@@ -6,24 +6,6 @@
          version="3.1">
 
   <display-name>Spring WebApp</display-name>
-
-  <!-- DispatcherServlet 등록 -->
-  <servlet>
-    <servlet-name>dispatcher</servlet-name>
-    <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
-    <init-param>
-      <param-name>contextConfigLocation</param-name>
-      <param-value>/WEB-INF/dispatcher-servlet.xml</param-value>
-    </init-param>
-    <load-on-startup>1</load-on-startup>
-  </servlet>
-
-  <!-- DispatcherServlet 매핑 -->
-  <servlet-mapping>
-    <servlet-name>dispatcher</servlet-name>
-    <url-pattern>/</url-pattern>
-  </servlet-mapping>
-
   <!-- 인코딩 필터 (선택) -->
   <filter>
     <filter-name>encodingFilter</filter-name>
