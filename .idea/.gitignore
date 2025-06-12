@@ -1,3 +1,38 @@
 # Default ignored files
 /shelf/
 /workspace.xml
+
+/target/
+
+.idea/
+*.iml
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+desktop.ini
+
+# 빌드 결과물
+/target/
+out/
+build/
+
+# 로그 파일
+*.log
+
+# 민감정보 및 설정
+*.env
+*.secret
+*.key
+*.pem
+*.crt
+src/main/resources/db.properties
+
+# 테스트 결과
+/test-output/
+
+# 프론트 연동 시
+node_modules/
+dist/
