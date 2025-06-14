@@ -1,0 +1,19 @@
+package com.airbng.common.exception;
+
+import com.airbng.common.response.status.ResponseStatus;
+import lombok.Getter;
+
+@Getter
+public class ImageException extends RuntimeException {
+    private final ResponseStatus exceptionStatus;
+
+    public ImageException(ResponseStatus exceptionStatus) {
+        super(exceptionStatus.getMessage());
+        this.exceptionStatus = exceptionStatus;
+    }
+
+    public ImageException(ResponseStatus exceptionStatus, String detailMessage) {
+        super(detailMessage);
+        this.exceptionStatus = exceptionStatus;
+    }
+}

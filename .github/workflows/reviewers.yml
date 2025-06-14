@@ -1,0 +1,62 @@
+name: Assign Reviewers
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+permissions:
+  pull-requests: write
+
+jobs:
+  assign_reviewer:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Get PR author
+        id: get_author
+        uses: actions/github-script@v6
+        with:
+          script: |
+            return context.payload.pull_request.user.login;
+
+      - name: Set reviewer candidates
+        id: get_candidates
+        run: |
+          echo "candidates=kwiyoon cheon1217 Mouon CHYHEE HaejunJang standha" >> $GITHUB_OUTPUT
+
+      - name: Select random reviewers
+        id: select_reviewers
+        run: |
+          AUTHOR="${{ steps.get_author.outputs.result }}"
+          CANDIDATES="${{ steps.get_candidates.outputs.candidates }}"
+          IFS=' ' read -r -a CANDIDATES_ARRAY <<< "$CANDIDATES"
+
+          FILTERED=()
+          for USER in "${CANDIDATES_ARRAY[@]}"; do
+            if [[ "$USER" != "$AUTHOR" ]]; then
+              FILTERED+=("$USER")
+            fi
+          done
+
+          if [[ ${#FILTERED[@]} -eq 0 ]]; then
+            echo "No available reviewers."
+            exit 0
+          fi
+
+          SHUFFLED=($(shuf -e "${FILTERED[@]}"))
+          SELECTED=("${SHUFFLED[@]:0:2}")
+          echo "reviewers=${SELECTED[*]}" >> $GITHUB_OUTPUT
+
+      - name: Add reviewers to PR
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const reviewers = process.env.REVIEWERS.split(" ");
+            await github.rest.pulls.requestReviewers({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.payload.pull_request.number,
+              reviewers: reviewers
+            });
+        env:
+          REVIEWERS: ${{ steps.select_reviewers.outputs.reviewers }}
