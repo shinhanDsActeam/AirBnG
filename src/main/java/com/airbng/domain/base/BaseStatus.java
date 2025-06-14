@@ -3,6 +3,10 @@ package com.airbng.domain.base;
 public enum BaseStatus {
 
         ACTIVE,
-        DELETE
+        DELETE;
+
+        public boolean isActive() {
+                return this == ACTIVE;
+        }
 
 }
