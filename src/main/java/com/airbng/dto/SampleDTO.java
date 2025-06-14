@@ -1,4 +1,4 @@
-package com.airbng.domain;
+package com.airbng.dto;
 
 public class SampleDTO {
     private String message;

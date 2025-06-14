@@ -5,7 +5,7 @@
 
 <mapper namespace="com.airbng.repository.SampleRepository">
 
-    <select id="findAll" resultType="com.airbng.domain.SampleDTO">
+    <select id="findAll" resultType="com.airbng.dto.SampleDTO">
         SELECT * FROM sample_table;
     </select>
 
