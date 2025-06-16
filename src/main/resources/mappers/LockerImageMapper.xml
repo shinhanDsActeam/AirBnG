@@ -1,0 +1,11 @@
+<mapper xmlns="http://mybatis.org/schema/mybatis-mapper" namespace="com.airbng.repository.LockerImageRepository">
+
+    <insert id="insertLokcerImages" parameterType="map">
+        INSERT INTO LockerImage (locker_id, image_id)
+        VALUES 
+        <foreach collection="imageIds" item="imageId" separator="," >
+            (#{lockerId}, #{imageId});
+        </foreach>
+    </insert>
+
+</mapper>
