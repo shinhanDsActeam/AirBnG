@@ -21,7 +21,7 @@ public class Locker extends BaseTime {
     @NonNull
     private Long lockerId;
     @NonNull
-    private Long lockerName;
+    private String lockerName;
     @NonNull
     private Available isAvailable;
     @NonNull
