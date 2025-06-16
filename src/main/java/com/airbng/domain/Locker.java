@@ -26,4 +26,6 @@ public class Locker extends BaseTime {
     @NonNull
     private Member owner;
     private List<LockerImage> lockerImages;
+    @NonNull
+    private String status;
 }
