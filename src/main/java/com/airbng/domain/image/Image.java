@@ -1,4 +1,4 @@
-package com.airbng.domain;
+package com.airbng.domain.image;
 
 import com.airbng.domain.base.BaseTime;
 import lombok.AllArgsConstructor;

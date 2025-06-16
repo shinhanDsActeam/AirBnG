@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.airbng.domain.base.Available;
 import com.airbng.domain.base.BaseTime;
+import com.airbng.domain.image.LockerImage;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

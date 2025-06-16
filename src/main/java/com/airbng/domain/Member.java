@@ -2,9 +2,8 @@ package com.airbng.domain;
 
 import com.airbng.domain.base.BaseStatus;
 
-import java.time.LocalDateTime;
-
 import com.airbng.domain.base.BaseTime;
+import com.airbng.domain.image.Image;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

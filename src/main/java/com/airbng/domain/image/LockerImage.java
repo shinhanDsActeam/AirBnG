@@ -1,5 +1,6 @@
-package com.airbng.domain;
+package com.airbng.domain.image;
 
+import com.airbng.domain.Locker;
 import com.airbng.domain.base.BaseTime;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
