@@ -7,5 +7,5 @@ import java.time.LocalDateTime;
 @Getter
 public class BaseTime {
     private LocalDateTime createdAt;
-    private LocalDateTime modifiedAt;
+    private LocalDateTime updatedAt;
 }
