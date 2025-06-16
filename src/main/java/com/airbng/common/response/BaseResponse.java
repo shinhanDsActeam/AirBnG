@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.Getter;
 
-import static com.airbng.common.response.status.BaseExceptionResponseStatus.SUCCESS;
+import static com.airbng.common.response.status.BaseResponseStatus.SUCCESS;
 
 @Getter
 @JsonPropertyOrder({"code", "status", "message", "result"})
