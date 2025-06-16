@@ -18,9 +18,8 @@ public class PopularLockerDTO {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class Result {
-        private String locationId;
-        private String address;
         private String lockerId;
+        private String address;
         private String lockerName;
         private String isAvailable;
         private String url;

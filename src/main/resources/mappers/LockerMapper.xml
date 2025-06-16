@@ -3,27 +3,46 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="LockerMapper">
-
-    <select id="findAll" resultType="com.airbng.dto.SampleDTO">
-        SELECT * FROM sample_table;
-    </select>
-
+<mapper namespace="com.airbng.mappers.LockerMapper">
 
     <!-- 인기 보관 5개 지역 -->
-    <select id="selectPopularLockers" resultType="com.airbng.dto.PopularLockerDTO$Result">
+    <resultMap id="PopularLockerMap" type="com.airbng.dto.PopularLockerDTO$Result">
+        <result column="address" property="address" />
+        <result column="locker_id" property="lockerId" />
+        <result column="locker_name" property="lockerName" />
+        <result column="is_available" property="isAvailable" />
+        <result column="url" property="url" />
+    </resultMap>
+
+    <select id="selectTop5Lockers" resultMap="PopularLockerMap">
         SELECT
-        l.locker_id,
-        l.is_available,
-        l.location_id,
-        l.member_id,
-        COUNT(r.reservation_id) AS reservation_count
+            l.locker_id,
+            l.is_available,
+            l.address,
+            l.address_english,
+            l.locker_name,
+            img.url AS url
         FROM Locker l
         JOIN Member m ON l.member_id = m.member_id
         JOIN Reservation r ON r.keeper_id = m.member_id
-        JOIN Location loc ON l.location_id = loc.location_id
-        GROUP BY l.locker_id
-        ORDER BY reservation_count DESC
+        LEFT JOIN (
+            SELECT li.locker_id, img.url
+            FROM LockerImage li
+            JOIN Image img ON li.image_id = img.image_id
+            WHERE li.image_id IN (
+                SELECT MIN(li2.image_id)
+                FROM LockerImage li2
+                GROUP BY li2.locker_id
+            )
+        ) AS img ON img.locker_id = l.locker_id
+        GROUP BY
+            l.locker_id,
+            l.is_available,
+            l.address,
+            l.address_english,
+            l.locker_name,
+            img.url
+        ORDER BY COUNT(r.reservation_id) DESC
         LIMIT 5
     </select>
 
