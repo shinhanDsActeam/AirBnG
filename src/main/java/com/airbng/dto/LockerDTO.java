@@ -1,7 +1,5 @@
 package com.airbng.dto;
 
-import com.airbng.domain.LockerImage;
-import com.airbng.domain.base.Available;
 import lombok.Data;
 
 import java.util.List;
