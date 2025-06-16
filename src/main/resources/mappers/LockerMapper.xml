@@ -1,8 +1,16 @@
-<mapper xmlns="http://mybatis.org/schema/mybatis-mapper" namespace="com.airbng.repository.LockerRepository">
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-    <insert id="insertLocker" parameterType="com.airbng.domain.Locker" useGeneratedKeys="true" keyProperty="lockerId">
-        INSERT INTO Locker(is_available, locationId, memberId)
-        VALUES (#{isAvailable}, #{location.locationId}, #{owner.memberId});
+<mapper namespace="com.airbng.mappers.LockerMapper">
+
+    <insert id="insertLocker"
+            parameterType="com.airbng.domain.Locker"
+            useGeneratedKeys="true"
+            keyProperty="lockerId" keyColumn="locker_id">
+        INSERT INTO Locker (locker_name, is_available, location_id, member_id)
+        VALUES (#{lockerName}, #{isAvailable}, #{location.locationId}, #{owner.memberId});
     </insert>
 
 </mapper>
