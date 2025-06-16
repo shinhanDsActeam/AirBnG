@@ -1,13 +1,18 @@
 package com.airbng.controller;
 
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import org.springframework.web.bind.annotation.*;
 
-@Controller
+@Api(tags = "스웨거 테스트용 컨트롤러")
+@RestController
+@RequestMapping("/swagger")// json 방식으로 응답
 public class HomeController {
 
-    @RequestMapping("/")
+    @ApiOperation("Get 테스트")
+    @GetMapping
     public String home() {
-        return "index"; // /WEB-INF/views/index.jsp
+        return "hello";
     }
+
 }
