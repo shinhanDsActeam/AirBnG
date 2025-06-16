@@ -1,7 +1,9 @@
 package com.airbng.service;
 
 import com.airbng.dto.PopularLockerDTO;
+import org.springframework.stereotype.Service;
 
+@Service
 public interface LockerService {
 
     /**
