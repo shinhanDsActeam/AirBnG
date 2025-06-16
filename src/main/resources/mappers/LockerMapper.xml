@@ -1,0 +1,8 @@
+<mapper xmlns="http://mybatis.org/schema/mybatis-mapper" namespace="com.airbng.repository.LockerRepository">
+
+    <insert id="insertLocker" parameterType="com.airbng.domain.Locker" useGeneratedKeys="true" keyProperty="lockerId">
+        INSERT INTO Locker(is_available, locationId, memberId)
+        VALUES (#{isAvailable}, #{location.locationId}, #{owner.memberId});
+    </insert>
+
+</mapper>
