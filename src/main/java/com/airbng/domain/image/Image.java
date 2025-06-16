@@ -1,4 +1,4 @@
-package com.airbng.domain;
+package com.airbng.domain.image;
 
 import com.airbng.domain.base.BaseTime;
 import lombok.AllArgsConstructor;
@@ -13,11 +13,11 @@ import org.springframework.lang.NonNull;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Location extends BaseTime {
+public class Image extends BaseTime {
     @NonNull
-    private Long locationId;
+    private Long imageId;
     @NonNull
-    private String address;
+    private String url;
     @NonNull
-    private String addressEnglish;
+    private String uploadName;
 }
