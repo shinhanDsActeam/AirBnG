@@ -84,7 +84,7 @@
       <version>1.18.32</version> <!-- 최신 버전으로 사용 권장 -->
       <scope>provided</scope>
     </dependency>
-
+    
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-databind</artifactId>
