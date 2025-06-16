@@ -20,6 +20,8 @@ public class Locker extends BaseTime {
     @NonNull
     private Long lockerId;
     @NonNull
+    private Long lockerName;
+    @NonNull
     private Available isAvailable;
     @NonNull
     private Location location;
