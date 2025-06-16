@@ -3,7 +3,6 @@ package com.airbng.controller;
 import com.airbng.common.response.BaseResponse;
 import com.airbng.dto.PopularLockerDTO;
 import com.airbng.service.LockerService;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;

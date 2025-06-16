@@ -1,24 +1,12 @@
 package com.airbng.service;
 
 import com.airbng.dto.PopularLockerDTO;
-import com.airbng.mappers.LockerMapper;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
 
-import java.util.List;
+public interface LockerService {
 
-@Service
-@RequiredArgsConstructor
-public class LockerService {
-
-    private final LockerMapper lockerMapper;
-
-    public PopularLockerDTO selectTop5Locker(){
-        List<PopularLockerDTO.Result> popularLockers = lockerMapper.selectTop5Lockers();
-
-        return PopularLockerDTO.builder()
-                .lockerList(popularLockers)
-                .build();
-    }
+    /**
+     * 예약 건수 기준 가장 상위 5개 조회
+     * */
+    public PopularLockerDTO selectTop5Locker();
 
 }
