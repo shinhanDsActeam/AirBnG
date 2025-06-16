@@ -28,7 +28,9 @@ build/
 *.key
 *.pem
 *.crt
+*.properties
 src/main/resources/db.properties
+src/main/resources/s3.properties
 
 # 테스트 결과
 /test-output/

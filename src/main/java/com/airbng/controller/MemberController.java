@@ -1,6 +1,8 @@
 package com.airbng.controller;
 
 
+import com.airbng.domain.Member;
+import com.airbng.dto.MemberSignupRequestDTO;
 import com.airbng.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -17,7 +19,8 @@ public class MemberController {
 
 
     @PostMapping("/signup")
-    public String signup(@ModelAttribute Member member) {
-        member
+    public String signup(@ModelAttribute MemberSignupRequestDTO requestDto) {
+        memberService.signup(requestDto);
+        return "redirect:/";
     }
 }
