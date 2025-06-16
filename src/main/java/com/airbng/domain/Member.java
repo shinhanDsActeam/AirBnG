@@ -10,6 +10,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.Builder;
+import org.springframework.lang.NonNull;
 
 @Getter
 @Setter
@@ -17,12 +18,20 @@ import lombok.Builder;
 @AllArgsConstructor
 @Builder
 public class Member extends BaseTime {
+    @NonNull
     private Long memberId;
+    @NonNull
     private String email;
+    @NonNull
     private String name;
+    @NonNull
     private String phone;
+    @NonNull
     private String nickname;
+    @NonNull
     private String password;
+    @NonNull
     private BaseStatus status;
+    @NonNull
     private Image profileImage;
 }

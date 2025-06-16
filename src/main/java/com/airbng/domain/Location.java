@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.Builder;
+import org.springframework.lang.NonNull;
 
 @Getter
 @Setter
@@ -13,7 +14,10 @@ import lombok.Builder;
 @AllArgsConstructor
 @Builder
 public class Location extends BaseTime {
+    @NonNull
     private Long locationId;
+    @NonNull
     private String address;
+    @NonNull
     private String addressEnglish;
 }
