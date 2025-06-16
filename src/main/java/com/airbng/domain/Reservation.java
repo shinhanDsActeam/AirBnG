@@ -1,6 +1,8 @@
 package com.airbng.domain;
 
 import java.time.LocalDateTime;
+
+import com.airbng.domain.base.BaseTime;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,7 +14,7 @@ import lombok.Builder;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Reservation {
+public class Reservation extends BaseTime {
     private Long reservationId;
     private Member dropper;
     private Member keeper;
