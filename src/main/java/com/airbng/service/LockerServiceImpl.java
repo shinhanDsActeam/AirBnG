@@ -44,7 +44,7 @@ public class LockerServiceImpl implements LockerService {
                         .url(imgDTO.getUrl())
                         .uploadName(imgDTO.getUploadName())
                         .build();
-                lockerMapper.insertImage(image); // 🔐 imageId 자동 세팅
+                lockerMapper.insertImage(image); // imageId 자동 세팅
                 imageIds.add(image.getImageId());
             }
 
