@@ -22,22 +22,18 @@ public class MemberServiceImpl implements MemberService {
     private final ImageMapper imageMapper;
     private final ImageService imageService;
 
-    private static final String DEFAULT_PROFILE_URL ="https://airbngbucket.s3.ap-northeast-2.amazonaws.com/profiles/users/default.jpeg";
+    private static final String DEFAULT_PROFILE_URL ="https://airbngbucket.s3.ap-northeast-2.amazonaws.com/profiles/default.jpeg";
     private static final String DEFAULT_PROFILE_NAME = "default.jpeg";
     @Override
     public void signup(MemberSignupRequest dto, MultipartFile file) {
         Image profileImage;
-        try {
-            if (file != null && !file.isEmpty()) {
-                log.info("이미지 존재함~~~~~~");
-                profileImage = imageService.uploadProfileImage(file);
-            } else {
-                log.info("이미지 없음~~~~~~");
-                profileImage = imageService.getDefaultProfileImage();
-                log.info("이미지 정보 확인 " + profileImage.getImageId() + "          "  + profileImage.getUrl());
-            }
-        } catch (IOException e) {
-            throw new RuntimeException("프로필 이미지 업로드 중 오류 발생", e);
+        if (file != null && !file.isEmpty()) {
+            log.info("이미지 존재함~~~~~~");
+            profileImage = imageService.uploadProfileImage(file);
+        } else {
+            log.info("이미지 없음~~~~~~");
+            profileImage = imageService.getDefaultProfileImage();
+            log.info("이미지 정보 확인 " + profileImage.getImageId() + "          "  + profileImage.getUrl());
         }
 
         Member member = Member.builder()
