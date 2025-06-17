@@ -15,8 +15,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class LockerExceptionController {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(LockerException.class)
-
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public BaseResponse handle(LockerException ex) {
         return new BaseResponse(ex.getExceptionStatus(), ex.getMessage());
     }

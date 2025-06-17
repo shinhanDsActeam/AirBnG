@@ -16,7 +16,6 @@ public interface LockerMapper {
 
     LockerDetailResponse findUserById(Long lockerId);
     List<String> findImageById(Long lockerId);
-    List<LockerPreviewResult> findTop5Lockers(ReservationState state);
   
     void insertLocker(Locker locker);
 
