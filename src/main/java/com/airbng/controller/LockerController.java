@@ -8,10 +8,10 @@ import com.airbng.dto.LockerTop5Response;
 import com.airbng.service.LockerService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.ui.Model;
+
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 
@@ -27,7 +27,6 @@ public class LockerController {
     public BaseResponse<UserFindByIdResponse> findUserById(@PathVariable Long lockerId) {
         return new BaseResponse<>(lockerService.findUserById(lockerId));
     }
-}
 
     @GetMapping("/popular")
     public BaseResponse<LockerTop5Response> selectTop5Lockers(){
