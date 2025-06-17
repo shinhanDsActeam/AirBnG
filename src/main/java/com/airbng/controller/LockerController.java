@@ -1,7 +1,7 @@
 package com.airbng.controller;
 
 import com.airbng.common.response.BaseResponse;
-import com.airbng.dto.LockerDTO;
+import com.airbng.dto.LockerInsertRequest;
 import com.airbng.service.LockerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
@@ -16,7 +16,7 @@ public class LockerController {
     private final LockerService lockerService;
 
     @PostMapping("/register")
-    public BaseResponse<String> registerLocker(@RequestBody LockerDTO dto) {
+    public BaseResponse<String> registerLocker(@RequestBody LockerInsertRequest dto) {
         lockerService.registerLocker(dto);
         return new BaseResponse<>("보관소 등록 완료");
 //        return ResponseEntity

@@ -4,8 +4,8 @@ import com.airbng.domain.Locker;
 import com.airbng.domain.Member;
 import com.airbng.domain.base.Available;
 import com.airbng.domain.image.Image;
-import com.airbng.dto.ImageDTO;
-import com.airbng.dto.LockerDTO;
+import com.airbng.dto.ImageInsertRequest;
+import com.airbng.dto.LockerInsertRequest;
 import com.airbng.mappers.LockerMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -22,7 +22,7 @@ public class LockerServiceImpl implements LockerService {
 
     @Transactional
     @Override
-    public void registerLocker(LockerDTO dto) {
+    public void registerLocker(LockerInsertRequest dto) {
 
         Locker locker = Locker.builder()
                 .lockerName(dto.getLockerName())
@@ -39,7 +39,7 @@ public class LockerServiceImpl implements LockerService {
 
         List<Long> imageIds = new ArrayList<>();
         if (dto.getImages() != null && !dto.getImages().isEmpty()) {
-            for (ImageDTO imgDTO : dto.getImages()) {
+            for (ImageInsertRequest imgDTO : dto.getImages()) {
                 Image image = Image.builder()
                         .url(imgDTO.getUrl())
                         .uploadName(imgDTO.getUploadName())

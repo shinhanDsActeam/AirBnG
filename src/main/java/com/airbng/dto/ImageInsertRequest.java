@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ImageDTO {
+public class ImageInsertRequest {
     private String url;
     private String uploadName;
 }

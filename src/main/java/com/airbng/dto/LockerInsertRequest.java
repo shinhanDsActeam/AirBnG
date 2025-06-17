@@ -9,7 +9,7 @@ import java.util.List;
 
 @Data
 @NoArgsConstructor
-public class LockerDTO {
+public class LockerInsertRequest {
     @NonNull
     private String lockerName;
 
@@ -32,7 +32,7 @@ public class LockerDTO {
     @NonNull
     private Double longitude;
 
-    private List<ImageDTO> images;
+    private List<ImageInsertRequest> images;
 
     private List<Long> jimTypeIds;
 }
