@@ -18,7 +18,7 @@ import org.springframework.lang.NonNull;
 @AllArgsConstructor
 @Builder
 public class Locker extends BaseTime {
-    @NonNull
+//    @NonNull
     private Long lockerId;
     @NonNull
     private String lockerName;
@@ -29,7 +29,7 @@ public class Locker extends BaseTime {
     @NonNull
     private String addressEnglish;
     @NonNull
-    private String addressDetail; // 상세 주소
+    private String addressDetail;
     @NonNull
     private Double latitude; // 위도
     @NonNull
