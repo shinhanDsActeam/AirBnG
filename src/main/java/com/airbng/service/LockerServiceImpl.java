@@ -38,8 +38,8 @@ public class LockerServiceImpl implements LockerService {
         lockerMapper.insertLocker(locker); // 등록 + lockerId 반환
 
         List<Long> imageIds = new ArrayList<>();
-        if (dto.getImageList() != null && !dto.getImageList().isEmpty()) {
-            for (ImageDTO imgDTO : dto.getImageList()) {
+        if (dto.getImages() != null && !dto.getImages().isEmpty()) {
+            for (ImageDTO imgDTO : dto.getImages()) {
                 Image image = Image.builder()
                         .url(imgDTO.getUrl())
                         .uploadName(imgDTO.getUploadName())

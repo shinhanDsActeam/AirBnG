@@ -32,7 +32,7 @@ public class LockerDTO {
     @NonNull
     private Double longitude;
 
-    private List<ImageDTO> imageList;
+    private List<ImageDTO> images;
 
     private List<Long> jimTypeIds;
 }
