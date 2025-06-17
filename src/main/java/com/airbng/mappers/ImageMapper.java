@@ -7,5 +7,5 @@ import org.apache.ibatis.annotations.Mapper;
 public interface ImageMapper {
     void insertImage(Image image);
 
-    Image selectDefaultImage();
+    Image findDefaultImage();
 }

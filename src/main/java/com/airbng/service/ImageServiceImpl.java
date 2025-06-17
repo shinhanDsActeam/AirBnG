@@ -20,9 +20,6 @@ public class ImageServiceImpl implements ImageService {
 
     @Override
     public Image uploadProfileImage(MultipartFile file) {
-        if(file.getSize() > 0) {
-            throw new ImageException(BaseResponseStatus.EMPTY_FILE);
-        }
 
         String uuid = UUID.randomUUID().toString();
         String fileName = uuid + "_" + file.getOriginalFilename();
@@ -45,6 +42,6 @@ public class ImageServiceImpl implements ImageService {
     }
 
     public Image getDefaultProfileImage() {
-        return imageMapper.selectDefaultImage();
+        return imageMapper.findDefaultImage();
     }
 }
