@@ -1,7 +1,10 @@
 package com.airbng.service;
 
 import com.airbng.common.exception.LockerException;
+import com.airbng.domain.base.ReservationState;
 import com.airbng.dto.LockerDetailResponse;
+import com.airbng.dto.LockerPreviewResult;
+import com.airbng.dto.LockerTop5Response;
 import com.airbng.mappers.LockerMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -9,6 +12,8 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 import static com.airbng.common.response.status.BaseResponseStatus.NOT_FOUND_LOCKER;
+import static com.airbng.common.response.status.BaseResponseStatus.NOT_FOUND_LOCKERDETAILS;
+
 
 @Service
 @RequiredArgsConstructor
