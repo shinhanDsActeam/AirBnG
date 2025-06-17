@@ -1,26 +1,29 @@
 package com.airbng.controller;
 
 
-import com.airbng.domain.Member;
-import com.airbng.dto.MemberSignupRequestDTO;
+import com.airbng.common.response.BaseResponse;
+import com.airbng.dto.MemberSignupRequest;
 import com.airbng.service.MemberService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
-@Controller
-@RequiredArgsConstructor
+@RestController
 @RequestMapping("/member")
+@RequiredArgsConstructor
+@Slf4j
 public class MemberController {
 
     private final MemberService memberService;
 
-
-    @PostMapping("/signup")
-    public String signup(@ModelAttribute MemberSignupRequestDTO requestDto) {
-        memberService.signup(requestDto);
-        return "redirect:/";
+    @PostMapping(value = "/signup", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<BaseResponse<String>> signup(
+            @RequestPart("profile") MemberSignupRequest dto,
+            @RequestPart(value = "profileImage", required = false) MultipartFile profileImage) {
+        memberService.signup(dto, profileImage);
+        return ResponseEntity.ok(new BaseResponse<>("회원가입 성공"));
     }
 }
