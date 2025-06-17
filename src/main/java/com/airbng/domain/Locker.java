@@ -18,10 +18,10 @@ import org.springframework.lang.NonNull;
 @AllArgsConstructor
 @Builder
 public class Locker extends BaseTime {
-    @NonNull
+//    @NonNull
     private Long lockerId;
     @NonNull
-    private Long lockerName;
+    private String lockerName;
     @NonNull
     private Available isAvailable;
     @NonNull
@@ -29,12 +29,12 @@ public class Locker extends BaseTime {
     @NonNull
     private String addressEnglish;
     @NonNull
-    private String addressDetail; // 상세 주소
+    private String addressDetail;
     @NonNull
     private Double latitude; // 위도
     @NonNull
     private Double longitude; // 경도
     @NonNull
-    private Member owner;
+    private Member keeper;
     private List<LockerImage> lockerImages;
 }
