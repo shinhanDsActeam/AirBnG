@@ -1,19 +1,15 @@
 package com.airbng.common.exception;
 
+import com.airbng.common.response.status.BaseResponseStatus;
 import com.airbng.common.response.status.ResponseStatus;
 import lombok.Getter;
 
 @Getter
-public class MemberException extends RuntimeException {
-    private final ResponseStatus exceptionStatus;
-
-    public MemberException(ResponseStatus exceptionStatus) {
-        super(exceptionStatus.getMessage());
-        this.exceptionStatus = exceptionStatus;
+public class MemberException extends DomainException {
+    public MemberException(BaseResponseStatus baseResponseStatus) {
+        super(baseResponseStatus);
     }
-
-    public MemberException(ResponseStatus exceptionStatus, String detailMessage) {
-        super(detailMessage);
-        this.exceptionStatus = exceptionStatus;
+    public MemberException(BaseResponseStatus baseResponseStatus, String detailMessage) {
+        super(baseResponseStatus, detailMessage);
     }
 }

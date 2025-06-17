@@ -4,7 +4,7 @@ public interface ResponseStatus {
 
     int getCode();
 
-    int getStatus();
+    int getHttpStatus();
 
     String getMessage();
 
