@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 public class BaseErrorResponse implements ResponseStatus {
 
     private final int code;
-    private final int status;
+    private int httpStatus;
     private final String message;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private final LocalDateTime timestamp;
@@ -37,8 +37,8 @@ public class BaseErrorResponse implements ResponseStatus {
     }
 
     @Override
-    public int getStatus() {
-        return status;
+    public int getHttpStatus() {
+        return httpStatus;
     }
 
     @Override

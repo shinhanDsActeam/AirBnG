@@ -13,7 +13,7 @@ import static com.airbng.common.response.status.BaseResponseStatus.SUCCESS;
 public class BaseResponse<T> implements ResponseStatus {
 
     private final int code;
-    private final int status;
+    private int httpStatus;
     private final String message;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -37,8 +37,8 @@ public class BaseResponse<T> implements ResponseStatus {
     }
 
     @Override
-    public int getStatus() {
-        return status;
+    public int getHttpStatus() {
+        return httpStatus;
     }
 
     @Override

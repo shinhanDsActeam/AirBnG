@@ -34,7 +34,7 @@ public enum BaseResponseStatus implements ResponseStatus{
 
 
     private final int code;
-    private final int status;
+    private final int httpStatus;
     private final String message;
 
     @Override
