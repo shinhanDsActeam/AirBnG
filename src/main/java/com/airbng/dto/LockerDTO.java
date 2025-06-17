@@ -10,22 +10,29 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 public class LockerDTO {
-
     @NonNull
     private String lockerName;
 
     @NonNull
-    private Available isAvailable;
-
-    // 🟨 기존: locationId → 제거
-    @NonNull
-    private String address;
-
-    @NonNull
-    private String addressEnglish;
+    private Available isAvailable; // 'YES' or 'NO'
 
     @NonNull
     private Long ownerId;
 
-    private List<Long> imageIds;
+    @NonNull
+    private String address;
+
+    private String addressEnglish;
+
+    private String addressDetail;
+
+    @NonNull
+    private Double latitude;
+
+    @NonNull
+    private Double longitude;
+
+    private List<ImageDTO> imageList;
+
+    private List<Long> jimTypeIds;
 }
