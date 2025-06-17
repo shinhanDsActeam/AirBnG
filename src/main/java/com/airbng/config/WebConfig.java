@@ -1,9 +1,11 @@
 package com.airbng.config;
 
 
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.servlet.config.annotation.*;
 
 @Configuration
@@ -27,5 +29,13 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addResourceHandler("swagger-ui.html")
                 .addResourceLocations("classpath:/META-INF/resources/");
 
+    }
+    //이미지 파일 처리
+    @Bean
+    public CommonsMultipartResolver multipartResolver() {
+        CommonsMultipartResolver resolver = new CommonsMultipartResolver();
+        resolver.setDefaultEncoding("UTF-8");
+        resolver.setMaxUploadSize(10 * 1024 * 1024); // 10MB
+        return resolver;
     }
 }
