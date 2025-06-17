@@ -29,6 +29,12 @@ public class Locker extends BaseTime {
     @NonNull
     private String addressEnglish;
     @NonNull
+    private String addressDetail; // 상세 주소
+    @NonNull
+    private Double latitude; // 위도
+    @NonNull
+    private Double longitude; // 경도
+    @NonNull
     private Member owner;
     private List<LockerImage> lockerImages;
 }

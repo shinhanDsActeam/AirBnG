@@ -1,7 +1,10 @@
 package com.airbng.controller;
 
+import java.util.Map;
+
 import com.airbng.common.response.BaseResponse;
 import com.airbng.dto.UserFindByIdResponse;
+import com.airbng.dto.LockerTop5Response;
 import com.airbng.service.LockerService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -11,11 +14,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Map;
 
 @Slf4j
 @RequiredArgsConstructor
-@RestController("/locker")
+@RestController
+@RequestMapping("/locker")
 public class LockerController {
 
     private final LockerService lockerService;
@@ -26,19 +29,10 @@ public class LockerController {
     }
 }
 
+    @GetMapping("/popular")
+    public BaseResponse<LockerTop5Response> selectTop5Lockers(){
+        log.info("LockerController.selectTop5Lockers");
+        return new BaseResponse<>(lockerService.findTop5Locker());
+    }
 
-
-//
-//@RestController
-//public class LockerController {
-//    @Autowired
-//    private LockerService service;
-//
-//    @GetMapping("/locker/details.do")
-//    public String detailsAll(Model model, LockerDetailsDTO dto) {
-//        Map<String, Object> map = service.detailsAll(dto);
-//        model.addAttribute("list",map);
-//        return "locker/details"; // locker/details.jsp
-//    }
-//
-//}
+}
