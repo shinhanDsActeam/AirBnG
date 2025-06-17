@@ -5,7 +5,7 @@
 
 <mapper namespace="com.airbng.mappers.LockerMapper">
 
-    <resultMap id="LockerDetails" type="com.airbng.dto.UserFindByIdResponse">
+    <resultMap id="LockerDetails" type="com.airbng.dto.LockerDetailResponse">
         <result property="lockerId" column="locker_id" />
         <result property="lockerName" column="locker_name" />
         <result property="address" column="address" />

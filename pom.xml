@@ -77,12 +77,6 @@
       <artifactId>commons-dbcp2</artifactId>
       <version>2.9.0</version> <!-- 버전은 적절히 조절 가능 -->
     </dependency>
-      <dependency>
-          <groupId>org.projectlombok</groupId>
-          <artifactId>lombok</artifactId>
-          <version>1.18.34</version>
-          <scope>provided</scope>
-      </dependency>
 
     <dependency>
       <groupId>org.projectlombok</groupId>
@@ -90,7 +84,7 @@
       <version>1.18.32</version> <!-- 최신 버전으로 사용 권장 -->
       <scope>provided</scope>
     </dependency>
-    
+
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-databind</artifactId>
@@ -132,6 +126,18 @@
       <groupId>ch.qos.logback</groupId>
       <artifactId>logback-classic</artifactId>
       <version>1.2.11</version>
+    </dependency>
+    <dependency>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
+      <version>1.18.34</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
+      <version>1.18.34</version>
+      <scope>provided</scope>
     </dependency>
   </dependencies>
   <build>

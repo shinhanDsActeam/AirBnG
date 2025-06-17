@@ -1,10 +1,7 @@
 package com.airbng.service;
 
 import com.airbng.common.exception.LockerException;
-import com.airbng.domain.base.ReservationState;
-import com.airbng.dto.LockerPreviewResult;
-import com.airbng.dto.LockerTop5Response;
-import com.airbng.dto.UserFindByIdResponse;
+import com.airbng.dto.LockerDetailResponse;
 import com.airbng.mappers.LockerMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,21 +17,15 @@ public class LockerServiceImpl implements LockerService{
     private final LockerMapper lockerMapper; //final → 생성자 주입
 
     @Override
-    public UserFindByIdResponse findUserById(Long lockerId) {
-        UserFindByIdResponse result = lockerMapper.findUserById(lockerId);
+    public LockerDetailResponse findUserById(Long lockerId) {
+        LockerDetailResponse result = lockerMapper.findUserById(lockerId);
         System.out.println(result);
+        if (result == null) {
+            throw new LockerException(NOT_FOUND_LOCKERDETAILS);
+        }
         result.setImages(lockerMapper.findImageById(lockerId));
+        return result;
 
-        return UserFindByIdResponse.builder().
-                lockerId(result.getLockerId())
-                .lockerName(result.getLockerName())
-                .address(result.getAddress())
-                .addressEnglish(result.getAddressEnglish())
-                .addressDetail(result.getAddressDetail())
-                .keeperId(result.getKeeperId())
-                .keeperName(result.getKeeperName())
-                .images(result.getImages())
-                .build();
     }
 
     @Override

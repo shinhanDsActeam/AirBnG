@@ -1,8 +1,10 @@
 package com.airbng.controller;
 
+import com.airbng.common.exception.LockerException;
 import java.util.Map;
 
 import com.airbng.common.response.BaseResponse;
+import com.airbng.dto.LockerDetailResponse;
 import com.airbng.dto.UserFindByIdResponse;
 import com.airbng.dto.LockerTop5Response;
 import com.airbng.service.LockerService;
@@ -14,17 +16,21 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Map;
+
+import static com.airbng.common.response.status.BaseResponseStatus.NOT_FOUND_LOCKERDETAILS;
 
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/locker")
+@RequestMapping("/lockers")
 public class LockerController {
 
     private final LockerService lockerService;
 
-    @GetMapping("/details/{lockerId}")
-    public BaseResponse<UserFindByIdResponse> findUserById(@PathVariable Long lockerId) {
+    @GetMapping("/{lockerId}")
+    public BaseResponse<LockerDetailResponse> findUserById(@PathVariable Long lockerId) {
+
         return new BaseResponse<>(lockerService.findUserById(lockerId));
     }
 

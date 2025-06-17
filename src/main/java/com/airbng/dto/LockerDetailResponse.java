@@ -8,7 +8,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserFindByIdResponse {
+public class LockerDetailResponse {
 
     private Long lockerId;
     private String lockerName;
