@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.airbng.mappers.LockerMapper">
+
+    <resultMap id="LockerResultMap" type="com.airbng.dto.LockerSearchDTO$Result">
+        <result column="locker_id" property="lockerId"/>
+        <result column="locker_name" property="lockerName"/>
+        <result column="address" property="address"/>
+        <result column="is_available" property="isAvailable"/>
+    </resultMap>
+
+    <!-- locker 검색 -->
+    <select id="lockerSearch" resultMap="LockerResultMap">
+        SELECT
+            locker_name,
+            address,
+            is_available
+        FROM locker
+        <where>
+            <if test="lockerName != null and lockerName != ''">
+                AND locker_name LIKE CONCAT('%', #{lockerName}, '%')
+            </if>
+            <if test="address != null and address != ''">
+                AND address LIKE CONCAT('%', #{address}, '%')
+            </if>
+            <if test="isAvailable != null and isAvailable != ''">
+                AND is_available = #{isAvailable}
+            </if>
+        </where>
+        ORDER BY locker_id DESC
+    </select>
+
+    <!-- locker 검색 결과 개수 -->
+    <select id="lockerSearchCount" resultType="int">
+        SELECT COUNT(*)
+        FROM locker
+        <where>
+            <if test="lockerName != null and lockerName != ''">
+                AND locker_name LIKE CONCAT('%', #{lockerName}, '%')
+            </if>
+            <if test="address != null and address != ''">
+                AND address LIKE CONCAT('%', #{address}, '%')
+            </if>
+            <if test="isAvailable != null and isAvailable != ''">
+                AND is_available = #{isAvailable}
+            </if>
+        </where>
+    </select>
+</mapper>
