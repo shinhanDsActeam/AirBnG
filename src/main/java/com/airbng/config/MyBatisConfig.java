@@ -11,8 +11,8 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import javax.sql.DataSource;
 
 @Configuration
-@PropertySource("classpath:db.properties")  // 🔸 이 부분 추가
-@MapperScan("com.airbng.repository")
+@PropertySource("classpath:db.properties")
+@MapperScan("com.airbng.mappers")
 public class MyBatisConfig {
 
     @Value("${db.driver}")
