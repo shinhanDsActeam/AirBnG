@@ -43,7 +43,7 @@
             GROUP BY li2.locker_id
             )
             ) AS img ON img.locker_id = l.locker_id
-        LEFT JOIN Locker_JimType ljt ON ljt.locker_id = l.locker_id
+        LEFT JOIN LockerJimType ljt ON ljt.locker_id = l.locker_id
         LEFT JOIN JimType jt ON jt.jimtype_id = ljt.jimtype_id
         WHERE r.state = #{state}
         GROUP BY
