@@ -2,6 +2,8 @@ package com.airbng.mappers;
 
 import com.airbng.domain.Locker;
 import com.airbng.domain.image.Image;
+import com.airbng.domain.base.ReservationState;
+import com.airbng.dto.LockerPreviewResult;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -17,4 +19,5 @@ public interface LockerMapper {
 
     void insertLockerJimTypes(@Param("lockerId") Long lockerId, @Param("jimTypeIds") List<Long> jimTypeIds);
 
+    List<LockerPreviewResult> findTop5Lockers(ReservationState state);
 }
