@@ -25,7 +25,7 @@ public class LockerServiceImp implements LockerService{
         if(popularLockers.isEmpty()) throw new LockerException(NOT_FOUND_LOCKER);
 
         return LockerTop5Response.builder()
-                .lockerList(popularLockers)
+                .lockers(popularLockers)
                 .build();
     }
 

@@ -10,5 +10,5 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class LockerTop5Response {
-    private List<LockerPreviewResult> lockerList;
+    private List<LockerPreviewResult> lockers;
 }
