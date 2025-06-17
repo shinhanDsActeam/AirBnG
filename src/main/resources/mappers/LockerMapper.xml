@@ -37,16 +37,16 @@
     <select id="lockerSearchCount" resultType="int">
         SELECT COUNT(*)
         FROM locker
-        <where>
+        <trim prefix="WHERE" prefixOverrides="OR |AND ">
             <if test="lockerName != null and lockerName != ''">
-                AND locker_name LIKE CONCAT('%', #{lockerName}, '%')
+                OR locker_name LIKE CONCAT('%', #{lockerName}, '%')
             </if>
             <if test="address != null and address != ''">
-                AND address LIKE CONCAT('%', #{address}, '%')
+                OR address LIKE CONCAT('%', #{address}, '%')
             </if>
             <if test="isAvailable != null and isAvailable != ''">
-                AND is_available = #{isAvailable}
+                OR is_available = #{isAvailable}
             </if>
-        </where>
+        </trim>
     </select>
 </mapper>
