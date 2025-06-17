@@ -1,6 +1,7 @@
 package com.airbng.common.response;
 
 import com.airbng.common.response.status.ResponseStatus;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.Getter;
 
@@ -13,6 +14,7 @@ public class BaseErrorResponse implements ResponseStatus {
     private final int code;
     private final int status;
     private final String message;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private final LocalDateTime timestamp;
 
     public BaseErrorResponse(ResponseStatus status) {

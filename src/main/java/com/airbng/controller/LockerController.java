@@ -25,10 +25,6 @@ public class LockerController {
     public BaseResponse<String> registerLocker(@RequestBody LockerInsertRequest dto) {
         lockerService.registerLocker(dto);
         return new BaseResponse<>("보관소 등록 완료");
-//        return ResponseEntity
-//                .ok()
-//                .contentType(MediaType.valueOf("text/plain;charset=UTF-8"))
-//                .body("보관소 등록 완료");
     }
 
     @GetMapping("/popular")

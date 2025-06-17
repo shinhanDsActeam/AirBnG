@@ -66,7 +66,7 @@
         address, address_english, address_detail,
         latitude, longitude
         ) VALUES (
-        #{isAvailable}, #{lockerName}, #{owner.memberId},
+        #{isAvailable}, #{lockerName}, #{keeper.memberId},
         #{address}, #{addressEnglish}, #{addressDetail},
         #{latitude}, #{longitude}
         )
@@ -94,4 +94,18 @@
             (#{lockerId}, #{jimtypeId})
         </foreach>
     </insert>
+
+    <select id="findLockerByMemberId" resultType="int">
+        SELECT COUNT(*) FROM Locker WHERE member_id = #{memberId}
+    </select>
+
+    <select id="findValidJimTypeIds" resultType="long">
+        SELECT jimtype_id
+        FROM JimType
+        WHERE jimtype_id IN
+        <foreach collection="jimTypeIds" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+
 </mapper>

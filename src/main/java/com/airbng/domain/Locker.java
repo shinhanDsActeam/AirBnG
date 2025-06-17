@@ -35,6 +35,6 @@ public class Locker extends BaseTime {
     @NonNull
     private Double longitude; // 경도
     @NonNull
-    private Member owner;
+    private Member keeper;
     private List<LockerImage> lockerImages;
 }

@@ -20,4 +20,9 @@ public interface LockerMapper {
     void insertLockerJimTypes(@Param("lockerId") Long lockerId, @Param("jimTypeIds") List<Long> jimTypeIds);
 
     List<LockerPreviewResult> findTop5Lockers(ReservationState state);
+
+    int findLockerByMemberId(@Param("memberId") Long memberId);
+
+    List<Long> findValidJimTypeIds(@Param("jimTypeIds") List<Long> jimTypeIds);
+
 }
