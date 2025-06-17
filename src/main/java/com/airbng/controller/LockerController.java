@@ -1,5 +1,6 @@
 package com.airbng.controller;
 
+import com.airbng.common.response.BaseResponse;
 import com.airbng.dto.LockerDTO;
 import com.airbng.service.LockerService;
 import lombok.RequiredArgsConstructor;
@@ -15,12 +16,13 @@ public class LockerController {
     private final LockerService lockerService;
 
     @PostMapping("/register")
-    public ResponseEntity<String> registerLocker(@RequestBody LockerDTO dto) {
+    public BaseResponse<String> registerLocker(@RequestBody LockerDTO dto) {
         lockerService.registerLocker(dto);
-        return ResponseEntity
-                .ok()
-                .contentType(MediaType.valueOf("text/plain;charset=UTF-8"))
-                .body("보관소 등록 완료");
+        return new BaseResponse<>("보관소 등록 완료");
+//        return ResponseEntity
+//                .ok()
+//                .contentType(MediaType.valueOf("text/plain;charset=UTF-8"))
+//                .body("보관소 등록 완료");
     }
 }
 
