@@ -17,7 +17,7 @@ public class LockerInsertRequest {
     private Available isAvailable; // 'YES' or 'NO'
 
     @NonNull
-    private Long ownerId;
+    private Long keeperId;
 
     @NonNull
     private String address;

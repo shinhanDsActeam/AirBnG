@@ -32,7 +32,7 @@ public class LockerServiceImpl implements LockerService {
                 .addressDetail(dto.getAddressDetail())
                 .latitude(dto.getLatitude())
                 .longitude(dto.getLongitude())
-                .owner(Member.withId(dto.getOwnerId()))
+                .owner(Member.withId(dto.getKeeperId()))
                 .build();
 
         lockerMapper.insertLocker(locker); // 등록 + lockerId 반환
