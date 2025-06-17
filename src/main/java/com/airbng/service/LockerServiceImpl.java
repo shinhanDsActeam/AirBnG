@@ -25,6 +25,8 @@ public class LockerServiceImpl implements LockerService{
     public LockerDetailResponse findUserById(Long lockerId) {
         LockerDetailResponse result = lockerMapper.findUserById(lockerId);
         System.out.println(result);
+
+        // 만약 result가 null이라면, 해당 lockerId에 대한 정보가 없다는 예외를 발생시킴
         if (result == null) {
             throw new LockerException(NOT_FOUND_LOCKERDETAILS);
         }
