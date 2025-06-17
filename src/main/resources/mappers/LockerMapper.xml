@@ -85,4 +85,56 @@
         ORDER BY COUNT(r.reservation_id) DESC
         LIMIT 5
     </select>
+
+    <!-- 1. 보관소 등록 -->
+    <insert id="insertLocker" parameterType="com.airbng.domain.Locker"
+            useGeneratedKeys="true" keyProperty="lockerId" keyColumn="locker_id">
+        INSERT INTO Locker (
+        is_available, locker_name, member_id,
+        address, address_english, address_detail,
+        latitude, longitude
+        ) VALUES (
+        #{isAvailable}, #{lockerName}, #{keeper.memberId},
+        #{address}, #{addressEnglish}, #{addressDetail},
+        #{latitude}, #{longitude}
+        )
+    </insert>
+
+    <!-- 2. 단일 이미지 등록 (1장씩 등록하며 imageId를 반환 받음) -->
+    <insert id="insertImage" parameterType="com.airbng.domain.image.Image"
+            useGeneratedKeys="true" keyProperty="imageId" keyColumn="image_id">
+        INSERT INTO Image (url, upload_name)
+        VALUES (#{url}, #{uploadName})
+    </insert>
+
+    <!-- 3. 보관소-이미지 연결 -->
+    <insert id="insertLockerImages">
+        INSERT INTO LockerImage (locker_id, image_id)
+        <foreach collection="imageIds" item="imageId" separator="," open="VALUES" close="">
+            (#{lockerId}, #{imageId})
+        </foreach>
+    </insert>
+
+    <!-- 4. 보관소-짐타입 연결 -->
+    <insert id="insertLockerJimTypes">
+        INSERT INTO LockerJimType (locker_id, jimtype_id)
+        <foreach collection="jimTypeIds" item="jimtypeId" separator="," open="VALUES" close="">
+            (#{lockerId}, #{jimtypeId})
+        </foreach>
+    </insert>
+
+    <select id="findLockerByMemberId" resultType="int">
+        SELECT COUNT(*) FROM Locker WHERE member_id = #{memberId}
+    </select>
+
+    <select id="findValidJimTypeIds" resultType="long">
+        SELECT jimtype_id
+        FROM JimType
+        WHERE jimtype_id IN
+        <foreach collection="jimTypeIds" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+
 </mapper>
+

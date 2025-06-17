@@ -1,7 +1,6 @@
 package com.airbng.common.response;
 
 import com.airbng.common.response.status.ResponseStatus;
-
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.Getter;
