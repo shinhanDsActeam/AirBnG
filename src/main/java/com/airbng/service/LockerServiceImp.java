@@ -1,7 +1,9 @@
 package com.airbng.service;
 
 import com.airbng.common.exception.LockerException;
-import com.airbng.dto.PopularLockerDTO;
+import com.airbng.domain.base.ReservationState;
+import com.airbng.dto.LockerPreviewResult;
+import com.airbng.dto.LockerTop5Response;
 import com.airbng.mappers.LockerMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,12 +18,13 @@ public class LockerServiceImp implements LockerService{
 
     private final LockerMapper lockerMapper;
 
-    public PopularLockerDTO selectTop5Locker(){
-        List<PopularLockerDTO.Result> popularLockers = lockerMapper.selectTop5Lockers();
+    @Override
+    public LockerTop5Response selectTop5Locker(){
+        List<LockerPreviewResult> popularLockers = lockerMapper.selectTop5Lockers(ReservationState.CONFIRMED);
 
         if(popularLockers.isEmpty()) throw new LockerException(NOT_FOUND_LOCKER);
 
-        return PopularLockerDTO.builder()
+        return LockerTop5Response.builder()
                 .lockerList(popularLockers)
                 .build();
     }
