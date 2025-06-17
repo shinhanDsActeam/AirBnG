@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.airbng.mappers.ImageMapper">
+    <insert id="insertImage"
+            parameterType="com.airbng.domain.Image"
+            useGeneratedKeys="true"
+            keyProperty="imageId">
+        INSERT INTO Image (url, upload_name, created_at, updated_at)
+        VALUES (#{url}, #{uploadName}, NOW(), NOW())
+    </insert>
+    <select id="selectDefaultImage" resultType="com.airbng.domain.Image">
+        SELECT
+            image_id AS imageId,
+            url,
+            upload_name AS uploadName,
+            created_at AS createdAt,
+            updated_at AS updatedAt
+        FROM Image
+        WHERE image_id = 1
+    </select>
+</mapper>
