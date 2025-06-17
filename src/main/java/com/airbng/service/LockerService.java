@@ -9,6 +9,6 @@ public interface LockerService {
     /**
      * 예약 건수 기준 가장 상위 5개 조회
      * */
-    public LockerTop5Response selectTop5Locker();
+    public LockerTop5Response findTop5Locker();
 
 }

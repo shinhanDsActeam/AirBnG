@@ -20,7 +20,7 @@ public class LockerController {
     @GetMapping("/popular")
     public BaseResponse<LockerTop5Response> selectTop5Lockers(){
         log.info("LockerController.selectTop5Lockers");
-        return new BaseResponse<>(lockerService.selectTop5Locker());
+        return new BaseResponse<>(lockerService.findTop5Locker());
     }
 
 }
