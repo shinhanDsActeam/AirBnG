@@ -21,7 +21,7 @@
     </resultMap>
 
     <!-- 인기 락커 5개 조회 -->
-    <select id="selectTop5Lockers" resultMap="PopularLockerMap" parameterType="com.airbng.domain.base.ReservationState">
+    <select id="findTop5Lockers" resultMap="PopularLockerMap" parameterType="com.airbng.domain.base.ReservationState">
         SELECT
             l.locker_id,
             l.is_available,

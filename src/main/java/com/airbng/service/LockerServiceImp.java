@@ -20,7 +20,7 @@ public class LockerServiceImp implements LockerService{
 
     @Override
     public LockerTop5Response findTop5Locker(){
-        List<LockerPreviewResult> popularLockers = lockerMapper.selectTop5Lockers(ReservationState.CONFIRMED);
+        List<LockerPreviewResult> popularLockers = lockerMapper.findTop5Lockers(ReservationState.CONFIRMED);
 
         if(popularLockers.isEmpty()) throw new LockerException(NOT_FOUND_LOCKER);
 

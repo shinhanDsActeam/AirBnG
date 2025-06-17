@@ -8,5 +8,5 @@ import java.util.List;
 
 @Mapper
 public interface LockerMapper {
-    List<LockerPreviewResult> selectTop5Lockers(ReservationState state);
+    List<LockerPreviewResult> findTop5Lockers(ReservationState state);
 }
