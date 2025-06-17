@@ -11,8 +11,13 @@ public enum BaseResponseStatus implements ResponseStatus{
      */
     SUCCESS(1000,HttpStatus.OK.value(), "요청에 성공하였습니다."),
     FAILURE(2000, HttpStatus.BAD_REQUEST.value(), "요청에 실패하였습니다."),
+
     /**
-     * 3000 락커 관련 코드 - id 없을 때 보관소 상세보기 실패
+     * 2000 맴버 관련 코드
+     */
+
+    /**
+     * 3000 락커 관련 코드
      */
     NOT_FOUND_LOCKER(3000,HttpStatus.NO_CONTENT.value(), "락커를 찾을 수 없습니다."),
     NOT_FOUND_LOCKERDETAILS(3002,HttpStatus.NO_CONTENT.value(), "락커를 찾을 수 없습니다."),
@@ -30,7 +35,7 @@ public enum BaseResponseStatus implements ResponseStatus{
 
 
     private final int code;
-    private final int status;
+    private final int httpStatus;
     private final String message;
 
     @Override
@@ -39,8 +44,8 @@ public enum BaseResponseStatus implements ResponseStatus{
     }
 
     @Override
-    public int getStatus() {
-        return status;
+    public int getHttpStatus() {
+        return httpStatus;
     }
 
     @Override
