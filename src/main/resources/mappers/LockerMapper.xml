@@ -5,43 +5,55 @@
 
 <mapper namespace="com.airbng.mappers.LockerMapper">
 
-    <!-- 인기 보관 5개 지역 -->
-    <resultMap id="PopularLockerMap" type="com.airbng.dto.PopularLockerDTO$Result">
-        <result column="address" property="address" />
-        <result column="locker_id" property="lockerId" />
-        <result column="locker_name" property="lockerName" />
-        <result column="is_available" property="isAvailable" />
-        <result column="url" property="url" />
+    <!-- 인기 보관소 resultMap -->
+    <resultMap id="PopularLockerMap" type="com.airbng.dto.LockerPreviewResult">
+        <id     column="locker_id"      property="lockerId" />
+        <result column="address"        property="address" />
+        <result column="locker_name"    property="lockerName" />
+        <result column="is_available"   property="isAvailable" />
+        <result column="url"            property="url" />
+
+        <!-- 중첩 짐타입 매핑 -->
+        <collection property="jimTypeResults" ofType="com.airbng.dto.JimTypeResult">
+            <id     column="jimtype_id"    property="jimTypeId" />
+            <result column="type_name"     property="typeName" />
+        </collection>
     </resultMap>
 
-    <select id="selectTop5Lockers" resultMap="PopularLockerMap">
+    <!-- 인기 락커 5개 조회 -->
+    <select id="selectTop5Lockers" resultMap="PopularLockerMap" parameterType="com.airbng.domain.base.ReservationState">
         SELECT
             l.locker_id,
             l.is_available,
             l.address,
-            l.address_english,
             l.locker_name,
-            img.url AS url
+            img.url AS url,
+            jt.jimtype_id,
+            jt.type_name
         FROM Locker l
         JOIN Member m ON l.member_id = m.member_id
         JOIN Reservation r ON r.keeper_id = m.member_id
         LEFT JOIN (
-            SELECT li.locker_id, img.url
-            FROM LockerImage li
-            JOIN Image img ON li.image_id = img.image_id
-            WHERE li.image_id IN (
-                SELECT MIN(li2.image_id)
-                FROM LockerImage li2
-                GROUP BY li2.locker_id
+        SELECT li.locker_id, img.url
+        FROM LockerImage li
+        JOIN Image img ON li.image_id = img.image_id
+        WHERE li.image_id IN (
+        SELECT MIN(li2.image_id)
+            FROM LockerImage li2
+            GROUP BY li2.locker_id
             )
-        ) AS img ON img.locker_id = l.locker_id
+            ) AS img ON img.locker_id = l.locker_id
+        LEFT JOIN Locker_JimType ljt ON ljt.locker_id = l.locker_id
+        LEFT JOIN JimType jt ON jt.jimtype_id = ljt.jimtype_id
+        WHERE r.state = #{state}
         GROUP BY
             l.locker_id,
             l.is_available,
             l.address,
-            l.address_english,
             l.locker_name,
-            img.url
+            img.url,
+            jt.jimtype_id,
+            jt.type_name
         ORDER BY COUNT(r.reservation_id) DESC
         LIMIT 5
     </select>
