@@ -14,7 +14,7 @@ import org.springframework.lang.NonNull;
 @AllArgsConstructor
 @Builder
 public class Image extends BaseTime {
-    @NonNull
+//    @NonNull
     private Long imageId;
     @NonNull
     private String url;

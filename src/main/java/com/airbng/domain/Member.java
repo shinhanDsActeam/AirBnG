@@ -18,7 +18,7 @@ import org.springframework.lang.NonNull;
 @AllArgsConstructor
 @Builder
 public class Member extends BaseTime {
-    @NonNull
+//    @NonNull
     private Long memberId;
     @NonNull
     private String email;
