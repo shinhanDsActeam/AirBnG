@@ -36,7 +36,7 @@
 
     <!-- 4. 보관소-짐타입 연결 -->
     <insert id="insertLockerJimTypes">
-        INSERT INTO Locker_JimType (locker_id, jimtype_id)
+        INSERT INTO LockerJimType (locker_id, jimtype_id)
         <foreach collection="jimTypeIds" item="jimtypeId" separator="," open="VALUES" close="">
             (#{lockerId}, #{jimtypeId})
         </foreach>
