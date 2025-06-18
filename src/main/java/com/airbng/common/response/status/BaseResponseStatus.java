@@ -15,15 +15,16 @@ public enum BaseResponseStatus implements ResponseStatus{
     /**
      * 2000 맴버 관련 코드
      */
+    MEMBER_NOT_FOUND(2001, HttpStatus.NOT_FOUND.value(), "존재하지 않는 멤버입니다."),
 
     /**
      * 3000 락커 관련 코드
      */
-    NOT_FOUND_LOCKER(3000,HttpStatus.BAD_REQUEST.value(), "락커를 찾을 수 없습니다."),
-    NOT_FOUND_LOCKERDETAILS(3002,HttpStatus.BAD_REQUEST.value(), "락커를 찾을 수 없습니다."),
-    MEMBER_ALREADY_HAS_LOCKER(3001, HttpStatus.BAD_REQUEST.value(), "한 멤버당 하나의 보관소만 등록할 수 있습니다."),
-    INVALID_JIMTYPE(3006, HttpStatus.BAD_REQUEST.value(), "존재하지 않는 짐 타입이 포함되어 있습니다."),
-    DUPLICATE_JIMTYPE(3007, HttpStatus.BAD_REQUEST.value(), "중복된 짐 타입이 존재합니다.");
+    NOT_FOUND_LOCKER(3000,HttpStatus.NOT_FOUND.value(), "락커를 찾을 수 없습니다."),
+    NOT_FOUND_LOCKERDETAILS(3002,HttpStatus.NOT_FOUND.value(), "락커를 찾을 수 없습니다."),
+    MEMBER_ALREADY_HAS_LOCKER(3001, HttpStatus.CONFLICT.value(), "한 멤버당 하나의 보관소만 등록할 수 있습니다."),
+    INVALID_JIMTYPE(3006, HttpStatus.UNPROCESSABLE_ENTITY.value(), "존재하지 않는 짐 타입이 포함되어 있습니다."),
+    DUPLICATE_JIMTYPE(3007, HttpStatus.UNPROCESSABLE_ENTITY.value(), "중복된 짐 타입이 존재합니다."),
 
     /**
      * 4000 예약 관련 코드
@@ -32,6 +33,14 @@ public enum BaseResponseStatus implements ResponseStatus{
     /**
      * 5000 짐 타입 관련 코드
      */
+
+    /**
+     * 6000: image
+     */
+    UPLOAD_FAILED(6001, HttpStatus.INTERNAL_SERVER_ERROR.value(),"이미지 업로드에 실패하였습니다."),
+    EMPTY_FILE(6002, HttpStatus.BAD_REQUEST.value(),"업로드할 이미지가 없습니다."),
+    INVALID_EXTENSIONS(6003, HttpStatus.UNSUPPORTED_MEDIA_TYPE.value(),"허용되지 않는 파일 확장자입니다."),
+    EXCEED_IMAGE_COUNT(6004, HttpStatus.PAYLOAD_TOO_LARGE.value(), "이미지 개수가 초과되었습니다. 최대 5개까지 업로드 가능합니다.");
 
 
     private final int code;

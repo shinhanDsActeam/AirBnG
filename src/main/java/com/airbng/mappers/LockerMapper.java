@@ -31,4 +31,6 @@ public interface LockerMapper {
 
     List<Long> findValidJimTypeIds(@Param("jimTypeIds") List<Long> jimTypeIds);
 
+    int findMemberId(@Param("memberId") Long memberId);
+
 }

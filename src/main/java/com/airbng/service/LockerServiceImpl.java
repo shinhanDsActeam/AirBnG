@@ -1,6 +1,8 @@
 package com.airbng.service;
 
+import com.airbng.common.exception.ImageException;
 import com.airbng.common.exception.LockerException;
+import com.airbng.common.exception.MemberException;
 import com.airbng.dto.LockerDetailResponse;
 import com.airbng.common.response.status.BaseResponseStatus;
 import com.airbng.domain.Locker;
@@ -13,16 +15,18 @@ import com.airbng.dto.LockerInsertRequest;
 import com.airbng.dto.LockerPreviewResult;
 import com.airbng.dto.LockerTop5Response;
 import com.airbng.mappers.LockerMapper;
+import com.airbng.util.S3Uploader;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import static com.airbng.common.response.status.BaseResponseStatus.NOT_FOUND_LOCKER;
 import static com.airbng.common.response.status.BaseResponseStatus.NOT_FOUND_LOCKERDETAILS;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.util.*;
+
 import static com.airbng.common.response.status.BaseResponseStatus.*;
 
 
@@ -32,6 +36,7 @@ import static com.airbng.common.response.status.BaseResponseStatus.*;
 public class LockerServiceImpl implements LockerService {
 
     private final LockerMapper lockerMapper;
+    private final S3Uploader s3Uploader;
   
     @Override
     public LockerDetailResponse findUserById(Long lockerId) {
@@ -56,9 +61,9 @@ public class LockerServiceImpl implements LockerService {
                 .build();
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     @Override
-    public void registerLocker(LockerInsertRequest dto) {
+    public void registerLocker(LockerInsertRequest dto) throws IOException {
         log.info("서비스 객체");
 
         log.info("보관소 존재 여부: {}", lockerMapper.findLockerByMemberId(dto.getKeeperId()));
@@ -66,6 +71,10 @@ public class LockerServiceImpl implements LockerService {
         if (lockerMapper.findLockerByMemberId(dto.getKeeperId()) > 0) {
             log.info("예외처리");
             throw new LockerException(MEMBER_ALREADY_HAS_LOCKER);
+        }
+
+        if (lockerMapper.findMemberId(dto.getKeeperId()) == 0) {
+            throw new MemberException(MEMBER_NOT_FOUND);
         }
 
         Locker locker = Locker.builder()
@@ -83,16 +92,40 @@ public class LockerServiceImpl implements LockerService {
 
         List<Long> imageIds = new ArrayList<>();
         if (dto.getImages() != null && !dto.getImages().isEmpty()) {
-            for (ImageInsertRequest imgDTO : dto.getImages()) {
+
+            if (dto.getImages().size() > 5) {
+                throw new ImageException(BaseResponseStatus.EXCEED_IMAGE_COUNT);
+            }
+
+            for (MultipartFile file : dto.getImages()) {
+
+                if (file.isEmpty()) {
+                    throw new ImageException(BaseResponseStatus.EMPTY_FILE);
+                }
+
+                // 1. 파일명 + 경로 지정
+                String uuid = UUID.randomUUID().toString();
+                String fileName = uuid + "_" + file.getOriginalFilename();
+                String path = "lockers/" + fileName;
+
+                // 2. 업로드 및 예외 처리
+                String imageUrl;
+                try {
+                    imageUrl = s3Uploader.upload(file, path); // 확장자 검사 포함됨
+                } catch (IOException e) {
+                    throw new ImageException(BaseResponseStatus.UPLOAD_FAILED); // 필요 시 추가 정의
+                }
+
+                // 3. DB 저장
                 Image image = Image.builder()
-                        .url(imgDTO.getUrl())
-                        .uploadName(imgDTO.getUploadName())
+                        .url(imageUrl)
+                        .uploadName(file.getOriginalFilename())
                         .build();
-                lockerMapper.insertImage(image); // imageId 자동 세팅
+
+                lockerMapper.insertImage(image);
                 imageIds.add(image.getImageId());
             }
 
-            // 3. LockerImage 테이블에 insert
             lockerMapper.insertLockerImages(locker.getLockerId(), imageIds);
         }
 

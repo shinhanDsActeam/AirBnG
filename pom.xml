@@ -153,8 +153,31 @@
       <version>2.13.5</version>
     </dependency>
 
+    <!-- AWS SDK for S3 (v1) -->
+    <dependency>
+      <groupId>com.amazonaws</groupId>
+      <artifactId>aws-java-sdk-s3</artifactId>
+      <version>1.12.695</version>
+    </dependency>
+    <!-- Multipart 처리용 (파일 업로드) -->
+    <dependency>
+      <groupId>commons-fileupload</groupId>
+      <artifactId>commons-fileupload</artifactId>
+      <version>1.5</version>
+    </dependency>
+
   </dependencies>
   <build>
     <finalName>AirBnG</finalName>
+      <plugins>
+          <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-compiler-plugin</artifactId>
+              <configuration>
+                  <source>9</source>
+                  <target>9</target>
+              </configuration>
+          </plugin>
+      </plugins>
   </build>
 </project>
