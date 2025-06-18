@@ -25,7 +25,6 @@ import static com.airbng.common.response.status.BaseResponseStatus.*;
 public class MemberServiceImpl implements MemberService {
 
     private final MemberMapper memberMapper;
-    private final ImageMapper imageMapper;
     private final ImageService imageService;
     private final BCryptPasswordEncoder passwordEncoder;
 
@@ -43,7 +42,6 @@ public class MemberServiceImpl implements MemberService {
                 ? imageService.uploadProfileImage(file)
                 : imageService.getDefaultProfileImage();
 
-        //패스워드 암호화
         String encodedPw = passwordEncoder.encode(dto.getPassword());
 
         Member member = Member.builder()
@@ -56,6 +54,12 @@ public class MemberServiceImpl implements MemberService {
                 .profileImage(profileImage)
                 .build();
         memberMapper.insertMember(member);
+    }
+
+    //이메일 중복 검사
+    @Override
+    public boolean emailCheck(String email) {
+        return memberMapper.findByEmail(email);
     }
 
     //패스워드 형식 확인

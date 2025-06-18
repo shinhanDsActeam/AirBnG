@@ -26,4 +26,11 @@ public class MemberController {
         memberService.signup(dto, profileImage);
         return ResponseEntity.ok(new BaseResponse<>("회원가입 성공"));
     }
+
+    @PostMapping("/check-email")
+    public ResponseEntity<BaseResponse<String>> emailCheck(@RequestParam String email) {
+        boolean exists = memberService.emailCheck(email);
+        String message = exists ? "이미 사용 중인 이메일" : "사용 가능한 이메일";
+        return ResponseEntity.ok(new BaseResponse<>(message));
+    }
 }

@@ -13,13 +13,13 @@ public enum BaseResponseStatus implements ResponseStatus{
     FAILURE(2000, HttpStatus.BAD_REQUEST.value(), "요청에 실패하였습니다."),
 
     /**
-     * 2000:
+     * 2000: member
      * */
-    NOT_FOUND_MEMBER(2000,HttpStatus.BAD_REQUEST.value(),"맴버가 없습니다."),
-    DUPLICATE_EMAIL(2001,HttpStatus.BAD_REQUEST.value(), "중복이메일 사용"),
-    DUPLICATE_NICKNAME(2002,HttpStatus.BAD_REQUEST.value(),"중복닉네임 사용"),
-    INVALID_PASSWORD(2003,HttpStatus.BAD_REQUEST.value(),"비밀번호 형식 오류"),
-    DUPLICATE_PHONE(2004,HttpStatus.BAD_REQUEST.value(),"휴대폰 번호 중복 오류"),
+    MEMBER_NOT_FOUND(2001, HttpStatus.NOT_FOUND.value(), "존재하지 않는 멤버입니다."),
+    DUPLICATE_EMAIL(2002,HttpStatus.BAD_REQUEST.value(), "중복이메일 사용"),
+    DUPLICATE_NICKNAME(2003,HttpStatus.BAD_REQUEST.value(),"중복닉네임 사용"),
+    INVALID_PASSWORD(2004,HttpStatus.BAD_REQUEST.value(),"비밀번호 형식 오류"),
+    DUPLICATE_PHONE(2005,HttpStatus.BAD_REQUEST.value(),"휴대폰 번호 중복 오류"),
     /**
      * 6000: image
      */
