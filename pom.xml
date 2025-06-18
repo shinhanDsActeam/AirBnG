@@ -127,6 +127,25 @@
       <artifactId>logback-classic</artifactId>
       <version>1.2.11</version>
     </dependency>
+    <dependency>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
+      <version>1.18.34</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
+      <version>1.18.34</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>com.fasterxml.jackson.datatype</groupId>
+      <artifactId>jackson-datatype-jsr310</artifactId>
+      <version>2.13.5</version> <!-- 사용 중인 Jackson 버전에 맞게 설정 -->
+    </dependency>
+
 
     <dependency>
       <groupId>com.fasterxml.jackson.datatype</groupId>

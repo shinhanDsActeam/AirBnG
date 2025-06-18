@@ -12,8 +12,8 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import javax.sql.DataSource;
 
 @Configuration
+@PropertySource("classpath:db.properties")
 @EnableTransactionManagement
-@PropertySource("classpath:db.properties")  // 🔸 이 부분 추가
 @MapperScan("com.airbng.mappers")
 public class MyBatisConfig {
 

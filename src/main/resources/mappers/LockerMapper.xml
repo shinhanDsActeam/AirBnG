@@ -5,6 +5,34 @@
 
 <mapper namespace="com.airbng.mappers.LockerMapper">
 
+    <resultMap id="LockerDetails" type="com.airbng.dto.LockerDetailResponse">
+        <result property="lockerId" column="locker_id" />
+        <result property="lockerName" column="locker_name" />
+        <result property="address" column="address" />
+        <result property="addressEnglish" column="address_english" />
+        <result property="addressDetail" column="address_detail" />
+        <result property="keeperId" column="keeper_id" />
+        <result property="keeperName" column="name" />
+    </resultMap>
+
+
+    <select id="findUserById" parameterType="Long" resultMap="LockerDetails">
+        SELECT l.locker_id, l.locker_name, l.address, l.address_english,
+                l.address_detail, m.member_id AS keeper_id, m.name
+        FROM Locker l
+        LEFT JOIN Member m ON l.member_id = m.member_id
+        WHERE l.locker_id = #{lockerId}
+    </select>
+
+    <!-- 이미지 URL만 조회하는 쿼리 (List<String>) -->
+    <select id="findImageById" parameterType="Long" resultType="string">
+        SELECT i.url
+        FROM Locker l
+        JOIN LockerImage li ON l.locker_id = li.locker_id
+        JOIN Image i ON li.image_id = i.image_id
+        WHERE l.locker_id = #{lockerId}
+    </select>
+  
     <!-- 인기 보관소 resultMap -->
     <resultMap id="PopularLockerMap" type="com.airbng.dto.LockerPreviewResult">
         <id     column="locker_id"      property="lockerId" />
@@ -109,3 +137,4 @@
     </select>
 
 </mapper>
+

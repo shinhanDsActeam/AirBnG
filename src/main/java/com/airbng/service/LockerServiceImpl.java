@@ -1,6 +1,7 @@
 package com.airbng.service;
 
 import com.airbng.common.exception.LockerException;
+import com.airbng.dto.LockerDetailResponse;
 import com.airbng.common.response.status.BaseResponseStatus;
 import com.airbng.domain.Locker;
 import com.airbng.domain.Member;
@@ -13,16 +14,17 @@ import com.airbng.dto.LockerPreviewResult;
 import com.airbng.dto.LockerTop5Response;
 import com.airbng.mappers.LockerMapper;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import static com.airbng.common.response.status.BaseResponseStatus.NOT_FOUND_LOCKER;
+import static com.airbng.common.response.status.BaseResponseStatus.NOT_FOUND_LOCKERDETAILS;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
 import static com.airbng.common.response.status.BaseResponseStatus.*;
+
 
 @Slf4j
 @Service
@@ -30,6 +32,18 @@ import static com.airbng.common.response.status.BaseResponseStatus.*;
 public class LockerServiceImpl implements LockerService {
 
     private final LockerMapper lockerMapper;
+  
+    @Override
+    public LockerDetailResponse findUserById(Long lockerId) {
+        LockerDetailResponse result = lockerMapper.findUserById(lockerId);
+        // 만약 result가 null이라면, 해당 lockerId에 대한 정보가 없다는 예외를 발생시킴
+        if (result == null) {
+            throw new LockerException(NOT_FOUND_LOCKERDETAILS);
+        }
+        result.setImages(lockerMapper.findImageById(lockerId));
+        return result;
+
+    }
 
     @Override
     public LockerTop5Response findTop5Locker(){
@@ -101,6 +115,6 @@ public class LockerServiceImpl implements LockerService {
             lockerMapper.insertLockerJimTypes(locker.getLockerId(), jimTypeIds);
         }
 
-
     }
 }
+
