@@ -6,8 +6,13 @@
 <mapper namespace="com.airbng.mappers.MemberMapper">
     <!-- 회원가입 -->
     <insert id="insertMember" parameterType="com.airbng.domain.Member">
-        INSERT INTO Member (email, name, phone, nickname, password, status, profile_image_id, created_at, updated_at)
-        VALUES (#{email}, #{name}, #{phone}, #{nickname}, #{password}, #{status}, #{profileImage.imageId}, NOW(), NOW())
+        INSERT INTO Member (
+            email, name, phone, nickname,
+            password, status, profile_image_id, created_at, updated_at)
+        VALUES (
+            #{email}, #{name}, #{phone}, #{nickname},
+            #{password}, #{status}, #{profileImage.imageId}, NOW(), NOW()
+        )
     </insert>
     <!-- 이메일 중복 검사 -->
     <select id="findByEmail" parameterType="String" resultType="boolean">
