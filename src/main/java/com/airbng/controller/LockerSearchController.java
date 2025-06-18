@@ -1,23 +1,38 @@
 package com.airbng.controller;
 
 import com.airbng.common.response.BaseResponse;
-import com.airbng.dto.LockerSearchDTO;
+import com.airbng.dto.LockerSearchRequest;
+import com.airbng.dto.LockerSearchResponse;
 import com.airbng.service.LockerService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
+import java.util.List;
+
 @RestController
-@RequestMapping("/swagger/locker")
+@RequiredArgsConstructor
+@RequestMapping("/lockers")
 public class LockerSearchController {
 
-    @Autowired
-    private LockerService lockerService;
+    private final LockerService lockerService;
 
     @GetMapping("/lockerSearch")
-    public ResponseEntity<BaseResponse<LockerSearchDTO>> searchLockers(LockerSearchDTO.Result searchParam) {
-        LockerSearchDTO dto = lockerService.lockerSearch(searchParam);
-        return ResponseEntity.ok(new BaseResponse<>(dto));
+    public BaseResponse<LockerSearchResponse> findAllLockerBySearch(
+            @RequestParam(required = false) String address,
+            @RequestParam(required = false) String lockerName,
+            @RequestParam(required = false) Long jimTypeId
+    ) {
+        List<Long> jimTypeIdList = (jimTypeId == null) ? null : Collections.singletonList(jimTypeId);
+
+        LockerSearchRequest request = LockerSearchRequest.builder()
+                .address(address)
+                .lockerName(lockerName)
+                .jimTypeId(jimTypeIdList)
+                .build();
+
+        LockerSearchResponse result = lockerService.findAllLockerBySearch(request);
+        return new BaseResponse<>(result);
     }
 
 }

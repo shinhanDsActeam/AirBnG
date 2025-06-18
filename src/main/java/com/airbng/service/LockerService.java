@@ -1,9 +1,10 @@
 package com.airbng.service;
 
-import com.airbng.dto.LockerSearchDTO;
+import com.airbng.dto.LockerPreviewResult;
+import com.airbng.dto.LockerSearchRequest;
+import com.airbng.dto.LockerSearchResponse;
 
-import java.util.Map;
 
 public interface LockerService {
-    LockerSearchDTO lockerSearch(LockerSearchDTO.Result ls);
+    LockerSearchResponse findAllLockerBySearch(LockerSearchRequest condition);
 }
