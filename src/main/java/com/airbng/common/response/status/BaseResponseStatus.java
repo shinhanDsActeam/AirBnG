@@ -15,6 +15,7 @@ public enum BaseResponseStatus implements ResponseStatus{
     /**
      * 2000 맴버 관련 코드
      */
+    MEMBER_NOT_FOUND(2001, HttpStatus.BAD_REQUEST.value(), "존재하지 않는 멤버입니다."),
 
     /**
      * 3000 락커 관련 코드
@@ -38,7 +39,7 @@ public enum BaseResponseStatus implements ResponseStatus{
      */
     UPLOAD_FAILED(6001, HttpStatus.BAD_REQUEST.value(),"이미지 업로드에 실패하였습니다."),
     EMPTY_FILE(6002, HttpStatus.BAD_REQUEST.value(),"업로드할 이미지가 없습니다."),
-    INVALID_EXTENSIONS(6003, HttpStatus.BAD_REQUEST.value(),"허용되지 않는 파일 확장자입니다. 허용된 확장자는 jpg, jpeg, png입니다."),
+    INVALID_EXTENSIONS(6003, HttpStatus.BAD_REQUEST.value(),"허용되지 않는 파일 확장자입니다."),
     EXCEED_IMAGE_COUNT(6004, HttpStatus.BAD_REQUEST.value(), "이미지 개수가 초과되었습니다. 최대 5개까지 업로드 가능합니다.");
 
 

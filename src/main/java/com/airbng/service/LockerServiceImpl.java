@@ -2,6 +2,7 @@ package com.airbng.service;
 
 import com.airbng.common.exception.ImageException;
 import com.airbng.common.exception.LockerException;
+import com.airbng.common.exception.MemberException;
 import com.airbng.dto.LockerDetailResponse;
 import com.airbng.common.response.status.BaseResponseStatus;
 import com.airbng.domain.Locker;
@@ -70,6 +71,10 @@ public class LockerServiceImpl implements LockerService {
         if (lockerMapper.findLockerByMemberId(dto.getKeeperId()) > 0) {
             log.info("예외처리");
             throw new LockerException(MEMBER_ALREADY_HAS_LOCKER);
+        }
+
+        if (lockerMapper.findMemberId(dto.getKeeperId()) == 0) {
+            throw new MemberException(MEMBER_NOT_FOUND);
         }
 
         Locker locker = Locker.builder()

@@ -136,5 +136,14 @@
         </foreach>
     </select>
 
+    <select id="findMemberId" resultType="int">
+        SELECT EXISTS (
+            SELECT 1
+            FROM Member
+            WHERE member_id = #{memberId}
+        )
+    </select>
+
+
 </mapper>
 
