@@ -7,11 +7,13 @@ import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.*;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.sql.DataSource;
 
 @Configuration
-@PropertySource("classpath:db.properties")  // 🔸 이 부분 추가
+@PropertySource("classpath:db.properties")
+@EnableTransactionManagement
 @MapperScan("com.airbng.mappers")
 public class MyBatisConfig {
 
@@ -44,5 +46,11 @@ public class MyBatisConfig {
         factory.setMapperLocations(
                 new PathMatchingResourcePatternResolver().getResources("classpath:/mappers/*.xml"));
         return factory.getObject();
+    }
+
+    @Bean
+    public org.springframework.transaction.PlatformTransactionManager transactionManager(
+            DataSource dataSource) {
+        return new org.springframework.jdbc.datasource.DataSourceTransactionManager(dataSource);
     }
 }
