@@ -12,7 +12,7 @@ import javax.sql.DataSource;
 
 @Configuration
 @PropertySource("classpath:db.properties")  // 🔸 이 부분 추가
-@MapperScan("com.airbng.repository")
+@MapperScan("com.airbng.mappers") // 🔸 Mapper 인터페이스가 위치한 패키지 지정
 public class MyBatisConfig {
 
     @Value("${db.driver}")
