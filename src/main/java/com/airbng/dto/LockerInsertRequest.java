@@ -1,9 +1,11 @@
 package com.airbng.dto;
 
 import com.airbng.domain.base.Available;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.lang.NonNull;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -32,7 +34,8 @@ public class LockerInsertRequest {
     @NonNull
     private Double longitude;
 
-    private List<ImageInsertRequest> images;
-
     private List<Long> jimTypeIds;
+
+    @JsonIgnore
+    private List<MultipartFile> images; // List<ImageInsertRequest> → 변경
 }
