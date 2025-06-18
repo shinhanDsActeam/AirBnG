@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.airbng.domain.base.Available;
 import com.airbng.domain.base.BaseTime;
+import com.airbng.domain.image.LockerImage;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,15 +18,23 @@ import org.springframework.lang.NonNull;
 @AllArgsConstructor
 @Builder
 public class Locker extends BaseTime {
-    @NonNull
+//    @NonNull
     private Long lockerId;
     @NonNull
-    private Long lockerName;
+    private String lockerName;
     @NonNull
     private Available isAvailable;
     @NonNull
-    private Location location;
+    private String address;
     @NonNull
-    private Member owner;
+    private String addressEnglish;
+    @NonNull
+    private String addressDetail;
+    @NonNull
+    private Double latitude; // 위도
+    @NonNull
+    private Double longitude; // 경도
+    @NonNull
+    private Member keeper;
     private List<LockerImage> lockerImages;
 }

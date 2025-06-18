@@ -1,4 +1,4 @@
-package com.airbng.domain;
+package com.airbng.domain.image;
 
 import com.airbng.domain.base.BaseTime;
 import lombok.AllArgsConstructor;
@@ -14,10 +14,20 @@ import org.springframework.lang.NonNull;
 @AllArgsConstructor
 @Builder
 public class Image extends BaseTime {
-    @NonNull
+//    @NonNull
     private Long imageId;
     @NonNull
     private String url;
     @NonNull
     private String uploadName;
+
+    // com.airbng.domain.image.Image
+    public static Image withId(Long imageId) {
+        return Image.builder()
+                .imageId(imageId)
+                .url("https://example.com/images/profile" + imageId + ".jpg")
+                .uploadName("profile" + imageId + ".jpg")
+                .build();
+    }
+
 }
