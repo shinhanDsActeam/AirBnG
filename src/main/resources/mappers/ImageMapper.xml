@@ -5,15 +5,13 @@
 
 <mapper namespace="com.airbng.mappers.ImageMapper">
     <insert id="insertImage"
-            parameterType="com.airbng.domain.Image"
+            parameterType="com.airbng.domain.image.Image"
             useGeneratedKeys="true"
             keyProperty="imageId">
-        INSERT INTO Image (
-                url, upload_name, created_at, updated_at)
-        VALUES (
-                #{url}, #{uploadName}, NOW(), NOW())
+        INSERT INTO Image (url, upload_name, created_at, updated_at)
+        VALUES (#{url}, #{uploadName}, NOW(), NOW())
     </insert>
-    <select id="findDefaultImage" resultType="com.airbng.domain.Image">
+    <select id="findDefaultImage" resultType="com.airbng.domain.image.Image">
         SELECT
             image_id AS imageId,
             url,

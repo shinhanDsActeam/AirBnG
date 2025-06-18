@@ -31,23 +31,6 @@ public enum BaseResponseStatus implements ResponseStatus{
     INVALID_JIMTYPE(3006, HttpStatus.UNPROCESSABLE_ENTITY.value(), "존재하지 않는 짐 타입이 포함되어 있습니다."),
     DUPLICATE_JIMTYPE(3007, HttpStatus.UNPROCESSABLE_ENTITY.value(), "중복된 짐 타입이 존재합니다."),
 
-
-    /**
-     * 4000 예약 관련 코드
-     */
-
-    /**
-     * 5000 짐 타입 관련 코드
-     */
-
-    /**
-     * 6000: image
-     */
-    UPLOAD_FAILED(6001, HttpStatus.INTERNAL_SERVER_ERROR.value(),"이미지 업로드에 실패하였습니다."),
-    EMPTY_FILE(6002, HttpStatus.BAD_REQUEST.value(),"업로드할 이미지가 없습니다."),
-    INVALID_EXTENSIONS(6003, HttpStatus.UNSUPPORTED_MEDIA_TYPE.value(),"허용되지 않는 파일 확장자입니다."),
-    EXCEED_IMAGE_COUNT(6004, HttpStatus.PAYLOAD_TOO_LARGE.value(), "이미지 개수가 초과되었습니다. 최대 5개까지 업로드 가능합니다.");
-
     /**
      * 4000 예약 관련 코드
      */
