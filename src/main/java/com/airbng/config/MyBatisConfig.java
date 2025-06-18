@@ -49,8 +49,7 @@ public class MyBatisConfig {
     }
 
     @Bean
-    public org.springframework.transaction.PlatformTransactionManager transactionManager(
-            DataSource dataSource) {
+    public org.springframework.transaction.PlatformTransactionManager transactionManager(DataSource dataSource) {
         return new org.springframework.jdbc.datasource.DataSourceTransactionManager(dataSource);
     }
 }

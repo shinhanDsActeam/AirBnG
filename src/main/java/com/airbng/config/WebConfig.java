@@ -1,6 +1,5 @@
 package com.airbng.config;
 
-
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -30,6 +29,7 @@ public class WebConfig implements WebMvcConfigurer {
                 .addResourceLocations("classpath:/META-INF/resources/");
 
     }
+
     //이미지 파일 처리
     @Bean
     public CommonsMultipartResolver multipartResolver() {

@@ -2,7 +2,7 @@ package com.airbng.service;
 
 import com.airbng.common.exception.ImageException;
 import com.airbng.common.response.status.BaseResponseStatus;
-import com.airbng.domain.Image;
+import com.airbng.domain.image.Image;
 import com.airbng.mappers.ImageMapper;
 import com.airbng.util.S3Uploader;
 import lombok.RequiredArgsConstructor;

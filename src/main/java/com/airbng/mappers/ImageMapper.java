@@ -1,6 +1,6 @@
 package com.airbng.mappers;
 
-import com.airbng.domain.Image;
+import com.airbng.domain.image.Image;
 import org.apache.ibatis.annotations.Mapper;
 
 @Mapper

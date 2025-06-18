@@ -3,6 +3,7 @@ package com.airbng.domain;
 import java.time.LocalDateTime;
 
 import com.airbng.domain.base.BaseTime;
+import com.airbng.domain.base.ReservationState;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -27,5 +28,5 @@ public class Reservation extends BaseTime {
     @NonNull
     private LocalDateTime endTime;
     @NonNull
-    private String status;
+    private ReservationState state;
 }
