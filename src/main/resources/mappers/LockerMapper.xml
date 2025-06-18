@@ -5,48 +5,82 @@
 
 <mapper namespace="com.airbng.mappers.LockerMapper">
 
-    <resultMap id="LockerResultMap" type="com.airbng.dto.LockerSearchDTO$Result">
-        <result column="locker_id" property="lockerId"/>
+    <!-- ResultMap for Locker + JimType -->
+    <resultMap id="LockerResultMap" type="com.airbng.dto.LockerPreviewResult">
+        <id column="locker_id" property="lockerId"/>
         <result column="locker_name" property="lockerName"/>
-        <result column="address" property="address"/>
         <result column="is_available" property="isAvailable"/>
+        <result column="url" property="url"/>
+        <result column="address" property="address"/>
+        <collection property="jimTypes" ofType="com.airbng.dto.JimTypeResult">
+            <id column="jimtype_id" property="jimTypeId"/>
+            <result column="type_name" property="typeName"/>
+        </collection>
     </resultMap>
 
-    <!-- locker 검색 -->
-    <select id="lockerSearch" resultMap="LockerResultMap">
+    <select id="findAllLockerBySearch" resultMap="LockerResultMap">
         SELECT
-            locker_name,
-            address,
-            is_available
-        FROM locker
+        l.locker_id,
+        l.locker_name,
+        l.is_available,
+        l.address,
+        img.url,
+        jt.jimtype_id,
+        jt.type_name
+        FROM locker l
+        LEFT JOIN lockerJimType lj ON l.locker_id = lj.locker_id
+        LEFT JOIN JimType jt ON lj.jimtype_id = jt.jimtype_id
+        LEFT JOIN (
+        SELECT li.locker_id, img.url
+        FROM LockerImage li
+        JOIN Image img ON li.image_id = img.image_id
+        WHERE li.image_id IN (
+        SELECT MIN(li2.image_id)
+        FROM LockerImage li2
+        GROUP BY li2.locker_id
+        )
+        ) img ON img.locker_id = l.locker_id
+        WHERE l.locker_id IN (
+        SELECT DISTINCT l2.locker_id
+        FROM locker l2
+        LEFT JOIN lockerJimType lj2 ON l2.locker_id = lj2.locker_id
         <where>
-            <if test="lockerName != null and lockerName != ''">
-                AND locker_name LIKE CONCAT('%', #{lockerName}, '%')
-            </if>
             <if test="address != null and address != ''">
-                AND address LIKE CONCAT('%', #{address}, '%')
+                l2.address LIKE CONCAT('%', #{address}, '%')
             </if>
-            <if test="isAvailable != null and isAvailable != ''">
-                AND is_available = #{isAvailable}
+            <if test="lockerName != null and lockerName != ''">
+                AND l2.locker_name LIKE CONCAT('%', #{lockerName}, '%')
+            </if>
+            <if test="jimTypeId != null and jimTypeId.size() > 0">
+                AND lj2.jimtype_id IN
+                <foreach item="id" collection="jimTypeId" open="(" separator="," close=")">
+                    #{id}
+                </foreach>
             </if>
         </where>
-        ORDER BY locker_id DESC
+        )
+        ORDER BY l.locker_id
     </select>
-
-    <!-- locker 검색 결과 개수 -->
-    <select id="lockerSearchCount" resultType="int">
-        SELECT COUNT(*)
-        FROM locker
-        <trim prefix="WHERE" prefixOverrides="OR |AND ">
-            <if test="lockerName != null and lockerName != ''">
-                OR locker_name LIKE CONCAT('%', #{lockerName}, '%')
-            </if>
+    <!-- Locker 개수 카운트 -->
+    <select id="findLockerCount" resultType="long">
+        SELECT COUNT(DISTINCT l.locker_id)
+        FROM locker l
+        LEFT JOIN lockerJimType lj ON l.locker_id = lj.locker_id
+        LEFT JOIN JimType jt ON lj.jimtype_id = jt.jimtype_id
+        <trim prefix="WHERE" prefixOverrides="AND |OR ">
             <if test="address != null and address != ''">
-                OR address LIKE CONCAT('%', #{address}, '%')
+                AND l.address LIKE CONCAT('%', #{address}, '%')
             </if>
-            <if test="isAvailable != null and isAvailable != ''">
-                OR is_available = #{isAvailable}
+            <if test="lockerName != null and lockerName != ''">
+                AND l.locker_name LIKE CONCAT('%', #{lockerName}, '%')
+            </if>
+            <if test="jimTypeId != null and jimTypeId.size() > 0">
+                AND lj.jimtype_id IN
+                <foreach item="id" collection="jimTypeId" open="(" separator="," close=")">
+                    #{id}
+                </foreach>
             </if>
         </trim>
     </select>
+
 </mapper>
