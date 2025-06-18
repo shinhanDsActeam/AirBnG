@@ -10,7 +10,8 @@ public enum BaseResponseStatus implements ResponseStatus{
      * 1000: 요청 성공 (OK)
      */
     SUCCESS(1000,HttpStatus.OK.value(), "요청에 성공하였습니다."),
-    FAILURE(2000, HttpStatus.BAD_REQUEST.value(), "요청에 실패하였습니다.");
+    FAILURE(2000, HttpStatus.BAD_REQUEST.value(), "요청에 실패하였습니다."),
+    NOT_FOUND_LOCKERSEARCH(3003, HttpStatus.BAD_REQUEST.value(), "해당 검색 결과가 없습니다.");
 
     private final int code;
     private final int status;
