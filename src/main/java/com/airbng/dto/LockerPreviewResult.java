@@ -15,5 +15,5 @@ public class LockerPreviewResult {
     private String lockerName;
     private String isAvailable;
     private String url;
-    private List<JimTypeResult> jimTypes;
+    private List<JimTypeResult> jimTypeResults;
 }

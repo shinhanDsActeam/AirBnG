@@ -152,7 +152,7 @@
         <result column="is_available" property="isAvailable"/>
         <result column="url" property="url"/>
         <result column="address" property="address"/>
-        <collection property="jimTypes" ofType="com.airbng.dto.JimTypeResult">
+        <collection property="jimTypeResults" ofType="com.airbng.dto.JimTypeResult">
             <id column="jimtype_id" property="jimTypeId"/>
             <result column="type_name" property="typeName"/>
         </collection>
