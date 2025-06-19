@@ -13,11 +13,11 @@
     </insert>
     <select id="findDefaultImage" resultType="com.airbng.domain.image.Image">
         SELECT
-        image_id AS imageId,
-        url,
-        upload_name AS uploadName,
-        created_at AS createdAt,
-        updated_at AS updatedAt
+            image_id AS imageId,
+            url,
+            upload_name AS uploadName,
+            created_at AS createdAt,
+            updated_at AS updatedAt
         FROM Image
         WHERE image_id = 1
     </select>
