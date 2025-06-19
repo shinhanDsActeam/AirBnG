@@ -18,7 +18,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class LockerServiceImplTest {
+class LockerServiceTest {
 
     @InjectMocks
     private LockerServiceImpl lockerService;
