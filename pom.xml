@@ -206,7 +206,7 @@
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-test</artifactId>
-      <version>5.3.32</version>  <!-- 네가 쓰는 Spring MVC 버전에 맞춰서! -->
+      <version>5.3.32</version> 
       <scope>test</scope>
     </dependency>
 
