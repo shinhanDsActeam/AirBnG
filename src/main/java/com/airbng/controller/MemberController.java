@@ -20,11 +20,11 @@ public class MemberController {
     private final MemberService memberService;
 
     @PostMapping(value = "/signup", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<BaseResponse<String>> signup(
+    public BaseResponse<String> signup(
             @RequestPart("profile") MemberSignupRequest dto,
             @RequestPart(value = "profileImage", required = false) MultipartFile profileImage) {
         memberService.signup(dto, profileImage);
-        return ResponseEntity.ok(new BaseResponse<>("회원가입 성공"));
+        return new BaseResponse<>("회원가입 성공");
     }
 
     @PostMapping("/check-email")
