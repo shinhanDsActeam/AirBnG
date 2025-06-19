@@ -22,6 +22,7 @@ public enum BaseResponseStatus implements ResponseStatus{
     INVALID_PASSWORD(2004,HttpStatus.BAD_REQUEST.value(),"비밀번호 형식 오류"),
     DUPLICATE_PHONE(2005,HttpStatus.BAD_REQUEST.value(),"휴대폰 번호 중복 오류"),
     INVALID_EMAIL(2006, HttpStatus.BAD_REQUEST.value(),"이메일 형식 오류"),
+    INVALID_MEMBER(2007, HttpStatus.UNAUTHORIZED.value(), "유효하지 않은 멤버입니다."),
 
 
     /**
