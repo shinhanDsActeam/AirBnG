@@ -1,13 +1,13 @@
 package com.airbng.mappers;
 
+import com.airbng.domain.Locker;
+import com.airbng.domain.base.ReservationState;
+import com.airbng.domain.image.Image;
 import com.airbng.dto.locker.LockerDetailResponse;
-import com.airbng.dto.LockerSearchRequest;
+import com.airbng.dto.locker.LockerPreviewResult;
+import com.airbng.dto.locker.LockerSearchRequest;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
-import com.airbng.domain.base.ReservationState;
-import com.airbng.dto.locker.LockerPreviewResult;
-import com.airbng.domain.Locker;
-import com.airbng.domain.image.Image;
 import java.util.List;
 
 @Mapper

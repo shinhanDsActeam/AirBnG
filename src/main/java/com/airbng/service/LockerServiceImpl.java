@@ -8,8 +8,8 @@ import com.airbng.domain.Locker;
 import com.airbng.domain.Member;
 import com.airbng.domain.base.ReservationState;
 import com.airbng.domain.image.Image;
-import com.airbng.dto.LockerSearchRequest;
-import com.airbng.dto.LockerSearchResponse;
+import com.airbng.dto.locker.LockerSearchRequest;
+import com.airbng.dto.locker.LockerSearchResponse;
 import com.airbng.dto.locker.LockerDetailResponse;
 import com.airbng.dto.locker.LockerInsertRequest;
 import com.airbng.dto.locker.LockerPreviewResult;
@@ -87,7 +87,7 @@ public class LockerServiceImpl implements LockerService {
         }
 
         if (lockerMapper.findMemberId(dto.getKeeperId()) == 0) {
-            throw new MemberException(MEMBER_NOT_FOUND);
+            throw new MemberException(NOT_FOUND_MEMBER);
         }
 
         Locker locker = Locker.builder()

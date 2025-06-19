@@ -14,9 +14,9 @@ public enum BaseResponseStatus implements ResponseStatus{
 
 
     /**
-     * 2000: member
-     * */
-    MEMBER_NOT_FOUND(2001, HttpStatus.NOT_FOUND.value(), "존재하지 않는 멤버입니다."),
+     * 2000 맴버 관련 코드
+     */
+    NOT_FOUND_MEMBER(2001, HttpStatus.NOT_FOUND.value(), "멤버를 찾을 수 없습니다."),
     DUPLICATE_EMAIL(2002,HttpStatus.BAD_REQUEST.value(), "중복이메일 사용"),
     DUPLICATE_NICKNAME(2003,HttpStatus.BAD_REQUEST.value(),"중복닉네임 사용"),
     INVALID_PASSWORD(2004,HttpStatus.BAD_REQUEST.value(),"비밀번호 형식 오류"),

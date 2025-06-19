@@ -3,8 +3,8 @@ package com.airbng.service;
 import com.airbng.dto.locker.LockerDetailResponse;
 import com.airbng.dto.locker.LockerTop5Response;
 import com.airbng.dto.locker.LockerInsertRequest;
-import com.airbng.dto.LockerSearchRequest;
-import com.airbng.dto.LockerSearchResponse;
+import com.airbng.dto.locker.LockerSearchRequest;
+import com.airbng.dto.locker.LockerSearchResponse;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
