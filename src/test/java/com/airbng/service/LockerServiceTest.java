@@ -12,6 +12,7 @@ import org.mockito.Mockito;
 
 import java.util.List;
 
+import static com.airbng.common.response.status.BaseResponseStatus.NOT_FOUND_LOCKER;
 import static junit.framework.Assert.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
@@ -64,6 +65,7 @@ class LockerServiceTest {
         when(lockerMapper.findTop5Lockers(Mockito.any()))
                 .thenReturn(results);
 
-        assertThrows(LockerException.class, () -> lockerService.findTop5Locker(),"락커를 찾을 수 없습니다.");
+        LockerException exception = assertThrows(LockerException.class, () -> lockerService.findTop5Locker());
+        assertEquals(NOT_FOUND_LOCKER.getMessage(), exception.getMessage());
     }
 }
