@@ -20,6 +20,8 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
+import static com.airbng.common.response.status.BaseResponseStatus.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -71,7 +73,9 @@ public class LockerServiceTest {
 
         when(lockerMapper.findLockerByMemberId(1L)).thenReturn(1); // 이미 등록된 보관소
 
-        assertThrows(LockerException.class, () -> lockerService.registerLocker(request));
+        LockerException exception = assertThrows(LockerException.class, () -> lockerService.registerLocker(request));
+        assertEquals(MEMBER_ALREADY_HAS_LOCKER, exception.getBaseResponseStatus());
+
     }
 
     @Test
@@ -80,7 +84,8 @@ public class LockerServiceTest {
         when(lockerMapper.findLockerByMemberId(1L)).thenReturn(0);
         when(lockerMapper.findMemberId(1L)).thenReturn(0);
 
-        assertThrows(MemberException.class, () -> lockerService.registerLocker(request));
+        MemberException exception = assertThrows(MemberException.class, () -> lockerService.registerLocker(request));
+        assertEquals(MEMBER_NOT_FOUND, exception.getBaseResponseStatus());
     }
 
     @Test
@@ -95,7 +100,8 @@ public class LockerServiceTest {
         when(lockerMapper.findLockerByMemberId(1L)).thenReturn(0);
         when(lockerMapper.findMemberId(1L)).thenReturn(1);
 
-        assertThrows(ImageException.class, () -> lockerService.registerLocker(request));
+        ImageException exception = assertThrows(ImageException.class, () -> lockerService.registerLocker(request));
+        assertEquals(EXCEED_IMAGE_COUNT, exception.getBaseResponseStatus());
     }
 
     @Test
@@ -109,7 +115,8 @@ public class LockerServiceTest {
         when(lockerMapper.findLockerByMemberId(1L)).thenReturn(0);
         when(lockerMapper.findMemberId(1L)).thenReturn(1);
 
-        assertThrows(ImageException.class, () -> lockerService.registerLocker(request));
+        ImageException exception = assertThrows(ImageException.class, () -> lockerService.registerLocker(request));
+        assertEquals(EMPTY_FILE, exception.getBaseResponseStatus());
     }
 
     @Test
@@ -121,7 +128,8 @@ public class LockerServiceTest {
         when(lockerMapper.findMemberId(1L)).thenReturn(1);
         when(lockerMapper.findValidJimTypeIds(anyList())).thenReturn(List.of(1L)); // 2L은 없음
 
-        assertThrows(LockerException.class, () -> lockerService.registerLocker(request));
+        LockerException exception = assertThrows(LockerException.class, () -> lockerService.registerLocker(request));
+        assertEquals(INVALID_JIMTYPE, exception.getBaseResponseStatus());
     }
 
     @Test
@@ -132,7 +140,8 @@ public class LockerServiceTest {
         when(lockerMapper.findLockerByMemberId(1L)).thenReturn(0);
         when(lockerMapper.findMemberId(1L)).thenReturn(1);
 
-        assertThrows(LockerException.class, () -> lockerService.registerLocker(request));
+        LockerException exception = assertThrows(LockerException.class, () -> lockerService.registerLocker(request));
+        assertEquals(DUPLICATE_JIMTYPE, exception.getBaseResponseStatus());
     }
 
 }
