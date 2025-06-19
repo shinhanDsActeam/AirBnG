@@ -8,12 +8,15 @@ import com.airbng.dto.locker.LockerPreviewResult;
 import com.airbng.dto.locker.LockerSearchRequest;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+
 import java.util.List;
 
 @Mapper
 public interface LockerMapper {
     List<LockerPreviewResult> findAllLockerBySearch(LockerPreviewResult lpr);
+
     String findOneImageById(Long lockerId);
+
     Long findLockerCount(LockerPreviewResult lsr);
 
     List<LockerPreviewResult> findAllLockerBySearch(LockerSearchRequest condition);
@@ -21,8 +24,9 @@ public interface LockerMapper {
     Long findLockerCount(LockerSearchRequest condition);
 
     LockerDetailResponse findUserById(Long lockerId);
+
     List<String> findImageById(Long lockerId);
-  
+
     void insertLocker(Locker locker);
 
     void insertImage(Image image);
@@ -38,4 +42,8 @@ public interface LockerMapper {
     List<Long> findValidJimTypeIds(@Param("jimTypeIds") List<Long> jimTypeIds);
 
     int findMemberId(@Param("memberId") Long memberId);
+
+    boolean isExistLocker(Long lockerId);
+
+    boolean isLockerKeeper(@Param("lockerId") Long lockerId, @Param("keeperId") Long keeperId);
 }

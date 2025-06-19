@@ -97,7 +97,6 @@
     <insert id="insertLocker" parameterType="com.airbng.domain.Locker"
             useGeneratedKeys="true" keyProperty="lockerId" keyColumn="locker_id">
         INSERT INTO Locker (
-            is_available, locker_name, member_id, address,
             is_available, locker_name, member_id,
             address, address_english, address_detail,
             latitude, longitude
@@ -238,7 +237,23 @@
         </trim>
     </select>
 
-  
+    <!-- 해당하는 id를 가진 보관소(Locker) 존재 여부 -->
+    <select id="isExistLocker" parameterType="Long" resultType="boolean">
+        SELECT IF(EXISTS(
+            SELECT 1
+            FROM Locker
+            WHERE locker_id = #{lockerId}
+        ), 1, 0)
+    </select>
+
+    <!-- 넘어온 keeperId가 실제 locker의 주인인지 확인 -->
+    <select id="isLockerKeeper" resultType="boolean">
+        SELECT IF(EXISTS(
+            SELECT 1
+            FROM Locker
+            WHERE locker_id = #{lockerId} AND member_id = #{keeperId}
+        ), 1, 0)
+    </select>
 
 </mapper>
 

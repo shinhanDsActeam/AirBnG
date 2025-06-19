@@ -10,3 +10,4 @@ public interface ReservationService {
     // 예약 등록
     BaseResponseStatus insertReservation(ReservationInsertRequest request);
 
+}

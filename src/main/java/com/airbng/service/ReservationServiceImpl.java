@@ -26,12 +26,49 @@ public class ReservationServiceImpl implements ReservationService {
     @Override
     @Transactional // 짐타입 등록 실패한 경우 예약 등록까지 롤백
     public BaseResponseStatus insertReservation(ReservationInsertRequest request) {
+        log.info("insertReservation({})", request);
+
+        // dropper와 keeper 존재 여부 확인
+        boolean dropperFlag = memberMapper.isExistMember(request.getDropperId());
+        if(!dropperFlag) {
+            throw new MemberException(BaseResponseStatus.NOT_FOUND_MEMBER);
+        }
+
+        boolean keeperFlag = memberMapper.isExistMember(request.getKeeperId());
+        if(!keeperFlag) {
+            throw new MemberException(BaseResponseStatus.NOT_FOUND_MEMBER);
+        }
+
+        // dropper와 keeper가 동일한 경우 예외
+        if (request.getDropperId().equals(request.getKeeperId())) {
+            throw new ReservationException(BaseResponseStatus.INVALID_RESERVATION_PARTICIPANTS);
+        }
+
+        // 락커 존재 여부 확인
+        boolean lockerFlag = lockerMapper.isExistLocker(request.getLockerId());
+        if(!lockerFlag) {
+            throw new LockerException(BaseResponseStatus.NOT_FOUND_LOCKER);
+        }
+
+        // keeper가 락커의 소유자인지 확인
+        boolean isLockerKeeper = lockerMapper.isLockerKeeper(request.getLockerId(), request.getKeeperId());
+        if (!isLockerKeeper) {
+            throw new LockerException(BaseResponseStatus.LOCKER_KEEPER_MISMATCH);
+        }
+
         // 예약 엔티티 추가
         reservationMapper.insertReservation(request);
         Long reservationId = reservationMapper.selectLastInsertId();
+        if (reservationId == null) {
+            throw new ReservationException(BaseResponseStatus.CANNOT_CREATE_RESERVATION);
+        }
+
         // 위에서 insert한 예약 엔티티에 맞게 짐 타입 등록
         int cnt = jimTypeMapper.insertReservationJimTypes(reservationId, request.getJimTypeCounts());
         // 요청한 짐 타입 개수와 실제 등록된 개수가 일치하지 않는 경우 예외
+        if (cnt != request.getJimTypeCounts().size()) {
+            throw new ReservationException(BaseResponseStatus.INVALID_JIMTYPE_COUNT);
+        }
 
         return BaseResponseStatus.CREATED_RESERVATION;
     }
