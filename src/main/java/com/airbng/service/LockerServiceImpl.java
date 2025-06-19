@@ -1,5 +1,15 @@
 package com.airbng.service;
 
+import com.airbng.common.exception.LockerException;
+import com.airbng.dto.JimTypeResult;
+import com.airbng.dto.LockerPreviewResult;
+import com.airbng.dto.LockerSearchRequest;
+import com.airbng.dto.LockerSearchResponse;
+import com.airbng.mappers.LockerMapper;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+import java.util.List;
 import com.airbng.common.exception.ImageException;
 import com.airbng.common.exception.LockerException;
 import com.airbng.common.exception.MemberException;
@@ -37,6 +47,21 @@ public class LockerServiceImpl implements LockerService {
 
     private final LockerMapper lockerMapper;
     private final S3Uploader s3Uploader;
+  
+  
+    @Override
+    public LockerSearchResponse findAllLockerBySearch(LockerSearchRequest request) {
+        log.info("LockerServiceImpl.findAllLockerBySearch");
+        List<LockerPreviewResult> lockers = lockerMapper.findAllLockerBySearch(request);
+        if (lockers.isEmpty()) throw new LockerException(NOT_FOUND_LOCKER);
+
+        LockerSearchResponse response = LockerSearchResponse.builder()
+                .count(lockerMapper.findLockerCount(request))
+                .lockers(lockers)
+                .build();
+
+        return response;
+    }
   
     @Override
     public LockerDetailResponse findUserById(Long lockerId) {
@@ -150,4 +175,3 @@ public class LockerServiceImpl implements LockerService {
 
     }
 }
-

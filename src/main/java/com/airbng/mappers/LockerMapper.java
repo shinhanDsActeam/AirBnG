@@ -1,5 +1,9 @@
 package com.airbng.mappers;
 
+import com.airbng.dto.LockerPreviewResult;
+import com.airbng.dto.LockerSearchRequest;
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import com.airbng.dto.LockerDetailResponse;
 import org.apache.ibatis.annotations.Mapper;
 import com.airbng.domain.base.ReservationState;
@@ -13,6 +17,13 @@ import java.util.List;
 
 @Mapper
 public interface LockerMapper {
+    List<LockerPreviewResult> findAllLockerBySearch(LockerPreviewResult lpr);
+    String findOneImageById(Long lockerId);
+    Long findLockerCount(LockerPreviewResult lsr);
+
+    List<LockerPreviewResult> findAllLockerBySearch(LockerSearchRequest condition);
+
+    Long findLockerCount(LockerSearchRequest condition);
 
     LockerDetailResponse findUserById(Long lockerId);
     List<String> findImageById(Long lockerId);

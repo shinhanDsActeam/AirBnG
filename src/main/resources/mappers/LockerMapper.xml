@@ -17,19 +17,26 @@
 
 
     <select id="findUserById" parameterType="Long" resultMap="LockerDetails">
-        SELECT l.locker_id, l.locker_name, l.address, l.address_english,
-                l.address_detail, m.member_id AS keeper_id, m.name
+        SELECT
+            l.locker_id,
+            l.locker_name,
+            l.address,
+            l.address_english,
+            l.address_detail,
+            m.member_id AS keeper_id,
+            m.name
         FROM Locker l
-        LEFT JOIN Member m ON l.member_id = m.member_id
+            LEFT JOIN Member m ON l.member_id = m.member_id
         WHERE l.locker_id = #{lockerId}
     </select>
 
     <!-- 이미지 URL만 조회하는 쿼리 (List<String>) -->
     <select id="findImageById" parameterType="Long" resultType="string">
-        SELECT i.url
+        SELECT
+            i.url
         FROM Locker l
-        JOIN LockerImage li ON l.locker_id = li.locker_id
-        JOIN Image i ON li.image_id = i.image_id
+            JOIN LockerImage li ON l.locker_id = li.locker_id
+            JOIN Image i ON li.image_id = i.image_id
         WHERE l.locker_id = #{lockerId}
     </select>
   
@@ -59,20 +66,20 @@
             jt.jimtype_id,
             jt.type_name
         FROM Locker l
-        JOIN Member m ON l.member_id = m.member_id
-        JOIN Reservation r ON r.keeper_id = m.member_id
-        LEFT JOIN (
-        SELECT li.locker_id, img.url
-        FROM LockerImage li
-        JOIN Image img ON li.image_id = img.image_id
-        WHERE li.image_id IN (
-        SELECT MIN(li2.image_id)
-            FROM LockerImage li2
-            GROUP BY li2.locker_id
-            )
+            JOIN Member m ON l.member_id = m.member_id
+            JOIN Reservation r ON r.keeper_id = m.member_id
+            LEFT JOIN (
+                SELECT li.locker_id, img.url
+                FROM LockerImage li
+                    JOIN Image img ON li.image_id = img.image_id
+                WHERE li.image_id IN (
+                    SELECT MIN(li2.image_id)
+                    FROM LockerImage li2
+                    GROUP BY li2.locker_id
+                )
             ) AS img ON img.locker_id = l.locker_id
-        LEFT JOIN LockerJimType ljt ON ljt.locker_id = l.locker_id
-        LEFT JOIN JimType jt ON jt.jimtype_id = ljt.jimtype_id
+            LEFT JOIN LockerJimType ljt ON ljt.locker_id = l.locker_id
+            LEFT JOIN JimType jt ON jt.jimtype_id = ljt.jimtype_id
         WHERE r.state = #{state}
         GROUP BY
             l.locker_id,
@@ -90,26 +97,29 @@
     <insert id="insertLocker" parameterType="com.airbng.domain.Locker"
             useGeneratedKeys="true" keyProperty="lockerId" keyColumn="locker_id">
         INSERT INTO Locker (
-        is_available, locker_name, member_id,
-        address, address_english, address_detail,
-        latitude, longitude
+            is_available, locker_name, member_id, address,
+            address_english, address_detail, latitude, longitude
         ) VALUES (
-        #{isAvailable}, #{lockerName}, #{keeper.memberId},
-        #{address}, #{addressEnglish}, #{addressDetail},
-        #{latitude}, #{longitude}
+            #{isAvailable}, #{lockerName}, #{keeper.memberId}, #{address},
+            #{addressEnglish}, #{addressDetail}, #{latitude}, #{longitude}
         )
     </insert>
 
     <!-- 2. 단일 이미지 등록 (1장씩 등록하며 imageId를 반환 받음) -->
     <insert id="insertImage" parameterType="com.airbng.domain.image.Image"
             useGeneratedKeys="true" keyProperty="imageId" keyColumn="image_id">
-        INSERT INTO Image (url, upload_name)
-        VALUES (#{url}, #{uploadName})
+        INSERT INTO Image (
+            url, upload_name
+        ) VALUES (
+            #{url}, #{uploadName}
+        )
     </insert>
 
     <!-- 3. 보관소-이미지 연결 -->
     <insert id="insertLockerImages">
-        INSERT INTO LockerImage (locker_id, image_id)
+        INSERT INTO LockerImage (
+            locker_id, image_id
+        )
         <foreach collection="imageIds" item="imageId" separator="," open="VALUES" close="">
             (#{lockerId}, #{imageId})
         </foreach>
@@ -117,14 +127,18 @@
 
     <!-- 4. 보관소-짐타입 연결 -->
     <insert id="insertLockerJimTypes">
-        INSERT INTO LockerJimType (locker_id, jimtype_id)
+        INSERT INTO LockerJimType (
+            locker_id, jimtype_id
+        )
         <foreach collection="jimTypeIds" item="jimtypeId" separator="," open="VALUES" close="">
             (#{lockerId}, #{jimtypeId})
         </foreach>
     </insert>
 
     <select id="findLockerByMemberId" resultType="int">
-        SELECT COUNT(*) FROM Locker WHERE member_id = #{memberId}
+        SELECT COUNT(*)
+        FROM Locker
+        WHERE member_id = #{memberId}
     </select>
 
     <select id="findValidJimTypeIds" resultType="long">
@@ -144,6 +158,86 @@
         )
     </select>
 
+  
+    <!-- ResultMap for Locker + JimType -->
+    <resultMap id="LockerResultMap" type="com.airbng.dto.LockerPreviewResult">
+        <id column="locker_id" property="lockerId"/>
+        <result column="locker_name" property="lockerName"/>
+        <result column="is_available" property="isAvailable"/>
+        <result column="url" property="url"/>
+        <result column="address" property="address"/>
+        <collection property="jimTypeResults" ofType="com.airbng.dto.JimTypeResult">
+            <id column="jimtype_id" property="jimTypeId"/>
+            <result column="type_name" property="typeName"/>
+        </collection>
+    </resultMap>
+
+    <select id="findAllLockerBySearch" resultMap="LockerResultMap">
+        SELECT
+            l.locker_id,
+            l.locker_name,
+            l.is_available,
+            l.address,
+            img.url,
+            jt.jimtype_id,
+            jt.type_name
+        FROM locker l
+            LEFT JOIN lockerJimType lj ON l.locker_id = lj.locker_id
+            LEFT JOIN JimType jt ON lj.jimtype_id = jt.jimtype_id
+            LEFT JOIN (
+                SELECT li.locker_id, img.url
+                FROM LockerImage li
+                    JOIN Image img ON li.image_id = img.image_id
+                WHERE li.image_id IN (
+                    SELECT MIN(li2.image_id)
+                    FROM LockerImage li2
+                    GROUP BY li2.locker_id
+                )
+            ) img ON img.locker_id = l.locker_id
+        WHERE l.locker_id IN (
+            SELECT DISTINCT l2.locker_id
+            FROM locker l2
+                LEFT JOIN lockerJimType lj2 ON l2.locker_id = lj2.locker_id
+        <where>
+            <if test="address != null and address != ''">
+                l2.address LIKE CONCAT('%', #{address}, '%')
+            </if>
+            <if test="lockerName != null and lockerName != ''">
+                AND l2.locker_name LIKE CONCAT('%', #{lockerName}, '%')
+            </if>
+            <if test="jimTypeId != null and jimTypeId.size() > 0">
+                AND lj2.jimtype_id IN
+                <foreach item="id" collection="jimTypeId" open="(" separator="," close=")">
+                    #{id}
+                </foreach>
+            </if>
+        </where>
+        )
+        ORDER BY l.locker_id
+    </select>
+    <!-- Locker 개수 카운트 -->
+    <select id="findLockerCount" resultType="long">
+        SELECT COUNT(DISTINCT l.locker_id)
+        FROM locker l
+            LEFT JOIN lockerJimType lj ON l.locker_id = lj.locker_id
+            LEFT JOIN JimType jt ON lj.jimtype_id = jt.jimtype_id
+        <trim prefix="WHERE" prefixOverrides="AND |OR ">
+            <if test="address != null and address != ''">
+                AND l.address LIKE CONCAT('%', #{address}, '%')
+            </if>
+            <if test="lockerName != null and lockerName != ''">
+                AND l.locker_name LIKE CONCAT('%', #{lockerName}, '%')
+            </if>
+            <if test="jimTypeId != null and jimTypeId.size() > 0">
+                AND lj.jimtype_id IN
+                <foreach item="id" collection="jimTypeId" open="(" separator="," close=")">
+                    #{id}
+                </foreach>
+            </if>
+        </trim>
+    </select>
+
+  
 
 </mapper>
 
