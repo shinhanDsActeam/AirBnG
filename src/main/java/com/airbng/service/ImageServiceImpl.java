@@ -44,5 +44,4 @@ public class ImageServiceImpl implements ImageService {
     public Image getDefaultProfileImage() {
         return imageMapper.findDefaultImage();
     }
-
 }
