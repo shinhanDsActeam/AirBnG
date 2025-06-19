@@ -3,6 +3,7 @@ package com.airbng.service;
 import com.airbng.common.exception.MemberException;
 import com.airbng.domain.Member;
 import com.airbng.domain.image.Image;
+import com.airbng.dto.MemberLoginResponse;
 import com.airbng.dto.MemberSignupRequest;
 import com.airbng.mappers.MemberMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -182,4 +183,45 @@ class MemberServiceTest {
         //then
         verify(memberMapper).insertMember(ArgumentMatchers.any(Member.class));
     }
+
+    @Test
+    @DisplayName("로그인 성공 시 MemberLoginResponse 반환")
+    void 로그인_성공() {
+        // given
+        String email = "valid@email.com";
+        String password = "Password1";
+
+        Member fakeMember = new Member();
+        fakeMember.setMemberId(10L);
+        fakeMember.setEmail(email);
+        fakeMember.setNickname("재구");
+
+        // when
+        when(memberMapper.findByEmailAndPassword(email, password)).thenReturn(fakeMember);
+
+        // then
+        MemberLoginResponse response = memberService.login(email, password);
+        assertEquals(10L, response.getMemberId());
+        assertEquals("valid@email.com", response.getEmail());
+        assertEquals("재구", response.getNickname());
+    }
+
+
+    @Test
+    @DisplayName("로그인 실패 시 INVALID_MEMBER 예외 발생")
+    void 로그인_실패() {
+        // given
+        String email = "notfound@email.com";
+        String password = "wrongPassword";
+
+        // when
+        when(memberMapper.findByEmailAndPassword(email, password)).thenReturn(null);
+
+        // then
+        MemberException exception = assertThrows(MemberException.class, () -> {
+            memberService.login(email, password);
+        });
+        assertEquals(INVALID_MEMBER, exception.getBaseResponseStatus());
+    }
+
 }
