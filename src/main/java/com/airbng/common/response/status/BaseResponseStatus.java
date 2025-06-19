@@ -14,9 +14,15 @@ public enum BaseResponseStatus implements ResponseStatus{
 
 
     /**
-     * 2000 맴버 관련 코드
-     */
+     * 2000: member
+     * */
     MEMBER_NOT_FOUND(2001, HttpStatus.NOT_FOUND.value(), "존재하지 않는 멤버입니다."),
+    DUPLICATE_EMAIL(2002,HttpStatus.BAD_REQUEST.value(), "중복이메일 사용"),
+    DUPLICATE_NICKNAME(2003,HttpStatus.BAD_REQUEST.value(),"중복닉네임 사용"),
+    INVALID_PASSWORD(2004,HttpStatus.BAD_REQUEST.value(),"비밀번호 형식 오류"),
+    DUPLICATE_PHONE(2005,HttpStatus.BAD_REQUEST.value(),"휴대폰 번호 중복 오류"),
+    INVALID_EMAIL(2006, HttpStatus.BAD_REQUEST.value(),"이메일 형식 오류"),
+
 
     /**
      * 3000 락커 관련 코드
