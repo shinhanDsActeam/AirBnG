@@ -8,12 +8,12 @@
   <name>AirBnG Maven Webapp</name>
   <url>http://maven.apache.org</url>
   <dependencies>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>3.8.1</version>
-      <scope>test</scope>
-    </dependency>
+<!--    <dependency>-->
+<!--      <groupId>junit</groupId>-->
+<!--      <artifactId>junit</artifactId>-->
+<!--      <version>3.8.1</version>-->
+<!--      <scope>test</scope>-->
+<!--    </dependency>-->
 
     <dependency>
       <groupId>org.springframework</groupId>
@@ -133,12 +133,19 @@
       <version>1.18.34</version>
       <scope>provided</scope>
     </dependency>
+    <dependency>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
+      <version>1.18.34</version>
+      <scope>provided</scope>
+    </dependency>
 
     <dependency>
       <groupId>com.fasterxml.jackson.datatype</groupId>
       <artifactId>jackson-datatype-jsr310</artifactId>
-      <version>2.13.5</version>
+      <version>2.13.5</version> <!-- 사용 중인 Jackson 버전에 맞게 설정 -->
     </dependency>
+
 
     <dependency>
       <groupId>com.fasterxml.jackson.datatype</groupId>
@@ -157,13 +164,6 @@
       <groupId>commons-fileupload</groupId>
       <artifactId>commons-fileupload</artifactId>
       <version>1.5</version>
-    </dependency>
-
-    <!-- spring-security-crypto 모듈만 넣으면 Encoder 클래스 사용 가능 -->
-    <dependency>
-      <groupId>org.springframework.security</groupId>
-      <artifactId>spring-security-crypto</artifactId>
-      <version>5.8.7</version>
     </dependency>
     <dependency>
       <groupId>org.junit.jupiter</groupId>
@@ -195,7 +195,6 @@
       <scope>test</scope>
     </dependency>
 
-    <!-- Mockito JUnit5 확장 지원 -->
     <dependency>
       <groupId>org.mockito</groupId>
       <artifactId>mockito-junit-jupiter</artifactId>
@@ -207,7 +206,7 @@
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-test</artifactId>
-      <version>5.3.32</version>
+      <version>5.3.32</version>  <!-- 네가 쓰는 Spring MVC 버전에 맞춰서! -->
       <scope>test</scope>
     </dependency>
 
