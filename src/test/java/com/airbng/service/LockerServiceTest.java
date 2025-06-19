@@ -5,19 +5,15 @@ import com.airbng.dto.*;
 import com.airbng.mappers.LockerMapper;
 import com.airbng.util.S3Uploader;
 import com.airbng.common.exception.ImageException;
-import com.airbng.common.exception.LockerException;
 import com.airbng.common.exception.MemberException;
 import com.airbng.domain.base.Available;
 import com.airbng.dto.LockerInsertRequest;
 import com.airbng.common.response.status.BaseResponseStatus;
 import com.airbng.dto.LockerDetailResponse;
-import org.mockito.MockitoAnnotations;
 import org.springframework.transaction.annotation.Transactional;
 import static org.junit.jupiter.api.Assertions.*;
 import com.airbng.dto.LockerPreviewResult;
 import com.airbng.dto.LockerTop5Response;
-import com.airbng.mappers.LockerMapper;
-import com.airbng.util.S3Uploader;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -26,28 +22,16 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-
 import java.util.List;
-
 import static com.airbng.common.response.status.BaseResponseStatus.NOT_FOUND_LOCKER;
-import static junit.framework.Assert.assertNotNull;
-import static org.junit.jupiter.api.Assertions.*;
-
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.multipart.MultipartFile;
-
 import java.io.IOException;
 import java.util.Collections;
-import java.util.List;
-
 import static com.airbng.common.response.status.BaseResponseStatus.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
-
-import org.mockito.Mockito;
-import static com.airbng.common.response.status.BaseResponseStatus.NOT_FOUND_LOCKER;
 import static org.mockito.Mockito.when;
 
 
