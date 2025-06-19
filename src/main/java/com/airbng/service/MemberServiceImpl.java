@@ -1,6 +1,8 @@
 package com.airbng.service;
 
+import com.airbng.common.exception.ImageException;
 import com.airbng.common.exception.MemberException;
+import com.airbng.common.response.status.BaseResponseStatus;
 import com.airbng.domain.Member;
 import com.airbng.domain.base.BaseStatus;
 import com.airbng.domain.image.Image;
@@ -32,7 +34,9 @@ public class MemberServiceImpl implements MemberService {
         if (memberMapper.findByEmail(dto.getEmail()))      throw new MemberException(DUPLICATE_EMAIL);
         if (memberMapper.findByNickname(dto.getNickname()))throw new MemberException(DUPLICATE_NICKNAME);
         if (memberMapper.findByPhone(dto.getPhone()))      throw new MemberException(DUPLICATE_PHONE);
-        if (!isValidPassword(dto.getPassword()))             throw new MemberException(INVALID_PASSWORD);
+        if (!isValidPassword(dto.getPassword()))           throw new MemberException(INVALID_PASSWORD);
+        if (!isValidEmail(dto.getEmail()))                 throw new MemberException(INVALID_EMAIL);
+
 
         //이미지 처리
         Image profileImage = (file != null && !file.isEmpty())
@@ -58,10 +62,14 @@ public class MemberServiceImpl implements MemberService {
     public boolean emailCheck(String email) {
         return memberMapper.findByEmail(email);
     }
-
     //패스워드 형식 확인
     private boolean isValidPassword(String password) {
         //대문자와 소문자, 하나 이상의 숫자를 포함하여 8자 이상
         return password != null && password.matches("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).{8,}$");
+    }
+    //이메일 형식 체크
+    private boolean isValidEmail(String email) {
+        //@앞의 문자 1개이상, @ 뒤에 문자+ . + 2~6자(com, net, co,kr , email)
+        return email != null && email.matches("^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,6}$");
     }
 }
