@@ -10,7 +10,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import java.util.List;
-import static com.airbng.common.response.status.BaseResponseStatus.NOT_FOUND_LOCKERSEARCH;
 import com.airbng.common.exception.ImageException;
 import com.airbng.common.exception.LockerException;
 import com.airbng.common.exception.MemberException;
@@ -54,7 +53,7 @@ public class LockerServiceImpl implements LockerService {
     public LockerSearchResponse findAllLockerBySearch(LockerSearchRequest request) {
         log.info("LockerServiceImpl.findAllLockerBySearch");
         List<LockerPreviewResult> lockers = lockerMapper.findAllLockerBySearch(request);
-        if (lockers.isEmpty()) throw new LockerException(NOT_FOUND_LOCKERSEARCH);
+        if (lockers.isEmpty()) throw new LockerException(NOT_FOUND_LOCKER);
 
         LockerSearchResponse response = LockerSearchResponse.builder()
                 .count(lockerMapper.findLockerCount(request))
