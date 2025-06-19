@@ -5,7 +5,6 @@ import com.airbng.common.exception.LockerException;
 import com.airbng.common.exception.MemberException;
 import com.airbng.domain.base.Available;
 import com.airbng.dto.LockerInsertRequest;
-import com.airbng.common.exception.LockerException;
 import com.airbng.common.response.status.BaseResponseStatus;
 import com.airbng.dto.LockerDetailResponse;
 import org.mockito.MockitoAnnotations;
@@ -35,11 +34,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 import org.mockito.Mockito;
-import org.mockito.junit.jupiter.MockitoExtension;
-import java.util.List;
 import static com.airbng.common.response.status.BaseResponseStatus.NOT_FOUND_LOCKER;
-import static junit.framework.Assert.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
 
@@ -59,8 +54,6 @@ class LockerServiceTest {
 
     @BeforeEach
     public void setUp() {
-        MockitoAnnotations.openMocks(this); // @Mock과 @InjectMocks 초기화
-      
         request = new LockerInsertRequest();
         request.setLockerName("Test Locker");
         request.setIsAvailable(Available.YES);
@@ -202,6 +195,7 @@ class LockerServiceTest {
         });
 
         assertSame(BaseResponseStatus.NOT_FOUND_LOCKERDETAILS, exception.getBaseResponseStatus());
+    }
 
     @Test
     @DisplayName("정상적으로 상위 5개의 항목이 보입니다.")
