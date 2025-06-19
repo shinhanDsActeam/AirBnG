@@ -8,12 +8,12 @@
   <name>AirBnG Maven Webapp</name>
   <url>http://maven.apache.org</url>
   <dependencies>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>3.8.1</version>
-      <scope>test</scope>
-    </dependency>
+<!--    <dependency>-->
+<!--      <groupId>junit</groupId>-->
+<!--      <artifactId>junit</artifactId>-->
+<!--      <version>3.8.1</version>-->
+<!--      <scope>test</scope>-->
+<!--    </dependency>-->
 
     <dependency>
       <groupId>org.springframework</groupId>
@@ -165,7 +165,6 @@
       <artifactId>commons-fileupload</artifactId>
       <version>1.5</version>
     </dependency>
-
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter</artifactId>
@@ -196,6 +195,13 @@
       <scope>test</scope>
     </dependency>
 
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-junit-jupiter</artifactId>
+      <version>5.10.0</version>
+      <scope>test</scope>
+    </dependency>
+
     <!-- Spring Test (스프링 MVC MockMvc 지원) -->
     <dependency>
       <groupId>org.springframework</groupId>
@@ -203,47 +209,6 @@
       <version>5.3.32</version>  <!-- 네가 쓰는 Spring MVC 버전에 맞춰서! -->
       <scope>test</scope>
     </dependency>
-
-    <!-- Jackson (jsonPath 쓰고 싶으면) -->
-    <dependency>
-      <groupId>com.fasterxml.jackson.core</groupId>
-      <artifactId>jackson-databind</artifactId>
-      <version>2.15.2</version>
-    </dependency>
-
-    <!-- Hamcrest matcher -->
-    <dependency>
-      <groupId>org.hamcrest</groupId>
-      <artifactId>hamcrest</artifactId>
-      <version>2.2</version>
-      <scope>test</scope>
-    </dependency>
-
-    <!-- JSON Path for MockMvc jsonPath() -->
-    <dependency>
-      <groupId>com.jayway.jsonpath</groupId>
-      <artifactId>json-path</artifactId>
-      <version>2.9.0</version>
-      <scope>test</scope>
-    </dependency>
-
-    <!-- Mockito Core -->
-    <dependency>
-      <groupId>org.mockito</groupId>
-      <artifactId>mockito-core</artifactId>
-      <version>5.11.0</version>
-      <scope>test</scope>
-    </dependency>
-
-    <!-- Mockito JUnit Jupiter (확장기능: @ExtendWith(MockitoExtension.class) 쓰려면 필요) -->
-    <dependency>
-      <groupId>org.mockito</groupId>
-      <artifactId>mockito-junit-jupiter</artifactId>
-      <version>5.11.0</version>
-      <scope>test</scope>
-    </dependency>
-
-
 
   </dependencies>
   <build>
