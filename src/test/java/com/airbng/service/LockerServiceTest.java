@@ -67,6 +67,6 @@ class LockerServiceTest {
                 .thenReturn(results);
 
         LockerException exception = assertThrows(LockerException.class, () -> lockerService.findTop5Locker());
-        assertEquals(NOT_FOUND_LOCKER.getMessage(), exception.getMessage());
+        assertEquals(NOT_FOUND_LOCKER, exception.getBaseResponseStatus());
     }
 }
