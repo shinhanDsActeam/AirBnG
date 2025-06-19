@@ -10,7 +10,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class LockerPreviewResult {
-    private String lockerId;
+    private Long lockerId;
     private String address;
     private String lockerName;
     private String isAvailable;
