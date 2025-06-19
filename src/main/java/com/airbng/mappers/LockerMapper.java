@@ -1,18 +1,13 @@
 package com.airbng.mappers;
 
-import com.airbng.dto.LockerPreviewResult;
+import com.airbng.dto.locker.LockerDetailResponse;
 import com.airbng.dto.LockerSearchRequest;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
-import com.airbng.dto.LockerDetailResponse;
-import org.apache.ibatis.annotations.Mapper;
 import com.airbng.domain.base.ReservationState;
-import com.airbng.dto.LockerPreviewResult;
+import com.airbng.dto.locker.LockerPreviewResult;
 import com.airbng.domain.Locker;
 import com.airbng.domain.image.Image;
-import com.airbng.domain.base.ReservationState;
-import com.airbng.dto.LockerPreviewResult;
-import org.apache.ibatis.annotations.Param;
 import java.util.List;
 
 @Mapper
@@ -43,5 +38,4 @@ public interface LockerMapper {
     List<Long> findValidJimTypeIds(@Param("jimTypeIds") List<Long> jimTypeIds);
 
     int findMemberId(@Param("memberId") Long memberId);
-
 }

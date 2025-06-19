@@ -1,5 +1,6 @@
-package com.airbng.dto;
+package com.airbng.dto.locker;
 
+import com.airbng.dto.JimTypeResult;
 import lombok.*;
 
 import java.util.List;

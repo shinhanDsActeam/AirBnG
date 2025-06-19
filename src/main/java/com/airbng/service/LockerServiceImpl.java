@@ -1,36 +1,24 @@
 package com.airbng.service;
 
-import com.airbng.common.exception.LockerException;
-import com.airbng.dto.JimTypeResult;
-import com.airbng.dto.LockerPreviewResult;
-import com.airbng.dto.LockerSearchRequest;
-import com.airbng.dto.LockerSearchResponse;
-import com.airbng.mappers.LockerMapper;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
-import java.util.List;
 import com.airbng.common.exception.ImageException;
 import com.airbng.common.exception.LockerException;
 import com.airbng.common.exception.MemberException;
-import com.airbng.dto.LockerDetailResponse;
 import com.airbng.common.response.status.BaseResponseStatus;
 import com.airbng.domain.Locker;
 import com.airbng.domain.Member;
-import com.airbng.domain.base.Available;
 import com.airbng.domain.base.ReservationState;
 import com.airbng.domain.image.Image;
-import com.airbng.dto.ImageInsertRequest;
-import com.airbng.dto.LockerInsertRequest;
-import com.airbng.dto.LockerPreviewResult;
-import com.airbng.dto.LockerTop5Response;
+import com.airbng.dto.LockerSearchRequest;
+import com.airbng.dto.LockerSearchResponse;
+import com.airbng.dto.locker.LockerDetailResponse;
+import com.airbng.dto.locker.LockerInsertRequest;
+import com.airbng.dto.locker.LockerPreviewResult;
+import com.airbng.dto.locker.LockerTop5Response;
 import com.airbng.mappers.LockerMapper;
 import com.airbng.util.S3Uploader;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import static com.airbng.common.response.status.BaseResponseStatus.NOT_FOUND_LOCKER;
-import static com.airbng.common.response.status.BaseResponseStatus.NOT_FOUND_LOCKERDETAILS;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -47,8 +35,8 @@ public class LockerServiceImpl implements LockerService {
 
     private final LockerMapper lockerMapper;
     private final S3Uploader s3Uploader;
-  
-  
+
+
     @Override
     public LockerSearchResponse findAllLockerBySearch(LockerSearchRequest request) {
         log.info("LockerServiceImpl.findAllLockerBySearch");
@@ -62,7 +50,7 @@ public class LockerServiceImpl implements LockerService {
 
         return response;
     }
-  
+
     @Override
     public LockerDetailResponse findUserById(Long lockerId) {
         LockerDetailResponse result = lockerMapper.findUserById(lockerId);
