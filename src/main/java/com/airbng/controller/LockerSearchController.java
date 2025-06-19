@@ -17,7 +17,7 @@ public class LockerSearchController {
 
     private final LockerService lockerService;
 
-    @GetMapping("/lockers")
+    @GetMapping
     public BaseResponse<LockerSearchResponse> findAllLockerBySearch(
             @RequestParam(required = false) String address,
             @RequestParam(required = false) String lockerName,
