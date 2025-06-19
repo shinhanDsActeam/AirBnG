@@ -8,30 +8,31 @@ import com.airbng.util.S3Uploader;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 
 import static com.airbng.common.response.status.BaseResponseStatus.NOT_FOUND_LOCKER;
 import static junit.framework.Assert.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 
+@ExtendWith(MockitoExtension.class)  // JUnit5에서 Mockito 사용 시 필수
 class LockerServiceTest {
 
+    @Mock
     private LockerMapper lockerMapper;
+
+    @Mock
     private S3Uploader s3Uploader;
+
+    @InjectMocks
     private LockerServiceImpl lockerService;
-
-    @BeforeEach
-    void setUp() {
-        lockerMapper = mock(LockerMapper.class);
-        s3Uploader = mock(S3Uploader.class);
-        lockerService = new LockerServiceImpl(lockerMapper, s3Uploader);
-
-    }
 
     @Test
     @DisplayName("정상적으로 상위 5개의 항목이 보입니다.")
