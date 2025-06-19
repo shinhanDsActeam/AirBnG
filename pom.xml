@@ -210,6 +210,13 @@
       <scope>test</scope>
     </dependency>
 
+      <!-- spring-security-crypto 모듈만 넣으면 Encoder 클래스 사용 가능 -->
+      <dependency>
+          <groupId>org.springframework.security</groupId>
+          <artifactId>spring-security-crypto</artifactId>
+          <version>5.8.7</version>
+      </dependency>
+
   </dependencies>
   <build>
     <finalName>AirBnG</finalName>
