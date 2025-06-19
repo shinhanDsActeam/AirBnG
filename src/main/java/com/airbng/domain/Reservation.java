@@ -17,7 +17,7 @@ import org.springframework.lang.NonNull;
 @AllArgsConstructor
 @Builder
 public class Reservation extends BaseTime {
-    @NonNull
+//    @NonNull
     private Long reservationId;
     @NonNull
     private Member dropper;

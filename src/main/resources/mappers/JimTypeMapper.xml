@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.airbng.mappers.JimTypeMapper">
+
+    <!-- 여러개의 짐타입 한 번에 삽입 -->
+    <insert id="insertReservationJimTypes">
+        INSERT INTO ReservationJimType (reservation_id, jimtype_id, count)
+        <foreach collection="results" item="jimTypeCount" separator="," open="VALUES" close="">
+            (#{reservationId}, #{jimTypeCount.jimTypeId}, #{jimTypeCount.count})
+        </foreach>
+    </insert>
+
+</mapper>
