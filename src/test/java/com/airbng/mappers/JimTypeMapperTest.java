@@ -87,19 +87,37 @@ class JimTypeMapperTest {
         }
     }
 
+    @Nested
+    @DisplayName("validateLockerJimTypes 테스트")
+    class ValidateLockerJimTypeTest {
+        @Test
+        @DisplayName("성공 - 해당 보관소가 관리하는 짐 종류인 경우")
         @Transactional
-        void 예약할_짐종류_추가_실패() {
+        void 해당_보관소가_관리하는_짐() {
             // Given
-            Long reservationId = null;
-            List<JimTypeCountResult> jimTypeCountResults = Arrays.asList(
-                    new JimTypeCountResult(1L, 2L),
-                    new JimTypeCountResult(2L, 3L)
-            );
+            Long lockerId = 1L;
+            List<Long> jimTypeIds = Arrays.asList(1L, 2L);
 
-            // When, Then
-            assertThrows(DataIntegrityViolationException.class, () -> {
-                jimTypeMapper.insertReservationJimTypes(reservationId, jimTypeCountResults);
-            });
+            // When
+            boolean result = jimTypeMapper.validateLockerJimTypes(lockerId, jimTypeIds, jimTypeIds.size());
+
+            // Then
+            assertEquals(true, result);
+        }
+
+        @Test
+        @DisplayName("실패 - 해당 보관소가 관리하지 않는 짐 종류인 경우")
+        @Transactional
+        void 해당_보관소가_관리하지_않는_짐() {
+            // Given
+            Long lockerId = 1L;
+            List<Long> jimTypeIds = Arrays.asList(1L, 2L, 3L); // 3L은 해당 보관소에 존재하지 않는 짐 종류
+
+            // When
+            boolean result = jimTypeMapper.validateLockerJimTypes(lockerId, jimTypeIds, jimTypeIds.size());
+
+            // Then
+            assertEquals(false, result);
         }
     }
 
