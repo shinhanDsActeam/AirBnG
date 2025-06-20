@@ -5,6 +5,8 @@ import com.airbng.domain.Member;
 import com.airbng.domain.image.Image;
 import com.airbng.dto.MemberSignupRequest;
 import com.airbng.mappers.MemberMapper;
+import com.airbng.validator.EmailValidator;
+import com.airbng.validator.PasswordValidator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -28,12 +30,14 @@ import static org.mockito.Mockito.when;
 class MemberServiceTest {
     @Mock
     private MemberMapper memberMapper;
-
     @Mock
     private ImageService imageService;
-
     @Mock
     private BCryptPasswordEncoder passwordEncoder;
+    @Mock
+    private  EmailValidator emailValidator;
+    @Mock
+    private  PasswordValidator passwordValidator;
 
     @InjectMocks
     private MemberServiceImpl memberService;
@@ -77,6 +81,7 @@ class MemberServiceTest {
         when(memberMapper.findByEmail(dto.getEmail())).thenReturn(false);
         when(memberMapper.findByNickname(dto.getNickname())).thenReturn(false);
         when(memberMapper.findByPhone(dto.getPhone())).thenReturn(false);
+        when(passwordValidator.isValidPassword(dto.getPassword())).thenReturn(true);
 
         //then
         MemberException exception = assertThrows(MemberException.class, () -> {
@@ -146,6 +151,7 @@ class MemberServiceTest {
         when(memberMapper.findByEmail(dto.getEmail())).thenReturn(false);
         when(memberMapper.findByNickname(dto.getNickname())).thenReturn(false);
         when(memberMapper.findByPhone(dto.getPhone())).thenReturn(false);
+        when(passwordValidator.isValidPassword(dto.getPassword())).thenReturn(false);
 
         MemberException exception = assertThrows(MemberException.class, () -> {
             memberService.signup(dto, mockFile);
@@ -171,6 +177,8 @@ class MemberServiceTest {
         when(memberMapper.findByEmail(dto.getEmail())).thenReturn(false);
         when(memberMapper.findByNickname(dto.getNickname())).thenReturn(false);
         when(memberMapper.findByPhone(dto.getPhone())).thenReturn(false);
+        when(passwordValidator.isValidPassword(dto.getPassword())).thenReturn(true);
+        when(emailValidator.isValidEmail(dto.getEmail())).thenReturn(true);
         when(passwordEncoder.encode(dto.getPassword())).thenReturn("encodedPassword");
         when(imageService.getDefaultProfileImage()).thenReturn(
                 Image.withId(1L)
