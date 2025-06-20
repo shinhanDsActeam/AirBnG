@@ -63,12 +63,14 @@ public class MemberServiceImpl implements MemberService {
         return memberMapper.findByEmail(email);
     }
     //패스워드 형식 확인
-    private boolean isValidPassword(String password) {
+    @Override
+    public boolean isValidPassword(String password) {
         //대문자와 소문자, 하나 이상의 숫자를 포함하여 8자 이상
         return password != null && password.matches("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).{8,}$");
     }
     //이메일 형식 체크
-    private boolean isValidEmail(String email) {
+    @Override
+    public boolean isValidEmail(String email) {
         //@앞의 문자 1개이상, @ 뒤에 문자+ . + 2~6자(com, net, co,kr , email)
         return email != null && email.matches("^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,6}$");
     }
