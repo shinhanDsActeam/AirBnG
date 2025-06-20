@@ -78,6 +78,10 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public MemberLoginResponse login(String email, String password) {
+        if (!isValidEmail(email)) {
+            throw new MemberException(INVALID_EMAIL);
+        }
+
         try {
             Member member = memberMapper.findByEmailAndPassword(email, password);
 
