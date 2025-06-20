@@ -2,6 +2,7 @@ package com.airbng.service;
 
 import com.airbng.common.exception.MemberException;
 import com.airbng.domain.Member;
+import com.airbng.domain.base.BaseStatus;
 import com.airbng.domain.image.Image;
 import com.airbng.dto.MemberLoginResponse;
 import com.airbng.dto.MemberSignupRequest;
@@ -191,10 +192,21 @@ class MemberServiceTest {
         String email = "valid@email.com";
         String password = "Password1";
 
-        Member fakeMember = new Member();
-        fakeMember.setMemberId(10L);
-        fakeMember.setEmail(email);
-        fakeMember.setNickname("재구");
+        Member fakeMember = Member.builder()
+                .memberId(10L)
+                .email("valid@email.com")
+                .name("박재구")
+                .phone("010-1111-2222")
+                .nickname("재구")
+                .password("Password1")
+                .status(BaseStatus.ACTIVE)
+                .profileImage(Image.withId(1L))  // ✅ Image 객체도 넣어야 함
+                .build();
+
+//        Member fakeMember = new Member();
+//        fakeMember.setMemberId(10L);
+//        fakeMember.setEmail(email);
+//        fakeMember.setNickname("재구");
 
         // when
         when(memberMapper.findByEmailAndPassword(email, password)).thenReturn(fakeMember);
@@ -223,5 +235,21 @@ class MemberServiceTest {
         });
         assertEquals(INVALID_MEMBER, exception.getBaseResponseStatus());
     }
+
+    @Test
+    @DisplayName("로그인 시 이메일 형식이 잘못되면 INVALID_EMAIL 예외 발생")
+    void 로그인_이메일형식_오류() {
+        // given
+        String invalidEmail = "invalid_email.com";
+        String password = "Password1234!";
+
+        // when & then
+        MemberException exception = assertThrows(MemberException.class, () -> {
+            memberService.login(invalidEmail, password);
+        });
+
+        assertEquals(INVALID_EMAIL, exception.getBaseResponseStatus());
+    }
+
 
 }
