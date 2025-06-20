@@ -11,11 +11,13 @@ import com.airbng.mappers.JimTypeMapper;
 import com.airbng.mappers.LockerMapper;
 import com.airbng.mappers.MemberMapper;
 import com.airbng.mappers.ReservationMapper;
+import com.airbng.util.LocalDateTimeUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -33,6 +35,18 @@ public class ReservationServiceImpl implements ReservationService {
     @Transactional // 짐타입 등록 실패한 경우 예약 등록까지 롤백
     public BaseResponseStatus insertReservation(ReservationInsertRequest request) {
         log.info("insertReservation({})", request);
+
+        // startTime과 endTime이 유효한지 확인
+        String startTime = request.getStartTime();
+        String endTime = request.getEndTime();
+        if (request.getStartTime() == null || request.getEndTime() == null) {
+            throw new ReservationException(BaseResponseStatus.INVALID_RESERVATION_TIME);
+        }
+
+        if (LocalDateTimeUtils.isStartTimeAfterEndTime(startTime, endTime)
+                || LocalDateTimeUtils.isStartTimeEqualEndTime(startTime, endTime)) {
+            throw new ReservationException(BaseResponseStatus.INVALID_RESERVATION_TIME_ORDER);
+        }
 
         // dropper와 keeper 존재 여부 확인
         boolean dropperFlag = memberMapper.isExistMember(request.getDropperId());
