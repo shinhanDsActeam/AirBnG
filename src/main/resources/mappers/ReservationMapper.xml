@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.airbng.mappers.ReservationMapper">
+
+    <resultMap id="ReservationSearch" type="com.airbng.dto.ReservationSearchResponse">
+        <result property="reservationId" column="reservation_id" />
+        <result property="state" column="state" />
+        <result property="keeperId" column="keeper_id" />
+        <result property="dropperId" column="dropper_id" />
+    </resultMap>
+
+    <select id="findAllReservationById" parameterType="Map" resultMap="ReservationSearch">
+        SELECT
+            r.reservation_id,
+            r.state,
+            r.keeper_id,
+            r.dropper_id
+        FROM Reservation r
+        <!-- 동적 JOIN -->
+        <if test="role == 'KEEPER'">
+            LEFT JOIN Member m ON r.keeper_id = m.member_id
+        </if>
+        <if test="role == 'DROPPER'">
+            LEFT JOIN Member m ON r.dropper_id = m.member_id
+        </if>
+        <where>
+            <if test="role == 'KEEPER'">
+                r.keeper_id = #{memberId}
+            </if>
+            <if test="role == 'DROPPER'">
+                r.dropper_id = #{memberId}
+            </if>
+            <if test="state != null and state != ''">
+                AND r.state = #{state}
+            </if>
+            <if test="curserId != null">
+                AND r.reservation_id &lt; #{curserId} <!-- &lt;는 부등호 '<'를 의미-->
+            </if>
+        </where>
+        GROUP BY r.reservation_id ORDER BY r.reservation_id desc LIMIT 11
+    </select>
+
+    <select id="findAllReservationByOnPage" resultMap="ReservationSearch">
+
+
+
+    </select>
+
+</mapper>
