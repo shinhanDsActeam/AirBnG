@@ -1,15 +1,13 @@
 package com.airbng.domain;
 
-import java.time.LocalDateTime;
-
 import com.airbng.domain.base.BaseTime;
 import com.airbng.domain.base.ReservationState;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.Builder;
+import com.airbng.domain.jimtype.ReservationJimType;
+import lombok.*;
 import org.springframework.lang.NonNull;
+
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -17,7 +15,7 @@ import org.springframework.lang.NonNull;
 @AllArgsConstructor
 @Builder
 public class Reservation extends BaseTime {
-//    @NonNull
+    //    @NonNull
     private Long reservationId;
     @NonNull
     private Member dropper;
@@ -29,4 +27,5 @@ public class Reservation extends BaseTime {
     private LocalDateTime endTime;
     @NonNull
     private ReservationState state;
+    private List<ReservationJimType> reservationJimTypes;
 }
