@@ -29,7 +29,7 @@ public class MemberController {
 
     @GetMapping("/check-email")
     public BaseResponse<String> emailCheck(@RequestParam String email) {
-        boolean exists = memberService.emailCheck(email);
-        return new BaseResponse<>(exists ? "이미 사용 중인 이메일" : "사용 가능한 이메일");
+        memberService.emailCheck(email);
+        return new BaseResponse<>("사용 가능한 이메일");
     }
 }
