@@ -13,4 +13,14 @@
         </foreach>
     </insert>
 
+    <select id="validateLockerJimTypes" resultType="boolean">
+        SELECT CASE WHEN COUNT(*) = #{size} THEN true ELSE false END
+        FROM LockerJimType
+        WHERE locker_id = #{lockerId}
+        AND jimtype_id IN
+        <foreach item="id" collection="jimTypeIds" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+
 </mapper>

@@ -11,4 +11,8 @@ import java.util.List;
 public interface JimTypeMapper {
     void insertReservationJimType(ReservationJimType reservationJimType);
     int insertReservationJimTypes(@Param("reservationId") Long reservationId, @Param("results") List<JimTypeCountResult> results);
+
+    boolean validateLockerJimTypes(@Param("lockerId") Long lockerId,
+                                   @Param("jimTypeIds") List<Long> jimTypeIds,
+                                   @Param("size") int size);
 }

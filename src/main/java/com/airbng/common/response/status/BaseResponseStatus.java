@@ -49,6 +49,7 @@ public enum BaseResponseStatus implements ResponseStatus{
     INVALID_JIMTYPE(5000, HttpStatus.UNPROCESSABLE_ENTITY.value(), "존재하지 않는 짐 타입이 포함되어 있습니다."),
     NOT_FOUND_JIMTYPE(5001, HttpStatus.NOT_FOUND.value(), "짐 타입을 찾을 수 없습니다."),
     INVALID_JIMTYPE_COUNT(5002, HttpStatus.BAD_REQUEST.value(), "요청한 짐 타입 개수와 실제 등록된 개수가 일치하지 않습니다."),
+    LOCKER_DOES_NOT_SUPPORT_JIMTYPE(5003, HttpStatus.BAD_REQUEST.value(), "해당 보관소가 관리하지 않는 짐 타입입니다."),
 
     /**
      * 6000: image

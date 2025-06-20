@@ -1,9 +1,11 @@
 package com.airbng.service;
 
+import com.airbng.common.exception.JimTypeException;
 import com.airbng.common.exception.LockerException;
 import com.airbng.common.exception.MemberException;
 import com.airbng.common.exception.ReservationException;
 import com.airbng.common.response.status.BaseResponseStatus;
+import com.airbng.dto.jimType.JimTypeCountResult;
 import com.airbng.dto.reservation.ReservationInsertRequest;
 import com.airbng.mappers.JimTypeMapper;
 import com.airbng.mappers.LockerMapper;
@@ -14,6 +16,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -22,6 +27,7 @@ public class ReservationServiceImpl implements ReservationService {
     private final JimTypeMapper jimTypeMapper;
     private final MemberMapper memberMapper;
     private final LockerMapper lockerMapper;
+
     // 예약 등록
     @Override
     @Transactional // 짐타입 등록 실패한 경우 예약 등록까지 롤백
@@ -30,12 +36,12 @@ public class ReservationServiceImpl implements ReservationService {
 
         // dropper와 keeper 존재 여부 확인
         boolean dropperFlag = memberMapper.isExistMember(request.getDropperId());
-        if(!dropperFlag) {
+        if (!dropperFlag) {
             throw new MemberException(BaseResponseStatus.NOT_FOUND_MEMBER);
         }
 
         boolean keeperFlag = memberMapper.isExistMember(request.getKeeperId());
-        if(!keeperFlag) {
+        if (!keeperFlag) {
             throw new MemberException(BaseResponseStatus.NOT_FOUND_MEMBER);
         }
 
@@ -46,7 +52,7 @@ public class ReservationServiceImpl implements ReservationService {
 
         // 락커 존재 여부 확인
         boolean lockerFlag = lockerMapper.isExistLocker(request.getLockerId());
-        if(!lockerFlag) {
+        if (!lockerFlag) {
             throw new LockerException(BaseResponseStatus.NOT_FOUND_LOCKER);
         }
 
@@ -59,13 +65,24 @@ public class ReservationServiceImpl implements ReservationService {
         // 예약 엔티티 추가
         reservationMapper.insertReservation(request);
         Long reservationId = reservationMapper.selectLastInsertId();
-        if (reservationId == null) {
+        if (reservationId == null || reservationId < 1) {
             throw new ReservationException(BaseResponseStatus.CANNOT_CREATE_RESERVATION);
         }
+
+        // 해당 보관소가 관리하는 짐타입들인지 검사
+        List<Long> jimTypeIds = request.getJimTypeCounts().stream()
+                .map(JimTypeCountResult::getJimTypeId)
+                .collect(Collectors.toList());
+        boolean validateJimtype = jimTypeMapper.validateLockerJimTypes(request.getLockerId(), jimTypeIds, jimTypeIds.size());
+        if (!validateJimtype) {
+            throw new JimTypeException(BaseResponseStatus.LOCKER_DOES_NOT_SUPPORT_JIMTYPE);
+        }
+
 
         // 위에서 insert한 예약 엔티티에 맞게 짐 타입 등록
         int cnt = jimTypeMapper.insertReservationJimTypes(reservationId, request.getJimTypeCounts());
         // 요청한 짐 타입 개수와 실제 등록된 개수가 일치하지 않는 경우 예외
+        // Mapper 에서 메서드가 실패하면 0을 반환
         if (cnt != request.getJimTypeCounts().size()) {
             throw new ReservationException(BaseResponseStatus.INVALID_JIMTYPE_COUNT);
         }
