@@ -26,4 +26,16 @@
     <select id="findByPhone" parameterType="String" resultType="boolean">
         SELECT EXISTS(SELECT 1 FROM Member WHERE phone = #{phone})
     </select>
+
+    <resultMap id="memberResultMap" type="com.airbng.domain.Member">
+        <id property="memberId" column="member_id" />
+        <result property="email" column="email" />
+        <result property="password" column="password" />
+        <result property="nickname" column="nickname" />
+    </resultMap>
+
+    <select id="findByEmailAndPassword" resultMap="memberResultMap" parameterType="map">
+        SELECT * FROM Member
+        WHERE email = #{email} AND password = #{password}
+    </select>
 </mapper>
