@@ -34,6 +34,8 @@ public enum BaseResponseStatus implements ResponseStatus{
     /**
      * 4000 예약 관련 코드
      */
+    NOT_FOUND_RESERVATION(4000,HttpStatus.NOT_FOUND.value(), "예약정보를 찾을 수 없습니다."),
+    CANNOT_UPDATE_STATE(4001,HttpStatus.BAD_REQUEST.value(), "예약 취소에 실패하였습니다."),
 
     /**
      * 5000 짐 타입 관련 코드
@@ -43,6 +45,7 @@ public enum BaseResponseStatus implements ResponseStatus{
     /**
      * 6000: image
      */
+
     UPLOAD_FAILED(6001, HttpStatus.INTERNAL_SERVER_ERROR.value(),"이미지 업로드에 실패하였습니다."),
     EMPTY_FILE(6002, HttpStatus.BAD_REQUEST.value(),"업로드할 이미지가 없습니다."),
     INVALID_EXTENSIONS(6003, HttpStatus.UNSUPPORTED_MEDIA_TYPE.value(),"허용되지 않는 파일 확장자입니다."),
