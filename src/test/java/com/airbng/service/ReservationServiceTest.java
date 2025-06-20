@@ -200,6 +200,38 @@ class ReservationServiceTest {
                 assertEquals(BaseResponseStatus.NOT_FOUND_LOCKER, exception.getBaseResponseStatus());
             }
 
+            @Test
+            @DisplayName("startTime과 endTime이 같을 때")
+            void 시작시간과_종료시간이_같음() {
+                // given
+                ReservationInsertRequest request = perfectRequest;
+                request.setEndTime(request.getStartTime()); // startTime과 endTime을 동일하게 설정
+
+                // when
+                ReservationException exception = assertThrows(ReservationException.class, () -> {
+                    reservationService.insertReservation(request);
+                });
+
+                // then
+                assertEquals(BaseResponseStatus.INVALID_RESERVATION_TIME_ORDER, exception.getBaseResponseStatus());
+            }
+
+            @Test
+            @DisplayName("startTime이 endTime보다 늦을 때")
+            void 시작시간이_종료시간보다_큼() {
+                // given
+                ReservationInsertRequest request = perfectRequest;
+                request.setEndTime("2025-10-02 09:00:00"); // startTime > endTime
+
+                // when
+                ReservationException exception = assertThrows(ReservationException.class, () -> {
+                    reservationService.insertReservation(request);
+                });
+
+                // then
+                assertEquals(BaseResponseStatus.INVALID_RESERVATION_TIME_ORDER, exception.getBaseResponseStatus());
+            }
+
             @Nested
             @DisplayName("회원 검증 실패")
             class ValidateMemberFailure {
