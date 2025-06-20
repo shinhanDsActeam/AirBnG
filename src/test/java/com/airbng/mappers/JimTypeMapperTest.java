@@ -48,8 +48,45 @@ class JimTypeMapperTest {
             assertEquals(2, cnt);
         }
 
-        @Test
+        @Nested
         @DisplayName("실패 - 일부 필드가 null인 경우")
+        class InsertJimTypeTestFailure {
+            @Test
+            @DisplayName("reservationId가 null인 경우")
+            @Transactional
+            void 예약필드_NULL() {
+                // Given
+                Long reservationId = null;
+                List<JimTypeCountResult> jimTypeCountResults = Arrays.asList(
+                        new JimTypeCountResult(1L, 2L),
+                        new JimTypeCountResult(2L, 3L)
+                );
+
+                // When, Then
+                assertThrows(DataIntegrityViolationException.class, () -> {
+                    jimTypeMapper.insertReservationJimTypes(reservationId, jimTypeCountResults);
+                });
+            }
+
+            @Test
+            @DisplayName("jimtypeId가 null인 경우")
+            @Transactional
+            void 짐타입_NULL() {
+                // Given
+                Long reservationId = 1L;
+                List<JimTypeCountResult> jimTypeCountResults = Arrays.asList(
+                        new JimTypeCountResult(null, 2L),
+                        new JimTypeCountResult(2L, 3L)
+                );
+
+                // When, Then
+                assertThrows(DataIntegrityViolationException.class, () -> {
+                    jimTypeMapper.insertReservationJimTypes(reservationId, jimTypeCountResults);
+                });
+            }
+        }
+    }
+
         @Transactional
         void 예약할_짐종류_추가_실패() {
             // Given
