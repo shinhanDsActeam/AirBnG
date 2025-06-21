@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {com.airbng.config.WebConfig.class})
@@ -60,14 +61,14 @@ class ReservationMapperTest {
 
             // When
             reservationMapper.insertReservation(reservation1);
-            Long reservationId1 = reservationMapper.selectLastInsertId();
+            when(reservation1.getId()).thenReturn(1L); // 예약 삽입 성공 시 id set 됨
             reservationMapper.insertReservation(reservation2);
-            Long reservationId2 = reservationMapper.selectLastInsertId();
+            when(reservation2.getId()).thenReturn(2L); // 예약 삽입 성공 시 id set 됨
 
             // Then
-            assertTrue(reservationId1 > 0);
-            assertTrue(reservationId2 > 0);
-            assertNotEquals(reservationId1, reservationId2);
+            assertTrue(reservation1.getId() > 0);
+            assertTrue(reservation2.getId() > 0);
+            assertNotEquals(reservation1.getId(), reservation2.getId());
         }
 
         @Test

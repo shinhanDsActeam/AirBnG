@@ -10,10 +10,9 @@
         )VALUES(
             #{dropperId}, #{keeperId}, #{startTime}, #{endTime}, 'PENDING'
         )
+        <selectKey keyProperty="id" resultType="Long" order="AFTER" >
+            SELECT LAST_INSERT_ID()
+        </selectKey>
     </insert>
-
-    <select id="selectLastInsertId" resultType="Long">
-        SELECT LAST_INSERT_ID()
-    </select>
 
 </mapper>

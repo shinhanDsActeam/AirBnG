@@ -164,8 +164,7 @@ class ReservationServiceTest {
             when(lockerMapper.isExistLocker(서울역_보관소.getLockerId())).thenReturn(true);
             when(lockerMapper.isLockerKeeper(서울역_보관소.getLockerId(), 보관왕.getMemberId())).thenReturn(true);
             when(jimTypeMapper.validateLockerJimTypes(서울역_보관소.getLockerId(), List.of(백팩.getJimTypeId(), 캐리어.getJimTypeId()), 2)).thenReturn(true);
-
-            when(reservationMapper.selectLastInsertId()).thenReturn(1L); // 예약 삽입 성공 시 1L 아이디 리턴
+            when(request.getId()).thenReturn(1L); // 예약 삽입 성공 시 id set 됨
             when(jimTypeMapper.insertReservationJimTypes(1L, request.getJimTypeCounts())).thenReturn(request.getJimTypeCounts().size());
 
             BaseResponseStatus status = reservationService.insertReservation(request);
@@ -283,7 +282,6 @@ class ReservationServiceTest {
                     when(memberMapper.isExistMember(맡김왕.getMemberId())).thenReturn(true);
                     when(lockerMapper.isExistLocker(서울역_보관소.getLockerId())).thenReturn(true);
                     when(lockerMapper.isLockerKeeper(서울역_보관소.getLockerId(), 보관왕.getMemberId())).thenReturn(true);
-                    when(reservationMapper.selectLastInsertId()).thenReturn(1L); // 예약 삽입 성공 시 1L 아이디 리턴
                 }
 
                 @Test
@@ -298,6 +296,8 @@ class ReservationServiceTest {
                     ));
 
                     // when
+                    when(request.getId()).thenReturn(1L); // 예약 삽입 성공 시 id set 됨
+                    when(request.getId()).thenReturn(1L); // 예약 삽입 성공 시 id set 됨
                     when(jimTypeMapper.validateLockerJimTypes(서울역_보관소.getLockerId(), List.of(백팩.getJimTypeId(), 캐리어.getJimTypeId(), 999L), 3))
                             .thenReturn(false);
 
@@ -320,6 +320,7 @@ class ReservationServiceTest {
                             new JimTypeCountResult(초대형캐리어.getJimTypeId(), 1L) // 존재하지 않는 짐타입 ID 추가
                     ));
                     // when
+                    when(request.getId()).thenReturn(1L); // 예약 삽입 성공 시 id set 됨
                     when(jimTypeMapper.validateLockerJimTypes(서울역_보관소.getLockerId(), List.of(백팩.getJimTypeId(), 캐리어.getJimTypeId(), 초대형캐리어.getJimTypeId()), 3))
                             .thenReturn(false);
 
@@ -338,6 +339,7 @@ class ReservationServiceTest {
                     ReservationInsertRequest request = perfectRequest;
 
                     // when
+                    when(request.getId()).thenReturn(1L); // 예약 삽입 성공 시 id set 됨
                     when(jimTypeMapper.validateLockerJimTypes(서울역_보관소.getLockerId(), List.of(백팩.getJimTypeId(), 캐리어.getJimTypeId()), 2))
                             .thenReturn(true);
 
