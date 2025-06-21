@@ -4,7 +4,7 @@ import com.airbng.common.exception.ImageException;
 import com.airbng.common.response.status.BaseResponseStatus;
 import com.airbng.domain.image.Image;
 import com.airbng.mappers.ImageMapper;
-import com.airbng.util.S3Util;
+import com.airbng.util.S3Utils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -16,7 +16,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class ImageServiceImpl implements ImageService {
     private final ImageMapper imageMapper;
-    private final S3Util s3Util;
+    private final S3Utils s3Utils;
 
     @Override
     public Image uploadProfileImage(MultipartFile file) {
@@ -27,7 +27,7 @@ public class ImageServiceImpl implements ImageService {
 
         String url = null;
         try {
-            url = s3Util.upload(file, path);
+            url = s3Utils.upload(file, path);
         } catch (IOException e) {
             throw new ImageException(BaseResponseStatus.UPLOAD_FAILED);
         }

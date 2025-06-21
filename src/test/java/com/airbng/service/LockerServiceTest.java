@@ -3,7 +3,7 @@ package com.airbng.service;
 import com.airbng.common.exception.LockerException;
 import com.airbng.dto.*;
 import com.airbng.mappers.LockerMapper;
-import com.airbng.util.S3Util;
+import com.airbng.util.S3Utils;
 import com.airbng.common.exception.ImageException;
 import com.airbng.common.exception.MemberException;
 import com.airbng.domain.base.Available;
@@ -42,7 +42,7 @@ class LockerServiceTest {
     private LockerMapper lockerMapper;
   
     @Mock
-    private S3Util s3Util;
+    private S3Utils s3Utils;
 
     @InjectMocks
     private LockerServiceImpl lockerService;

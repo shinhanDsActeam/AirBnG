@@ -19,7 +19,7 @@ import com.airbng.domain.base.ReservationState;
 import com.airbng.domain.image.Image;
 import com.airbng.dto.LockerInsertRequest;
 import com.airbng.dto.LockerTop5Response;
-import com.airbng.util.S3Util;
+import com.airbng.util.S3Utils;
 
 import static com.airbng.common.response.status.BaseResponseStatus.NOT_FOUND_LOCKER;
 import static com.airbng.common.response.status.BaseResponseStatus.NOT_FOUND_LOCKERDETAILS;
@@ -39,7 +39,7 @@ import static com.airbng.common.response.status.BaseResponseStatus.*;
 public class LockerServiceImpl implements LockerService {
 
     private final LockerMapper lockerMapper;
-    private final S3Util s3Util;
+    private final S3Utils s3Utils;
   
   
     @Override
@@ -129,7 +129,7 @@ public class LockerServiceImpl implements LockerService {
                 // 2. 업로드 및 예외 처리
                 String imageUrl;
                 try {
-                    imageUrl = s3Util.upload(file, path); // 확장자 검사 포함됨
+                    imageUrl = s3Utils.upload(file, path); // 확장자 검사 포함됨
                 } catch (IOException e) {
                     throw new ImageException(BaseResponseStatus.UPLOAD_FAILED); // 필요 시 추가 정의
                 }

@@ -16,7 +16,7 @@ import static com.airbng.common.response.status.BaseResponseStatus.INVALID_EXTEN
 
 @Component
 @RequiredArgsConstructor
-public class S3Util {
+public class S3Utils {
 
     private final AmazonS3Client amazonS3Client;
     private static final List<String> ALLOWED_EXTENSIONS = List.of("jpeg", "jpg", "png");
