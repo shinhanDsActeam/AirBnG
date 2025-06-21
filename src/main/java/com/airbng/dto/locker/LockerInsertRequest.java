@@ -1,4 +1,4 @@
-package com.airbng.dto;
+package com.airbng.dto.locker;
 
 import com.airbng.domain.base.Available;
 import com.fasterxml.jackson.annotation.JsonIgnore;

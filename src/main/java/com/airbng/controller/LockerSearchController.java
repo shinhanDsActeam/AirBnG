@@ -1,8 +1,8 @@
 package com.airbng.controller;
 
 import com.airbng.common.response.BaseResponse;
-import com.airbng.dto.LockerSearchRequest;
-import com.airbng.dto.LockerSearchResponse;
+import com.airbng.dto.locker.LockerSearchRequest;
+import com.airbng.dto.locker.LockerSearchResponse;
 import com.airbng.service.LockerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
