@@ -84,11 +84,11 @@
       <version>1.18.32</version> <!-- 최신 버전으로 사용 권장 -->
       <scope>provided</scope>
     </dependency>
-    
+
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-databind</artifactId>
-      <version>2.15.3</version>
+      <version>2.13.3</version>
     </dependency>
 
     <dependency>
@@ -206,7 +206,7 @@
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-test</artifactId>
-      <version>5.3.32</version> 
+      <version>5.3.32</version>
       <scope>test</scope>
     </dependency>
 
