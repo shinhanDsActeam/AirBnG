@@ -1,6 +1,7 @@
 package com.airbng.dto.reservation;
 
 import com.airbng.dto.jimType.JimTypeCountResult;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import java.util.List;
@@ -11,6 +12,8 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ReservationInsertRequest {
+    @JsonIgnore
+    private Long id;
     private Long dropperId; // 맡길 사람 ID
     private Long keeperId;  // 맡길 짐을 보관하는 사람 ID
     private Long lockerId;  // 맡길 짐을 보관하는 락커 ID

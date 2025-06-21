@@ -26,6 +26,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Arrays;
@@ -156,7 +157,8 @@ class ReservationServiceTest {
         @DisplayName("예약 등록 성공")
         void 예약_등록_성공() throws LockerException, MemberException {
             // given
-            ReservationInsertRequest request = perfectRequest;
+            ReservationInsertRequest request = Mockito.spy(perfectRequest);
+
 
             // when
             when(memberMapper.isExistMember(보관왕.getMemberId())).thenReturn(true);
@@ -164,9 +166,11 @@ class ReservationServiceTest {
             when(lockerMapper.isExistLocker(서울역_보관소.getLockerId())).thenReturn(true);
             when(lockerMapper.isLockerKeeper(서울역_보관소.getLockerId(), 보관왕.getMemberId())).thenReturn(true);
             when(jimTypeMapper.validateLockerJimTypes(서울역_보관소.getLockerId(), List.of(백팩.getJimTypeId(), 캐리어.getJimTypeId()), 2)).thenReturn(true);
-
-            when(reservationMapper.selectLastInsertId()).thenReturn(1L); // 예약 삽입 성공 시 1L 아이디 리턴
-            when(jimTypeMapper.insertReservationJimTypes(1L, request.getJimTypeCounts())).thenReturn(request.getJimTypeCounts().size());
+            Long insertedId = 1L; // stubbing
+            when(request.getId()).thenReturn(insertedId); // 예약 삽입 성공 시 id set 됨
+            List<JimTypeCountResult> jimTypeCounts = request.getJimTypeCounts(); // stubbing
+            when(jimTypeMapper.insertReservationJimTypes(insertedId, jimTypeCounts))
+                    .thenReturn(jimTypeCounts.size());
 
             BaseResponseStatus status = reservationService.insertReservation(request);
 
@@ -283,14 +287,14 @@ class ReservationServiceTest {
                     when(memberMapper.isExistMember(맡김왕.getMemberId())).thenReturn(true);
                     when(lockerMapper.isExistLocker(서울역_보관소.getLockerId())).thenReturn(true);
                     when(lockerMapper.isLockerKeeper(서울역_보관소.getLockerId(), 보관왕.getMemberId())).thenReturn(true);
-                    when(reservationMapper.selectLastInsertId()).thenReturn(1L); // 예약 삽입 성공 시 1L 아이디 리턴
                 }
 
                 @Test
                 @DisplayName("존재하지 않는 짐타입에 예약을 시도할 때")
                 void 존재하지_않는_짐타입() {
                     // given
-                    ReservationInsertRequest request = perfectRequest;
+                    ReservationInsertRequest request = Mockito.spy(perfectRequest);
+
                     request.setJimTypeCounts(Arrays.asList(
                             new JimTypeCountResult(백팩.getJimTypeId(), 1L),
                             new JimTypeCountResult(캐리어.getJimTypeId(), 3L),
@@ -298,6 +302,7 @@ class ReservationServiceTest {
                     ));
 
                     // when
+                    when(request.getId()).thenReturn(1L); // 예약 삽입 성공 시 id set 됨
                     when(jimTypeMapper.validateLockerJimTypes(서울역_보관소.getLockerId(), List.of(백팩.getJimTypeId(), 캐리어.getJimTypeId(), 999L), 3))
                             .thenReturn(false);
 
@@ -313,13 +318,14 @@ class ReservationServiceTest {
                 @DisplayName("보관소가 관리하지 않는 짐타입에 예약을 시도할 때")
                 void 보관소가_관리하지_않는_짐타입() {
                     // given
-                    ReservationInsertRequest request = perfectRequest;
+                    ReservationInsertRequest request = Mockito.spy(perfectRequest);
                     request.setJimTypeCounts(Arrays.asList(
                             new JimTypeCountResult(백팩.getJimTypeId(), 1L),
                             new JimTypeCountResult(캐리어.getJimTypeId(), 3L),
                             new JimTypeCountResult(초대형캐리어.getJimTypeId(), 1L) // 존재하지 않는 짐타입 ID 추가
                     ));
                     // when
+                    when(request.getId()).thenReturn(1L); // 예약 삽입 성공 시 id set 됨
                     when(jimTypeMapper.validateLockerJimTypes(서울역_보관소.getLockerId(), List.of(백팩.getJimTypeId(), 캐리어.getJimTypeId(), 초대형캐리어.getJimTypeId()), 3))
                             .thenReturn(false);
 
@@ -335,9 +341,10 @@ class ReservationServiceTest {
                 @DisplayName("요청한 짐 타입 개수와 실제 등록된 개수가 일치하지 않을 때")
                 void 짐타임_등록_실패() {
                     // given
-                    ReservationInsertRequest request = perfectRequest;
+                    ReservationInsertRequest request = Mockito.spy(perfectRequest);
 
                     // when
+                    when(request.getId()).thenReturn(1L); // 예약 삽입 성공 시 id set 됨
                     when(jimTypeMapper.validateLockerJimTypes(서울역_보관소.getLockerId(), List.of(백팩.getJimTypeId(), 캐리어.getJimTypeId()), 2))
                             .thenReturn(true);
 

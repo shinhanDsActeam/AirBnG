@@ -78,7 +78,7 @@ public class ReservationServiceImpl implements ReservationService {
 
         // 예약 엔티티 추가
         reservationMapper.insertReservation(request);
-        Long reservationId = reservationMapper.selectLastInsertId();
+        Long reservationId = request.getId();
         if (reservationId == null || reservationId < 1) {
             throw new ReservationException(BaseResponseStatus.CANNOT_CREATE_RESERVATION);
         }
