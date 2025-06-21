@@ -16,25 +16,13 @@ import static com.airbng.common.response.status.BaseResponseStatus.INVALID_EXTEN
 
 @Component
 @RequiredArgsConstructor
-public class S3Uploader {
+public class S3Utils {
 
     private final AmazonS3Client amazonS3Client;
     private static final List<String> ALLOWED_EXTENSIONS = List.of("jpeg", "jpg", "png");
 
     @Value("${aws.s3.bucket}")
     private String bucket;
-
-    private void validateFileExtension(MultipartFile file) {
-        String originalFilename = file.getOriginalFilename();
-        if (originalFilename == null || !originalFilename.contains(".")) {
-            throw new ImageException(INVALID_EXTENSIONS);
-        }
-
-        String extension = originalFilename.substring(originalFilename.lastIndexOf(".") + 1).toLowerCase();
-        if (!ALLOWED_EXTENSIONS.contains(extension)) {
-            throw new ImageException(INVALID_EXTENSIONS);
-        }
-    }
 
     public String upload(MultipartFile file, String filePath) throws IOException {
         validateFileExtension(file); // 확장자 검사 추가
@@ -48,5 +36,17 @@ public class S3Uploader {
         );
 
         return amazonS3Client.getUrl(bucket, filePath).toString();
+    }
+
+    private void validateFileExtension(MultipartFile file) {
+        String originalFilename = file.getOriginalFilename();
+        if (originalFilename == null || !originalFilename.contains(".")) {
+            throw new ImageException(INVALID_EXTENSIONS);
+        }
+
+        String extension = originalFilename.substring(originalFilename.lastIndexOf(".") + 1).toLowerCase();
+        if (!ALLOWED_EXTENSIONS.contains(extension)) {
+            throw new ImageException(INVALID_EXTENSIONS);
+        }
     }
 }
