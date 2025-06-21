@@ -3,17 +3,11 @@ package com.airbng.service;
 import com.airbng.common.exception.ImageException;
 import com.airbng.common.exception.LockerException;
 import com.airbng.common.exception.MemberException;
-import com.airbng.common.response.status.BaseResponseStatus;
 import com.airbng.domain.Locker;
 import com.airbng.domain.Member;
 import com.airbng.domain.base.ReservationState;
 import com.airbng.domain.image.Image;
-import com.airbng.dto.locker.LockerSearchRequest;
-import com.airbng.dto.locker.LockerSearchResponse;
-import com.airbng.dto.locker.LockerDetailResponse;
-import com.airbng.dto.locker.LockerInsertRequest;
-import com.airbng.dto.locker.LockerPreviewResult;
-import com.airbng.dto.locker.LockerTop5Response;
+import com.airbng.dto.locker.*;
 import com.airbng.mappers.LockerMapper;
 import com.airbng.util.S3Uploader;
 import lombok.RequiredArgsConstructor;
@@ -64,10 +58,10 @@ public class LockerServiceImpl implements LockerService {
     }
 
     @Override
-    public LockerTop5Response findTop5Locker(){
+    public LockerTop5Response findTop5Locker() {
         List<LockerPreviewResult> popularLockers = lockerMapper.findTop5Lockers(ReservationState.CONFIRMED);
 
-        if(popularLockers.isEmpty()) throw new LockerException(NOT_FOUND_LOCKER);
+        if (popularLockers.isEmpty()) throw new LockerException(NOT_FOUND_LOCKER);
 
         return LockerTop5Response.builder()
                 .lockers(popularLockers)
@@ -107,13 +101,13 @@ public class LockerServiceImpl implements LockerService {
         if (dto.getImages() != null && !dto.getImages().isEmpty()) {
 
             if (dto.getImages().size() > 5) {
-                throw new ImageException(BaseResponseStatus.EXCEED_IMAGE_COUNT);
+                throw new ImageException(EXCEED_IMAGE_COUNT);
             }
 
             for (MultipartFile file : dto.getImages()) {
 
                 if (file.isEmpty()) {
-                    throw new ImageException(BaseResponseStatus.EMPTY_FILE);
+                    throw new ImageException(EMPTY_FILE);
                 }
 
                 // 1. 파일명 + 경로 지정
@@ -126,7 +120,7 @@ public class LockerServiceImpl implements LockerService {
                 try {
                     imageUrl = s3Uploader.upload(file, path); // 확장자 검사 포함됨
                 } catch (IOException e) {
-                    throw new ImageException(BaseResponseStatus.UPLOAD_FAILED); // 필요 시 추가 정의
+                    throw new ImageException(UPLOAD_FAILED); // 필요 시 추가 정의
                 }
 
                 // 3. DB 저장

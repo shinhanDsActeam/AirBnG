@@ -3,7 +3,6 @@ package com.airbng.service;
 import com.airbng.common.exception.ImageException;
 import com.airbng.common.exception.LockerException;
 import com.airbng.common.exception.MemberException;
-import com.airbng.common.response.status.BaseResponseStatus;
 import com.airbng.domain.base.Available;
 import com.airbng.dto.jimType.JimTypeResult;
 import com.airbng.dto.locker.*;
@@ -245,7 +244,7 @@ class LockerServiceTest {
             lockerService.findUserById(lockerId);
         });
 
-        assertSame(BaseResponseStatus.NOT_FOUND_LOCKERDETAILS, exception.getBaseResponseStatus());
+        assertSame(NOT_FOUND_LOCKERDETAILS, exception.getBaseResponseStatus());
     }
 
     @Test

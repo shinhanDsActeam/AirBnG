@@ -17,9 +17,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static com.airbng.common.response.status.BaseResponseStatus.*;
 
 @Slf4j
 @Service
@@ -40,47 +41,47 @@ public class ReservationServiceImpl implements ReservationService {
         String startTime = request.getStartTime();
         String endTime = request.getEndTime();
         if (request.getStartTime() == null || request.getEndTime() == null) {
-            throw new ReservationException(BaseResponseStatus.INVALID_RESERVATION_TIME);
+            throw new ReservationException(INVALID_RESERVATION_TIME);
         }
 
         if (LocalDateTimeUtils.isStartTimeAfterEndTime(startTime, endTime)
                 || LocalDateTimeUtils.isStartTimeEqualEndTime(startTime, endTime)) {
-            throw new ReservationException(BaseResponseStatus.INVALID_RESERVATION_TIME_ORDER);
+            throw new ReservationException(INVALID_RESERVATION_TIME_ORDER);
         }
 
         // dropper와 keeper 존재 여부 확인
         boolean dropperFlag = memberMapper.isExistMember(request.getDropperId());
         if (!dropperFlag) {
-            throw new MemberException(BaseResponseStatus.NOT_FOUND_MEMBER);
+            throw new MemberException(NOT_FOUND_MEMBER);
         }
 
         boolean keeperFlag = memberMapper.isExistMember(request.getKeeperId());
         if (!keeperFlag) {
-            throw new MemberException(BaseResponseStatus.NOT_FOUND_MEMBER);
+            throw new MemberException(NOT_FOUND_MEMBER);
         }
 
         // dropper와 keeper가 동일한 경우 예외
         if (request.getDropperId().equals(request.getKeeperId())) {
-            throw new ReservationException(BaseResponseStatus.INVALID_RESERVATION_PARTICIPANTS);
+            throw new ReservationException(INVALID_RESERVATION_PARTICIPANTS);
         }
 
         // 락커 존재 여부 확인
         boolean lockerFlag = lockerMapper.isExistLocker(request.getLockerId());
         if (!lockerFlag) {
-            throw new LockerException(BaseResponseStatus.NOT_FOUND_LOCKER);
+            throw new LockerException(NOT_FOUND_LOCKER);
         }
 
         // keeper가 락커의 소유자인지 확인
         boolean isLockerKeeper = lockerMapper.isLockerKeeper(request.getLockerId(), request.getKeeperId());
         if (!isLockerKeeper) {
-            throw new LockerException(BaseResponseStatus.LOCKER_KEEPER_MISMATCH);
+            throw new LockerException(LOCKER_KEEPER_MISMATCH);
         }
 
         // 예약 엔티티 추가
         reservationMapper.insertReservation(request);
         Long reservationId = request.getId();
         if (reservationId == null || reservationId < 1) {
-            throw new ReservationException(BaseResponseStatus.CANNOT_CREATE_RESERVATION);
+            throw new ReservationException(CANNOT_CREATE_RESERVATION);
         }
 
         // 해당 보관소가 관리하는 짐타입들인지 검사
@@ -89,7 +90,7 @@ public class ReservationServiceImpl implements ReservationService {
                 .collect(Collectors.toList());
         boolean validateJimtype = jimTypeMapper.validateLockerJimTypes(request.getLockerId(), jimTypeIds, jimTypeIds.size());
         if (!validateJimtype) {
-            throw new JimTypeException(BaseResponseStatus.LOCKER_DOES_NOT_SUPPORT_JIMTYPE);
+            throw new JimTypeException(LOCKER_DOES_NOT_SUPPORT_JIMTYPE);
         }
 
 
@@ -98,10 +99,10 @@ public class ReservationServiceImpl implements ReservationService {
         // 요청한 짐 타입 개수와 실제 등록된 개수가 일치하지 않는 경우 예외
         // Mapper 에서 메서드가 실패하면 0을 반환
         if (cnt != request.getJimTypeCounts().size()) {
-            throw new ReservationException(BaseResponseStatus.INVALID_JIMTYPE_COUNT);
+            throw new ReservationException(INVALID_JIMTYPE_COUNT);
         }
 
-        return BaseResponseStatus.CREATED_RESERVATION;
+        return CREATED_RESERVATION;
     }
 
 }

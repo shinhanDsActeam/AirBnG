@@ -32,7 +32,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.Arrays;
 import java.util.List;
 
-import static com.airbng.common.response.status.BaseResponseStatus.CREATED_RESERVATION;
+import static com.airbng.common.response.status.BaseResponseStatus.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -175,7 +175,6 @@ class ReservationServiceTest {
             BaseResponseStatus status = reservationService.insertReservation(request);
 
             // then
-//            assertEquals(request.getJimTypeCounts().size(), 2);
             assertEquals(CREATED_RESERVATION, status);
         }
 
@@ -201,7 +200,7 @@ class ReservationServiceTest {
                 });
 
                 // then
-                assertEquals(BaseResponseStatus.NOT_FOUND_LOCKER, exception.getBaseResponseStatus());
+                assertEquals(NOT_FOUND_LOCKER, exception.getBaseResponseStatus());
             }
 
             @Test
@@ -217,7 +216,7 @@ class ReservationServiceTest {
                 });
 
                 // then
-                assertEquals(BaseResponseStatus.INVALID_RESERVATION_TIME_ORDER, exception.getBaseResponseStatus());
+                assertEquals(INVALID_RESERVATION_TIME_ORDER, exception.getBaseResponseStatus());
             }
 
             @Test
@@ -233,7 +232,7 @@ class ReservationServiceTest {
                 });
 
                 // then
-                assertEquals(BaseResponseStatus.INVALID_RESERVATION_TIME_ORDER, exception.getBaseResponseStatus());
+                assertEquals(INVALID_RESERVATION_TIME_ORDER, exception.getBaseResponseStatus());
             }
 
             @Nested
@@ -255,7 +254,7 @@ class ReservationServiceTest {
                     });
 
                     // then
-                    assertEquals(BaseResponseStatus.NOT_FOUND_MEMBER, exception.getBaseResponseStatus());
+                    assertEquals(NOT_FOUND_MEMBER, exception.getBaseResponseStatus());
                 }
 
                 @Test
@@ -273,14 +272,13 @@ class ReservationServiceTest {
                     });
 
                     // then
-                    assertEquals(BaseResponseStatus.INVALID_RESERVATION_PARTICIPANTS, exception.getBaseResponseStatus());
+                    assertEquals(INVALID_RESERVATION_PARTICIPANTS, exception.getBaseResponseStatus());
                 }
             }
 
             @Nested
             @DisplayName("짐타입 검증 실패")
             class ValidateJimTypesFailure {
-
                 @BeforeEach
                 void setUp() {
                     when(memberMapper.isExistMember(보관왕.getMemberId())).thenReturn(true);
@@ -311,7 +309,7 @@ class ReservationServiceTest {
                     });
 
                     // then
-                    assertEquals(BaseResponseStatus.LOCKER_DOES_NOT_SUPPORT_JIMTYPE, exception.getBaseResponseStatus());
+                    assertEquals(LOCKER_DOES_NOT_SUPPORT_JIMTYPE, exception.getBaseResponseStatus());
                 }
 
                 @Test
@@ -334,7 +332,7 @@ class ReservationServiceTest {
                     });
 
                     // then
-                    assertEquals(BaseResponseStatus.LOCKER_DOES_NOT_SUPPORT_JIMTYPE, exception.getBaseResponseStatus());
+                    assertEquals(LOCKER_DOES_NOT_SUPPORT_JIMTYPE, exception.getBaseResponseStatus());
                 }
 
                 @Test
@@ -355,7 +353,7 @@ class ReservationServiceTest {
                     });
 
                     // then
-                    assertEquals(BaseResponseStatus.INVALID_JIMTYPE_COUNT, exception.getBaseResponseStatus());
+                    assertEquals(INVALID_JIMTYPE_COUNT, exception.getBaseResponseStatus());
                 }
             }
         }
