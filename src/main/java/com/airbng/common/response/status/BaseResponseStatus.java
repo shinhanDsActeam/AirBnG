@@ -14,6 +14,7 @@ public enum BaseResponseStatus implements ResponseStatus{
     INVALID_FIELD(1002, HttpStatus.BAD_REQUEST.value(), "유효하지 않은 필드입니다."),
     MALFORMED_JSON_FIELD(1003, HttpStatus.BAD_REQUEST.value(), "요청 본문에 잘못된 형식의 필드가 포함되어 있습니다."),
     INVALID_JSON_EMPTY_FIELD(1004, HttpStatus.BAD_REQUEST.value(), "JSON 필드 타입 오류 - 필드의 값이 비어있거나 누락되었습니다."),
+    INVALID_DATETIME_FORMAT(1006, HttpStatus.BAD_REQUEST.value(), "날짜 형식이 올바르지 않습니다. (yyyy-MM-dd HH:mm:ss)"),
 
     /**
      * 2000 맴버 관련 코드
