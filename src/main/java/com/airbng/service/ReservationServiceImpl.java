@@ -9,10 +9,11 @@ import com.airbng.mappers.ReservationMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReentrantLock;
+import com.github.benmanes.caffeine.cache.Cache;
 
 import static com.airbng.common.response.status.BaseResponseStatus.NOT_FOUND_RESERVATION;
 
@@ -22,42 +23,36 @@ import static com.airbng.common.response.status.BaseResponseStatus.NOT_FOUND_RES
 public class ReservationServiceImpl implements ReservationService{
 
     private final ReservationMapper reservationMapper;
+    private final Cache<Long, ReentrantLock> reservationLocks;
 
-    /** 예약 락 선언  */
-    private final Map<Long, ReentrantLock> reservationLocks = new ConcurrentHashMap<>();
 
-    /**
-     * TODO
-     * 여기서 문제는 이제..
-     * 승인과 동시에 취소일때가 문제인데..그런데 말입니다..  (o)
-     * 예?? 생각이 안나요 어케하더라........................ . .. . . .. .. ..  .. .....  (o)
-     * 아 수수료 ... 정책이 있데  (o)
-     *  -- 예외처리 할 것---
-     * 1. 아 맞다 맞다!!!!! 완료상태와 취소 상태는 업데이트 안되게 막아야지!!!!!!!!!!!! <- 예외처리 (o)
-     * 2.
-     *
-     * */
     @Override
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public ReservationCancelResponse updateReservationState(Long reservationId) {
+
         /** 락 만듬 */
-        ReentrantLock lock = reservationLocks.computeIfAbsent(reservationId, k -> new ReentrantLock());
-        /** 릭 검 */
-        lock.lock();
+        ReentrantLock lock = reservationLocks.get(reservationId, key -> new ReentrantLock());
         try {
+            /** 릭 검 */
+            lock.lock();
             /** 요청 예약건의 존재여부 파악 */
             Reservation reservation = reservationMapper.findReservationById(reservationId);
+            if (reservation == null) {
+                throw new ReservationException(NOT_FOUND_RESERVATION);
+            }
             ChargeType chargeType = ChargeType.from(reservation.getStartTime());
             ReservationState state = reservation.getState();
             /** 취소, 완료상태는 상태 변경 불가 */
             state.isAvailableUpdate(state);
-            reservationMapper.updateReservationState(reservationId, ReservationState.CANCELLED);
+            reservationMapper.updateReservationState(reservationId,
+                    ReservationState.CANCELLED);
 
-            return ReservationCancelResponse.from(reservation,
-                    chargeType.discountAmount(),ReservationState.CANCELLED);
-        }catch (NullPointerException e){
-            throw new ReservationException(NOT_FOUND_RESERVATION);
-        }finally {
-            lock.unlock();
-        }
+             return ReservationCancelResponse.from(reservation,
+                     chargeType.discountAmount(),ReservationState.CANCELLED);
+
+            } finally{
+                lock.unlock();
+            }
     }
+
 }

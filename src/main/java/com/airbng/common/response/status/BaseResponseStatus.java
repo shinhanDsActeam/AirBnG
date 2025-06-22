@@ -36,6 +36,7 @@ public enum BaseResponseStatus implements ResponseStatus{
      */
     NOT_FOUND_RESERVATION(4000,HttpStatus.NOT_FOUND.value(), "예약정보를 찾을 수 없습니다."),
     CANNOT_UPDATE_STATE(4001,HttpStatus.BAD_REQUEST.value(), "예약 취소에 실패하였습니다."),
+    CANNOT_GET_RESERVATION_LOCK(4001,HttpStatus.BAD_REQUEST.value(), "예약 락 획득을 실패하였습니다."),
 
     /**
      * 5000 짐 타입 관련 코드
