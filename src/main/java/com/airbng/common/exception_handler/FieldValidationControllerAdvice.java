@@ -11,11 +11,13 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.airbng.common.response.status.BaseResponseStatus.INVALID_FIELD;
+import static com.airbng.common.response.status.BaseResponseStatus.INVALID_PARAMETER;
 
 @Slf4j
 @RestControllerAdvice(annotations = RestController.class)
@@ -40,6 +42,23 @@ public class FieldValidationControllerAdvice {
         return ResponseEntity
                 .status(INVALID_FIELD.getHttpStatus())
                 .body(new BaseResponse(INVALID_FIELD, build));
+    }
+
+    /** 바인딩 전에 발생하는 예외<br>
+     * -> 예외 자체는 validation 전에 발생*/
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<BaseErrorResponse>  handleTypeMismatchException(MethodArgumentTypeMismatchException ex) {
+        log.info("[FieldValidationControllerAdvice] MethodArgumentTypeMismatchException");
+
+        FieldValidationError build = FieldValidationError.builder()
+                .fieldName(ex.getName())
+                .rejectValue((String) ex.getValue())
+                .message(ex.getMessage())
+                .build();
+
+        return ResponseEntity
+                .status(INVALID_PARAMETER.getHttpStatus())
+                .body(new BaseErrorResponse(INVALID_PARAMETER, build));
     }
 
 }
