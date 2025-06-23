@@ -29,9 +29,9 @@ public enum BaseResponseStatus implements ResponseStatus{
     /**
      * 3000 락커 관련 코드
      */
-    NOT_FOUND_LOCKER(3000,HttpStatus.BAD_REQUEST.value(), "락커를 찾을 수 없습니다."),
-    NOT_FOUND_LOCKERDETAILS(3001,HttpStatus.BAD_REQUEST.value(), "락커를 찾을 수 없습니다."),
-    MEMBER_ALREADY_HAS_LOCKER(3002, HttpStatus.BAD_REQUEST.value(), "한 멤버당 하나의 보관소만 등록할 수 있습니다."),
+    NOT_FOUND_LOCKER(3001,HttpStatus.BAD_REQUEST.value(), "락커를 찾을 수 없습니다."),
+    NOT_FOUND_LOCKERDETAILS(3002,HttpStatus.BAD_REQUEST.value(), "락커를 찾을 수 없습니다."),
+    MEMBER_ALREADY_HAS_LOCKER(3003, HttpStatus.BAD_REQUEST.value(), "한 멤버당 하나의 보관소만 등록할 수 있습니다."),
     LOCKER_KEEPER_MISMATCH(3004, HttpStatus.BAD_REQUEST.value(), "선택한 보관소의 보관자 정보가 일치하지 않습니다."),
     /**
      * 4000 예약 관련 코드
@@ -46,10 +46,10 @@ public enum BaseResponseStatus implements ResponseStatus{
     /**
      * 5000 짐 타입 관련 코드
      */
-    INVALID_JIMTYPE(5000, HttpStatus.UNPROCESSABLE_ENTITY.value(), "존재하지 않는 짐 타입이 포함되어 있습니다."),
-    INVALID_JIMTYPE_COUNT(5001, HttpStatus.BAD_REQUEST.value(), "요청한 짐 타입 개수와 실제 등록된 개수가 일치하지 않습니다."),
-    LOCKER_DOES_NOT_SUPPORT_JIMTYPE(5002, HttpStatus.BAD_REQUEST.value(), "해당 보관소가 관리하지 않는 짐 타입입니다."),
-    DUPLICATE_JIMTYPE(5003, HttpStatus.BAD_REQUEST.value(), "중복된 짐 타입이 존재합니다."),
+    INVALID_JIMTYPE(5001, HttpStatus.UNPROCESSABLE_ENTITY.value(), "존재하지 않는 짐 타입이 포함되어 있습니다."),
+    INVALID_JIMTYPE_COUNT(5002, HttpStatus.BAD_REQUEST.value(), "요청한 짐 타입 개수와 실제 등록된 개수가 일치하지 않습니다."),
+    LOCKER_DOES_NOT_SUPPORT_JIMTYPE(5003, HttpStatus.BAD_REQUEST.value(), "해당 보관소가 관리하지 않는 짐 타입입니다."),
+    DUPLICATE_JIMTYPE(5004, HttpStatus.BAD_REQUEST.value(), "중복된 짐 타입이 존재합니다."),
     /**
      * 6000: image
      */
@@ -58,8 +58,11 @@ public enum BaseResponseStatus implements ResponseStatus{
     INVALID_EXTENSIONS(6003, HttpStatus.UNSUPPORTED_MEDIA_TYPE.value(),"허용되지 않는 파일 확장자입니다."),
     EXCEED_IMAGE_COUNT(6004, HttpStatus.PAYLOAD_TOO_LARGE.value(), "이미지 개수가 초과되었습니다. 최대 5개까지 업로드 가능합니다."),
 
-
-
+    /**
+     * 7000: 찜 관련 코드
+     */
+    DUPLICATE_ZZIM(7001, HttpStatus.BAD_REQUEST.value(), "이미 찜한 락커입니다."),
+    SELF_LOCKER_ZZIM(7002, HttpStatus.BAD_REQUEST.value(), "자신의 보관소는 찜할 수 없습니다."),
     ;
 
     private final int code;
