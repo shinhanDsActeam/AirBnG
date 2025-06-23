@@ -44,6 +44,11 @@ public class ReservationServiceImpl implements ReservationService {
                 memberId, role, state, nextCursorId, limit + 1 //다음 페이지 유무 확인
         );
 
+        // 초기 커서 ID 설정
+        if(nextCursorId == null) {
+            nextCursorId = -1L;
+        }
+
         // 예외 처리: 예약이 없을 경우
         if (reservations == null || reservations.isEmpty()) {
             throw new ReservationException(NOT_FOUND_RESERVATION);
