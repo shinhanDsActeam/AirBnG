@@ -1,19 +1,13 @@
 package com.airbng.service;
 
-import com.airbng.common.exception.LockerException;
-import com.airbng.dto.*;
-import com.airbng.mappers.LockerMapper;
-import com.airbng.util.S3Uploader;
 import com.airbng.common.exception.ImageException;
+import com.airbng.common.exception.LockerException;
 import com.airbng.common.exception.MemberException;
 import com.airbng.domain.base.Available;
-import com.airbng.dto.LockerInsertRequest;
-import com.airbng.common.response.status.BaseResponseStatus;
-import com.airbng.dto.LockerDetailResponse;
-import org.springframework.transaction.annotation.Transactional;
-import static org.junit.jupiter.api.Assertions.*;
-import com.airbng.dto.LockerPreviewResult;
-import com.airbng.dto.LockerTop5Response;
+import com.airbng.dto.jimType.JimTypeResult;
+import com.airbng.dto.locker.*;
+import com.airbng.mappers.LockerMapper;
+import com.airbng.util.S3Uploader;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -22,17 +16,17 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import java.util.List;
-import static com.airbng.common.response.status.BaseResponseStatus.NOT_FOUND_LOCKER;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+
 import java.io.IOException;
 import java.util.Collections;
+import java.util.List;
+
 import static com.airbng.common.response.status.BaseResponseStatus.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.when;
 
 
 @ExtendWith(MockitoExtension.class)  // JUnit5에서 Mockito 사용 시 필수
@@ -40,13 +34,13 @@ class LockerServiceTest {
 
     @Mock
     private LockerMapper lockerMapper;
-  
+
     @Mock
     private S3Uploader s3Uploader;
 
     @InjectMocks
     private LockerServiceImpl lockerService;
-  
+
     private LockerInsertRequest request;
 
     @BeforeEach
@@ -153,7 +147,7 @@ class LockerServiceTest {
         when(lockerMapper.findMemberId(1L)).thenReturn(0);
 
         MemberException exception = assertThrows(MemberException.class, () -> lockerService.registerLocker(request));
-        assertEquals(MEMBER_NOT_FOUND, exception.getBaseResponseStatus());
+        assertEquals(NOT_FOUND_MEMBER, exception.getBaseResponseStatus());
     }
 
     @Test
@@ -237,7 +231,7 @@ class LockerServiceTest {
         assertEquals(2, result.getImages().size());
         assertEquals("img1.jpg", result.getImages().get(0));
     }
-  
+
     @DisplayName("보관소 상세 결과 없음 (예외발생)")
     @Test
     void findUserById_결과없음_예외발생() {
@@ -250,7 +244,7 @@ class LockerServiceTest {
             lockerService.findUserById(lockerId);
         });
 
-        assertSame(BaseResponseStatus.NOT_FOUND_LOCKERDETAILS, exception.getBaseResponseStatus());
+        assertSame(NOT_FOUND_LOCKERDETAILS, exception.getBaseResponseStatus());
     }
 
     @Test

@@ -1,6 +1,7 @@
 package com.airbng.domain.jimtype;
 
 
+import com.airbng.domain.Locker;
 import com.airbng.domain.Reservation;
 import com.airbng.domain.base.BaseTime;
 import lombok.*;
@@ -13,9 +14,9 @@ import org.springframework.lang.NonNull;
 @Builder
 public class LockerJimType extends BaseTime {
     @NonNull
-    private Long reservationJimTypeId;
+    private Long lockerJimTypeId;
     @NonNull
     private JimType jimType;
     @NonNull
-    private Reservation reservation;
+    private Locker locker;
 }

@@ -1,7 +1,6 @@
 package com.airbng.service;
 
 import com.airbng.common.exception.ImageException;
-import com.airbng.common.response.status.BaseResponseStatus;
 import com.airbng.domain.image.Image;
 import com.airbng.mappers.ImageMapper;
 import com.airbng.util.S3Uploader;
@@ -11,6 +10,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.UUID;
+
+import static com.airbng.common.response.status.BaseResponseStatus.UPLOAD_FAILED;
 
 @Service
 @RequiredArgsConstructor
@@ -29,7 +30,7 @@ public class ImageServiceImpl implements ImageService {
         try {
             url = s3Uploader.upload(file, path);
         } catch (IOException e) {
-            throw new ImageException(BaseResponseStatus.UPLOAD_FAILED);
+            throw new ImageException(UPLOAD_FAILED);
         }
 
         Image image = Image.builder()
