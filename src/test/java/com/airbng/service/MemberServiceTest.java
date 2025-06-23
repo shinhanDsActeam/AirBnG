@@ -2,7 +2,9 @@ package com.airbng.service;
 
 import com.airbng.common.exception.MemberException;
 import com.airbng.domain.Member;
+import com.airbng.domain.base.BaseStatus;
 import com.airbng.domain.image.Image;
+import com.airbng.dto.MemberLoginResponse;
 import com.airbng.dto.MemberSignupRequest;
 import com.airbng.mappers.MemberMapper;
 import org.junit.jupiter.api.DisplayName;
@@ -181,4 +183,81 @@ class MemberServiceTest {
         //then
         verify(memberMapper).insertMember(ArgumentMatchers.any(Member.class));
     }
+
+    @Test
+    @DisplayName("로그인 성공 시 MemberLoginResponse 반환")
+    void 로그인_성공() {
+        // given
+        String email = "valid@email.com";
+        String password = "Password1";
+
+        Member fakeMember = Member.builder()
+                .memberId(10L)
+                .email("valid@email.com")
+                .name("박재구")
+                .phone("010-1111-2222")
+                .nickname("재구")
+                .password("Password1")
+                .status(BaseStatus.ACTIVE)
+                .profileImage(Image.withId(1L))  // ✅ Image 객체도 넣어야 함
+                .build();
+
+//        Member fakeMember = new Member();
+//        fakeMember.setMemberId(10L);
+//        fakeMember.setEmail(email);
+//        fakeMember.setNickname("재구");
+
+        // when
+        when(memberMapper.findByEmailAndPassword(email, password)).thenReturn(fakeMember);
+
+        // then
+        MemberLoginResponse response = memberService.login(email, password);
+        assertEquals(10L, response.getMemberId());
+        assertEquals("valid@email.com", response.getEmail());
+        assertEquals("재구", response.getNickname());
+    }
+
+
+    @Test
+    @DisplayName("로그인 실패 시 INVALID_MEMBER 예외 발생")
+    void 로그인_실패() {
+        // given
+        String email = "notfound@email.com";
+        String password = "wrongPassword";
+
+        // when
+        when(memberMapper.findByEmailAndPassword(email, password)).thenReturn(null);
+
+        // then
+        MemberException exception = assertThrows(MemberException.class, () -> {
+            memberService.login(email, password);
+        });
+        assertEquals(INVALID_MEMBER, exception.getBaseResponseStatus());
+    }
+
+    @Test
+    @DisplayName("로그인 시 이메일 형식이 잘못되면 INVALID_EMAIL 예외 발생")
+    void 로그인_이메일_형식_오류들_검사() {
+        String[] invalidEmails = {
+                "user@",
+                "@domain.com",
+                "user@hi..com",
+                "user@domain.com.",
+                ".user@domain.com",
+                "user@domain_com",
+                "user@domain.c",
+                "user@domain.abcdefghi",
+                " ",
+                null
+        };
+
+        for (String email : invalidEmails) {
+            System.out.println("테스트 중인 이메일: " + email);
+            MemberException exception = assertThrows(MemberException.class, () -> {
+                memberService.login(email, "Password1234!");
+            });
+            assertEquals(INVALID_EMAIL, exception.getBaseResponseStatus(), "실패한 이메일: " + email);
+        }
+    }
+
 }
