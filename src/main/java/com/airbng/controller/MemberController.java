@@ -2,6 +2,7 @@ package com.airbng.controller;
 
 
 import com.airbng.common.response.BaseResponse;
+import com.airbng.dto.MemberMyPageResult;
 import com.airbng.dto.MemberSignupRequest;
 import com.airbng.service.MemberService;
 import lombok.RequiredArgsConstructor;
@@ -32,5 +33,14 @@ public class MemberController {
         boolean exists = memberService.emailCheck(email);
         String message = exists ? "이미 사용 중인 이메일" : "사용 가능한 이메일";
         return ResponseEntity.ok(new BaseResponse<>(message));
+    }
+
+    @GetMapping
+    public BaseResponse<MemberMyPageResult> findUserById(
+            @RequestParam Long memberId
+    ) {
+        MemberMyPageResult result = memberService.findUserById(memberId);
+
+        return new BaseResponse<>(result);
     }
 }

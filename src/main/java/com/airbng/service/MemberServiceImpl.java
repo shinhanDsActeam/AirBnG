@@ -1,11 +1,10 @@
 package com.airbng.service;
 
-import com.airbng.common.exception.ImageException;
 import com.airbng.common.exception.MemberException;
-import com.airbng.common.response.status.BaseResponseStatus;
 import com.airbng.domain.Member;
 import com.airbng.domain.base.BaseStatus;
 import com.airbng.domain.image.Image;
+import com.airbng.dto.MemberMyPageResult;
 import com.airbng.dto.MemberSignupRequest;
 import com.airbng.mappers.MemberMapper;
 import lombok.RequiredArgsConstructor;
@@ -71,5 +70,24 @@ public class MemberServiceImpl implements MemberService {
     private boolean isValidEmail(String email) {
         //@앞의 문자 1개이상, @ 뒤에 문자+ . + 2~6자(com, net, co,kr , email)
         return email != null && email.matches("^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,6}$");
+    }
+
+    @Override
+    public MemberMyPageResult findUserById(Long memberId) {
+        MemberMyPageResult result = memberMapper.findUserById(memberId);
+
+        if (result == null) throw new MemberException(MEMBER_NOT_FOUND);
+
+        MemberMyPageResult response =  MemberMyPageResult.builder()
+                .memberId(result.getMemberId())
+                .email(result.getEmail())
+                .name(result.getName())
+                .phone(result.getPhone())
+                .nickname(result.getNickname())
+                .profileImageId(result.getProfileImageId())
+                .url(result.getUrl())
+                .build();
+
+        return response;
     }
 }
