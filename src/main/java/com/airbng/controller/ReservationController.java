@@ -15,29 +15,24 @@ import org.springframework.web.bind.annotation.*;
 public class ReservationController {
 
     private final ReservationService reservationService;
+
     // 예약 등록
     @PostMapping
     public BaseResponse<String> insertReservation(@RequestBody ReservationInsertRequest request) {
         return new BaseResponse<>(reservationService.insertReservation(request));
     }
 
+    // 예약 조회 + 페이징 처리
     @GetMapping
     public BaseResponse<ReservationPaging> findAllReservationById(
             @RequestParam Boolean isDropper,
             @RequestParam Long memberId,
             @RequestParam(required = false) String state,
-            @RequestParam("cursorId") Long cursorId,
+            @RequestParam("nextCursorId") Long nextCursorId,
             @RequestParam("limit") Long limit
     ) {
-//        String role = isDropper ? "DROPPER" : "KEEPER";
-//        List<ReservationSearchResponse> reservations = reservationService.findAllReservationById(memberId, role, state, cursorId, limit);
-//
-//        return ResponseEntity.ok(reservations);
-
-
         String role = isDropper ? "DROPPER" : "KEEPER";
-
-        ReservationPaging response = reservationService.findAllReservationById(memberId, role, state, cursorId, limit);
+        ReservationPaging response = reservationService.findAllReservationById(memberId, role, state, nextCursorId, limit);
 
         return new BaseResponse<>(response); // 이렇게 객체로 감싼 채로 반환
     }

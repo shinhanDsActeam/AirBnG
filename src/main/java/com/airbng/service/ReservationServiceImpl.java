@@ -34,6 +34,7 @@ public class ReservationServiceImpl implements ReservationService {
     private final MemberMapper memberMapper;
     private final LockerMapper lockerMapper;
 
+    //예약 조회 + 페이징 처리
     @Override
     public ReservationPaging findAllReservationById(Long memberId, String role, String state, Long nextCursorId, Long limit) {
         log.info("Finding reservation by memberId: {}, role: {}, state: {}, nextCursorId: {}, limit:{} ",
@@ -74,8 +75,7 @@ public class ReservationServiceImpl implements ReservationService {
     }
 
 
-
-        // 예약 등록
+     // 예약 등록
     @Override
     @Transactional // 짐타입 등록 실패한 경우 예약 등록까지 롤백
     public BaseResponseStatus insertReservation(ReservationInsertRequest request) {

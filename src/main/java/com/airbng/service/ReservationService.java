@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 @Service
 public interface ReservationService {
 
+    // 예약 조회 + 페이징 처리
     ReservationPaging findAllReservationById(Long memberId, String role, String state, Long nextCursorId, Long limit);
 
     // 예약 등록
