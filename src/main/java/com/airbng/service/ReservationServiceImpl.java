@@ -5,6 +5,7 @@ import com.airbng.common.exception.LockerException;
 import com.airbng.common.exception.MemberException;
 import com.airbng.common.exception.ReservationException;
 import com.airbng.common.response.status.BaseResponseStatus;
+import com.airbng.dto.ReservationPaging;
 import com.airbng.dto.ReservationSearchResponse;
 import com.airbng.dto.jimType.JimTypeCountResult;
 import com.airbng.dto.reservation.ReservationInsertRequest;
@@ -18,9 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import static com.airbng.common.response.status.BaseResponseStatus.*;
@@ -35,39 +34,46 @@ public class ReservationServiceImpl implements ReservationService {
     private final MemberMapper memberMapper;
     private final LockerMapper lockerMapper;
 
-
     @Override
-    public List<ReservationSearchResponse> findAllReservationById(Long memberId, String role, String state, Long cursorId) {
-        log.info("Finding reservation by memberId: {}, role: {}, state: {}, cursorId: {} ", memberId, role, state, cursorId);
+    public ReservationPaging findAllReservationById(Long memberId, String role, String state, Long nextCursorId, Long limit) {
+        log.info("Finding reservation by memberId: {}, role: {}, state: {}, nextCursorId: {}, limit:{} ",
+                memberId, role, state, nextCursorId, limit);
 
-//        // 예외처리 : 파라미터 유효성 검사
-//        if (memberId == null || role == null || role.isEmpty()) {
-//            throw new ReservationException(INVALID_RESERVATION_REQUEST);
-//        }
-
-        Map<String, Object> params = new HashMap<>();
-        params.put("memberId", memberId);
-        params.put("role", role);
-
-        // state가 null이거나 빈 문자열인 경우, state 추가하지 않음
-        if (state != null && !state.isEmpty()) {
-            params.put("state", state);
-        }
-
-        List<ReservationSearchResponse> reservations = reservationMapper.findAllReservationById(params);
+        List<ReservationSearchResponse> reservations = reservationMapper.findAllReservationById(
+                memberId, role, state, nextCursorId, limit + 1 //다음 페이지 유무 확인
+        );
 
         // 예외 처리: 예약이 없을 경우
         if (reservations == null || reservations.isEmpty()) {
             throw new ReservationException(NOT_FOUND_RESERVATION);
         }
 
+        boolean hasNextPage = reservations.size() > limit;
+        List<ReservationSearchResponse> content = reservations.stream()
+                .limit(limit)
+                .collect(Collectors.toList());
+
         // role을 응답 DTO에 표시
-        for (ReservationSearchResponse dto : reservations) {
+        for (ReservationSearchResponse dto : content) {
             dto.setRole(role.toUpperCase()); // KEEPER or DROPPER
         }
 
-        return reservations;
+        if (hasNextPage && !content.isEmpty()) {
+            nextCursorId = content.get(content.size() - 1).getReservationId();
+        } else {
+            nextCursorId = -1L;  // 더 이상 페이지가 없으면 -1로 설정
+        }
+
+        ReservationPaging paging = ReservationPaging.builder()
+                .reservations(content)
+                .nextCursorId(nextCursorId)
+                .hasNextPage(hasNextPage)
+                .totalCount(reservationMapper.findReservationByMemberId(memberId, role))
+                .build();
+        return paging;
     }
+
+
 
         // 예약 등록
     @Override
