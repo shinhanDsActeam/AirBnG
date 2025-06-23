@@ -1,5 +1,7 @@
 package com.airbng.config;
 
+import com.airbng.interceptor.RequestRateLimitInterceptor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -11,7 +13,10 @@ import org.springframework.web.servlet.config.annotation.*;
 @EnableWebMvc
 @ComponentScan(basePackages = "com.airbng")
 @EnableTransactionManagement
+@RequiredArgsConstructor
 public class WebConfig implements WebMvcConfigurer {
+
+    private final RequestRateLimitInterceptor rateLimitInterceptor;
 
     @Override
     public void configureViewResolvers(ViewResolverRegistry registry) {
@@ -28,6 +33,15 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addResourceHandler("swagger-ui.html")
                 .addResourceLocations("classpath:/META-INF/resources/");
 
+    }
+
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        // 요청 속도 제한 인터셉터 등록
+        registry.addInterceptor(rateLimitInterceptor)
+//                .addPathPatterns("/**") // 모든 경로에 적용
+                .addPathPatterns("/zzim/**", "/lockers/**")
+                .excludePathPatterns("/swagger-ui/**", "/v3/api-docs/**"); // Swagger 관련 경로 제외
     }
 
     //이미지 파일 처리
