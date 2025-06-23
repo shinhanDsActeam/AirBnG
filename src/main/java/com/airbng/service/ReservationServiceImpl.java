@@ -5,10 +5,10 @@ import com.airbng.common.exception.LockerException;
 import com.airbng.common.exception.MemberException;
 import com.airbng.common.exception.ReservationException;
 import com.airbng.common.response.status.BaseResponseStatus;
-import com.airbng.dto.ReservationPaging;
-import com.airbng.dto.ReservationSearchResponse;
 import com.airbng.dto.jimType.JimTypeCountResult;
 import com.airbng.dto.reservation.ReservationInsertRequest;
+import com.airbng.dto.reservation.ReservationPaging;
+import com.airbng.dto.reservation.ReservationSearchResponse;
 import com.airbng.mappers.JimTypeMapper;
 import com.airbng.mappers.LockerMapper;
 import com.airbng.mappers.MemberMapper;
@@ -49,6 +49,7 @@ public class ReservationServiceImpl implements ReservationService {
             throw new ReservationException(NOT_FOUND_RESERVATION);
         }
 
+        //hasNextPage 값 설정 : 다음 페이지 유무
         boolean hasNextPage = reservations.size() > limit;
         List<ReservationSearchResponse> content = reservations.stream()
                 .limit(limit)
@@ -59,6 +60,7 @@ public class ReservationServiceImpl implements ReservationService {
             dto.setRole(role.toUpperCase()); // KEEPER or DROPPER
         }
 
+        // 다음 커서 ID 설정
         if (hasNextPage && !content.isEmpty()) {
             nextCursorId = content.get(content.size() - 1).getReservationId();
         } else {
@@ -74,8 +76,7 @@ public class ReservationServiceImpl implements ReservationService {
         return paging;
     }
 
-
-     // 예약 등록
+    // 예약 등록
     @Override
     @Transactional // 짐타입 등록 실패한 경우 예약 등록까지 롤백
     public BaseResponseStatus insertReservation(ReservationInsertRequest request) {

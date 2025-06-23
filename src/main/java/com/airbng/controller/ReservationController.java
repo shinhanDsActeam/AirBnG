@@ -1,8 +1,8 @@
 package com.airbng.controller;
 
 import com.airbng.common.response.BaseResponse;
-import com.airbng.dto.ReservationPaging;
 import com.airbng.dto.reservation.ReservationInsertRequest;
+import com.airbng.dto.reservation.ReservationPaging;
 import com.airbng.service.ReservationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,9 +31,11 @@ public class ReservationController {
             @RequestParam("nextCursorId") Long nextCursorId,
             @RequestParam("limit") Long limit
     ) {
+
         String role = isDropper ? "DROPPER" : "KEEPER";
         ReservationPaging response = reservationService.findAllReservationById(memberId, role, state, nextCursorId, limit);
 
         return new BaseResponse<>(response); // 이렇게 객체로 감싼 채로 반환
     }
+
 }

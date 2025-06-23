@@ -1,4 +1,4 @@
-package com.airbng.dto;
+package com.airbng.dto.reservation;
 
 import lombok.*;
 

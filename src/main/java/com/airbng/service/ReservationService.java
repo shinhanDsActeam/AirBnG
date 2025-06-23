@@ -1,8 +1,8 @@
 package com.airbng.service;
 
 import com.airbng.common.response.status.BaseResponseStatus;
-import com.airbng.dto.ReservationPaging;
 import com.airbng.dto.reservation.ReservationInsertRequest;
+import com.airbng.dto.reservation.ReservationPaging;
 import org.springframework.stereotype.Service;
 
 @Service

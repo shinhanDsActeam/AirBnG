@@ -15,20 +15,21 @@
         </selectKey>
     </insert>
 
-    <resultMap id="ReservationSearch" type="com.airbng.dto.ReservationSearchResponse">
+
+    <resultMap id="ReservationSearch" type="com.airbng.dto.reservation.ReservationSearchResponse">
         <result property="reservationId" column="reservation_id" />
         <result property="state" column="state" />
         <result property="keeperId" column="keeper_id" />
         <result property="dropperId" column="dropper_id" />
-
     </resultMap>
 
+    <!-- 예약 목록 조회 -->
     <select id="findAllReservationById" resultMap="ReservationSearch">
         SELECT
-            r.reservation_id,
-            r.state,
-            r.keeper_id,
-            r.dropper_id
+        r.reservation_id,
+        r.state,
+        r.keeper_id,
+        r.dropper_id
         FROM Reservation r
         <!-- 동적 JOIN -->
         <choose>
@@ -52,13 +53,14 @@
                 AND r.state = #{state}
             </if>
             <if test="nextCursorId != null">
-                AND r.reservation_id &lt; #{nextCursorId} <!-- &gt;는 부등호 '>'를 의미-->
+                AND r.reservation_id &lt; #{nextCursorId} <!-- &lt;는 부등호 '<'를 의미-->
             </if>
-            <!--최신 보관소 보여주기 위해서 내림차순 + cursorId보다 작은 id를 출력 (cursorId는 높은 숫자부터 내려가야함)-->
+            <!--최신 보관소 보여주기 위해서 내림차순 + nextCursorId보다 작은 id를 출력 (nextCursorId는 높은 숫자부터 내려가야함)-->
         </where>
         GROUP BY r.reservation_id ORDER BY r.reservation_id desc LIMIT #{limit}
     </select>
 
+    <!-- 예약 건수 조회 -->
     <select id="findReservationByMemberId">
         SELECT COUNT(*)
         FROM Reservation r
@@ -70,4 +72,5 @@
         </if>
         WHERE m.member_id = #{memberId}
     </select>
+
 </mapper>
