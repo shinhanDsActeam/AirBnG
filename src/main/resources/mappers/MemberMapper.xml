@@ -26,4 +26,9 @@
     <select id="findByPhone" parameterType="String" resultType="boolean">
         SELECT EXISTS(SELECT 1 FROM Member WHERE phone = #{phone})
     </select>
+    <!-- 맴버 존재 확인 -->
+    <select id="findById" parameterType="Long" resultType="boolean">
+        SELECT EXISTS(SELECT 1 FROM Member WHERE member_id = #{memberId})
+    </select>
+
 </mapper>

@@ -6,5 +6,5 @@ import org.apache.ibatis.annotations.Param;
 
 public interface ReservationMapper {
     void updateReservationState(@Param("reservationId")Long reservationId, @Param("state")ReservationState state);
-    Reservation findReservationById(Long reservationId);
+    Reservation findReservationWithDropperById(Long reservationId);
 }

@@ -9,4 +9,5 @@ public interface MemberMapper {
     boolean findByEmail(String email);
     boolean findByNickname(String nickname);
     boolean findByPhone(String phone);
+    boolean findById(Long memberId);
 }
