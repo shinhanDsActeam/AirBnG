@@ -1,8 +1,6 @@
 package com.airbng.service;
 
-import com.airbng.common.exception.ImageException;
 import com.airbng.common.exception.MemberException;
-import com.airbng.common.response.status.BaseResponseStatus;
 import com.airbng.domain.Member;
 import com.airbng.domain.base.BaseStatus;
 import com.airbng.domain.image.Image;
@@ -15,7 +13,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-
 
 import static com.airbng.common.response.status.BaseResponseStatus.*;
 

@@ -15,7 +15,7 @@ import org.springframework.lang.NonNull;
 @AllArgsConstructor
 @Builder
 public class LockerImage extends BaseTime {
-    @NonNull
+//    @NonNull
     private Long lockerImageId;
     @NonNull
     private Locker locker;
