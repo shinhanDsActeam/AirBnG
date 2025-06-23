@@ -5,6 +5,7 @@ import com.airbng.common.exception.LockerException;
 import com.airbng.common.exception.MemberException;
 import com.airbng.common.exception.ReservationException;
 import com.airbng.common.response.status.BaseResponseStatus;
+import com.airbng.dto.ReservationSearchResponse;
 import com.airbng.dto.jimType.JimTypeCountResult;
 import com.airbng.dto.reservation.ReservationInsertRequest;
 import com.airbng.mappers.JimTypeMapper;
@@ -17,7 +18,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static com.airbng.common.response.status.BaseResponseStatus.*;
@@ -26,12 +29,47 @@ import static com.airbng.common.response.status.BaseResponseStatus.*;
 @Service
 @RequiredArgsConstructor
 public class ReservationServiceImpl implements ReservationService {
+
     private final ReservationMapper reservationMapper;
     private final JimTypeMapper jimTypeMapper;
     private final MemberMapper memberMapper;
     private final LockerMapper lockerMapper;
 
-    // 예약 등록
+
+    @Override
+    public List<ReservationSearchResponse> findAllReservationById(Long memberId, String role, String state, Long cursorId) {
+        log.info("Finding reservation by memberId: {}, role: {}, state: {}, cursorId: {} ", memberId, role, state, cursorId);
+
+//        // 예외처리 : 파라미터 유효성 검사
+//        if (memberId == null || role == null || role.isEmpty()) {
+//            throw new ReservationException(INVALID_RESERVATION_REQUEST);
+//        }
+
+        Map<String, Object> params = new HashMap<>();
+        params.put("memberId", memberId);
+        params.put("role", role);
+
+        // state가 null이거나 빈 문자열인 경우, state 추가하지 않음
+        if (state != null && !state.isEmpty()) {
+            params.put("state", state);
+        }
+
+        List<ReservationSearchResponse> reservations = reservationMapper.findAllReservationById(params);
+
+        // 예외 처리: 예약이 없을 경우
+        if (reservations == null || reservations.isEmpty()) {
+            throw new ReservationException(NOT_FOUND_RESERVATION);
+        }
+
+        // role을 응답 DTO에 표시
+        for (ReservationSearchResponse dto : reservations) {
+            dto.setRole(role.toUpperCase()); // KEEPER or DROPPER
+        }
+
+        return reservations;
+    }
+
+        // 예약 등록
     @Override
     @Transactional // 짐타입 등록 실패한 경우 예약 등록까지 롤백
     public BaseResponseStatus insertReservation(ReservationInsertRequest request) {
@@ -104,5 +142,6 @@ public class ReservationServiceImpl implements ReservationService {
 
         return CREATED_RESERVATION;
     }
+
 
 }
