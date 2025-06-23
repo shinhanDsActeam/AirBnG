@@ -26,18 +26,18 @@
 
     <select id="findReservationWithDropperById" parameterType="Long" resultMap="ReservationWithDropperMap">
         SELECT
-        r.reservation_id,
-        r.state,
-        r.start_time,
-        r.end_time,
+            r.reservation_id,
+            r.state,
+            r.start_time,
+            r.end_time,
 
-        d.member_id AS dropper_id,
-        d.email AS dropper_email,
-        d.name AS dropper_name,
-        d.phone AS dropper_phone,
-        d.nickname AS dropper_nickname,
-        d.password AS dropper_password,
-        d.status AS dropper_status
+            d.member_id AS dropper_id,
+            d.email AS dropper_email,
+            d.name AS dropper_name,
+            d.phone AS dropper_phone,
+            d.nickname AS dropper_nickname,
+            d.password AS dropper_password,
+            d.status AS dropper_status
 
         FROM reservation r
         JOIN member d ON r.dropper_id = d.member_id

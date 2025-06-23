@@ -1,5 +1,6 @@
 package com.airbng.service;
 
+import com.airbng.common.exception.LockerException;
 import com.airbng.common.exception.MemberException;
 import com.airbng.common.exception.ReservationException;
 import com.airbng.domain.Member;
@@ -25,7 +26,7 @@ import org.mockito.quality.Strictness;
 import java.time.LocalDateTime;
 import java.util.concurrent.locks.ReentrantLock;
 
-import static com.airbng.common.response.status.BaseResponseStatus.NOT_FOUND_RESERVATION;
+import static com.airbng.common.response.status.BaseResponseStatus.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
@@ -155,12 +156,15 @@ class ReservationCancelServiceTest {
             when(reservationMapper.findReservationWithDropperById(reservationId)).thenReturn(null);
             when(memberMapper.findById(memberId)).thenReturn(true);
 
-            // when & then
+            // when
             ReservationException exception = assertThrows(ReservationException.class, () ->
                     reservationService.updateReservationState(reservationId, memberId)
             );
 
+            // then
+            assertEquals(NOT_FOUND_RESERVATION, exception.getBaseResponseStatus());
             assertEquals(NOT_FOUND_RESERVATION.getMessage(), exception.getMessage());
+
         }
 
         @Test
@@ -182,10 +186,14 @@ class ReservationCancelServiceTest {
             when(reservationMapper.findReservationWithDropperById(reservationId)).thenReturn(reservation);
             when(memberMapper.findById(memberId)).thenReturn(true);
 
-            // when & then
-            assertThrows(ReservationException.class, () ->
+            // when
+            ReservationException exception = assertThrows(ReservationException.class, () ->
                     reservationService.updateReservationState(reservationId, memberId)
             );
+
+            // then
+            assertEquals(CANNOT_UPDATE_STATE, exception.getBaseResponseStatus());
+            assertEquals(CANNOT_UPDATE_STATE.getMessage(), exception.getMessage());
         }
 
         @Test
@@ -207,10 +215,14 @@ class ReservationCancelServiceTest {
             when(reservationMapper.findReservationWithDropperById(reservationId)).thenReturn(reservation);
             when(memberMapper.findById(memberId)).thenReturn(true);
 
-            // when & then
-            assertThrows(ReservationException.class, () ->
+            // when
+            ReservationException exception = assertThrows(ReservationException.class, () ->
                     reservationService.updateReservationState(reservationId, memberId)
             );
+
+            // then
+            assertEquals(CANNOT_UPDATE_STATE, exception.getBaseResponseStatus());
+            assertEquals(CANNOT_UPDATE_STATE.getMessage(), exception.getMessage());
         }
 
         @Test
@@ -219,7 +231,7 @@ class ReservationCancelServiceTest {
         void 맴버_없음_예외() {
             // given
             Long reservationId = 5L;
-            Long memberId = 999L; // 없는 멤버
+            Long memberId = 999L; // 존재하지 않는 멤버
 
             Reservation reservation = Reservation.builder()
                     .reservationId(reservationId)
@@ -231,12 +243,16 @@ class ReservationCancelServiceTest {
                     .build();
 
             when(reservationMapper.findReservationWithDropperById(reservationId)).thenReturn(reservation);
-            when(memberMapper.findById(memberId)).thenReturn(false);
+            when(memberMapper.findById(memberId)).thenReturn(false); // 맴버가 없다면
 
-            // when & then
-            assertThrows(MemberException.class, () ->
+            // when
+            MemberException exception = assertThrows(MemberException.class, () ->
                     reservationService.updateReservationState(reservationId, memberId)
             );
+
+            // then
+            assertEquals(MEMBER_NOT_FOUND, exception.getBaseResponseStatus());
+            assertEquals(MEMBER_NOT_FOUND.getMessage(), exception.getMessage());
         }
 
         @Test
@@ -256,12 +272,16 @@ class ReservationCancelServiceTest {
                     .build();
 
             when(reservationMapper.findReservationWithDropperById(reservationId)).thenReturn(reservation);
-            when(memberMapper.findById(memberId)).thenReturn(true);
+            when(memberMapper.findById(memberId)).thenReturn(true); //맴버는 있음
 
-            // when & then
-            assertThrows(ReservationException.class, () ->
+            // when
+            ReservationException exception = assertThrows(ReservationException.class, () ->
                     reservationService.updateReservationState(reservationId, memberId)
             );
+
+            // then
+            assertEquals(NOT_DROPPER_OF_RESERVATION, exception.getBaseResponseStatus());
+            assertEquals(NOT_DROPPER_OF_RESERVATION.getMessage(), exception.getMessage());
         }
     }
 }

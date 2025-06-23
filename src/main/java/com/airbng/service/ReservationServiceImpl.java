@@ -31,7 +31,7 @@ public class ReservationServiceImpl implements ReservationService{
 
 
     @Override
-    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    @Transactional
     public ReservationCancelResponse updateReservationState(Long reservationId, Long memberId) {
 
         /** 락 만듬 */
@@ -45,10 +45,7 @@ public class ReservationServiceImpl implements ReservationService{
 
             /** 요청 예약건의 존재여부 파악 */
             Reservation reservation = reservationMapper.findReservationWithDropperById(reservationId);
-
-            if (reservation == null) {
-                throw new ReservationException(NOT_FOUND_RESERVATION);
-            }
+            if (reservation == null) throw new ReservationException(NOT_FOUND_RESERVATION);
 
             /** 예약건의 주인이 맞는지 파악 */
             if(!reservation.getDropper().getMemberId().equals(memberId)) throw new ReservationException(NOT_DROPPER_OF_RESERVATION);
@@ -64,6 +61,7 @@ public class ReservationServiceImpl implements ReservationService{
                      chargeType.discountAmount(),ReservationState.CANCELLED);
 
             } finally{
+                /** 무조건 락 해제 */
                 lock.unlock();
             }
     }
