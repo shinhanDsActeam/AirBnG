@@ -237,18 +237,27 @@ class MemberServiceTest {
 
     @Test
     @DisplayName("로그인 시 이메일 형식이 잘못되면 INVALID_EMAIL 예외 발생")
-    void 로그인_이메일형식_오류() {
-        // given
-        String invalidEmail = "invalid_email.com";
-        String password = "Password1234!";
+    void 로그인_이메일_형식_오류들_검사() {
+        String[] invalidEmails = {
+                "user@",
+                "@domain.com",
+                "user@hi..com",
+                "user@domain.com.",
+                ".user@domain.com",
+                "user@domain_com",
+                "user@domain.c",
+                "user@domain.abcdefghi",
+                " ",
+                null
+        };
 
-        // when & then
-        MemberException exception = assertThrows(MemberException.class, () -> {
-            memberService.login(invalidEmail, password);
-        });
-
-        assertEquals(INVALID_EMAIL, exception.getBaseResponseStatus());
+        for (String email : invalidEmails) {
+            System.out.println("테스트 중인 이메일: " + email);
+            MemberException exception = assertThrows(MemberException.class, () -> {
+                memberService.login(email, "Password1234!");
+            });
+            assertEquals(INVALID_EMAIL, exception.getBaseResponseStatus(), "실패한 이메일: " + email);
+        }
     }
-
 
 }
