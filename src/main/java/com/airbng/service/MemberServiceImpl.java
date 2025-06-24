@@ -1,11 +1,10 @@
 package com.airbng.service;
 
-import com.airbng.common.exception.ImageException;
 import com.airbng.common.exception.MemberException;
-import com.airbng.common.response.status.BaseResponseStatus;
 import com.airbng.domain.Member;
 import com.airbng.domain.base.BaseStatus;
 import com.airbng.domain.image.Image;
+import com.airbng.dto.MemberLoginResponse;
 import com.airbng.dto.MemberSignupRequest;
 import com.airbng.mappers.MemberMapper;
 import com.airbng.validator.EmailValidator;
@@ -28,8 +27,6 @@ public class MemberServiceImpl implements MemberService {
     private final MemberMapper memberMapper;
     private final ImageService imageService;
     private final BCryptPasswordEncoder passwordEncoder;
-    private final EmailValidator emailValidator;
-    private final PasswordValidator passwordValidator;
 
     @Transactional
     @Override
@@ -60,10 +57,29 @@ public class MemberServiceImpl implements MemberService {
                 .build();
         memberMapper.insertMember(member);
     }
+
     //이메일 중복 검사
     @Override
     public void emailCheck(String email) {
         if (memberMapper.findByEmail(email))               throw new MemberException(DUPLICATE_EMAIL);
         if (!emailValidator.isValidEmail(email))           throw new MemberException(INVALID_EMAIL);
     }
+
+    @Override
+    public MemberLoginResponse login(String email, String password) {
+        if (!isValidEmail(email)) {
+            throw new MemberException(INVALID_EMAIL);
+        }
+
+        try {
+            Member member = memberMapper.findByEmailAndPassword(email, password);
+
+            log.info("Member id found: {}", member.getMemberId());
+
+            return MemberLoginResponse.from(member);
+        } catch (NullPointerException e) {
+            throw new MemberException(INVALID_MEMBER);
+        }
+    }
+
 }

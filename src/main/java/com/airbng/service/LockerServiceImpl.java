@@ -17,6 +17,12 @@ import com.airbng.domain.Locker;
 import com.airbng.domain.Member;
 import com.airbng.domain.base.ReservationState;
 import com.airbng.domain.image.Image;
+import com.airbng.dto.locker.*;
+import com.airbng.mappers.LockerMapper;
+import com.airbng.util.S3Uploader;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
 import com.airbng.dto.LockerInsertRequest;
 import com.airbng.dto.LockerTop5Response;
 import com.airbng.util.S3Utils;
@@ -40,8 +46,8 @@ public class LockerServiceImpl implements LockerService {
 
     private final LockerMapper lockerMapper;
     private final S3Utils s3Utils;
-  
-  
+
+
     @Override
     public LockerSearchResponse findAllLockerBySearch(LockerSearchRequest request) {
         log.info("LockerServiceImpl.findAllLockerBySearch");
@@ -92,7 +98,7 @@ public class LockerServiceImpl implements LockerService {
         }
 
         if (lockerMapper.findMemberId(dto.getKeeperId()) == 0) {
-            throw new MemberException(MEMBER_NOT_FOUND);
+            throw new MemberException(NOT_FOUND_MEMBER);
         }
 
         Locker locker = Locker.builder()
@@ -112,13 +118,13 @@ public class LockerServiceImpl implements LockerService {
         if (dto.getImages() != null && !dto.getImages().isEmpty()) {
 
             if (dto.getImages().size() > 5) {
-                throw new ImageException(BaseResponseStatus.EXCEED_IMAGE_COUNT);
+                throw new ImageException(EXCEED_IMAGE_COUNT);
             }
 
             for (MultipartFile file : dto.getImages()) {
 
                 if (file.isEmpty()) {
-                    throw new ImageException(BaseResponseStatus.EMPTY_FILE);
+                    throw new ImageException(EMPTY_FILE);
                 }
 
                 // 1. 파일명 + 경로 지정
@@ -131,7 +137,7 @@ public class LockerServiceImpl implements LockerService {
                 try {
                     imageUrl = s3Utils.upload(file, path); // 확장자 검사 포함됨
                 } catch (IOException e) {
-                    throw new ImageException(BaseResponseStatus.UPLOAD_FAILED); // 필요 시 추가 정의
+                    throw new ImageException(UPLOAD_FAILED); // 필요 시 추가 정의
                 }
 
                 // 3. DB 저장

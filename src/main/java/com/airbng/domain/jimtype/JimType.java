@@ -11,7 +11,6 @@ import org.springframework.lang.NonNull;
 @AllArgsConstructor
 @Builder
 public class JimType extends BaseTime {
-    @NonNull
     private Long jimTypeId;
     @NonNull
     private String typeName;

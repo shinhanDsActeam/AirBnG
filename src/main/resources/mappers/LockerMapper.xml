@@ -5,7 +5,7 @@
 
 <mapper namespace="com.airbng.mappers.LockerMapper">
 
-    <resultMap id="LockerDetails" type="com.airbng.dto.LockerDetailResponse">
+    <resultMap id="LockerDetails" type="com.airbng.dto.locker.LockerDetailResponse">
         <result property="lockerId" column="locker_id" />
         <result property="lockerName" column="locker_name" />
         <result property="address" column="address" />
@@ -41,7 +41,7 @@
     </select>
   
     <!-- 인기 보관소 resultMap -->
-    <resultMap id="PopularLockerMap" type="com.airbng.dto.LockerPreviewResult">
+    <resultMap id="PopularLockerMap" type="com.airbng.dto.locker.LockerPreviewResult">
         <id     column="locker_id"      property="lockerId" />
         <result column="address"        property="address" />
         <result column="locker_name"    property="lockerName" />
@@ -49,7 +49,7 @@
         <result column="url"            property="url" />
 
         <!-- 중첩 짐타입 매핑 -->
-        <collection property="jimTypeResults" ofType="com.airbng.dto.JimTypeResult">
+        <collection property="jimTypeResults" ofType="com.airbng.dto.jimType.JimTypeResult">
             <id     column="jimtype_id"    property="jimTypeId" />
             <result column="type_name"     property="typeName" />
         </collection>
@@ -97,11 +97,13 @@
     <insert id="insertLocker" parameterType="com.airbng.domain.Locker"
             useGeneratedKeys="true" keyProperty="lockerId" keyColumn="locker_id">
         INSERT INTO Locker (
-            is_available, locker_name, member_id, address,
-            address_english, address_detail, latitude, longitude
+            is_available, locker_name, member_id,
+            address, address_english, address_detail,
+            latitude, longitude
         ) VALUES (
-            #{isAvailable}, #{lockerName}, #{keeper.memberId}, #{address},
-            #{addressEnglish}, #{addressDetail}, #{latitude}, #{longitude}
+            #{isAvailable}, #{lockerName}, #{keeper.memberId},
+            #{address}, #{addressEnglish}, #{addressDetail},
+            #{latitude}, #{longitude}
         )
     </insert>
 
@@ -127,9 +129,7 @@
 
     <!-- 4. 보관소-짐타입 연결 -->
     <insert id="insertLockerJimTypes">
-        INSERT INTO LockerJimType (
-            locker_id, jimtype_id
-        )
+        INSERT INTO LockerJimType (locker_id, jimtype_id)
         <foreach collection="jimTypeIds" item="jimtypeId" separator="," open="VALUES" close="">
             (#{lockerId}, #{jimtypeId})
         </foreach>
@@ -158,15 +158,15 @@
         )
     </select>
 
-  
+
     <!-- ResultMap for Locker + JimType -->
-    <resultMap id="LockerResultMap" type="com.airbng.dto.LockerPreviewResult">
+    <resultMap id="LockerResultMap" type="com.airbng.dto.locker.LockerPreviewResult">
         <id column="locker_id" property="lockerId"/>
         <result column="locker_name" property="lockerName"/>
         <result column="is_available" property="isAvailable"/>
         <result column="url" property="url"/>
         <result column="address" property="address"/>
-        <collection property="jimTypeResults" ofType="com.airbng.dto.JimTypeResult">
+        <collection property="jimTypeResults" ofType="com.airbng.dto.jimType.JimTypeResult">
             <id column="jimtype_id" property="jimTypeId"/>
             <result column="type_name" property="typeName"/>
         </collection>
@@ -237,7 +237,23 @@
         </trim>
     </select>
 
-  
+    <!-- 해당하는 id를 가진 보관소(Locker) 존재 여부 -->
+    <select id="isExistLocker" parameterType="Long" resultType="boolean">
+        SELECT IF(EXISTS(
+            SELECT 1
+            FROM Locker
+            WHERE locker_id = #{lockerId}
+        ), 1, 0)
+    </select>
+
+    <!-- 넘어온 keeperId가 실제 locker의 주인인지 확인 -->
+    <select id="isLockerKeeper" resultType="boolean">
+        SELECT IF(EXISTS(
+            SELECT 1
+            FROM Locker
+            WHERE locker_id = #{lockerId} AND member_id = #{keeperId}
+        ), 1, 0)
+    </select>
 
 </mapper>
 

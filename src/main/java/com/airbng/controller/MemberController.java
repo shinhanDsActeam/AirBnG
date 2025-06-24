@@ -2,6 +2,9 @@ package com.airbng.controller;
 
 
 import com.airbng.common.response.BaseResponse;
+import com.airbng.domain.Member;
+import com.airbng.dto.MemberLoginRequest;
+import com.airbng.dto.MemberLoginResponse;
 import com.airbng.dto.MemberSignupRequest;
 import com.airbng.service.MemberService;
 import lombok.RequiredArgsConstructor;
@@ -10,6 +13,11 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import javax.servlet.http.HttpSession;
+
+import static com.airbng.common.response.status.BaseResponseStatus.SUCCESS;
+import static com.airbng.common.response.status.BaseResponseStatus.SUCCESS_LOGIN;
 
 @RestController
 @RequestMapping("/members")
@@ -32,4 +40,20 @@ public class MemberController {
         memberService.emailCheck(email);
         return new BaseResponse<>("사용 가능한 이메일");
     }
+
+    @PostMapping("/login")
+    public BaseResponse<MemberLoginResponse> login(@RequestBody MemberLoginRequest request,
+                                                   HttpSession session) {
+        log.info("로그인 요청: email={}, password={}", request.getEmail(), request.getPassword());
+
+        MemberLoginResponse response = memberService.login(request.getEmail(), request.getPassword());
+
+        log.info("로그인 결과: {}", response);
+
+        // 세션에 memberId 저장
+        session.setAttribute("memberId", response.getMemberId());
+
+        return new BaseResponse<>(SUCCESS_LOGIN, response);
+    }
+
 }

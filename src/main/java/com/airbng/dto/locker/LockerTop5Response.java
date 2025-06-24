@@ -1,4 +1,4 @@
-package com.airbng.dto;
+package com.airbng.dto.locker;
 
 import lombok.*;
 
@@ -9,7 +9,6 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class LockerSearchResponse {
-    private Long count;
+public class LockerTop5Response {
     private List<LockerPreviewResult> lockers;
 }

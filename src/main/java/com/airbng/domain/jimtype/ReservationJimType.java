@@ -12,7 +12,7 @@ import org.springframework.lang.NonNull;
 @AllArgsConstructor
 @Builder
 public class ReservationJimType extends BaseTime {
-    @NonNull
+//    @NonNull
     private Long reservationJimTypeId;
     @NonNull
     private JimType jimType;
