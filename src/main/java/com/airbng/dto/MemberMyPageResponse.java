@@ -12,7 +12,7 @@ import lombok.Builder;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class MemberMyPageResult {
+public class MemberMyPageResponse {
     private Long memberId;
     private String email;
     private String name;

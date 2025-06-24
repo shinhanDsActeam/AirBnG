@@ -4,13 +4,15 @@ import com.airbng.common.exception.MemberException;
 import com.airbng.domain.Member;
 import com.airbng.domain.base.BaseStatus;
 import com.airbng.domain.image.Image;
-import com.airbng.dto.MemberMyPageResult;
+import com.airbng.dto.MemberMyPageRequest;
+import com.airbng.dto.MemberMyPageResponse;
 import com.airbng.dto.MemberLoginResponse;
 import com.airbng.dto.MemberSignupRequest;
 import com.airbng.mappers.MemberMapper;
 import com.airbng.util.S3Uploader;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentMatchers;
@@ -192,29 +194,58 @@ class MemberServiceTest {
         verify(memberMapper).insertMember(ArgumentMatchers.any(Member.class));
     }
 
-    @Test
-    @DisplayName("회원 정보 조회 정상 반환 테스트")
-    void 회원정보_조회_정상_반환() {
-        Long memberId = 1L;
+    @Nested
+    @DisplayName("회원 정보 조회 테스트")
+    class FindUserByIdTest {
+        @Test
+        @DisplayName("회원 정보 조회 정상 반환 테스트")
+        void 회원정보_조회_정상_반환() {
+//            MemberMyPageRequest request = new MemberMyPageRequest();
+//            request.setMemberId(1L);
 
-        MemberMyPageResult memberMyPageResult = MemberMyPageResult.builder()
-                .memberId(1L)
-                .email("a@airbng.com")
-                .name("회원11")
-                .phone("01011111111")
-                .nickname("회원11")
-                .profileImageId(1L)
-                .url("https://cdn.airbng.com/image11.jpg")
-                .build();
+            Long memberId = 1L; // 테스트용 회원 ID
 
-        Mockito.when(memberMapper.findUserById(memberId))
-                .thenReturn(memberMyPageResult);
+            MemberMyPageResponse response = MemberMyPageResponse.builder()
+                    .memberId(1L)
+                    .email("a@airbng.com")
+                    .name("회원11")
+                    .phone("01011111111")
+                    .nickname("회원11")
+                    .profileImageId(1L)
+                    .url("https://cdn.airbng.com/image11.jpg")
+                    .build();
 
-        MemberMyPageResult response = memberService.findUserById(memberId);
+            Mockito.when(memberMapper.findUserById(memberId))
+                    .thenReturn(response);
 
-        assertEquals(memberId, response.getMemberId());
-        assertEquals("a@airbng.com", response.getEmail());
+            MemberMyPageResponse result = memberService.findUserById(memberId);
+
+            assertEquals(memberId, result.getMemberId());
+            assertEquals("a@airbng.com", response.getEmail());
+        }
+
+        @Nested
+        @DisplayName("회원 정보 조회 예외 처리 테스트")
+        class FindUserByIdExceptionTest {
+            @Test
+            @DisplayName("회원 정보 조회 실패 시 예외 메시지 확인 테스트")
+            void 회원정보_조회_예외_메시지_확인() {
+                //MemberMyPageRequest request = new MemberMyPageRequest();
+
+                Long memberId = 999L; // 존재하지 않는 회원 ID
+
+                Mockito.when(memberMapper.findUserById(memberId))
+                        .thenReturn(null);
+
+                MemberException exception = assertThrows(MemberException.class, () -> {
+                    memberService.findUserById(memberId);
+                });
+
+                assertEquals(NOT_FOUND_MEMBER, exception.getBaseResponseStatus()); // 예외 내부에 errorCode 필드가 있다면
+            }
+        }
     }
+
 
     @DisplayName("로그인 성공 시 MemberLoginResponse 반환")
     void 로그인_성공() {
@@ -247,22 +278,6 @@ class MemberServiceTest {
         assertEquals("valid@email.com", response.getEmail());
         assertEquals("재구", response.getNickname());
 
-    }
-
-
-    @Test
-    @DisplayName("회원 정보 조회 실패 시 예외 메시지 확인 테스트")
-    void 회원정보_조회_예외_메시지_확인() {
-        Long memberId = 999L;
-
-        Mockito.when(memberMapper.findUserById(memberId))
-                .thenReturn(null);
-
-        MemberException exception = assertThrows(MemberException.class, () -> {
-            memberService.findUserById(memberId);
-        });
-
-        assertEquals(NOT_FOUND_MEMBER, exception.getBaseResponseStatus()); // 예외 내부에 errorCode 필드가 있다면
     }
 
     @DisplayName("로그인 실패 시 INVALID_MEMBER 예외 발생")

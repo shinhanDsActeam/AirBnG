@@ -4,7 +4,8 @@ import com.airbng.common.exception.MemberException;
 import com.airbng.domain.Member;
 import com.airbng.domain.base.BaseStatus;
 import com.airbng.domain.image.Image;
-import com.airbng.dto.MemberMyPageResult;
+import com.airbng.dto.MemberMyPageRequest;
+import com.airbng.dto.MemberMyPageResponse;
 import com.airbng.dto.MemberLoginResponse;
 import com.airbng.dto.MemberSignupRequest;
 import com.airbng.mappers.MemberMapper;
@@ -76,22 +77,22 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public MemberMyPageResult findUserById(Long memberId) {
-        MemberMyPageResult result = memberMapper.findUserById(memberId);
+    public MemberMyPageResponse findUserById(Long memberId) {
+        //Long memberId = request.getMemberId();
 
-        if (result == null) throw new MemberException(NOT_FOUND_MEMBER);
+        MemberMyPageResponse response = memberMapper.findUserById(memberId);
 
-        MemberMyPageResult response =  MemberMyPageResult.builder()
-                .memberId(result.getMemberId())
-                .email(result.getEmail())
-                .name(result.getName())
-                .phone(result.getPhone())
-                .nickname(result.getNickname())
-                .profileImageId(result.getProfileImageId())
-                .url(result.getUrl())
+        if (response == null) throw new MemberException(NOT_FOUND_MEMBER);
+
+        return  MemberMyPageResponse.builder()
+                .memberId(response.getMemberId())
+                .email(response.getEmail())
+                .name(response.getName())
+                .phone(response.getPhone())
+                .nickname(response.getNickname())
+                .profileImageId(response.getProfileImageId())
+                .url(response.getUrl())
                 .build();
-
-        return response;
     }
 
     @Override

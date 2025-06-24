@@ -30,7 +30,7 @@
         SELECT EXISTS(SELECT 1 FROM Member WHERE phone = #{phone})
     </select>
 
-    <resultMap id="MemberResultMap" type="com.airbng.dto.MemberMyPageResult">
+    <resultMap id="MemberResultMap" type="com.airbng.dto.MemberMyPageResponse">
         <id property="memberId" column="member_id"/>
         <result property="email" column="email"/>
         <result property="name" column="name"/>
