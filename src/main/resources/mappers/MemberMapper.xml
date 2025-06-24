@@ -31,4 +31,25 @@
         SELECT EXISTS(SELECT 1 FROM Member WHERE member_id = #{memberId})
     </select>
 
+
+    <resultMap id="memberResultMap" type="com.airbng.domain.Member">
+        <id property="memberId" column="member_id" />
+        <result property="email" column="email" />
+        <result property="password" column="password" />
+        <result property="nickname" column="nickname" />
+    </resultMap>
+
+    <select id="findByEmailAndPassword" resultMap="memberResultMap" parameterType="map">
+        SELECT * FROM Member
+        WHERE email = #{email} AND password = #{password}
+    </select>
+
+   <!-- 해당하는 id를 가진 멤버 존재 여부 -->
+    <select id="isExistMember" parameterType="Long" resultType="boolean">
+        SELECT IF(EXISTS(
+            SELECT 1
+            FROM Member
+            WHERE member_id = #{memberId}
+        ), 1, 0)
+    </select>
 </mapper>

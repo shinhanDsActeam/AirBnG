@@ -4,6 +4,16 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.airbng.mappers.ReservationMapper">
+    <insert id="insertReservation" parameterType="com.airbng.dto.reservation.ReservationInsertRequest">
+        INSERT INTO Reservation(
+            dropper_id, keeper_id, start_time, end_time, state
+        )VALUES(
+            #{dropperId}, #{keeperId}, #{startTime}, #{endTime}, 'PENDING'
+        )
+        <selectKey keyProperty="id" resultType="Long" order="AFTER" >
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+    </insert>
 
 
     <resultMap id="ReservationWithDropperMap" type="com.airbng.domain.Reservation">

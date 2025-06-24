@@ -2,6 +2,7 @@ package com.airbng.mappers;
 
 import com.airbng.domain.Member;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 @Mapper
 public interface MemberMapper {
@@ -10,4 +11,9 @@ public interface MemberMapper {
     boolean findByNickname(String nickname);
     boolean findByPhone(String phone);
     boolean findById(Long memberId);
+
+    Member findByEmailAndPassword(@Param("email") String email, @Param("password") String password);
+
+    boolean isExistMember(Long memberId);
+
 }
