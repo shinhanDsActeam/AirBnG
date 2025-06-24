@@ -36,11 +36,13 @@ class ZzimServiceTest {
     @InjectMocks
     private ZzimServiceImpl zzimService;
 
+    private Long sessionMemberId;
     private Long memberId;
     private Long lockerId;
 
     @BeforeEach
     void setUp() {
+        sessionMemberId = 1L;
         memberId = 1L;
         lockerId = 100L;
     }
@@ -57,7 +59,7 @@ class ZzimServiceTest {
             when(lockerMapper.isLockerKeeper(lockerId, memberId)).thenReturn(false);
             when(zzimMapper.isExistZzim(memberId, lockerId)).thenReturn(0);
 
-            BaseResponseStatus result = zzimService.toggleZzim(memberId, lockerId);
+            BaseResponseStatus result = zzimService.toggleZzim(sessionMemberId, memberId, lockerId);
 
             verify(zzimMapper).insertZzim(memberId, lockerId);
             assertEquals(SUCCESS_INSERT_ZZIM, result);
@@ -71,7 +73,7 @@ class ZzimServiceTest {
             when(lockerMapper.isLockerKeeper(lockerId, memberId)).thenReturn(false);
             when(zzimMapper.isExistZzim(memberId, lockerId)).thenReturn(1);
 
-            BaseResponseStatus result = zzimService.toggleZzim(memberId, lockerId);
+            BaseResponseStatus result = zzimService.toggleZzim(sessionMemberId, memberId, lockerId);
 
             verify(zzimMapper).deleteZzim(memberId, lockerId);
             assertEquals(SUCCESS_DELETE_ZZIM, result);
@@ -83,7 +85,7 @@ class ZzimServiceTest {
             when(memberMapper.isExistMember(memberId)).thenReturn(false);
 
             MemberException ex = assertThrows(MemberException.class,
-                    () -> zzimService.toggleZzim(memberId, lockerId));
+                    () -> zzimService.toggleZzim(sessionMemberId, memberId, lockerId));
 
             assertEquals(NOT_FOUND_MEMBER, ex.getBaseResponseStatus());
         }
@@ -95,7 +97,7 @@ class ZzimServiceTest {
             when(lockerMapper.isExistLocker(lockerId)).thenReturn(false);
 
             LockerException ex = assertThrows(LockerException.class,
-                    () -> zzimService.toggleZzim(memberId, lockerId));
+                    () -> zzimService.toggleZzim(sessionMemberId, memberId, lockerId));
 
             assertEquals(NOT_FOUND_LOCKER, ex.getBaseResponseStatus());
         }
@@ -108,7 +110,7 @@ class ZzimServiceTest {
             when(lockerMapper.isLockerKeeper(lockerId, memberId)).thenReturn(true);
 
             ZzimException ex = assertThrows(ZzimException.class,
-                    () -> zzimService.toggleZzim(memberId, lockerId));
+                    () -> zzimService.toggleZzim(sessionMemberId, memberId, lockerId));
 
             assertEquals(SELF_LOCKER_ZZIM, ex.getBaseResponseStatus());
         }
@@ -123,7 +125,7 @@ class ZzimServiceTest {
             doThrow(new DuplicateKeyException("중복")).when(zzimMapper).insertZzim(memberId, lockerId);
 
             ZzimException ex = assertThrows(ZzimException.class,
-                    () -> zzimService.toggleZzim(memberId, lockerId));
+                    () -> zzimService.toggleZzim(sessionMemberId, memberId, lockerId));
 
             assertEquals(DUPLICATE_ZZIM, ex.getBaseResponseStatus());
         }
