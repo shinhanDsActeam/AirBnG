@@ -6,13 +6,16 @@ import com.airbng.common.response.JsonSyntaxError;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.util.ContentCachingRequestWrapper;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 
 import static com.airbng.common.response.status.BaseResponseStatus.INVALID_JSON_FORMAT;
@@ -61,6 +64,7 @@ public class JsonErrorControllerAdvice {
         return path;
     }
 
+    /** 캐싱해둔 request body 반환 */
     private static String getRequestBody(HttpServletRequest request) {
         if (request instanceof ContentCachingRequestWrapper) {
             ContentCachingRequestWrapper wrapper = (ContentCachingRequestWrapper) request;
@@ -69,11 +73,13 @@ public class JsonErrorControllerAdvice {
                 try {
                     return new String(buf, wrapper.getCharacterEncoding());
                 } catch (UnsupportedEncodingException e) {
-                    throw new RuntimeException(e);
+                    return "[unreadable body: unsupported encoding]";
                 }
+            } else {
+                return "[empty body]";
             }
         }
-        return null;
+        return "[request is not wrapped - cannot read body]";
     }
 
     public JsonSyntaxError extractErrorLineFromJson(String requestBody, JsonParseException ex) {
