@@ -28,20 +28,22 @@ public class ResevationSearchServiceTest {
     private final Long memberId = 3L;
     private final String role = "DROPPER";
     private final String state = "CONFIRMED";
-    private final Long limit = 2L;
+    private static final Long LIMIT = 10L;
 
     @InjectMocks
     private ReservationServiceImpl reservationService;
 
-    ReservationSearchResponse SearchResponse1, SearchResponse2;
+    // 다음 페이지가 있는 경우를 테스트하기 위해 11개 예약을 생성
+    List<ReservationSearchResponse> nextPage = new ArrayList<>();
 
     @BeforeEach
     void setup() {
-        SearchResponse1 = new ReservationSearchResponse();
-        SearchResponse1.setReservationId(101L);
-
-        SearchResponse2 = new ReservationSearchResponse();
-        SearchResponse2.setReservationId(100L);
+        // LIMIT이 10이므로 limit+1인 10개 만들어야 함
+        for (long i = 109L; i >= 100L; i--) {
+            ReservationSearchResponse res = new ReservationSearchResponse();
+            res.setReservationId(i);
+            nextPage.add(res);
+        }
     }
 
     @Nested
@@ -52,33 +54,31 @@ public class ResevationSearchServiceTest {
         @DisplayName("다음 페이지 있음")
         void 다음_페이지_있음() {
 
-            List<ReservationSearchResponse> nextPage = new ArrayList<>(List.of(SearchResponse1, SearchResponse2));
-
             ReservationSearchResponse res3 = new ReservationSearchResponse();
             res3.setReservationId(99L);
             nextPage.add(res3); // limit + 1 (다음페이지 있음)
 
-            Mockito.when(reservationMapper.findAllReservationById(memberId, role, state, 100L, limit + 1)).thenReturn(nextPage);
-            Mockito.when(reservationMapper.findReservationByMemberId(memberId, role)).thenReturn(10L);
+            Mockito.when(reservationMapper.findAllReservationById(memberId, role, state, 100L, LIMIT + 1)).thenReturn(nextPage);
+            Mockito.when(reservationMapper.findReservationByMemberId(memberId, role)).thenReturn(999L);
 
-            ReservationPaging result = reservationService.findAllReservationById(memberId, role, state, 100L, limit);
+            ReservationPaging result = reservationService.findAllReservationById(memberId, role, state, 100L);
 
             assertNotNull(result);
-            assertEquals(2, result.getReservations().size());    // hasSize(2)
+            assertEquals(10, result.getReservations().size());    // hasSize(10)
             assertTrue(result.isHasNextPage());                          // isTrue()
-            assertEquals(100L, result.getNextCursorId());        // isEqualTo(101L)
+            assertEquals(100L, result.getNextCursorId());        // isEqualTo(100L)
 
         }
 
         @Test
         @DisplayName("마지막 페이지 (다음 없음)")
         void 마지막_페이지_다음_없음() {
-            Mockito.when(reservationMapper.findAllReservationById(memberId, role, state, -1L, limit + 1)).thenReturn(List.of(SearchResponse1, SearchResponse2));
-            Mockito.when(reservationMapper.findReservationByMemberId(memberId, role)).thenReturn(2L);
+            Mockito.when(reservationMapper.findAllReservationById(memberId, role, state, -1L, LIMIT + 1)).thenReturn(nextPage);
+            Mockito.when(reservationMapper.findReservationByMemberId(memberId, role)).thenReturn(999L);
 
-            ReservationPaging result = reservationService.findAllReservationById(memberId, role, state, -1L, limit);
+            ReservationPaging result = reservationService.findAllReservationById(memberId, role, state, -1L);
 
-            assertEquals(2, result.getReservations().size());
+            assertEquals(10, result.getReservations().size());
             assertFalse(result.isHasNextPage());                        // isFalse()
             assertEquals(-1L, result.getNextCursorId());        // isEqualTo(-1L)
         }
@@ -91,11 +91,11 @@ public class ResevationSearchServiceTest {
         @Test
         @DisplayName("예약 결과 없음")
         void 예약_결과_없음() {
-            Mockito.when(reservationMapper.findAllReservationById(memberId, role, state, -1L, limit + 1))
+            Mockito.when(reservationMapper.findAllReservationById(memberId, role, state, -1L, LIMIT + 1))
                     .thenReturn(Collections.emptyList());
 
             assertThrows(ReservationException.class, () ->
-                    reservationService.findAllReservationById(memberId, role, state, -1L, limit));
+                    reservationService.findAllReservationById(memberId, role, state, -1L));
         }
     }
 }

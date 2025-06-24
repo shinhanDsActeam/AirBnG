@@ -6,12 +6,16 @@ import com.airbng.dto.reservation.ReservationPaging;
 import com.airbng.service.ReservationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 
 @Slf4j
 @RestController
 @RequestMapping("/reservations")
+@Validated
 @RequiredArgsConstructor
 public class ReservationController {
 
@@ -26,17 +30,15 @@ public class ReservationController {
     // 예약 조회 + 페이징 처리
     @GetMapping
     public BaseResponse<ReservationPaging> findAllReservationById(
-            @RequestParam Boolean isDropper,
-            @RequestParam Long memberId,
+            @RequestParam(value = "isDropper") @NotNull Boolean isDropper,
+            @RequestParam(value = "memberId") @Min(1) @NotNull Long memberId,
             @RequestParam(required = false) String state,
-            @RequestParam("nextCursorId") Long nextCursorId,
-            @RequestParam("limit") Long limit
+            @RequestParam(value = "nextCursorId", required = false) Long nextCursorId
     ) {
 
         String role = isDropper ? "DROPPER" : "KEEPER";
-        ReservationPaging response = reservationService.findAllReservationById(memberId, role, state, nextCursorId, limit);
+        ReservationPaging response = reservationService.findAllReservationById(memberId, role, state, nextCursorId );
 
         return new BaseResponse<>(response); // 이렇게 객체로 감싼 채로 반환
     }
-
 }
