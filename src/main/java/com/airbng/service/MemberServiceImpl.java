@@ -4,6 +4,8 @@ import com.airbng.common.exception.MemberException;
 import com.airbng.domain.Member;
 import com.airbng.domain.base.BaseStatus;
 import com.airbng.domain.image.Image;
+import com.airbng.dto.MemberMyPageRequest;
+import com.airbng.dto.MemberMyPageResponse;
 import com.airbng.dto.MemberLoginResponse;
 import com.airbng.dto.MemberSignupRequest;
 import com.airbng.mappers.MemberMapper;
@@ -68,6 +70,25 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
+    public MemberMyPageResponse findUserById(Long memberId) {
+        //Long memberId = request.getMemberId();
+
+        MemberMyPageResponse response = memberMapper.findUserById(memberId);
+
+        if (response == null) throw new MemberException(NOT_FOUND_MEMBER);
+
+        return  MemberMyPageResponse.builder()
+                .memberId(response.getMemberId())
+                .email(response.getEmail())
+                .name(response.getName())
+                .phone(response.getPhone())
+                .nickname(response.getNickname())
+                .profileImageId(response.getProfileImageId())
+                .url(response.getUrl())
+                .build();
+    }
+
+    @Override
     public MemberLoginResponse login(String email, String password) {
         if (!emailValidator.isValidEmail(email)) {
             throw new MemberException(INVALID_EMAIL);
@@ -83,7 +104,6 @@ public class MemberServiceImpl implements MemberService {
             throw new MemberException(INVALID_MEMBER);
         }
     }
-
 
 
 }
