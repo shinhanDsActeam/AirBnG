@@ -20,6 +20,7 @@ public enum BaseResponseStatus implements ResponseStatus{
     /**
      * 2000 맴버 관련 코드
      */
+    SUCCESS_LOGIN(2000, HttpStatus.OK.value(), "로그인에 성공하였습니다."),
     NOT_FOUND_MEMBER(2001, HttpStatus.NOT_FOUND.value(), "존재하지 않는 멤버입니다."),
     DUPLICATE_EMAIL(2002,HttpStatus.BAD_REQUEST.value(), "중복이메일 사용"),
     DUPLICATE_NICKNAME(2003,HttpStatus.BAD_REQUEST.value(),"중복닉네임 사용"),
@@ -74,6 +75,13 @@ public enum BaseResponseStatus implements ResponseStatus{
      * 8000: DDOS / 보안 관련 코드
      */
     DDOS_PREVENTION(8000, HttpStatus.TOO_MANY_REQUESTS.value(), "요청이 너무 빠릅니다. 잠시 후 다시 시도해주세요."),
+
+    /**
+     * 9000: sesssion
+     */
+    SESSION_NOT_FOUND(7000, HttpStatus.UNAUTHORIZED.value(), "세션이 존재하지 않습니다. 다시 로그인해주세요."),
+    SESSION_INVALID_TYPE(7001, HttpStatus.UNAUTHORIZED.value(), "세션 정보가 올바르지 않습니다."),
+    SESSION_EXPIRED(7002, HttpStatus.UNAUTHORIZED.value(), "세션이 만료되었습니다."),
 
     ;
 
