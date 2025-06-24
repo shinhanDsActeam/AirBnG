@@ -1,22 +1,23 @@
 package com.airbng.common.exception_handler;
 
+import com.airbng.common.ParamNameResolver;
 import com.airbng.common.response.BaseErrorResponse;
 import com.airbng.common.response.BaseResponse;
 import com.airbng.common.response.FieldErrors;
 import com.airbng.common.response.FieldValidationError;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.MethodParameter;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
-import org.springframework.web.util.ContentCachingRequestWrapper;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolationException;
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -76,21 +77,17 @@ public class FieldValidationControllerAdvice {
      * @Validated 에서 발생하는 예외
      */
     @ExceptionHandler(ConstraintViolationException.class)
-    public ResponseEntity<BaseErrorResponse> handleConstraintViolationException(ConstraintViolationException ex, HttpServletRequest request) {
+    public ResponseEntity<BaseErrorResponse> handleConstraintViolationException(ConstraintViolationException ex, HandlerMethod handlerMethod) {
         log.info("[FieldValidationControllerAdvice] ConstraintViolationException");
 
-        List<String> parameterNames;
-        if (request instanceof ContentCachingRequestWrapper) {
-            ContentCachingRequestWrapper wrapper = (ContentCachingRequestWrapper) request;
-            parameterNames = Collections.list(wrapper.getParameterNames());
-        } else {
-            parameterNames = Collections.emptyList();
-        }
+        List<String> parameterNames = getAllParameterNames(handlerMethod);
 
+        log.info("[FieldValidationControllerAdvice] Parameter Names: {}", parameterNames);
         FieldErrors errors = FieldErrors.builder()
                 .errors(
                         ex.getConstraintViolations().stream().map(
                                 violation -> {
+                                    log.info("[아규먼트 패스] : {}", violation.getPropertyPath().toString());
                                     int idx = extractArgIndex(violation.getPropertyPath().toString());
                                     return FieldValidationError.builder()
                                             .fieldName(parameterNames.get(idx))
@@ -114,5 +111,14 @@ public class FieldValidationControllerAdvice {
             return Integer.parseInt(matcher.group(1));
         }
         throw new IllegalArgumentException("No arg index found in property path: " + propertyPath);
+    }
+
+    public List<String> getAllParameterNames(HandlerMethod handlerMethod) {
+        MethodParameter[] params = handlerMethod.getMethodParameters();
+        List<String> names = new ArrayList<>();
+        for (MethodParameter param : params) {
+            names.add(ParamNameResolver.resolveParamName(param));
+        }
+        return names;
     }
 }
