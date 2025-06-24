@@ -24,7 +24,7 @@ public class ZzimServiceImpl implements ZzimService {
 
     @Override
     @Transactional
-    public boolean toggleZzim(Long memberId, Long lockerId) {
+    public BaseResponseStatus toggleZzim(Long memberId, Long lockerId) {
         // 멤버 존재 여부 확인
         if (!memberMapper.isExistMember(memberId)) {
             throw new MemberException(NOT_FOUND_MEMBER);
@@ -40,13 +40,13 @@ public class ZzimServiceImpl implements ZzimService {
         // 찜 존재 여부 확인 후 등록/삭제
         if (zzimMapper.isExistZzim(memberId, lockerId) == 1) {
             zzimMapper.deleteZzim(memberId, lockerId);
-            return false; // 취소됨
+            return SUCCESS_DELETE_ZZIM; // 취소됨
         }
 
         // 찜 등록 (중복 insert 예외 방지)
         try {
             zzimMapper.insertZzim(memberId, lockerId);
-            return true; // 찜 등록됨
+            return SUCCESS_INSERT_ZZIM; // 찜 등록됨
         } catch (DuplicateKeyException e) {
             throw new ZzimException(DUPLICATE_ZZIM);
         }
