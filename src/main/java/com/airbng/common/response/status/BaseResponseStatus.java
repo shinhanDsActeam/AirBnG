@@ -18,16 +18,18 @@ public enum BaseResponseStatus implements ResponseStatus{
     INVALID_DATETIME_FORMAT(1006, HttpStatus.BAD_REQUEST.value(), "날짜 형식이 올바르지 않습니다. (yyyy-MM-dd HH:mm:ss)"),
     INVALID_PARAMETER(1007, HttpStatus.BAD_REQUEST.value(), "요청한 파라미터 값의 유효성 검사 조건을 만족하지 않습니다."),
 
+
     /**
      * 2000 맴버 관련 코드
      */
+    SUCCESS_LOGIN(2000, HttpStatus.OK.value(), "로그인에 성공하였습니다."),
     NOT_FOUND_MEMBER(2001, HttpStatus.NOT_FOUND.value(), "존재하지 않는 멤버입니다."),
     DUPLICATE_EMAIL(2002,HttpStatus.BAD_REQUEST.value(), "중복이메일 사용"),
     DUPLICATE_NICKNAME(2003,HttpStatus.BAD_REQUEST.value(),"중복닉네임 사용"),
     INVALID_PASSWORD(2004,HttpStatus.BAD_REQUEST.value(),"비밀번호 형식 오류"),
     DUPLICATE_PHONE(2005,HttpStatus.BAD_REQUEST.value(),"휴대폰 번호 중복 오류"),
-    INVALID_EMAIL(2006, HttpStatus.BAD_REQUEST.value(),"이메일 형식 오류"),
-
+    INVALID_EMAIL(2006, HttpStatus.BAD_REQUEST.value(),"이메일 형식을 지켜주세요"),
+    INVALID_MEMBER(2007, HttpStatus.UNAUTHORIZED.value(), "유효하지 않은 멤버입니다."),
 
     /**
      * 3000 락커 관련 코드
@@ -61,7 +63,12 @@ public enum BaseResponseStatus implements ResponseStatus{
     INVALID_EXTENSIONS(6003, HttpStatus.UNSUPPORTED_MEDIA_TYPE.value(),"허용되지 않는 파일 확장자입니다."),
     EXCEED_IMAGE_COUNT(6004, HttpStatus.PAYLOAD_TOO_LARGE.value(), "이미지 개수가 초과되었습니다. 최대 5개까지 업로드 가능합니다."),
 
-
+    /**
+     * 9000: sesssion
+     */
+    SESSION_NOT_FOUND(7000, HttpStatus.UNAUTHORIZED.value(), "세션이 존재하지 않습니다. 다시 로그인해주세요."),
+    SESSION_INVALID_TYPE(7001, HttpStatus.UNAUTHORIZED.value(), "세션 정보가 올바르지 않습니다."),
+    SESSION_EXPIRED(7002, HttpStatus.UNAUTHORIZED.value(), "세션이 만료되었습니다."),
 
     ;
 

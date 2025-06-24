@@ -22,7 +22,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import static com.airbng.common.response.status.BaseResponseStatus.*;
+import static com.airbng.common.response.status.BaseResponseStatus.INVALID_FIELD;
+import static com.airbng.common.response.status.BaseResponseStatus.INVALID_PARAMETER;
+
 
 @Slf4j
 @RestControllerAdvice(annotations = RestController.class)
@@ -66,8 +68,8 @@ public class FieldValidationControllerAdvice {
                 .build();
 
         return ResponseEntity
-                .status(TYPE_MISMATCH_PARAMETER.getHttpStatus())
-                .body(new BaseErrorResponse(TYPE_MISMATCH_PARAMETER, build));
+                .status(INVALID_PARAMETER.getHttpStatus())
+                .body(new BaseErrorResponse(INVALID_PARAMETER, build));
     }
 
     /**
@@ -100,8 +102,8 @@ public class FieldValidationControllerAdvice {
                 ).build();
 
         return ResponseEntity
-                .status(PARAMETER_VALIDATION_FAILED.getHttpStatus())
-                .body(new BaseErrorResponse(PARAMETER_VALIDATION_FAILED, errors));
+                .status(INVALID_PARAMETER.getHttpStatus())
+                .body(new BaseErrorResponse(INVALID_PARAMETER, errors));
     }
 
     // violation의 PropertyPath에서 Argument 인덱스를 추출하는 메소드
