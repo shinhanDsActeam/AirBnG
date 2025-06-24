@@ -66,8 +66,8 @@ public class FieldValidationControllerAdvice {
                 .build();
 
         return ResponseEntity
-                .status(INVALID_PARAMETER.getHttpStatus())
-                .body(new BaseErrorResponse(INVALID_PARAMETER, build));
+                .status(TYPE_MISMATCH_PARAMETER.getHttpStatus())
+                .body(new BaseErrorResponse(TYPE_MISMATCH_PARAMETER, build));
     }
 
     /**
@@ -100,8 +100,8 @@ public class FieldValidationControllerAdvice {
                 ).build();
 
         return ResponseEntity
-                .status(VALIDATION_FAILED.getHttpStatus())
-                .body(new BaseErrorResponse(VALIDATION_FAILED, errors));
+                .status(PARAMETER_VALIDATION_FAILED.getHttpStatus())
+                .body(new BaseErrorResponse(PARAMETER_VALIDATION_FAILED, errors));
     }
 
     // violation의 PropertyPath에서 Argument 인덱스를 추출하는 메소드
