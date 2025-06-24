@@ -14,6 +14,7 @@ import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.mock.web.MockHttpSession;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.multipart.MultipartFile;
@@ -259,5 +260,44 @@ class MemberServiceTest {
             assertEquals(INVALID_EMAIL, exception.getBaseResponseStatus(), "실패한 이메일: " + email);
         }
     }
+
+    @Test
+    @DisplayName("로그인 시 세션에 memberId 저장 확인")
+    void 로그인_세션_저장_확인() {
+        // given
+        String email = "valid@email.com";
+        String password = "Password1234!";
+
+        Member member = Member.builder()
+                .memberId(42L)
+                .email(email)
+                .name("재구")
+                .nickname("박재구")
+                .phone("010-1111-1111")
+                .password(password)
+                .status(BaseStatus.ACTIVE)
+                .profileImage(Image.withId(1L))
+                .build();
+
+        when(memberMapper.findByEmailAndPassword(email, password)).thenReturn(member);
+
+        // when
+        MemberLoginResponse response = memberService.login(email, password);
+
+        // 세션 객체 생성 및 저장 확인
+        MockHttpSession session = new MockHttpSession();
+        session.setAttribute("memberId", response.getMemberId());
+
+        Object sessionMemberId = session.getAttribute("memberId");
+        
+        // 콘솔 출력
+        System.out.println("세션에 저장된 memberId: " + sessionMemberId);
+
+        // then
+        assertEquals(42L, session.getAttribute("memberId"));
+        assertEquals(email, response.getEmail());
+        assertEquals("박재구", response.getNickname());
+    }
+
 
 }
