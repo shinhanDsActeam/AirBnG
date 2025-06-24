@@ -27,6 +27,8 @@ public class MemberServiceImpl implements MemberService {
     private final MemberMapper memberMapper;
     private final ImageService imageService;
     private final BCryptPasswordEncoder passwordEncoder;
+    private final EmailValidator emailValidator;
+    private final PasswordValidator passwordValidator;
 
     @Transactional
     @Override
@@ -67,7 +69,7 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public MemberLoginResponse login(String email, String password) {
-        if (!isValidEmail(email)) {
+        if (!emailValidator.isValidEmail(email)) {
             throw new MemberException(INVALID_EMAIL);
         }
 
@@ -81,5 +83,7 @@ public class MemberServiceImpl implements MemberService {
             throw new MemberException(INVALID_MEMBER);
         }
     }
+
+
 
 }
