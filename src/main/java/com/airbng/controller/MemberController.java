@@ -15,7 +15,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import static com.airbng.common.response.status.BaseResponseStatus.SUCCESS;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 
 @RestController
 @RequestMapping("/members")
@@ -42,12 +43,13 @@ public class MemberController {
 
     @GetMapping
     public BaseResponse<MemberMyPageResult> findUserById(
-            @RequestParam Long memberId
+            @RequestParam @NotNull @Min(1) Long memberId
     ) {
         MemberMyPageResult result = memberService.findUserById(memberId);
 
         return new BaseResponse<>(result);
     }
+
     @PostMapping("/login")
     public BaseResponse<MemberLoginResponse> login(@RequestBody MemberLoginRequest request) {
         return new BaseResponse<>(memberService.login(request.getEmail(), request.getPassword()));
