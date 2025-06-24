@@ -5,6 +5,10 @@ import com.airbng.common.exception.LockerException;
 import com.airbng.common.exception.MemberException;
 import com.airbng.common.exception.ReservationException;
 import com.airbng.common.response.status.BaseResponseStatus;
+import com.airbng.domain.Reservation;
+import com.airbng.domain.base.ChargeType;
+import com.airbng.domain.base.ReservationState;
+import com.airbng.dto.ReservationCancelResponse;
 import com.airbng.dto.jimType.JimTypeCountResult;
 import com.airbng.dto.reservation.ReservationInsertRequest;
 import com.airbng.mappers.JimTypeMapper;
@@ -12,12 +16,14 @@ import com.airbng.mappers.LockerMapper;
 import com.airbng.mappers.MemberMapper;
 import com.airbng.mappers.ReservationMapper;
 import com.airbng.util.LocalDateTimeUtils;
+import com.github.benmanes.caffeine.cache.Cache;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
 
 import static com.airbng.common.response.status.BaseResponseStatus.*;
@@ -45,7 +51,7 @@ public class ReservationServiceImpl implements ReservationService{
             lock.lock();
 
             /** 맴버 존재 유무 파악 */
-            if(!memberMapper.findById(memberId)) throw new MemberException(MEMBER_NOT_FOUND);
+            if(!memberMapper.findById(memberId)) throw new MemberException(NOT_FOUND_MEMBER);
 
             /** 요청 예약건의 존재여부 파악 */
             Reservation reservation = reservationMapper.findReservationWithDropperById(reservationId);

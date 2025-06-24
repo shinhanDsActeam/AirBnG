@@ -254,8 +254,8 @@ class ReservationCancelServiceTest {
             );
 
             // then
-            assertEquals(MEMBER_NOT_FOUND, exception.getBaseResponseStatus());
-            assertEquals(MEMBER_NOT_FOUND.getMessage(), exception.getMessage());
+            assertEquals(NOT_FOUND_MEMBER, exception.getBaseResponseStatus());
+            assertEquals(NOT_FOUND_MEMBER.getMessage(), exception.getMessage());
         }
 
         @Test
