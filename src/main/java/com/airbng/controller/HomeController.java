@@ -27,9 +27,10 @@ public class HomeController {
     }
 
     @ApiOperation("파라미터 유효성 검증 테스트")
-    @GetMapping
-    public BaseResponse getName(@RequestParam(value = "status") @Size(min = 3) String name,
-                                @RequestParam(value = "id") @Min(1) @NotNull(message = "빈값이면 안됩니다.") Long id){
+    @GetMapping("/{id}")
+    public BaseResponse getName(@PathVariable(value = "id") @Min(1) @NotNull Long id,
+                                @RequestParam(value = "name") @Size(min = 3) String name,
+                                @RequestParam(value = "age") @Min(10) int age){
         return new BaseResponse(BaseResponseStatus.SUCCESS);
     }
 
