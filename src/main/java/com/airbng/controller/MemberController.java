@@ -11,9 +11,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import javax.servlet.http.HttpSession;
+
+import static com.airbng.common.response.status.BaseResponseStatus.SUCCESS;
+import static com.airbng.common.response.status.BaseResponseStatus.SUCCESS_LOGIN;
 
 @RestController
 @RequestMapping("/members")
@@ -52,8 +55,18 @@ public class MemberController {
     }
 
     @PostMapping("/login")
-    public BaseResponse<MemberLoginResponse> login(@RequestBody MemberLoginRequest request) {
-        return new BaseResponse<>(memberService.login(request.getEmail(), request.getPassword()));
+    public BaseResponse<MemberLoginResponse> login(@RequestBody MemberLoginRequest request,
+                                                   HttpSession session) {
+        log.info("로그인 요청: email={}, password={}", request.getEmail(), request.getPassword());
+
+        MemberLoginResponse response = memberService.login(request.getEmail(), request.getPassword());
+
+        log.info("로그인 결과: {}", response);
+
+        // 세션에 memberId 저장
+        session.setAttribute("memberId", response.getMemberId());
+
+        return new BaseResponse<>(SUCCESS_LOGIN, response);
     }
 
 }
