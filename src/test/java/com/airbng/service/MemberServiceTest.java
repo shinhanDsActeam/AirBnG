@@ -4,15 +4,13 @@ import com.airbng.common.exception.MemberException;
 import com.airbng.domain.Member;
 import com.airbng.domain.base.BaseStatus;
 import com.airbng.domain.image.Image;
-import com.airbng.dto.MemberMyPageRequest;
 import com.airbng.dto.MemberMyPageResponse;
 import com.airbng.dto.MemberLoginResponse;
 import com.airbng.dto.MemberSignupRequest;
 import com.airbng.mappers.MemberMapper;
+import com.airbng.util.S3Utils;
 import com.airbng.validator.EmailValidator;
 import com.airbng.validator.PasswordValidator;
-import com.airbng.util.S3Uploader;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -33,7 +31,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.util.AssertionErrors.assertNotNull;
 
 @ExtendWith(MockitoExtension.class)
 class MemberServiceTest {
@@ -41,7 +38,7 @@ class MemberServiceTest {
     private MemberMapper memberMapper;
 
     @Mock
-    private S3Uploader s3Uploader;
+    private S3Utils s3Utils;
 
     @Mock
     private ImageService imageService;
