@@ -30,6 +30,31 @@
         SELECT EXISTS(SELECT 1 FROM Member WHERE phone = #{phone})
     </select>
 
+    <resultMap id="MemberResultMap" type="com.airbng.dto.MemberMyPageResponse">
+        <id property="memberId" column="member_id"/>
+        <result property="email" column="email"/>
+        <result property="name" column="name"/>
+        <result property="phone" column="phone"/>
+        <result property="nickname" column="nickname"/>
+        <result property="password" column="password"/>
+        <result property="profileImageId" column="profile_image_id"/>
+    </resultMap>
+
+    <!-- 회원 정보 조회 -->
+    <select id="findUserById" resultMap="MemberResultMap">
+        SELECT
+            m.member_id,
+            m.email,
+            m.name,
+            m.phone,
+            m.nickname,
+            m.profile_image_id,
+            i.url
+        FROM Member m
+        LEFT JOIN Image i ON m.profile_image_id = i.image_id
+        WHERE member_id = #{memberId}
+    </select>
+      
     <resultMap id="memberResultMap" type="com.airbng.domain.Member">
         <id property="memberId" column="member_id" />
         <result property="email" column="email" />
