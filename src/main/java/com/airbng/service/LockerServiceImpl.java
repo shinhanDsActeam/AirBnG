@@ -1,18 +1,23 @@
 package com.airbng.service;
 
-import com.airbng.common.exception.ImageException;
 import com.airbng.common.exception.LockerException;
+import com.airbng.mappers.LockerMapper;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+import java.util.List;
+import com.airbng.common.exception.ImageException;
 import com.airbng.common.exception.MemberException;
 import com.airbng.domain.Locker;
 import com.airbng.domain.Member;
 import com.airbng.domain.base.ReservationState;
 import com.airbng.domain.image.Image;
 import com.airbng.dto.locker.*;
-import com.airbng.mappers.LockerMapper;
-import com.airbng.util.S3Uploader;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
+import com.airbng.util.S3Utils;
+
+import static com.airbng.common.response.status.BaseResponseStatus.NOT_FOUND_LOCKER;
+import static com.airbng.common.response.status.BaseResponseStatus.NOT_FOUND_LOCKERDETAILS;
+
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -28,7 +33,7 @@ import static com.airbng.common.response.status.BaseResponseStatus.*;
 public class LockerServiceImpl implements LockerService {
 
     private final LockerMapper lockerMapper;
-    private final S3Uploader s3Uploader;
+    private final S3Utils s3Utils;
 
 
     @Override
@@ -44,7 +49,7 @@ public class LockerServiceImpl implements LockerService {
 
         return response;
     }
-
+  
     @Override
     public LockerDetailResponse findUserById(Long lockerId) {
         LockerDetailResponse result = lockerMapper.findUserById(lockerId);
@@ -58,10 +63,10 @@ public class LockerServiceImpl implements LockerService {
     }
 
     @Override
-    public LockerTop5Response findTop5Locker() {
+    public LockerTop5Response findTop5Locker(){
         List<LockerPreviewResult> popularLockers = lockerMapper.findTop5Lockers(ReservationState.CONFIRMED);
 
-        if (popularLockers.isEmpty()) throw new LockerException(NOT_FOUND_LOCKER);
+        if(popularLockers.isEmpty()) throw new LockerException(NOT_FOUND_LOCKER);
 
         return LockerTop5Response.builder()
                 .lockers(popularLockers)
@@ -118,7 +123,7 @@ public class LockerServiceImpl implements LockerService {
                 // 2. 업로드 및 예외 처리
                 String imageUrl;
                 try {
-                    imageUrl = s3Uploader.upload(file, path); // 확장자 검사 포함됨
+                    imageUrl = s3Utils.upload(file, path); // 확장자 검사 포함됨
                 } catch (IOException e) {
                     throw new ImageException(UPLOAD_FAILED); // 필요 시 추가 정의
                 }
