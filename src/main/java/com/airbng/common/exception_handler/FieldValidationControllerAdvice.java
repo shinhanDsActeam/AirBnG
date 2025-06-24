@@ -12,8 +12,14 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.util.ContentCachingRequestWrapper;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.ConstraintViolationException;
+import java.util.Collections;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static com.airbng.common.response.status.BaseResponseStatus.INVALID_FIELD;
@@ -23,7 +29,9 @@ import static com.airbng.common.response.status.BaseResponseStatus.INVALID_PARAM
 @RestControllerAdvice(annotations = RestController.class)
 public class FieldValidationControllerAdvice {
 
-    /** 바인딩 후 발생하는 유효성 검증 예외 */
+    /**
+     * 바인딩 후 발생하는 유효성 검증 예외
+     */
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<BaseResponse> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
         log.info("[FieldValidationControllerAdvice] MethodArgumentNotValidException");
@@ -44,10 +52,12 @@ public class FieldValidationControllerAdvice {
                 .body(new BaseResponse(INVALID_FIELD, build));
     }
 
-    /** 바인딩 전에 발생하는 예외<br>
-     * -> 예외 자체는 validation 전에 발생*/
+    /**
+     * 바인딩 전에 발생하는 예외<br>
+     * -> 예외 자체는 validation 전에 발생
+     */
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
-    public ResponseEntity<BaseErrorResponse>  handleTypeMismatchException(MethodArgumentTypeMismatchException ex) {
+    public ResponseEntity<BaseErrorResponse> handleTypeMismatchException(MethodArgumentTypeMismatchException ex) {
         log.info("[FieldValidationControllerAdvice] MethodArgumentTypeMismatchException");
 
         FieldValidationError build = FieldValidationError.builder()
@@ -61,4 +71,47 @@ public class FieldValidationControllerAdvice {
                 .body(new BaseErrorResponse(INVALID_PARAMETER, build));
     }
 
+    /**
+     * @Validated 에서 발생하는 예외
+     */
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<BaseErrorResponse> handleConstraintViolationException(ConstraintViolationException ex, HttpServletRequest request) {
+        log.info("[FieldValidationControllerAdvice] ConstraintViolationException");
+
+        List<String> parameterNames;
+        if (request instanceof ContentCachingRequestWrapper) {
+            ContentCachingRequestWrapper wrapper = (ContentCachingRequestWrapper) request;
+            parameterNames = Collections.list(wrapper.getParameterNames());
+        } else {
+            parameterNames = Collections.emptyList();
+        }
+
+        FieldErrors errors = FieldErrors.builder()
+                .errors(
+                        ex.getConstraintViolations().stream().map(
+                                violation -> {
+                                    int idx = extractArgIndex(violation.getPropertyPath().toString());
+                                    return FieldValidationError.builder()
+                                            .fieldName(parameterNames.get(idx))
+                                            .rejectValue(violation.getInvalidValue().toString())
+                                            .message(violation.getMessage())
+                                            .build();
+                                }
+                        ).collect(Collectors.toList())
+                ).build();
+
+        return ResponseEntity
+                .status(INVALID_FIELD.getHttpStatus())
+                .body(new BaseErrorResponse(INVALID_FIELD, errors));
+    }
+
+    // violation의 PropertyPath에서 Argument 인덱스를 추출하는 메소드
+    public static int extractArgIndex(String propertyPath) {
+        Pattern pattern = Pattern.compile("\\.arg(\\d+)$");
+        Matcher matcher = pattern.matcher(propertyPath);
+        if (matcher.find()) {
+            return Integer.parseInt(matcher.group(1));
+        }
+        throw new IllegalArgumentException("No arg index found in property path: " + propertyPath);
+    }
 }
