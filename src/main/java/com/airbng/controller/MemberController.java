@@ -2,16 +2,13 @@ package com.airbng.controller;
 
 
 import com.airbng.common.response.BaseResponse;
-import com.airbng.dto.MemberMyPageResult;
-import com.airbng.domain.Member;
-import com.airbng.dto.MemberLoginRequest;
-import com.airbng.dto.MemberLoginResponse;
-import com.airbng.dto.MemberSignupRequest;
+import com.airbng.dto.*;
 import com.airbng.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -22,6 +19,7 @@ import javax.validation.constraints.NotNull;
 @RequestMapping("/members")
 @RequiredArgsConstructor
 @Slf4j
+@Validated
 public class MemberController {
 
     private final MemberService memberService;
@@ -42,12 +40,15 @@ public class MemberController {
     }
 
     @GetMapping
-    public BaseResponse<MemberMyPageResult> findUserById(
+    public BaseResponse<MemberMyPageResponse> findUserById(
             @RequestParam @NotNull @Min(1) Long memberId
     ) {
-        MemberMyPageResult result = memberService.findUserById(memberId);
+        MemberMyPageRequest request = MemberMyPageRequest.builder()
+                .memberId(memberId)
+                .build();
 
-        return new BaseResponse<>(result);
+        MemberMyPageResponse response = memberService.findUserById(request.getMemberId());
+        return new BaseResponse<>(response);
     }
 
     @PostMapping("/login")
