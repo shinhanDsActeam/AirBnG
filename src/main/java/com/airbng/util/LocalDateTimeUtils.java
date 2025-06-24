@@ -7,12 +7,8 @@ import java.time.format.DateTimeParseException;
 public class LocalDateTimeUtils {
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
-    public static LocalDateTime parse(String dateTimeStr) {
-        try {
-            return LocalDateTime.parse(dateTimeStr, FORMATTER);
-        } catch (DateTimeParseException e) {
-            throw new IllegalArgumentException("올바르지 않은 날짜 형식입니다. 형식: yyyy-MM-dd HH:mm:ss", e);
-        }
+    public static LocalDateTime parse(String dateTimeStr) throws DateTimeParseException {
+        return LocalDateTime.parse(dateTimeStr, FORMATTER);
     }
 
     public static boolean isStartTimeAfterEndTime(String startTime, String endTime) {

@@ -18,4 +18,8 @@ public interface MemberMapper {
     boolean findByPhone(String phone);
   
     MemberMyPageResult findUserById(@Param("memberId") Long memberId);
+
+    Member findByEmailAndPassword(@Param("email") String email, @Param("password") String password);
+
+    boolean isExistMember(Long memberId);
 }

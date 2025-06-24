@@ -3,6 +3,9 @@ package com.airbng.controller;
 
 import com.airbng.common.response.BaseResponse;
 import com.airbng.dto.MemberMyPageResult;
+import com.airbng.domain.Member;
+import com.airbng.dto.MemberLoginRequest;
+import com.airbng.dto.MemberLoginResponse;
 import com.airbng.dto.MemberSignupRequest;
 import com.airbng.service.MemberService;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +14,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import static com.airbng.common.response.status.BaseResponseStatus.SUCCESS;
 
 @RestController
 @RequestMapping("/members")
@@ -43,4 +48,9 @@ public class MemberController {
 
         return new BaseResponse<>(result);
     }
+    @PostMapping("/login")
+    public BaseResponse<MemberLoginResponse> login(@RequestBody MemberLoginRequest request) {
+        return new BaseResponse<>(memberService.login(request.getEmail(), request.getPassword()));
+    }
+
 }
