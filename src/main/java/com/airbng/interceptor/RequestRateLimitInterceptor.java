@@ -11,6 +11,8 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static com.airbng.common.response.status.BaseResponseStatus.DDOS_PREVENTION;
+
 @Slf4j
 @Component
 public class RequestRateLimitInterceptor implements HandlerInterceptor {
@@ -26,8 +28,8 @@ public class RequestRateLimitInterceptor implements HandlerInterceptor {
 
         if (now - lastTime < LIMIT_MILLIS) {
             log.warn("DDOS 차단 - key={}, path={}", key, request.getRequestURI());
-            response.setStatus(429); // HTTP 429 Too Many Requests
-            response.getWriter().write("요청이 너무 빠릅니다. 잠시 후 다시 시도해주세요.");
+            response.setStatus(DDOS_PREVENTION.getHttpStatus());
+            response.getWriter().write(DDOS_PREVENTION.getMessage());
             return false;
         }
 
@@ -36,8 +38,7 @@ public class RequestRateLimitInterceptor implements HandlerInterceptor {
     }
 
     private String getKey(HttpServletRequest request) {
-        Long memberId = SessionUtils.getMemberId(request);
-        return (memberId != null ? "user:" + memberId : "ip:" + request.getRemoteAddr()) +
-                ":" + request.getRequestURI();
+        Object memberId = request.getSession().getAttribute("memberId");
+        return (memberId != null ? "user:" + memberId : "ip:" + request.getRemoteAddr()) + ":" + request.getRequestURI();
     }
 }
