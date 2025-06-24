@@ -79,9 +79,10 @@ public enum BaseResponseStatus implements ResponseStatus{
     /**
      * 9000: sesssion
      */
-    SESSION_NOT_FOUND(7000, HttpStatus.UNAUTHORIZED.value(), "세션이 존재하지 않습니다. 다시 로그인해주세요."),
-    SESSION_INVALID_TYPE(7001, HttpStatus.UNAUTHORIZED.value(), "세션 정보가 올바르지 않습니다."),
-    SESSION_EXPIRED(7002, HttpStatus.UNAUTHORIZED.value(), "세션이 만료되었습니다."),
+    SESSION_MISMATCH(9001, HttpStatus.UNAUTHORIZED.value(), "세션의 사용자와 요청된 사용자 ID가 일치하지 않습니다."),
+    SESSION_NOT_FOUND(9002, HttpStatus.UNAUTHORIZED.value(), "세션이 존재하지 않습니다. 다시 로그인해주세요."),
+    SESSION_INVALID_TYPE(9003, HttpStatus.UNAUTHORIZED.value(), "세션 정보가 올바르지 않습니다."),
+    SESSION_EXPIRED(9004, HttpStatus.UNAUTHORIZED.value(), "세션이 만료되었습니다."),
 
     ;
 
