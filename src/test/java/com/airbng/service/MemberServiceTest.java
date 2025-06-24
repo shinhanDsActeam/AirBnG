@@ -2,16 +2,25 @@ package com.airbng.service;
 
 import com.airbng.common.exception.MemberException;
 import com.airbng.domain.Member;
+import com.airbng.domain.base.BaseStatus;
 import com.airbng.domain.image.Image;
+import com.airbng.dto.MemberMyPageResponse;
+import com.airbng.dto.MemberLoginResponse;
 import com.airbng.dto.MemberSignupRequest;
 import com.airbng.mappers.MemberMapper;
+import com.airbng.util.S3Utils;
+import com.airbng.validator.EmailValidator;
+import com.airbng.validator.PasswordValidator;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.mock.web.MockHttpSession;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.multipart.MultipartFile;
@@ -29,10 +38,17 @@ class MemberServiceTest {
     private MemberMapper memberMapper;
 
     @Mock
+    private S3Utils s3Utils;
+
+    @Mock
     private ImageService imageService;
 
     @Mock
     private BCryptPasswordEncoder passwordEncoder;
+    @Mock
+    private  EmailValidator emailValidator;
+    @Mock
+    private  PasswordValidator passwordValidator;
 
     @InjectMocks
     private MemberServiceImpl memberService;
@@ -76,6 +92,7 @@ class MemberServiceTest {
         when(memberMapper.findByEmail(dto.getEmail())).thenReturn(false);
         when(memberMapper.findByNickname(dto.getNickname())).thenReturn(false);
         when(memberMapper.findByPhone(dto.getPhone())).thenReturn(false);
+        when(passwordValidator.isValidPassword(dto.getPassword())).thenReturn(true);
 
         //then
         MemberException exception = assertThrows(MemberException.class, () -> {
@@ -145,6 +162,7 @@ class MemberServiceTest {
         when(memberMapper.findByEmail(dto.getEmail())).thenReturn(false);
         when(memberMapper.findByNickname(dto.getNickname())).thenReturn(false);
         when(memberMapper.findByPhone(dto.getPhone())).thenReturn(false);
+        when(passwordValidator.isValidPassword(dto.getPassword())).thenReturn(false);
 
         MemberException exception = assertThrows(MemberException.class, () -> {
             memberService.signup(dto, mockFile);
@@ -170,6 +188,8 @@ class MemberServiceTest {
         when(memberMapper.findByEmail(dto.getEmail())).thenReturn(false);
         when(memberMapper.findByNickname(dto.getNickname())).thenReturn(false);
         when(memberMapper.findByPhone(dto.getPhone())).thenReturn(false);
+        when(passwordValidator.isValidPassword(dto.getPassword())).thenReturn(true);
+        when(emailValidator.isValidEmail(dto.getEmail())).thenReturn(true);
         when(passwordEncoder.encode(dto.getPassword())).thenReturn("encodedPassword");
         when(imageService.getDefaultProfileImage()).thenReturn(
                 Image.withId(1L)
@@ -181,4 +201,171 @@ class MemberServiceTest {
         //then
         verify(memberMapper).insertMember(ArgumentMatchers.any(Member.class));
     }
+
+    @Nested
+    @DisplayName("회원 정보 조회 테스트")
+    class FindUserByIdTest {
+        @Test
+        @DisplayName("회원 정보 조회 정상 반환 테스트")
+        void 회원정보_조회_정상_반환() {
+//            MemberMyPageRequest request = new MemberMyPageRequest();
+//            request.setMemberId(1L);
+
+            Long memberId = 1L; // 테스트용 회원 ID
+
+            MemberMyPageResponse response = MemberMyPageResponse.builder()
+                    .memberId(1L)
+                    .email("a@airbng.com")
+                    .name("회원11")
+                    .phone("01011111111")
+                    .nickname("회원11")
+                    .profileImageId(1L)
+                    .url("https://cdn.airbng.com/image11.jpg")
+                    .build();
+
+            Mockito.when(memberMapper.findUserById(memberId))
+                    .thenReturn(response);
+
+            MemberMyPageResponse result = memberService.findUserById(memberId);
+
+            assertEquals(memberId, result.getMemberId());
+            assertEquals("a@airbng.com", response.getEmail());
+        }
+
+        @Nested
+        @DisplayName("회원 정보 조회 예외 처리 테스트")
+        class FindUserByIdExceptionTest {
+            @Test
+            @DisplayName("회원 정보 조회 실패 시 예외 메시지 확인 테스트")
+            void 회원정보_조회_예외_메시지_확인() {
+                //MemberMyPageRequest request = new MemberMyPageRequest();
+
+                Long memberId = 999L; // 존재하지 않는 회원 ID
+
+                Mockito.when(memberMapper.findUserById(memberId))
+                        .thenReturn(null);
+
+                MemberException exception = assertThrows(MemberException.class, () -> {
+                    memberService.findUserById(memberId);
+                });
+
+                assertEquals(NOT_FOUND_MEMBER, exception.getBaseResponseStatus()); // 예외 내부에 errorCode 필드가 있다면
+            }
+        }
+    }
+
+
+    @DisplayName("로그인 성공 시 MemberLoginResponse 반환")
+    void 로그인_성공() {
+        // given
+        String email = "valid@email.com";
+        String password = "Password1";
+
+        Member fakeMember = Member.builder()
+                .memberId(10L)
+                .email("valid@email.com")
+                .name("박재구")
+                .phone("010-1111-2222")
+                .nickname("재구")
+                .password("Password1")
+                .status(BaseStatus.ACTIVE)
+                .profileImage(Image.withId(1L))  // ✅ Image 객체도 넣어야 함
+                .build();
+
+//        Member fakeMember = new Member();
+//        fakeMember.setMemberId(10L);
+//        fakeMember.setEmail(email);
+//        fakeMember.setNickname("재구");
+
+        // when
+        when(memberMapper.findByEmailAndPassword(email, password)).thenReturn(fakeMember);
+
+        // then
+        MemberLoginResponse response = memberService.login(email, password);
+        assertEquals(10L, response.getMemberId());
+        assertEquals("valid@email.com", response.getEmail());
+        assertEquals("재구", response.getNickname());
+
+    }
+
+    @DisplayName("로그인 실패 시 INVALID_MEMBER 예외 발생")
+    void 로그인_실패() {
+        // given
+        String email = "notfound@email.com";
+        String password = "wrongPassword";
+
+        // when
+        when(memberMapper.findByEmailAndPassword(email, password)).thenReturn(null);
+
+        // then
+        MemberException exception = assertThrows(MemberException.class, () -> {
+            memberService.login(email, password);
+        });
+        assertEquals(INVALID_MEMBER, exception.getBaseResponseStatus());
+    }
+
+    @Test
+    @DisplayName("로그인 시 이메일 형식이 잘못되면 INVALID_EMAIL 예외 발생")
+    void 로그인_이메일_형식_오류들_검사() {
+        String[] invalidEmails = {
+                "user@",
+                "@domain.com",
+                "user@hi..com",
+                "user@domain.com.",
+                ".user@domain.com",
+                "user@domain_com",
+                "user@domain.c",
+                "user@domain.abcdefghi",
+                " ",
+                null
+        };
+
+        for (String email : invalidEmails) {
+            System.out.println("테스트 중인 이메일: " + email);
+            MemberException exception = assertThrows(MemberException.class, () -> {
+                memberService.login(email, "Password1234!");
+            });
+            assertEquals(INVALID_EMAIL, exception.getBaseResponseStatus(), "실패한 이메일: " + email);
+        }
+    }
+
+    @Test
+    @DisplayName("로그인 시 세션에 memberId 저장 확인")
+    void 로그인_세션_저장_확인() {
+        // given
+        String email = "valid@email.com";
+        String password = "Password1234!";
+
+        Member member = Member.builder()
+                .memberId(42L)
+                .email(email)
+                .name("재구")
+                .nickname("박재구")
+                .phone("010-1111-1111")
+                .password(password)
+                .status(BaseStatus.ACTIVE)
+                .profileImage(Image.withId(1L))
+                .build();
+
+        when(memberMapper.findByEmailAndPassword(email, password)).thenReturn(member);
+
+        // when
+        MemberLoginResponse response = memberService.login(email, password);
+
+        // 세션 객체 생성 및 저장 확인
+        MockHttpSession session = new MockHttpSession();
+        session.setAttribute("memberId", response.getMemberId());
+
+        Object sessionMemberId = session.getAttribute("memberId");
+
+        // 콘솔 출력
+        System.out.println("세션에 저장된 memberId: " + sessionMemberId);
+
+        // then
+        assertEquals(42L, session.getAttribute("memberId"));
+        assertEquals(email, response.getEmail());
+        assertEquals("박재구", response.getNickname());
+    }
+
+
 }

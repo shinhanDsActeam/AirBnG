@@ -63,7 +63,7 @@ public class JsonErrorControllerAdvice {
         }
         return path;
     }
-
+  
     /** 캐싱해둔 request body 반환 */
     private static String getRequestBody(HttpServletRequest request) {
         if (request instanceof ContentCachingRequestWrapper) {
