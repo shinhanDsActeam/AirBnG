@@ -61,8 +61,11 @@ public enum BaseResponseStatus implements ResponseStatus{
     /**
      * 7000: 찜 관련 코드
      */
-    DUPLICATE_ZZIM(7001, HttpStatus.BAD_REQUEST.value(), "이미 찜한 락커입니다."),
-    SELF_LOCKER_ZZIM(7002, HttpStatus.BAD_REQUEST.value(), "자신의 보관소는 찜할 수 없습니다."),
+    // 찜 등록 성공
+    SUCCESS_INSERT_ZZIM(7000, HttpStatus.OK.value(), "찜 등록에 성공하였습니다."),
+    SUCCESS_DELETE_ZZIM(7001, HttpStatus.OK.value(), "찜 취소에 성공하였습니다."),
+    DUPLICATE_ZZIM(7002, HttpStatus.BAD_REQUEST.value(), "이미 찜한 락커입니다."),
+    SELF_LOCKER_ZZIM(7003, HttpStatus.BAD_REQUEST.value(), "자신의 보관소는 찜할 수 없습니다."),
 
     /**
      * 8000: DDOS / 보안 관련 코드
