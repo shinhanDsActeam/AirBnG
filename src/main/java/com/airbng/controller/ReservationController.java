@@ -7,18 +7,19 @@ import com.airbng.service.ReservationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+import javax.validation.Valid;
 
 @Slf4j
-@RequiredArgsConstructor
 @RestController
 @RequestMapping("/reservations")
+@RequiredArgsConstructor
 public class ReservationController {
 
     private final ReservationService reservationService;
 
     // 예약 등록
     @PostMapping
-    public BaseResponse<String> insertReservation(@RequestBody ReservationInsertRequest request) {
+    public BaseResponse<String> insertReservation(@RequestBody @Valid ReservationInsertRequest request) {
         return new BaseResponse<>(reservationService.insertReservation(request));
     }
 
