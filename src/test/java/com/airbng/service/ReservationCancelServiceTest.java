@@ -22,8 +22,11 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
+import com.github.benmanes.caffeine.cache.*;
+import java.util.concurrent.TimeUnit;
 
 import java.time.LocalDateTime;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.ReentrantLock;
 
 import static com.airbng.common.response.status.BaseResponseStatus.*;
@@ -284,4 +287,40 @@ class ReservationCancelServiceTest {
             assertEquals(NOT_DROPPER_OF_RESERVATION.getMessage(), exception.getMessage());
         }
     }
+
+    @Nested
+    @DisplayName("카페인 캐시 만료 테스트")
+    class CaffeineExpireAfterWriteTest {
+
+        @Test
+        void 쓰기_이후_만료_테스트() {
+            AtomicLong  fakeNanos = new AtomicLong();
+
+            // Cache 생성
+            Cache<String, String> cache = Caffeine.newBuilder()
+                    .expireAfterWrite(5, TimeUnit.MINUTES)
+                    .scheduler(Scheduler.systemScheduler()) // ✅ scheduler 만 사용
+                    .recordStats()
+                    .build();
+
+            // put
+            cache.put("key1", "value1");
+
+            // 0초 → 존재함
+            assertEquals(cache.getIfPresent("key1"),"value1");
+
+            // 3분 경과
+            fakeNanos.addAndGet(TimeUnit.MINUTES.toNanos(3));
+            assertEquals(cache.getIfPresent("key1"),"value1");
+            // 5분 추가 경과 (총 8분)
+            fakeNanos.addAndGet(TimeUnit.MINUTES.toNanos(5));
+
+            cache.cleanUp();
+
+            assertEquals(cache.getIfPresent("key1"),null);
+            System.out.println(cache.stats());
+
+        }
+    }
+
 }
