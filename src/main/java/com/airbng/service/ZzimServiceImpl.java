@@ -2,6 +2,7 @@ package com.airbng.service;
 
 import com.airbng.common.exception.LockerException;
 import com.airbng.common.exception.MemberException;
+import com.airbng.common.exception.SessionException;
 import com.airbng.common.exception.ZzimException;
 import com.airbng.common.response.status.BaseResponseStatus;
 import com.airbng.mappers.LockerMapper;
@@ -11,6 +12,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Objects;
 
 import static com.airbng.common.response.status.BaseResponseStatus.*;
 
@@ -24,7 +27,12 @@ public class ZzimServiceImpl implements ZzimService {
 
     @Override
     @Transactional
-    public BaseResponseStatus toggleZzim(Long memberId, Long lockerId) {
+    public BaseResponseStatus toggleZzim(Long sessionMemberId, Long memberId, Long lockerId) {
+        // 세션의 사용자와 요청된 사용자 ID가 일치하는지 확인
+        if (!Objects.equals(sessionMemberId, memberId)) {
+            throw new SessionException(SESSION_MISMATCH);
+        }
+
         // 멤버 존재 여부 확인
         if (!memberMapper.isExistMember(memberId)) {
             throw new MemberException(NOT_FOUND_MEMBER);
