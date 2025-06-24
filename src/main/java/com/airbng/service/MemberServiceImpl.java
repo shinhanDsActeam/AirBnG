@@ -9,12 +9,15 @@ import com.airbng.dto.MemberMyPageResponse;
 import com.airbng.dto.MemberLoginResponse;
 import com.airbng.dto.MemberSignupRequest;
 import com.airbng.mappers.MemberMapper;
+import com.airbng.validator.EmailValidator;
+import com.airbng.validator.PasswordValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+
 
 import static com.airbng.common.response.status.BaseResponseStatus.*;
 
@@ -26,16 +29,18 @@ public class MemberServiceImpl implements MemberService {
     private final MemberMapper memberMapper;
     private final ImageService imageService;
     private final BCryptPasswordEncoder passwordEncoder;
+    private final EmailValidator emailValidator;
+    private final PasswordValidator passwordValidator;
 
     @Transactional
     @Override
     public void signup(MemberSignupRequest dto, MultipartFile file) {
         //예외 처리
-        if (memberMapper.findByEmail(dto.getEmail())) throw new MemberException(DUPLICATE_EMAIL);
-        if (memberMapper.findByNickname(dto.getNickname())) throw new MemberException(DUPLICATE_NICKNAME);
-        if (memberMapper.findByPhone(dto.getPhone())) throw new MemberException(DUPLICATE_PHONE);
-        if (!isValidPassword(dto.getPassword())) throw new MemberException(INVALID_PASSWORD);
-        if (!isValidEmail(dto.getEmail())) throw new MemberException(INVALID_EMAIL);
+        if (memberMapper.findByEmail(dto.getEmail()))               throw new MemberException(DUPLICATE_EMAIL);
+        if (memberMapper.findByNickname(dto.getNickname()))         throw new MemberException(DUPLICATE_NICKNAME);
+        if (memberMapper.findByPhone(dto.getPhone()))               throw new MemberException(DUPLICATE_PHONE);
+        if (!passwordValidator.isValidPassword(dto.getPassword()))  throw new MemberException(INVALID_PASSWORD);
+        if (!emailValidator.isValidEmail(dto.getEmail()))           throw new MemberException(INVALID_EMAIL);
 
 
         //이미지 처리
@@ -59,21 +64,9 @@ public class MemberServiceImpl implements MemberService {
 
     //이메일 중복 검사
     @Override
-    public boolean emailCheck(String email) {
-        return memberMapper.findByEmail(email);
-    }
-
-    //패스워드 형식 확인
-    private boolean isValidPassword(String password) {
-        //대문자와 소문자, 하나 이상의 숫자를 포함하여 8자 이상
-        return password != null && password.matches("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).{8,}$");
-    }
-
-    //이메일 형식 체크
-    private boolean isValidEmail(String email) {
-        //@앞의 문자 1개이상, @ 뒤에 문자+ . + 2~6자(com, net, co,kr , email)
-        // 점(.)이 연속되거나, @ 앞/뒤 형식이 잘못된 경우 모두 차단
-        return email != null && email.matches("^[A-Za-z0-9]+([._%+-]?[A-Za-z0-9]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*\\.[A-Za-z]{2,6}$");
+    public void emailCheck(String email) {
+        if (memberMapper.findByEmail(email))               throw new MemberException(DUPLICATE_EMAIL);
+        if (!emailValidator.isValidEmail(email))           throw new MemberException(INVALID_EMAIL);
     }
 
     @Override
@@ -97,7 +90,7 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public MemberLoginResponse login(String email, String password) {
-        if (!isValidEmail(email)) {
+        if (!emailValidator.isValidEmail(email)) {
             throw new MemberException(INVALID_EMAIL);
         }
 
@@ -112,6 +105,5 @@ public class MemberServiceImpl implements MemberService {
         }
     }
 
+
 }
-
-
