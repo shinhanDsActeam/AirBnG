@@ -37,11 +37,9 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        // 요청 속도 제한 인터셉터 등록
-        registry.addInterceptor(rateLimitInterceptor)
-//                .addPathPatterns("/**") // 모든 경로에 적용
-                .addPathPatterns("/zzim/**", "/lockers/**")
-                .excludePathPatterns("/swagger-ui/**", "/v3/api-docs/**"); // Swagger 관련 경로 제외
+        registry.addInterceptor(rateLimitInterceptor) // 메서드로 직접 호출
+                .addPathPatterns("/lockers/**/members/**/zzim")
+                .excludePathPatterns("/swagger-ui/**", "/v3/api-docs/**");
     }
 
     //이미지 파일 처리
@@ -52,4 +50,5 @@ public class WebConfig implements WebMvcConfigurer {
         resolver.setMaxUploadSize(10 * 1024 * 1024); // 10MB
         return resolver;
     }
+
 }
