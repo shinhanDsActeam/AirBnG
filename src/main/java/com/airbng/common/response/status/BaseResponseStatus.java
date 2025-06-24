@@ -63,6 +63,12 @@ public enum BaseResponseStatus implements ResponseStatus{
      */
     DUPLICATE_ZZIM(7001, HttpStatus.BAD_REQUEST.value(), "이미 찜한 락커입니다."),
     SELF_LOCKER_ZZIM(7002, HttpStatus.BAD_REQUEST.value(), "자신의 보관소는 찜할 수 없습니다."),
+
+    /**
+     * 8000: DDOS / 보안 관련 코드
+     */
+    DDOS_PREVENTION(8000, HttpStatus.TOO_MANY_REQUESTS.value(), "요청이 너무 빠릅니다. 잠시 후 다시 시도해주세요."),
+
     ;
 
     private final int code;

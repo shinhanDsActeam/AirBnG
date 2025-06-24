@@ -1,5 +1,6 @@
 package com.airbng.interceptor;
 
+import com.airbng.common.response.status.BaseResponseStatus;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -7,6 +8,8 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockHttpSession;
 
+import static com.airbng.common.response.status.BaseResponseStatus.DDOS_PREVENTION;
+import static com.airbng.common.response.status.BaseResponseStatus.SUCCESS;
 import static org.junit.jupiter.api.Assertions.*;
 
 class RequestRateLimitInterceptorTest {
@@ -31,7 +34,7 @@ class RequestRateLimitInterceptorTest {
 
             // then
             assertTrue(result);
-            assertEquals(200, response.getStatus());
+            assertEquals(SUCCESS.getHttpStatus(), response.getStatus());
         }
     }
 
@@ -56,7 +59,7 @@ class RequestRateLimitInterceptorTest {
             // then
             assertTrue(first);
             assertFalse(second);
-            assertEquals(429, response2.getStatus());
+            assertEquals(DDOS_PREVENTION.getHttpStatus(), response2.getStatus());
         }
     }
 
@@ -68,7 +71,7 @@ class RequestRateLimitInterceptorTest {
         @DisplayName("로그인한 사용자의 첫 요청은 통과된다")
         void 로그인한_사용자의_첫_요청은_허용된다() throws Exception {
             // given
-            MockHttpServletRequest request = new MockHttpServletRequest("POST", "/zzim/lockers/1/members/42");
+            MockHttpServletRequest request = new MockHttpServletRequest("POST", "/lockers/1/members/42/zzim");
             MockHttpSession session = new MockHttpSession();
             session.setAttribute("memberId", 42L);
             request.setSession(session);
@@ -79,7 +82,7 @@ class RequestRateLimitInterceptorTest {
 
             // then
             assertTrue(result);
-            assertEquals(200, response.getStatus());
+            assertEquals(SUCCESS.getHttpStatus(), response.getStatus());
         }
     }
 
@@ -106,7 +109,7 @@ class RequestRateLimitInterceptorTest {
             // then
             assertTrue(allowed1);
             assertFalse(allowed2);
-            assertEquals(429, response2.getStatus());
+            assertEquals(DDOS_PREVENTION.getHttpStatus(), response2.getStatus());
         }
     }
 }
