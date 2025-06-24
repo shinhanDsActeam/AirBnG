@@ -214,6 +214,7 @@ class MemberServiceTest {
 
         assertEquals(memberId, response.getMemberId());
         assertEquals("a@airbng.com", response.getEmail());
+    }
 
     @DisplayName("로그인 성공 시 MemberLoginResponse 반환")
     void 로그인_성공() {
@@ -261,7 +262,8 @@ class MemberServiceTest {
             memberService.findUserById(memberId);
         });
 
-        assertEquals(MEMBER_NOT_FOUND, exception.getBaseResponseStatus()); // 예외 내부에 errorCode 필드가 있다면
+        assertEquals(NOT_FOUND_MEMBER, exception.getBaseResponseStatus()); // 예외 내부에 errorCode 필드가 있다면
+    }
 
     @DisplayName("로그인 실패 시 INVALID_MEMBER 예외 발생")
     void 로그인_실패() {

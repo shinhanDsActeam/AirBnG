@@ -79,7 +79,7 @@ public class MemberServiceImpl implements MemberService {
     public MemberMyPageResult findUserById(Long memberId) {
         MemberMyPageResult result = memberMapper.findUserById(memberId);
 
-        if (result == null) throw new MemberException(MEMBER_NOT_FOUND);
+        if (result == null) throw new MemberException(NOT_FOUND_MEMBER);
 
         MemberMyPageResult response =  MemberMyPageResult.builder()
                 .memberId(result.getMemberId())
@@ -93,7 +93,8 @@ public class MemberServiceImpl implements MemberService {
 
         return response;
     }
-}
+
+    @Override
     public MemberLoginResponse login(String email, String password) {
         if (!isValidEmail(email)) {
             throw new MemberException(INVALID_EMAIL);
@@ -111,3 +112,5 @@ public class MemberServiceImpl implements MemberService {
     }
 
 }
+
+

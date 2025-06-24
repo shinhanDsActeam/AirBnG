@@ -53,6 +53,7 @@
         FROM Member m
         LEFT JOIN Image i ON m.profile_image_id = i.image_id
         WHERE member_id = #{memberId}
+    </select>
       
     <resultMap id="memberResultMap" type="com.airbng.domain.Member">
         <id property="memberId" column="member_id" />
