@@ -12,6 +12,6 @@ public interface ReservationService {
     BaseResponseStatus insertReservation(ReservationInsertRequest request);
 
     //예약 상새
-    ReservationDetailResponse findReservationDetail(Long reservationId);
+    ReservationDetailResponse findReservationDetail(Long reservationId, Long memberId);
 
 }
