@@ -2,6 +2,7 @@ package com.airbng.dto.reservation;
 
 import com.airbng.domain.Reservation;
 import com.airbng.domain.base.Available;
+import com.airbng.domain.base.ReservationState;
 import lombok.*;
 
 import java.util.List;
@@ -16,7 +17,7 @@ public class ReservationDetailResponse {
     private String keeperNickname;
     private String startTime;
     private String endTime;
-    private Available state;
+    private ReservationState state;
     private List<ReservationJimTypeResult> reservationJimTypes;
 
     public static ReservationDetailResponse from(Reservation reservation){
@@ -24,6 +25,7 @@ public class ReservationDetailResponse {
                 .dropperNickname(reservation.getDropper().getNickname())
                 .keeperNickname(reservation.getKeeper().getNickname())
                 .startTime(String.valueOf(reservation.getStartTime()))
+                .state(reservation.getState())
                 .endTime(String.valueOf(reservation.getEndTime()))
                 .reservationJimTypes(
                         reservation.getReservationJimTypes().stream()

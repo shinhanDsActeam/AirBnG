@@ -111,6 +111,7 @@ public class ReservationServiceImpl implements ReservationService {
     public ReservationDetailResponse findReservationDetail(Long reservationId) {
         Reservation reservation = reservationMapper.findReservationDetailById(reservationId);
         if(reservation==null) throw new ReservationException(NOT_FOUND_RESERVATION);
+        log.info("state {}", reservation.getState());
         return ReservationDetailResponse.from(reservation);
     }
 

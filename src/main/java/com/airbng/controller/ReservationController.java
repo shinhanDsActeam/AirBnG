@@ -21,7 +21,7 @@ public class ReservationController {
     }
 
     @GetMapping("{reservation-id}/detail")
-    public BaseResponse<ReservationDetailResponse> getReservationDetail(@PathVariable Long reservationId){
+    public BaseResponse<ReservationDetailResponse> getReservationDetail(@PathVariable("reservation-id") Long reservationId){
         return new BaseResponse<>(reservationService.findReservationDetail(reservationId));
     }
 
