@@ -86,4 +86,50 @@
     </select>
 
 
+
+    <resultMap id="ReservationWithDropperMap" type="com.airbng.domain.Reservation">
+        <result property="reservationId" column="reservation_id"/>
+        <result property="state" column="state"/>
+        <result property="startTime" column="start_time"/>
+        <result property="endTime" column="end_time"/>
+
+        <association property="dropper" javaType="com.airbng.domain.Member">
+            <result property="memberId" column="dropper_id"/>
+            <result property="email" column="dropper_email"/>
+            <result property="name" column="dropper_name"/>
+            <result property="phone" column="dropper_phone"/>
+            <result property="nickname" column="dropper_nickname"/>
+            <result property="password" column="dropper_password"/>
+            <result property="status" column="dropper_status"/>
+        </association>
+    </resultMap>
+
+
+    <select id="findReservationWithDropperById" parameterType="Long" resultMap="ReservationWithDropperMap">
+        SELECT
+            r.reservation_id,
+            r.state,
+            r.start_time,
+            r.end_time,
+
+            d.member_id AS dropper_id,
+            d.email AS dropper_email,
+            d.name AS dropper_name,
+            d.phone AS dropper_phone,
+            d.nickname AS dropper_nickname,
+            d.password AS dropper_password,
+            d.status AS dropper_status
+
+        FROM reservation r
+        JOIN member d ON r.dropper_id = d.member_id
+        WHERE r.reservation_id = #{reservationId}
+    </select>
+
+
+    <update id="updateReservationState">
+        UPDATE reservation
+        SET state = #{state}
+        WHERE reservation_id = #{reservationId}
+    </update>
+
 </mapper>

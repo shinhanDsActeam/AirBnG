@@ -11,11 +11,13 @@ public enum BaseResponseStatus implements ResponseStatus{
      */
     SUCCESS(1000,HttpStatus.OK.value(), "요청에 성공하였습니다."),
     FAILURE(1001, HttpStatus.BAD_REQUEST.value(), "요청에 실패하였습니다."),
-    INVALID_FIELD(1002, HttpStatus.BAD_REQUEST.value(), "요청 본문에 잘못된 형식의 필드가 포함되어 있습니다."),
+    INVALID_FIELD(1002, HttpStatus.BAD_REQUEST.value(), "요청한 값이 유효성 검사 조건을 만족하지 않습니다."),
     INVALID_JSON_FORMAT(1003, HttpStatus.BAD_REQUEST.value(), "요청한 JSON 필드의 데이터 타입이 올바르지 않습니다."),
     INVALID_JSON_SYNTAX(1004, HttpStatus.BAD_REQUEST.value(), "요청 JSON의 문법이 올바르지 않습니다."),
-    INVALID_PARAMETER(1005, HttpStatus.BAD_REQUEST.value(), "요청한 파라미터 값이 타입에 맞지 않습니다."),
+    TYPE_MISMATCH_PARAMETER(1005, HttpStatus.BAD_REQUEST.value(), "요청한 파라미터 값이 타입에 맞지 않습니다."),
     INVALID_DATETIME_FORMAT(1006, HttpStatus.BAD_REQUEST.value(), "날짜 형식이 올바르지 않습니다. (yyyy-MM-dd HH:mm:ss)"),
+    INVALID_PARAMETER(1007, HttpStatus.BAD_REQUEST.value(), "요청한 파라미터 값의 유효성 검사 조건을 만족하지 않습니다."),
+
 
     /**
      * 2000 맴버 관련 코드
@@ -45,8 +47,10 @@ public enum BaseResponseStatus implements ResponseStatus{
     INVALID_RESERVATION_PARTICIPANTS(4003, HttpStatus.BAD_REQUEST.value(), "예약자와 보관자는 동일할 수 없습니다."),
     INVALID_RESERVATION_TIME(4004, HttpStatus.BAD_REQUEST.value(), "예약 시간은 시작 시간과 종료 시간이 모두 지정되어야 합니다."),
     INVALID_RESERVATION_TIME_ORDER(4005, HttpStatus.BAD_REQUEST.value(), "시작 시간은 종료 시간보다 작아야합니다."),
-    CANNOT_UPDATE_STATE(4006,HttpStatus.BAD_REQUEST.value(), "예약 취소에 실패하였습니다."),
+    CANNOT_UPDATE_STATE(4006,HttpStatus.BAD_REQUEST.value(), "예약 상태 변경에 실패하였습니다."),
     NOT_DROPPER_OF_RESERVATION(4007,HttpStatus.BAD_REQUEST.value(), "해당 예약의 드롭퍼가 아닙니다."),
+
+
     /**
      * 5000 짐 타입 관련 코드
      */

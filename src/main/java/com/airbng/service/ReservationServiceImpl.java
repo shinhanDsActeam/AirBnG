@@ -6,7 +6,10 @@ import com.airbng.common.exception.MemberException;
 import com.airbng.common.exception.ReservationException;
 import com.airbng.common.response.status.BaseResponseStatus;
 import com.airbng.domain.Reservation;
+import com.airbng.domain.base.ChargeType;
+import com.airbng.domain.base.ReservationState;
 import com.airbng.dto.jimType.JimTypeCountResult;
+import com.airbng.dto.reservation.ReservationCancelResponse;
 import com.airbng.dto.reservation.ReservationDetailResponse;
 import com.airbng.dto.reservation.ReservationInsertRequest;
 import com.airbng.mappers.JimTypeMapper;
@@ -14,12 +17,14 @@ import com.airbng.mappers.LockerMapper;
 import com.airbng.mappers.MemberMapper;
 import com.airbng.mappers.ReservationMapper;
 import com.airbng.util.LocalDateTimeUtils;
+import com.github.benmanes.caffeine.cache.Cache;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
 
 import static com.airbng.common.response.status.BaseResponseStatus.*;
@@ -27,12 +32,50 @@ import static com.airbng.common.response.status.BaseResponseStatus.*;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class ReservationServiceImpl implements ReservationService {
+public class ReservationServiceImpl implements ReservationService{
     private final ReservationMapper reservationMapper;
     private final JimTypeMapper jimTypeMapper;
     private final MemberMapper memberMapper;
     private final LockerMapper lockerMapper;
 
+    private final Cache<Long, ReentrantLock> reservationLocks;
+
+
+    @Override
+    @Transactional
+    public ReservationCancelResponse updateReservationState(Long reservationId, Long memberId) {
+
+        /** 락 만듬 */
+        ReentrantLock lock = reservationLocks.get(reservationId, key -> new ReentrantLock());
+        try {
+            /** 릭 검 */
+            lock.lock();
+
+            /** 맴버 존재 유무 파악 */
+            if(!memberMapper.findById(memberId)) throw new MemberException(NOT_FOUND_MEMBER);
+
+            /** 요청 예약건의 존재여부 파악 */
+            Reservation reservation = reservationMapper.findReservationWithDropperById(reservationId);
+            if (reservation == null) throw new ReservationException(NOT_FOUND_RESERVATION);
+
+            /** 예약건의 주인이 맞는지 파악 */
+            if(!reservation.getDropper().getMemberId().equals(memberId)) throw new ReservationException(NOT_DROPPER_OF_RESERVATION);
+
+            ChargeType chargeType = ChargeType.from(reservation.getStartTime());
+            ReservationState state = reservation.getState();
+            /** 취소, 완료상태는 상태 변경 불가 */
+            state.isAvailableUpdate(state);
+            reservationMapper.updateReservationState(reservationId,
+                    ReservationState.CANCELLED);
+
+             return ReservationCancelResponse.of(reservation,
+                     chargeType.discountAmount(),ReservationState.CANCELLED);
+
+            } finally{
+                /** 무조건 락 해제 */
+                lock.unlock();
+            }
+    }
     // 예약 등록
     @Override
     @Transactional // 짐타입 등록 실패한 경우 예약 등록까지 롤백
