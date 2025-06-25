@@ -53,8 +53,10 @@ public class ReservationServiceImpl implements ReservationService{
             nextCursorId = -1L;
         }
 
+        String stateStr = (state != null) ? state.toString() : null;
+
         List<ReservationSearchResponse> reservations = reservationMapper.findAllReservationById(
-                memberId, role, state, nextCursorId, LIMIT + 1 //다음 페이지 유무 확인
+                memberId, role, stateStr, nextCursorId, LIMIT + 1 //다음 페이지 유무 확인
         );
 
 
