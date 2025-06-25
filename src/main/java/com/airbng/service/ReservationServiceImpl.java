@@ -5,12 +5,15 @@ import com.airbng.common.exception.LockerException;
 import com.airbng.common.exception.MemberException;
 import com.airbng.common.exception.ReservationException;
 import com.airbng.common.response.status.BaseResponseStatus;
+import com.airbng.domain.base.ReservationState;
 import com.airbng.domain.Reservation;
 import com.airbng.domain.base.ChargeType;
 import com.airbng.domain.base.ReservationState;
 import com.airbng.dto.reservation.ReservationCancelResponse;
 import com.airbng.dto.jimType.JimTypeCountResult;
 import com.airbng.dto.reservation.ReservationInsertRequest;
+import com.airbng.dto.reservation.ReservationPaging;
+import com.airbng.dto.reservation.ReservationSearchResponse;
 import com.airbng.mappers.JimTypeMapper;
 import com.airbng.mappers.LockerMapper;
 import com.airbng.mappers.MemberMapper;
@@ -32,10 +35,62 @@ import static com.airbng.common.response.status.BaseResponseStatus.*;
 @Service
 @RequiredArgsConstructor
 public class ReservationServiceImpl implements ReservationService{
+  
     private final ReservationMapper reservationMapper;
     private final JimTypeMapper jimTypeMapper;
     private final MemberMapper memberMapper;
     private final LockerMapper lockerMapper;
+    private static final Long LIMIT= 10L; // 페이지당 최대 예약 개수
+
+    //예약 조회 + 페이징 처리
+    @Override
+    public ReservationPaging findAllReservationById(Long memberId, String role, ReservationState state, Long nextCursorId) {
+        log.info("Finding reservation by memberId: {}, role: {}, state: {}, nextCursorId: {}, LIMIT:{} ",
+                memberId, role, state, nextCursorId, LIMIT);
+
+        // 초기 커서 ID 설정
+        if(nextCursorId == null) {
+            nextCursorId = -1L;
+        }
+
+        String stateStr = (state != null) ? state.toString() : null;
+
+        List<ReservationSearchResponse> reservations = reservationMapper.findAllReservationById(
+                memberId, role, stateStr, nextCursorId, LIMIT + 1 //다음 페이지 유무 확인
+        );
+
+
+        // 예외 처리: 예약이 없을 경우
+        if (reservations == null || reservations.isEmpty()) {
+            throw new ReservationException(NOT_FOUND_RESERVATION);
+        }
+
+        //hasNextPage 값 설정 : 다음 페이지 유무
+        boolean hasNextPage = reservations.size() > LIMIT;
+        List<ReservationSearchResponse> content = reservations.stream()
+                .limit(LIMIT)
+                .collect(Collectors.toList());
+
+        // role을 응답 DTO에 표시
+        for (ReservationSearchResponse dto : content) {
+            dto.setRole(role.toUpperCase()); // KEEPER or DROPPER
+        }
+
+        // 다음 커서 ID 설정
+        if (hasNextPage && !content.isEmpty()) {
+            nextCursorId = content.get(content.size() - 1).getReservationId();
+        } else {
+            nextCursorId = -1L;  // 더 이상 페이지가 없으면 -1로 설정
+        }
+
+        ReservationPaging paging = ReservationPaging.builder()
+                .reservations(content)
+                .nextCursorId(nextCursorId)
+                .hasNextPage(hasNextPage)
+                .totalCount(reservationMapper.findReservationByMemberId(memberId, role))
+                .build();
+        return paging;
+    }
 
     private final Cache<Long, ReentrantLock> reservationLocks;
 
@@ -148,5 +203,6 @@ public class ReservationServiceImpl implements ReservationService{
 
         return CREATED_RESERVATION;
     }
+
 
 }
