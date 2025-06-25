@@ -15,4 +15,77 @@
         </selectKey>
     </insert>
 
+    <resultMap id="ReservationWithDropperAndKeeperMap" type="com.airbng.domain.Reservation">
+        <result property="reservationId" column="reservation_id"/>
+        <result property="state" column="state"/>
+        <result property="startTime" column="start_time"/>
+        <result property="endTime" column="end_time"/>
+
+        <association property="dropper" javaType="com.airbng.domain.Member">
+            <result property="memberId" column="dropper_id"/>
+            <result property="email" column="dropper_email"/>
+            <result property="name" column="dropper_name"/>
+            <result property="phone" column="dropper_phone"/>
+            <result property="nickname" column="dropper_nickname"/>
+            <result property="password" column="dropper_password"/>
+            <result property="status" column="dropper_status"/>
+        </association>
+
+        <association property="keeper" javaType="com.airbng.domain.Member">
+            <result property="memberId" column="keeper_id"/>
+            <result property="email" column="keeper_email"/>
+            <result property="name" column="keeper_name"/>
+            <result property="phone" column="keeper_phone"/>
+            <result property="nickname" column="keeper_nickname"/>
+            <result property="password" column="keeper_password"/>
+            <result property="status" column="keeper_status"/>
+        </association>
+
+        <collection property="reservationJimTypes" ofType="com.airbng.domain.jimtype.ReservationJimType">
+            <result property="reservationId" column="reservation_id"/>
+            <result property="jimType.jimTypeId" column="jimtype_id"/>
+            <result property="jimType.typeName" column="type_name"/>
+            <result property="count" column="count"/>
+        </collection>
+    </resultMap>
+
+
+    <select id="findReservationDetailById" parameterType="Long" resultMap="ReservationWithDropperAndKeeperMap">
+        SELECT
+        r.reservation_id,
+        r.state,
+        r.start_time,
+        r.end_time,
+
+        d.member_id AS dropper_id,
+        d.email AS dropper_email,
+        d.name AS dropper_name,
+        d.phone AS dropper_phone,
+        d.nickname AS dropper_nickname,
+        d.password AS dropper_password,
+        d.status AS dropper_status,
+
+        k.member_id AS keeper_id,
+        k.email AS keeper_email,
+        k.name AS keeper_name,
+        k.phone AS keeper_phone,
+        k.nickname AS keeper_nickname,
+        k.password AS keeper_password,
+        k.status AS keeper_status,
+
+        rjt.reservation_id AS reservation_id,
+        rjt.jimtype_id AS jimtype_id,
+        jt.type_name AS type_name,
+        rjt.count AS count
+
+        FROM reservation r
+        JOIN member d ON r.dropper_id = d.member_id
+        JOIN member k ON r.keeper_id = k.member_id
+        LEFT JOIN reservation_jimtype rjt ON r.reservation_id = rjt.reservation_id
+        LEFT JOIN jimtype jt ON rjt.jimtype_id = jt.jimtype_id
+
+        WHERE r.reservation_id = #{reservationId}
+    </select>
+
+
 </mapper>
