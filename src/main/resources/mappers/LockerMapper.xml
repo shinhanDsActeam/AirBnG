@@ -273,5 +273,11 @@
         WHERE locker_id = #{lockerId}
     </update>
 
+    <select id="getIsAvailableById" resultType="com.airbng.domain.base.Available">
+        SELECT is_available
+        FROM Locker
+        WHERE locker_id = #{lockerId};
+    </select>
+
 </mapper>
 
