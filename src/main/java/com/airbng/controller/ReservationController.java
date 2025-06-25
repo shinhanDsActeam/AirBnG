@@ -20,7 +20,7 @@ public class ReservationController {
     private final ReservationService reservationService;
 
     @PostMapping("/{reservation-id}/members/{member-id}/cancel")
-    public BaseResponse<ReservationCancelResponse> updateResponse(@PathVariable("reservationId") Long reservationId, @PathVariable("memberId") Long memberId) {
+    public BaseResponse<ReservationCancelResponse> updateResponse(@PathVariable("reservation-id") Long reservationId, @PathVariable("member-id") Long memberId) {
         log.info("ReservationController.updateResponse");
         return new BaseResponse<>(reservationService.updateReservationState(reservationId, memberId));
     }
