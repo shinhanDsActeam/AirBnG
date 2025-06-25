@@ -59,7 +59,7 @@ public class ResevationSearchServiceTest {
             res3.setReservationId(99L);
             nextPage.add(res3); // limit + 1 (다음페이지 있음)
 
-            Mockito.when(reservationMapper.findAllReservationById(memberId, role, state, 100L, LIMIT + 1)).thenReturn(nextPage);
+            Mockito.when(reservationMapper.findAllReservationById(memberId, role, state.toString(), 100L, LIMIT + 1)).thenReturn(nextPage);
             Mockito.when(reservationMapper.findReservationByMemberId(memberId, role)).thenReturn(999L);
 
             ReservationPaging result = reservationService.findAllReservationById(memberId, role, state, 100L);
@@ -74,7 +74,7 @@ public class ResevationSearchServiceTest {
         @Test
         @DisplayName("마지막 페이지 (다음 없음)")
         void 마지막_페이지_다음_없음() {
-            Mockito.when(reservationMapper.findAllReservationById(memberId, role, state, -1L, LIMIT + 1)).thenReturn(nextPage);
+            Mockito.when(reservationMapper.findAllReservationById(memberId, role, state.toString(), -1L, LIMIT + 1)).thenReturn(nextPage);
             Mockito.when(reservationMapper.findReservationByMemberId(memberId, role)).thenReturn(999L);
 
             ReservationPaging result = reservationService.findAllReservationById(memberId, role, state, -1L);
@@ -92,7 +92,7 @@ public class ResevationSearchServiceTest {
         @Test
         @DisplayName("예약 결과 없음")
         void 예약_결과_없음() {
-            Mockito.when(reservationMapper.findAllReservationById(memberId, role, state, -1L, LIMIT + 1))
+            Mockito.when(reservationMapper.findAllReservationById(memberId, role, state.toString(), -1L, LIMIT + 1))
                     .thenReturn(Collections.emptyList());
 
             assertThrows(ReservationException.class, () ->
