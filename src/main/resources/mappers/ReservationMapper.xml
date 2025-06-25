@@ -17,7 +17,7 @@
 
     <resultMap id="ReservationSearch" type="com.airbng.dto.reservation.ReservationSearchResponse">
         <result property="reservationId" column="reservation_id" />
-        <result property="state" column="state" />
+        <result property="state" column="state" javaType="com.airbng.domain.base.ReservationState"/>
         <result property="keeperId" column="keeper_id" />
         <result property="dropperId" column="dropper_id" />
     </resultMap>

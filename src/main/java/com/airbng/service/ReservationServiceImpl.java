@@ -54,8 +54,9 @@ public class ReservationServiceImpl implements ReservationService{
         }
 
         List<ReservationSearchResponse> reservations = reservationMapper.findAllReservationById(
-                memberId, role, state.toString(), nextCursorId, LIMIT + 1 //다음 페이지 유무 확인
+                memberId, role, state, nextCursorId, LIMIT + 1 //다음 페이지 유무 확인
         );
+
 
         // 예외 처리: 예약이 없을 경우
         if (reservations == null || reservations.isEmpty()) {

@@ -14,7 +14,6 @@ import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
-@Slf4j
 @RestController
 @RequestMapping("/reservations")
 @Validated
