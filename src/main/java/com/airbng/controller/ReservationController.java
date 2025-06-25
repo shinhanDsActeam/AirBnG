@@ -1,8 +1,7 @@
 package com.airbng.controller;
 
 import com.airbng.common.response.BaseResponse;
-import com.airbng.dto.ReservationCancelRequest;
-import com.airbng.dto.ReservationCancelResponse;
+import com.airbng.dto.reservation.ReservationCancelResponse;
 import com.airbng.dto.reservation.ReservationInsertRequest;
 import com.airbng.service.ReservationService;
 import lombok.RequiredArgsConstructor;

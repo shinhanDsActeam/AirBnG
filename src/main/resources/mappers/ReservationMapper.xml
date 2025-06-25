@@ -55,7 +55,7 @@
     </select>
 
 
-    <update id="updateReservationState" parameterType="map">
+    <update id="updateReservationState">
         UPDATE reservation
         SET state = #{state}
         WHERE reservation_id = #{reservationId}

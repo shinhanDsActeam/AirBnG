@@ -8,7 +8,7 @@ import com.airbng.common.response.status.BaseResponseStatus;
 import com.airbng.domain.Reservation;
 import com.airbng.domain.base.ChargeType;
 import com.airbng.domain.base.ReservationState;
-import com.airbng.dto.ReservationCancelResponse;
+import com.airbng.dto.reservation.ReservationCancelResponse;
 import com.airbng.dto.jimType.JimTypeCountResult;
 import com.airbng.dto.reservation.ReservationInsertRequest;
 import com.airbng.mappers.JimTypeMapper;

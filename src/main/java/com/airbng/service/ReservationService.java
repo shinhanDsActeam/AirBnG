@@ -3,9 +3,7 @@ package com.airbng.service;
 import com.airbng.common.response.status.BaseResponseStatus;
 import com.airbng.dto.reservation.ReservationInsertRequest;
 import org.springframework.stereotype.Service;
-import com.airbng.dto.ReservationCancelRequest;
-import com.airbng.dto.ReservationCancelResponse;
-import org.springframework.web.bind.annotation.PathVariable;
+import com.airbng.dto.reservation.ReservationCancelResponse;
 
 @Service
 public interface ReservationService {
