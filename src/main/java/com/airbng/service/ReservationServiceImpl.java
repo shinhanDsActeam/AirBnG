@@ -110,8 +110,8 @@ public class ReservationServiceImpl implements ReservationService {
     @Override
     public ReservationDetailResponse findReservationDetail(Long reservationId, Long memberId) {
         Reservation reservation = reservationMapper.findReservationDetailById(reservationId);
-        if(reservation==null) throw new ReservationException(NOT_FOUND_RESERVATION);
-        if(!reservation.getDropper().getMemberId().equals(memberId)) throw new ReservationException(NOT_DROPPER_OF_RESERVATION);
+        if(reservation==null) throw new ReservationException(NOT_FOUND_RESERVATION); // 보관소 있나요
+        if(!reservation.getDropper().getMemberId().equals(memberId)) throw new ReservationException(NOT_DROPPER_OF_RESERVATION); // 있는 보관소가 내거 맞나요
 
         return ReservationDetailResponse.from(reservation);
     }
