@@ -67,7 +67,7 @@ public class ReservationServiceImpl implements ReservationService{
             reservationMapper.updateReservationState(reservationId,
                     ReservationState.CANCELLED);
 
-             return ReservationCancelResponse.from(reservation,
+             return ReservationCancelResponse.of(reservation,
                      chargeType.discountAmount(),ReservationState.CANCELLED);
 
             } finally{

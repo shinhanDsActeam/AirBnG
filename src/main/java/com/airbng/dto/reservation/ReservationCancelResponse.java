@@ -14,7 +14,7 @@ public class ReservationCancelResponse {
     private ReservationState state;
     private Long charge;
 
-    public static ReservationCancelResponse from(Reservation reservation, Long charge, ReservationState newState){
+    public static ReservationCancelResponse of(Reservation reservation, Long charge, ReservationState newState){
         return ReservationCancelResponse.builder()
                 .reservationId(reservation.getReservationId())
                 .state(newState)
