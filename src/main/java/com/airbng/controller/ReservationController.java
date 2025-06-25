@@ -2,6 +2,7 @@ package com.airbng.controller;
 
 import com.airbng.common.response.BaseResponse;
 import com.airbng.domain.base.ReservationState;
+import com.airbng.dto.reservation.ReservationCancelResponse;
 import com.airbng.dto.reservation.ReservationInsertRequest;
 import com.airbng.dto.reservation.ReservationPaging;
 import com.airbng.service.ReservationService;
@@ -18,9 +19,16 @@ import javax.validation.constraints.NotNull;
 @RequestMapping("/reservations")
 @Validated
 @RequiredArgsConstructor
+@Slf4j
 public class ReservationController {
 
     private final ReservationService reservationService;
+
+    @PostMapping("/{reservation-id}/members/{member-id}/cancel")
+    public BaseResponse<ReservationCancelResponse> updateResponse(@PathVariable("reservation-id") Long reservationId, @PathVariable("member-id") Long memberId) {
+        log.info("ReservationController.updateResponse");
+        return new BaseResponse<>(reservationService.updateReservationState(reservationId, memberId));
+    }
 
     // 예약 등록
     @PostMapping

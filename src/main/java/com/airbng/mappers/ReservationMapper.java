@@ -1,16 +1,20 @@
 package com.airbng.mappers;
 
 import com.airbng.domain.base.ReservationState;
+import com.airbng.domain.Reservation;
+import org.apache.ibatis.annotations.Param;
 import com.airbng.dto.reservation.ReservationInsertRequest;
 import com.airbng.dto.reservation.ReservationSearchResponse;
 import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
 @Mapper
 public interface ReservationMapper {
-    // 예약 등록
+
+    void updateReservationState(@Param("reservationId")Long reservationId, @Param("state")ReservationState state);
+    Reservation findReservationWithDropperById(Long reservationId);
+  
     void insertReservation(ReservationInsertRequest reservation);
 
     // 예약 조회 + 페이징 처리
