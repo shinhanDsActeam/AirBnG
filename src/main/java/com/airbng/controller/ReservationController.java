@@ -20,7 +20,6 @@ import javax.validation.constraints.NotNull;
 @RequestMapping("/reservations")
 @Validated
 @RequiredArgsConstructor
-@Validated
 @Slf4j
 public class ReservationController {
     private final ReservationService reservationService;
