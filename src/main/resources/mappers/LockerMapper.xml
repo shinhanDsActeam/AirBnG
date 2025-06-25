@@ -255,5 +255,12 @@
         ), 1, 0)
     </select>
 
+    <!-- locker 활성화/비활성화 처리 -->
+    <update id="updateLockerIsAvailable">
+        UPDATE Locker
+        SET is_available = #{isAvailable}
+        WHERE locker_id = #{lockerId}
+    </update>
+
 </mapper>
 

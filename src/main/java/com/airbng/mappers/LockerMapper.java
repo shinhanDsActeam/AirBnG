@@ -1,6 +1,7 @@
 package com.airbng.mappers;
 
 import com.airbng.domain.Locker;
+import com.airbng.domain.base.Available;
 import com.airbng.domain.base.ReservationState;
 import com.airbng.domain.image.Image;
 import com.airbng.dto.locker.LockerDetailResponse;
@@ -46,4 +47,6 @@ public interface LockerMapper {
     boolean isExistLocker(Long lockerId);
 
     boolean isLockerKeeper(@Param("lockerId") Long lockerId, @Param("keeperId") Long keeperId);
+
+    void updateLockerIsAvailable(@Param("lockerId") Long lockerId, @Param("isAvailable") Available isAvailable);
 }
