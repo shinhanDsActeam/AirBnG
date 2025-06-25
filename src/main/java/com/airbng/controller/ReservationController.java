@@ -1,9 +1,11 @@
 package com.airbng.controller;
 
 import com.airbng.common.response.BaseResponse;
+import com.airbng.dto.reservation.ReservationCancelResponse;
 import com.airbng.dto.reservation.ReservationInsertRequest;
 import com.airbng.service.ReservationService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -11,8 +13,16 @@ import javax.validation.Valid;
 @RestController
 @RequestMapping("/reservations")
 @RequiredArgsConstructor
+@Slf4j
 public class ReservationController {
+
     private final ReservationService reservationService;
+
+    @PostMapping("/{reservation-id}/members/{member-id}/cancel")
+    public BaseResponse<ReservationCancelResponse> updateResponse(@PathVariable("reservation-id") Long reservationId, @PathVariable("member-id") Long memberId) {
+        log.info("ReservationController.updateResponse");
+        return new BaseResponse<>(reservationService.updateReservationState(reservationId, memberId));
+    }
     // 예약 등록
     @PostMapping
     public BaseResponse<String> insertReservation(@RequestBody @Valid ReservationInsertRequest request) {
