@@ -1,6 +1,7 @@
 package com.airbng.service;
 
 import com.airbng.common.exception.ReservationException;
+import com.airbng.domain.base.ReservationState;
 import com.airbng.dto.reservation.ReservationPaging;
 import com.airbng.dto.reservation.ReservationSearchResponse;
 import com.airbng.mappers.ReservationMapper;
@@ -27,7 +28,7 @@ public class ResevationSearchServiceTest {
     private ReservationMapper reservationMapper;
     private final Long memberId = 3L;
     private final String role = "DROPPER";
-    private final String state = "CONFIRMED";
+    private final ReservationState state = ReservationState.CONFIRMED;
     private static final Long LIMIT = 10L;
 
     @InjectMocks

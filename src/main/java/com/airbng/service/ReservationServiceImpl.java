@@ -5,6 +5,7 @@ import com.airbng.common.exception.LockerException;
 import com.airbng.common.exception.MemberException;
 import com.airbng.common.exception.ReservationException;
 import com.airbng.common.response.status.BaseResponseStatus;
+import com.airbng.domain.base.ReservationState;
 import com.airbng.dto.jimType.JimTypeCountResult;
 import com.airbng.dto.reservation.ReservationInsertRequest;
 import com.airbng.dto.reservation.ReservationPaging;
@@ -37,7 +38,7 @@ public class ReservationServiceImpl implements ReservationService {
 
     //예약 조회 + 페이징 처리
     @Override
-    public ReservationPaging findAllReservationById(Long memberId, String role, String state, Long nextCursorId) {
+    public ReservationPaging findAllReservationById(Long memberId, String role, ReservationState state, Long nextCursorId) {
         log.info("Finding reservation by memberId: {}, role: {}, state: {}, nextCursorId: {}, LIMIT:{} ",
                 memberId, role, state, nextCursorId, LIMIT);
 

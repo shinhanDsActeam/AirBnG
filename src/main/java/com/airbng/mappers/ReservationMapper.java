@@ -1,5 +1,6 @@
 package com.airbng.mappers;
 
+import com.airbng.domain.base.ReservationState;
 import com.airbng.dto.reservation.ReservationInsertRequest;
 import com.airbng.dto.reservation.ReservationSearchResponse;
 import org.apache.ibatis.annotations.Mapper;
@@ -16,7 +17,7 @@ public interface ReservationMapper {
     List<ReservationSearchResponse> findAllReservationById(
                                              @Param("memberId") Long memberId,
                                              @Param("role") String role,
-                                             @Param("state") String state,
+                                             @Param("state") ReservationState state,
                                              @Param("nextCursorId") Long nextCursorId,
                                              @Param("limit") Long limit
     );

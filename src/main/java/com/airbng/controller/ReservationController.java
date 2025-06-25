@@ -1,6 +1,7 @@
 package com.airbng.controller;
 
 import com.airbng.common.response.BaseResponse;
+import com.airbng.domain.base.ReservationState;
 import com.airbng.dto.reservation.ReservationInsertRequest;
 import com.airbng.dto.reservation.ReservationPaging;
 import com.airbng.service.ReservationService;
@@ -32,7 +33,7 @@ public class ReservationController {
     public BaseResponse<ReservationPaging> findAllReservationById(
             @RequestParam(value = "isDropper") @NotNull Boolean isDropper,
             @RequestParam(value = "memberId") @Min(1) @NotNull Long memberId,
-            @RequestParam(required = false) String state,
+            @RequestParam(required = false) ReservationState state,
             @RequestParam(value = "nextCursorId", required = false) Long nextCursorId
     ) {
 
