@@ -20,9 +20,9 @@ public class ReservationController {
         return new BaseResponse<>(reservationService.insertReservation(request));
     }
 
-    @GetMapping("")
-    public BaseResponse<ReservationDetailResponse> getReservationDetail(@PathVariable Long reservationId, @PathVariable Long memberId){
-
+    @GetMapping("{reservation-id}/detail")
+    public BaseResponse<ReservationDetailResponse> getReservationDetail(@PathVariable Long reservationId){
+        return new BaseResponse<>(reservationService.findReservationDetail(reservationId));
     }
 
 }
