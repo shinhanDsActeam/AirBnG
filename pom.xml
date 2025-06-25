@@ -205,6 +205,12 @@
           <version>3.1.8</version>
       </dependency>
 
+    <dependency>
+      <groupId>org.glassfish</groupId>
+      <artifactId>jakarta.el</artifactId>
+      <version>3.0.4</version>
+    </dependency>
+
   </dependencies>
   <build>
     <finalName>AirBnG</finalName>
