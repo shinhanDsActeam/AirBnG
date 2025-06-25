@@ -49,4 +49,6 @@ public interface LockerMapper {
     boolean isLockerKeeper(@Param("lockerId") Long lockerId, @Param("keeperId") Long keeperId);
 
     void updateLockerIsAvailable(@Param("lockerId") Long lockerId, @Param("isAvailable") Available isAvailable);
+
+    void toggleLockerIsAvailable(@Param("lockerId") Long lockerId);
 }
