@@ -5,7 +5,9 @@ import com.airbng.common.exception.LockerException;
 import com.airbng.common.exception.MemberException;
 import com.airbng.common.exception.ReservationException;
 import com.airbng.common.response.status.BaseResponseStatus;
+import com.airbng.domain.Reservation;
 import com.airbng.dto.jimType.JimTypeCountResult;
+import com.airbng.dto.reservation.ReservationDetailResponse;
 import com.airbng.dto.reservation.ReservationInsertRequest;
 import com.airbng.mappers.JimTypeMapper;
 import com.airbng.mappers.LockerMapper;
@@ -103,6 +105,13 @@ public class ReservationServiceImpl implements ReservationService {
         }
 
         return CREATED_RESERVATION;
+    }
+
+    @Override
+    public ReservationDetailResponse findReservationDetail(Long reservationId) {
+        Reservation reservation = reservationMapper.findReservationDetailById(reservationId);
+        if(reservation==null) throw new ReservationException(NOT_FOUND_RESERVATION);
+        return ReservationDetailResponse.from(reservation);
     }
 
 }
