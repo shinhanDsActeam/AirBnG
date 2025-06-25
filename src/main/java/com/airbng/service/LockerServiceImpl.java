@@ -49,7 +49,7 @@ public class LockerServiceImpl implements LockerService {
 
         return response;
     }
-  
+
     @Override
     public LockerDetailResponse findUserById(Long lockerId) {
         LockerDetailResponse result = lockerMapper.findUserById(lockerId);
@@ -63,10 +63,10 @@ public class LockerServiceImpl implements LockerService {
     }
 
     @Override
-    public LockerTop5Response findTop5Locker(){
+    public LockerTop5Response findTop5Locker() {
         List<LockerPreviewResult> popularLockers = lockerMapper.findTop5Lockers(ReservationState.CONFIRMED);
 
-        if(popularLockers.isEmpty()) throw new LockerException(NOT_FOUND_LOCKER);
+        if (popularLockers.isEmpty()) throw new LockerException(NOT_FOUND_LOCKER);
 
         return LockerTop5Response.builder()
                 .lockers(popularLockers)

@@ -24,6 +24,6 @@ public interface LockerService {
      *보관소 상세 조회
      * */
     LockerDetailResponse findUserById(Long lockerId);
-  
+
 }
 
