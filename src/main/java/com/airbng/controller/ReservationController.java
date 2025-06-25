@@ -1,6 +1,7 @@
 package com.airbng.controller;
 
 import com.airbng.common.response.BaseResponse;
+import com.airbng.dto.reservation.ReservationDetailResponse;
 import com.airbng.dto.reservation.ReservationInsertRequest;
 import com.airbng.service.ReservationService;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +18,11 @@ public class ReservationController {
     @PostMapping
     public BaseResponse<String> insertReservation(@RequestBody @Valid ReservationInsertRequest request) {
         return new BaseResponse<>(reservationService.insertReservation(request));
+    }
+
+    @GetMapping("")
+    public BaseResponse<ReservationDetailResponse> getReservationDetail(@PathVariable Long reservationId, @PathVariable Long memberId){
+
     }
 
 }
