@@ -9,8 +9,9 @@ import com.airbng.domain.base.ReservationState;
 import com.airbng.domain.Reservation;
 import com.airbng.domain.base.ChargeType;
 import com.airbng.domain.base.ReservationState;
-import com.airbng.dto.reservation.ReservationCancelResponse;
 import com.airbng.dto.jimType.JimTypeCountResult;
+import com.airbng.dto.reservation.ReservationCancelResponse;
+import com.airbng.dto.reservation.ReservationDetailResponse;
 import com.airbng.dto.reservation.ReservationInsertRequest;
 import com.airbng.dto.reservation.ReservationPaging;
 import com.airbng.dto.reservation.ReservationSearchResponse;
@@ -203,6 +204,13 @@ public class ReservationServiceImpl implements ReservationService{
 
         return CREATED_RESERVATION;
     }
+    @Override
+    public ReservationDetailResponse findReservationDetail(Long reservationId, Long memberId) {
+        Reservation reservation = reservationMapper.findReservationDetailById(reservationId);
+        if(reservation==null) throw new ReservationException(NOT_FOUND_RESERVATION); // 보관소 있나요
+        if(!reservation.getDropper().getMemberId().equals(memberId)) throw new ReservationException(NOT_DROPPER_OF_RESERVATION); // 있는 보관소가 내거 맞나요
 
+        return ReservationDetailResponse.from(reservation);
+    }
 
 }

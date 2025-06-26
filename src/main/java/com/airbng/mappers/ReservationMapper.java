@@ -6,6 +6,7 @@ import org.apache.ibatis.annotations.Param;
 import com.airbng.dto.reservation.ReservationInsertRequest;
 import com.airbng.dto.reservation.ReservationSearchResponse;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -16,6 +17,7 @@ public interface ReservationMapper {
     Reservation findReservationWithDropperById(Long reservationId);
   
     void insertReservation(ReservationInsertRequest reservation);
+    Reservation findReservationDetailById(@Param("reservationId") Long reservationId);
 
     // 예약 조회 + 페이징 처리
     List<ReservationSearchResponse> findAllReservationById(
