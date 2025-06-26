@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ReservationDetailResponse {
+    private Long reservationId;
     private String dropperNickname;
     private String keeperNickname;
     private String startTime;
@@ -22,6 +23,7 @@ public class ReservationDetailResponse {
 
     public static ReservationDetailResponse from(Reservation reservation){
         return ReservationDetailResponse.builder()
+                .reservationId(reservation.getReservationId())
                 .dropperNickname(reservation.getDropper().getNickname())
                 .keeperNickname(reservation.getKeeper().getNickname())
                 .startTime(String.valueOf(reservation.getStartTime()))
