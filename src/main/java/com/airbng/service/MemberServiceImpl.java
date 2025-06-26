@@ -4,10 +4,8 @@ import com.airbng.common.exception.MemberException;
 import com.airbng.domain.Member;
 import com.airbng.domain.base.BaseStatus;
 import com.airbng.domain.image.Image;
-import com.airbng.dto.MemberMyPageRequest;
-import com.airbng.dto.MemberMyPageResponse;
-import com.airbng.dto.MemberLoginResponse;
-import com.airbng.dto.MemberSignupRequest;
+import com.airbng.dto.*;
+import com.airbng.mappers.ImageMapper;
 import com.airbng.mappers.MemberMapper;
 import com.airbng.validator.EmailValidator;
 import com.airbng.validator.PasswordValidator;
@@ -27,6 +25,7 @@ import static com.airbng.common.response.status.BaseResponseStatus.*;
 public class MemberServiceImpl implements MemberService {
 
     private final MemberMapper memberMapper;
+    private final ImageMapper imageMapper;
     private final ImageService imageService;
     private final BCryptPasswordEncoder passwordEncoder;
     private final EmailValidator emailValidator;
@@ -70,25 +69,6 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public MemberMyPageResponse findUserById(Long memberId) {
-        //Long memberId = request.getMemberId();
-
-        MemberMyPageResponse response = memberMapper.findUserById(memberId);
-
-        if (response == null) throw new MemberException(NOT_FOUND_MEMBER);
-
-        return  MemberMyPageResponse.builder()
-                .memberId(response.getMemberId())
-                .email(response.getEmail())
-                .name(response.getName())
-                .phone(response.getPhone())
-                .nickname(response.getNickname())
-                .profileImageId(response.getProfileImageId())
-                .url(response.getUrl())
-                .build();
-    }
-
-    @Override
     public MemberLoginResponse login(String email, String password) {
         if (!emailValidator.isValidEmail(email)) {
             throw new MemberException(INVALID_EMAIL);
@@ -105,5 +85,48 @@ public class MemberServiceImpl implements MemberService {
         }
     }
 
+    @Override
+    public MemberMyPageResponse findUserById(Long memberId) {
+        //Long memberId = request.getMemberId();
 
+        MemberMyPageResponse response = memberMapper.findUserById(memberId);
+
+        if (response == null) throw new MemberException(NOT_FOUND_MEMBER);
+
+        return  MemberMyPageResponse.builder()
+                .memberId(response.getMemberId())
+                .email(response.getEmail())
+                .name(response.getName())
+                .phone(response.getPhone())
+                .nickname(response.getNickname())
+                .profileImageId(response.getProfileImageId())
+                .url(response.getUrl())
+                .build();
+
+    }
+
+    @Transactional
+    @Override
+    public MemberMyPageResponse updateUserById(MemberUpdateRequest request, MultipartFile profileImage) {
+
+        MemberMyPageResponse existing = memberMapper.findUserById(request.getMemberId());
+        if (existing == null) throw new MemberException(NOT_FOUND_MEMBER);
+
+        if (request.getEmail() == null) request.setEmail(existing.getEmail());
+        if (request.getName() == null) request.setName(existing.getName());
+        if (request.getPhone() == null) request.setPhone(existing.getPhone());
+        if (request.getNickname() == null) request.setNickname(existing.getNickname());
+
+        Image image = (profileImage != null && !profileImage.isEmpty())
+                ? imageService.uploadProfileImage(profileImage)
+                : imageService.getDefaultProfileImage();
+
+        request.setProfileImageUrl(image.getUrl());
+
+        int updateCount = memberMapper.updateUserById(request);
+
+        if (updateCount == 0) throw new MemberException(NOT_UPDATE_MEMBER);
+
+        return memberMapper.findUserById(request.getMemberId());
+    }
 }
