@@ -12,6 +12,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.servlet.http.HttpSession;
@@ -57,7 +59,7 @@ public class MemberController {
 
     @PostMapping("/my-page/update")
     public BaseResponse<MemberMyPageResponse> updateUserById(
-            @RequestPart("memberUpdateRequest") MemberUpdateRequest memberUpdateRequest,
+            @Valid @RequestPart ("memberUpdateRequest") MemberUpdateRequest memberUpdateRequest,
             @RequestPart(value = "profileImage", required = false) MultipartFile profileImage) {
 
         log.info("회원 정보 수정 요청: {}", memberUpdateRequest);
