@@ -55,9 +55,8 @@ public class MemberController {
         return new BaseResponse<>(response);
     }
 
-    @PostMapping("/my-page/{member-id}/update")
+    @PostMapping("/my-page/update")
     public BaseResponse<MemberMyPageResponse> updateUserById(
-            @PathVariable("member-id") @NotNull @Min(1) Long memberId,
             @RequestPart("memberUpdateRequest") MemberUpdateRequest memberUpdateRequest,
             @RequestPart(value = "profileImage", required = false) MultipartFile profileImage) {
 

@@ -110,6 +110,7 @@ public class MemberServiceImpl implements MemberService {
     public MemberMyPageResponse updateUserById(MemberUpdateRequest request, MultipartFile profileImage) {
 
         MemberMyPageResponse existing = memberMapper.findUserById(request.getMemberId());
+
         if (existing == null) throw new MemberException(NOT_FOUND_MEMBER);
 
         if (request.getEmail() == null) request.setEmail(existing.getEmail());
@@ -119,9 +120,9 @@ public class MemberServiceImpl implements MemberService {
 
         Image image = (profileImage != null && !profileImage.isEmpty())
                 ? imageService.uploadProfileImage(profileImage)
-                : imageService.getDefaultProfileImage();
+                : imageService.updateDefaultProfileImage(profileImage, request.getMemberId());
 
-        request.setProfileImageUrl(image.getUrl());
+        request.setProfileImageId(image.getImageId());
 
         int updateCount = memberMapper.updateUserById(request);
 
