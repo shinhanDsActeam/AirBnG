@@ -72,6 +72,14 @@
         WHERE m.member_id = #{memberId}
     </select>
 
+
+    <update id="updateReservationState">
+        UPDATE reservation
+        SET state = #{state}
+        WHERE reservation_id = #{reservationId}
+    </update>
+
+
     <resultMap id="ReservationWithDropperMap" type="com.airbng.domain.Reservation">
         <result property="reservationId" column="reservation_id"/>
         <result property="state" column="state"/>
@@ -90,31 +98,83 @@
     </resultMap>
 
 
-    <select id="findReservationWithDropperById" parameterType="Long" resultMap="ReservationWithDropperMap">
-        SELECT
-            r.reservation_id,
-            r.state,
-            r.start_time,
-            r.end_time,
 
-            d.member_id AS dropper_id,
-            d.email AS dropper_email,
-            d.name AS dropper_name,
-            d.phone AS dropper_phone,
-            d.nickname AS dropper_nickname,
-            d.password AS dropper_password,
-            d.status AS dropper_status
 
-        FROM reservation r
-        JOIN member d ON r.dropper_id = d.member_id
-        WHERE r.reservation_id = #{reservationId}
+
+
+//<!-- 예약 - 알림 -->
+    <!-- 단건 조회 -->
+    <select id="findById" parameterType="long" resultType="com.airbng.model.Reservation">
+        SELECT reservation_id AS id,
+        dropper_id,
+        keeper_id,
+        start_time,
+        end_time,
+        state,
+        updated_at,
+        created_at
+        FROM reservation
+        WHERE reservation_id = #{id}
     </select>
 
+    <!-- end_time 24시간 지난 상태 CONFIRMED 예약 조회 -->
+    <select id="findExpiredConfirmedReservations" parameterType="java.time.LocalDateTime" resultType="com.airbng.model.Reservation">
+        SELECT reservation_id AS id,
+        dropper_id,
+        keeper_id,
+        start_time,
+        end_time,
+        state,
+        updated_at,
+        created_at
+        FROM reservation
+        WHERE state = 'CONFIRMED'
+        AND end_time &lt; #{deadline}
+    </select>
 
-    <update id="updateReservationState">
-        UPDATE reservation
-        SET state = #{state}
-        WHERE reservation_id = #{reservationId}
-    </update>
+    <!-- 30분 이내 end_time 도래 예정인 예약 (CONFIRMED) -->
+    <select id="findConfirmedNearEndTime" parameterType="java.time.LocalDateTime" resultType="com.airbng.model.Reservation">
+        SELECT reservation_id AS id,
+        dropper_id,
+        keeper_id,
+        start_time,
+        end_time,
+        state,
+        updated_at,
+        created_at
+        FROM reservation
+        WHERE state = 'CONFIRMED'
+        AND end_time BETWEEN #{_parameter} AND DATE_ADD(#{_parameter}, INTERVAL 30 MINUTE)
+    </select>
+
+    <!-- 5분 이내 CONFIRMED 상태로 바뀐 예약 -->
+    <select id="findStateChangedToConfirmed" parameterType="java.time.LocalDateTime" resultType="com.airbng.model.Reservation">
+        SELECT reservation_id AS id,
+        dropper_id,
+        keeper_id,
+        start_time,
+        end_time,
+        state,
+        updated_at,
+        created_at
+        FROM reservation
+        WHERE state = 'CONFIRMED'
+        AND updated_at &gt; #{_parameter}
+    </select>
+
+    <!-- 5분 이내 CANCELLED 상태로 바뀐 예약 -->
+    <select id="findStateChangedToCancelled" parameterType="java.time.LocalDateTime" resultType="com.airbng.model.Reservation">
+        SELECT reservation_id AS id,
+        dropper_id,
+        keeper_id,
+        start_time,
+        end_time,
+        state,
+        updated_at,
+        created_at
+        FROM reservation
+        WHERE state = 'CANCELLED'
+        AND updated_at &gt; #{_parameter}
+    </select>
 
 </mapper>
