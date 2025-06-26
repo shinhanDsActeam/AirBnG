@@ -14,5 +14,5 @@ public class MemberUpdateRequest {
     private String name;
     private String phone;
     private String nickname;
-    private String profileImageUrl;
+    private Long profileImageId;
 }
