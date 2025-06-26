@@ -28,6 +28,7 @@ public enum BaseResponseStatus implements ResponseStatus{
     DUPLICATE_PHONE(2005,HttpStatus.BAD_REQUEST.value(),"휴대폰 번호 중복 오류"),
     INVALID_EMAIL(2006, HttpStatus.BAD_REQUEST.value(),"이메일 형식을 지켜주세요"),
     INVALID_MEMBER(2007, HttpStatus.UNAUTHORIZED.value(), "유효하지 않은 멤버입니다."),
+    NOT_UPDATE_MEMBER(2008, HttpStatus.NO_CONTENT.value(), "멤버 정보가 변경되지 않았습니다."),
 
     /**
      * 3000 락커 관련 코드

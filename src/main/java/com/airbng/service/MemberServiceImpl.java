@@ -108,10 +108,13 @@ public class MemberServiceImpl implements MemberService {
     @Transactional
     @Override
     public MemberMyPageResponse updateUserById(MemberUpdateRequest request, MultipartFile profileImage) {
-
         MemberMyPageResponse existing = memberMapper.findUserById(request.getMemberId());
 
         if (existing == null) throw new MemberException(NOT_FOUND_MEMBER);
+        if (memberMapper.findByEmail(request.getEmail()))               throw new MemberException(DUPLICATE_EMAIL);
+        if (memberMapper.findByNickname(request.getNickname()))         throw new MemberException(DUPLICATE_NICKNAME);
+        if (memberMapper.findByPhone(request.getPhone()))               throw new MemberException(DUPLICATE_PHONE);
+        if (!emailValidator.isValidEmail(request.getEmail()))           throw new MemberException(INVALID_EMAIL);
 
         if (request.getEmail() == null) request.setEmail(existing.getEmail());
         if (request.getName() == null) request.setName(existing.getName());
