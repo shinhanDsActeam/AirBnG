@@ -24,6 +24,8 @@ public class ReservationAlarmSseServiceImpl implements ReservationAlarmSseServic
     // 클라이언트가 SSE 연결을 요청할 때 호출되는 메서드
     @Override
     public SseEmitter connect(Long memberId, String lastEventId) {
+        log.info("SSE 연결 요청: memberId={}, 현재 연결 수={}", memberId, emitterMap.size());
+
         SseEmitter emitter = new SseEmitter(TIMEOUT);
         emitterMap.put(memberId, emitter);
 
@@ -43,10 +45,12 @@ public class ReservationAlarmSseServiceImpl implements ReservationAlarmSseServic
         });
 
         try {
-            emitter.send(SseEmitter.event().name("connect").data("SSE 연결 성공"));
+            emitter.send(SseEmitter.event().name("connect").data("SSE SUCCESS - memberId: " + memberId));
         } catch (IOException e) {
             log.error("초기 연결 메시지 전송 실패", e);
         }
+
+        log.info("연결 완료: memberId={}, 현재 연결 수={}", memberId, emitterMap.size());
 
         return emitter;
     }
@@ -57,11 +61,14 @@ public class ReservationAlarmSseServiceImpl implements ReservationAlarmSseServic
         SseEmitter emitter = emitterMap.get(memberId);
         if (emitter != null) {
             try {
+                log.info("🔔 알림 전송 시도: memberId={}, data={}", memberId, data);
                 emitter.send(SseEmitter.event().name("alarm").data(data));
             } catch (IOException e) {
                 log.warn("SSE 메시지 전송 실패: memberId={}, error={}", memberId, e.getMessage());
                 emitterMap.remove(memberId);
             }
+        } else {
+            log.info("⚠️ SSE 연결 없음: memberId={}", memberId);
         }
     }
 
