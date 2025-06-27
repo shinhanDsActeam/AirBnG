@@ -7,10 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import javax.servlet.http.HttpSession;
 
@@ -21,11 +18,17 @@ public class ReservationAlarmSseController {
 
     private final ReservationAlarmSseService reservationAlarmSseService;
 
-    @GetMapping("/reservations_alarms")
+    @GetMapping("/reservations/alarms")
     public SseEmitter subscribe(
             HttpSession session,
             @RequestHeader(value = "Last-Event-ID", required = false) String lastEventId
     ) {
+
+//        Long memberId = 1L; //keeper의 경우 1L로 고정, dropper의 경우 2L로 고정
+//
+//        Long memberId = 3L; //dropper의 경우 3L로 고정
+
+        // 세션에서 로그인한 사용자 정보 가져오기
         MemberLoginResponse userDetails = (MemberLoginResponse) session.getAttribute("memberId");
         if (userDetails == null) {
             throw new IllegalStateException("로그인 정보가 없습니다.");
