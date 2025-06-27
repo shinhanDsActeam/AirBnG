@@ -40,7 +40,6 @@ public class ReservationServiceImpl implements ReservationService {
     private static final Long LIMIT = 10L; // 페이지당 최대 예약 개수
 
     //예약 조회 + 페이징 처리
-
     @Override
     public ReservationPaging findAllReservationById(Long memberId, String role, ReservationState state, Long nextCursorId, String period) {
         log.info("Finding reservation by memberId: {}, role: {}, state: {}, nextCursorId: {}, LIMIT:{},  PERIOD: {}",
@@ -98,10 +97,10 @@ public class ReservationServiceImpl implements ReservationService {
     @Transactional
     public ReservationCancelResponse updateReservationState(Long reservationId, Long memberId) {
 
-        /** 락 만듬 */
+        /** 락 만듦 */
         ReentrantLock lock = reservationLocks.get(reservationId, key -> new ReentrantLock());
         try {
-            /** 릭 검 */
+            /** 락 걸기 */
             lock.lock();
 
             /** 맴버 존재 유무 파악 */
@@ -181,7 +180,7 @@ public class ReservationServiceImpl implements ReservationService {
     }
 
     @Override
-    public ReservationFormResponse getReservationForm(Long lockerId){
+    public ReservationFormResponse getReservationForm(Long lockerId) {
         ReservationFormResponse response = lockerMapper.getLockerInfoById(lockerId);
         List<LockerJimTypeResult> jimTypes = lockerMapper.getLockerJimTypeById(lockerId);
         response.setLockerJimTypes(jimTypes);
@@ -191,7 +190,7 @@ public class ReservationServiceImpl implements ReservationService {
     // 예약 등록
     @Override
     @Transactional // 짐타입 등록 실패한 경우 예약 등록까지 롤백
-    public BaseResponseStatus insertReservation(final ReservationInsertRequest request) {
+    public BaseResponseStatus insertReservation(ReservationInsertRequest request) {
         log.info("insertReservation({})", request);
 
         validateStartTimeAndEndTime(request.getStartTime(), request.getEndTime());
