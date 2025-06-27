@@ -8,10 +8,12 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class NotificationRequest {
+public class NotificationRespose {
     private Long reservationId;
 
     private Long receiverId;         // 실제 알림 받는 유저 ID
+    private String nickName;   // 실제 알림 받는 유저 이름
+
     private String role;     // "KEEPER" 또는 "DROPPER"
 
     private NotificationType type;             // "EXPIRED", "STATE_CHANGE" 등
