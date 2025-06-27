@@ -4,9 +4,11 @@ import com.airbng.domain.base.NotificationType;
 import com.airbng.dto.NotificationRespose;
 import com.airbng.dto.reservation.ReservationResponse;
 import com.airbng.mappers.ReservationMapper;
+import com.airbng.service.ReservationAlarmCacheService;
 import com.airbng.service.ReservationAlarmSseService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -14,16 +16,20 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Slf4j
+@Async
 @Component
 @RequiredArgsConstructor
 public class AlertScheduledTask {
 
     private final ReservationMapper reservationMapper;
     private final ReservationAlarmSseService sseService;
+    private final ReservationAlarmCacheService reservationAlarmCacheService;
 
-    @Scheduled(fixedRate = 1000 *60 * 5) // 5분마다 실행
-    // 5분마다 실행
+    @Scheduled(initialDelay = 10000, fixedRate = 1000 *30) //대기시간 1분, 30초 주기로 스케줄러 실행
     public void processReservationAlarms() {
+
+        log.info("스케줄러 실행 - 현재 시간: {}", LocalDateTime.now());
+
         LocalDateTime now = LocalDateTime.now();
 
         // 1. EXPIRED 알림 (24시간 지난 CONFIRMED)
@@ -53,28 +59,57 @@ public class AlertScheduledTask {
 
     private void sendToBoth(ReservationResponse r, NotificationType type, String dropperMsg, String keeperMsg) {
         LocalDateTime now = LocalDateTime.now();
-        NotificationRespose d = NotificationRespose.builder()
-                .reservationId(r.getReservationId())
-                .receiverId(r.getDropper().getMemberId())
-                .nickName(r.getDropper().getNickname())
-                .role("DROPPER")
-                .type(type)
-                .message(dropperMsg)
-                .sendTime(now.toString()).build();
-        NotificationRespose k = NotificationRespose.builder()
-                .reservationId(r.getReservationId())
-                .receiverId(r.getKeeper().getMemberId())
-                .nickName(r.getKeeper().getNickname())
-                .role("KEEPER")
-                .type(type)
-                .message(keeperMsg)
-                .sendTime(now.toString()).build();
-        if (sseService.hasConnected(d.getReceiverId())) sseService.sendMessage(d.getReceiverId(), d);
-        if (sseService.hasConnected(k.getReceiverId())) sseService.sendMessage(k.getReceiverId(), k);
+        // DROPPER
+        //레디스 캐시에 해당 내용의 알림 없으면 알림 발송
+        if (!reservationAlarmCacheService.isSent(r.getReservationId(), r.getDropper().getMemberId(), type)) {
+            if (sseService.hasConnected(r.getDropper().getMemberId())) {
+                NotificationRespose d = NotificationRespose.builder()
+                        .reservationId(r.getReservationId())
+                        .receiverId(r.getDropper().getMemberId())
+                        .nickName(r.getDropper().getNickname())
+                        .role("DROPPER")
+                        .type(type)
+                        .message(dropperMsg)
+                        .sendTime(now.toString()).build();
+                sseService.sendMessage(r.getDropper().getMemberId(), d);
+
+                //알림 보내고 레디스 캐시에 해당 내용 저장
+                reservationAlarmCacheService.markSent(r.getReservationId(), r.getDropper().getMemberId(), type);
+                log.info("✅ 발송 후 Redis markSent 완료 (dropper)");
+            }
+        } else {
+            log.debug("🚫 DROPPER Redis에 발송됨 표시가 있어 재발송 안함");
+        }
+
+        // KEEPER
+        //레디스 캐시에 해당 내용의 알림 없으면 알림 발송
+        if (!reservationAlarmCacheService.isSent(r.getReservationId(), r.getKeeper().getMemberId(), type)) {
+            if (sseService.hasConnected(r.getKeeper().getMemberId())) {
+                NotificationRespose k = NotificationRespose.builder()
+                        .reservationId(r.getReservationId())
+                        .receiverId(r.getKeeper().getMemberId())
+                        .nickName(r.getKeeper().getNickname())
+                        .role("KEEPER")
+                        .type(type)
+                        .message(keeperMsg)
+                        .sendTime(now.toString()).build();
+                sseService.sendMessage(r.getKeeper().getMemberId(), k);
+
+                //알림 보내고 레디스 캐시에 해당 내용 저장
+                reservationAlarmCacheService.markSent(r.getReservationId(), r.getKeeper().getMemberId(), type);
+                log.info("✅ 발송 후 Redis markSent 완료 (keeper)");
+            }
+        } else {
+            log.debug("🚫 KEEPER Redis에 발송됨 표시가 있어 재발송 안함");
+        }
     }
 
     private void sendToOne(Long id, Long resId, String name, String role, NotificationType type, String message) {
         if (!sseService.hasConnected(id)) return;
+        if (reservationAlarmCacheService.isSent(resId, id, type)) {
+            log.debug("🚫 이미 Redis에 발송됨 표시가 있어 재발송 안함 (reservationId={}, memberId={}, type={})", resId, id, type);
+            return;
+        }
         NotificationRespose dto = NotificationRespose.builder()
                 .reservationId(resId)
                 .receiverId(id)
@@ -85,5 +120,6 @@ public class AlertScheduledTask {
                 .sendTime(String.valueOf(LocalDateTime.now()))
                 .build();
         sseService.sendMessage(id, dto);
+        reservationAlarmCacheService.markSent(id, resId, type);
     }
 }

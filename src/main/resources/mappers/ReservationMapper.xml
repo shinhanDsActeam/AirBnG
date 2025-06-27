@@ -320,7 +320,7 @@
         JOIN member k ON r.keeper_id = k.member_id
 
         WHERE r.state = 'CONFIRMED'
-        AND r.updated_at &gt; #{now}
+        AND r.updated_at &gt; #{since}
     </select>
 
     <!-- 5분 이내 CANCELLED 상태로 바뀐 예약 -->
@@ -352,7 +352,7 @@
         JOIN member k ON r.keeper_id = k.member_id
 
         WHERE r.state = 'CANCELLED'
-        AND r.updated_at &gt; #{now}
+        AND r.updated_at &gt; #{since}
     </select>
 
 </mapper>
