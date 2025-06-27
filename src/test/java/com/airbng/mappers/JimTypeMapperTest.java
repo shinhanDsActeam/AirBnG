@@ -3,6 +3,7 @@ package com.airbng.mappers;
 import com.airbng.dto.jimType.JimTypeCountResult;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+@Tag("integration")
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {com.airbng.config.WebConfig.class})
 @WebAppConfiguration

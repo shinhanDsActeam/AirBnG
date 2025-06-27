@@ -4,6 +4,7 @@ import com.airbng.dto.jimType.JimTypeCountResult;
 import com.airbng.dto.reservation.ReservationInsertRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,7 @@ import java.util.Arrays;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
+@Tag("integration")
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {com.airbng.config.WebConfig.class})
 @WebAppConfiguration
