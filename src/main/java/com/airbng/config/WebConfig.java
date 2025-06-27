@@ -3,6 +3,8 @@ package com.airbng.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.validation.beanvalidation.MethodValidationPostProcessor;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
@@ -10,6 +12,8 @@ import org.springframework.web.servlet.config.annotation.*;
 
 @Configuration
 @EnableWebMvc
+@EnableAsync                // 비동기 메서드 실행 지원
+@EnableScheduling           // 스케줄러 활성화
 @ComponentScan(basePackages = "com.airbng")
 @EnableTransactionManagement
 public class WebConfig implements WebMvcConfigurer {
