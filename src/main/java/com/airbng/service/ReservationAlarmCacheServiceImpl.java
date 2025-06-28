@@ -14,15 +14,10 @@ import java.util.concurrent.TimeUnit;
 public class ReservationAlarmCacheServiceImpl implements ReservationAlarmCacheService{
 
     private final RedisTemplate<String, String> redisTemplate;
-    private static final long EXPIRE_SECONDS =  60; // 테스트용 1분
+//    private static final long EXPIRE_SECONDS =  60; // 테스트용 1분
 
-//      이게 찐 코드
-//    private static final long EXPIRE_SECONDS = 24 * 60 * 60;
-
-//    public ReservationAlarmCacheServiceImpl(RedisTemplate<String, String> redisTemplate) {
-//        this.redisTemplate = redisTemplate;
-//    }
-
+    //진짜 코드
+    private static final long EXPIRE_SECONDS = 24 * 60 * 60;
 
     //알림이 발송되었는지 획인하기 위함 (레디스에 저장되었는지 확인)
     @Override
@@ -41,6 +36,7 @@ public class ReservationAlarmCacheServiceImpl implements ReservationAlarmCacheSe
         log.info("🔔 Redis 캐시에 알림 발송 기록 저장: {}", key);
     }
 
+    //Redis 키를 일관되게 만들기 위한 헬퍼 메서드
     private String buildKey(Long reservationId, Long receiverId, NotificationType type) {
         return String.format("alarm:%d:%d:%s", reservationId, receiverId, type.name());
     }
