@@ -31,19 +31,16 @@ public interface ReservationMapper {
     //예약  목록 개수
     Long findReservationByMemberId(@Param("memberId") Long memberId, @Param("role") String role);
 
-    // 단건 예약 조회
-//    Reservation findById(Long id);
-
     // 24시간이 지난 CONFIRMED 예약 조회 (EXPIRED 알림용)
     List<ReservationResponse> findExpiredConfirmedReservations(@Param("deadline") LocalDateTime deadline);
 
     // endTime이 30분 이내인 예약 조회 (REMINDER 알림용)
     List<ReservationResponse> findConfirmedNearEndTime(@Param("now") LocalDateTime now);
 
-    // 최근 5분 이내 CONFIRMED로 변경된 예약 (STATE_CHANGE 알림용)
-    List<ReservationResponse> findStateChangedToConfirmed(@Param("since") LocalDateTime since);
+    // CONFIRMED로 변경된 예약 (STATE_CHANGE 알림용)
+    List<ReservationResponse> findStateChangedToConfirmed();
 
-    // 최근 5분 이내 CANCELLED로 변경된 예약 (CANCEL_NOTICE 알림용)
-    List<ReservationResponse> findStateChangedToCancelled(@Param("since") LocalDateTime since);
+    // CANCELLED로 변경된 예약 (CANCEL_NOTICE 알림용)
+    List<ReservationResponse> findStateChangedToCancelled();
 
 }

@@ -189,23 +189,7 @@
     </update>
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    <!--알림-->
     <resultMap id="ReservationAlarm" type="com.airbng.dto.reservation.ReservationResponse">
         <result property="reservationId" column="reservation_id"/>
         <result property="startTime" column="start_time"/>
@@ -222,10 +206,6 @@
             <result property="nickname" column="keeper_nickname"/>
         </association>
     </resultMap>
-
-
-
-
 
     <!-- end_time 24시간 지난 상태 CONFIRMED 예약 조회 -->
     <select id="findExpiredConfirmedReservations" parameterType="java.time.LocalDateTime" resultMap="ReservationAlarm">
@@ -291,8 +271,8 @@
         AND r.end_time BETWEEN #{now} AND DATE_ADD(#{now}, INTERVAL 30 MINUTE)
     </select>
 
-    <!-- 5분 이내 CONFIRMED 상태로 바뀐 예약 -->
-    <select id="findStateChangedToConfirmed" parameterType="java.time.LocalDateTime" resultMap="ReservationAlarm">
+    <!-- CONFIRMED 상태로 바뀐 예약 -->
+    <select id="findStateChangedToConfirmed" resultMap="ReservationAlarm">
         SELECT
             r.reservation_id,
             r.state,
@@ -320,11 +300,12 @@
         JOIN member k ON r.keeper_id = k.member_id
 
         WHERE r.state = 'CONFIRMED'
-        AND r.updated_at &gt; #{since}
+        AND r.updated_at >= DATE_SUB(NOW(), INTERVAL 1 MINUTE)
+        AND r.updated_at != r.created_at
     </select>
 
-    <!-- 5분 이내 CANCELLED 상태로 바뀐 예약 -->
-    <select id="findStateChangedToCancelled" parameterType="java.time.LocalDateTime" resultMap="ReservationAlarm">
+    <!-- CANCELLED 상태로 바뀐 예약 -->
+    <select id="findStateChangedToCancelled" resultMap="ReservationAlarm">
         SELECT
             r.reservation_id,
             r.state,
@@ -352,7 +333,8 @@
         JOIN member k ON r.keeper_id = k.member_id
 
         WHERE r.state = 'CANCELLED'
-        AND r.updated_at &gt; #{since}
+        AND r.updated_at >= DATE_SUB(NOW(), INTERVAL 1 MINUTE)
+        AND r.updated_at != r.created_at
     </select>
 
 </mapper>
