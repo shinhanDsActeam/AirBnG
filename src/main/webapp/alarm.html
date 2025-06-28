@@ -550,15 +550,8 @@
             }
         }
 
-        // ✅ 닉네임 선택 로직 추가
-        let nickname = 'N/A';
-        if (typeof data === 'object' && data !== null) {
-            if (data.role === 'DROPPER') {
-                nickname = data.dropper?.nickname || 'N/A';
-            } else if (data.role === 'KEEPER') {
-                nickname = data.keeper?.nickname || 'N/A';
-            }
-        }
+        // ✅ 닉네임 선택 로직 수정
+        let nickname = (typeof data === 'object' && data !== null && data.nickName) ? data.nickName : 'N/A';
 
         messageDiv.className = messageClass;
 
