@@ -1,7 +1,7 @@
 package com.airbng.controller;
 
 import com.airbng.domain.base.NotificationType;
-import com.airbng.dto.NotificationRespose;
+import com.airbng.dto.AlarmRespose;
 import com.airbng.scheduler.AlertScheduledTask;
 import com.airbng.service.ReservationAlarmSseService;
 import lombok.RequiredArgsConstructor;
@@ -34,7 +34,7 @@ public class SchedulerManualTriggerController {
     public ResponseEntity<String> testNotification(@PathVariable Long memberId) {
         log.info("🧪 테스트 알림 전송: memberId={}", memberId);
 
-        NotificationRespose testNotification = NotificationRespose.builder()
+        AlarmRespose testNotification = AlarmRespose.builder()
                 .reservationId(3L)
                 .receiverId(memberId)
                 .nickName("테스트 사용자")

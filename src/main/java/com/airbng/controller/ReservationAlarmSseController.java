@@ -23,19 +23,19 @@ public class ReservationAlarmSseController {
             HttpSession session,
             @RequestHeader(value = "Last-Event-ID", required = false) String lastEventId
     ) {
-
-//        Long memberId = 1L; //테스트 위함 - keeper의 경우 1L로 고정
+//        테스트 위한 코드
+//        Long memberId = 1L; //keeper의 경우 1L로 고정
 //
-        Long memberId = 3L; //테스트 위함 - dropper의 경우 3L로 고정
+//        Long memberId = 3L; // dropper의 경우 3L로 고정
 
 
-//        //이게 찐 코드
-//        // 세션에서 로그인한 사용자 정보 가져오기
-//        MemberLoginResponse userDetails = (MemberLoginResponse) session.getAttribute("memberId");
-//        if (userDetails == null) {
-//            throw new IllegalStateException("로그인 정보가 없습니다.");
-//        }
-//        Long memberId = userDetails.getMemberId();
+//        이게 찐 코드
+        // 세션에서 로그인한 사용자 정보 가져오기
+        MemberLoginResponse userDetails = (MemberLoginResponse) session.getAttribute("memberId");
+        if (userDetails == null) {
+            throw new IllegalStateException("로그인 정보가 없습니다.");
+        }
+        Long memberId = userDetails.getMemberId();
 
         // lastEventId를 로그 또는 서비스로 넘겨서 놓친 알림 재전송할 수 있음
         return reservationAlarmSseService.connect(memberId, lastEventId);
