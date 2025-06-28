@@ -14,7 +14,7 @@ import java.util.concurrent.TimeUnit;
 public class ReservationAlarmCacheServiceImpl implements ReservationAlarmCacheService{
 
     private final RedisTemplate<String, String> redisTemplate;
-//    private static final long EXPIRE_SECONDS =  60; // 테스트용 1분
+//    private static final long EXPIRE_SECONDS =  120; // 테스트용 2분
 
     //진짜 코드
     private static final long EXPIRE_SECONDS = 24 * 60 * 60;
