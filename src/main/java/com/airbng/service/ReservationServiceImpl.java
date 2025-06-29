@@ -145,7 +145,7 @@ public class ReservationServiceImpl implements ReservationService{
             if (!reservation.getKeeper().getMemberId().equals(memberId)) throw new ReservationException(NOT_KEEPER_OF_RESERVATION);
 
             //이미 취소된 예약인지 확인
-            if (reservation.getState().equals(ReservationState.CANCELLED)) throw new ReservationException(ALREADY_CANCELLED_RESERVATION);
+//            if (reservation.getState().equals(ReservationState.CANCELLED)) throw new ReservationException(ALREADY_CANCELLED_RESERVATION);
 
             //취소, 완료상태는 상태변경 불가
             reservation.getState().isAvailableUpdate(reservation.getState());

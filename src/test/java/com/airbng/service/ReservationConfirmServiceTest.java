@@ -163,8 +163,8 @@ public class ReservationConfirmServiceTest {
                     reservationService.confirmReservationState(reservationId, approve, memberId));
 
             //then
-            assertEquals(ALREADY_CANCELLED_RESERVATION, exception.getBaseResponseStatus());
-            assertEquals(ALREADY_CANCELLED_RESERVATION.getMessage(), exception.getMessage());
+            assertEquals(CANNOT_UPDATE_STATE, exception.getBaseResponseStatus());
+            assertEquals(CANNOT_UPDATE_STATE.getMessage(), exception.getMessage());
         }
     }
 }
