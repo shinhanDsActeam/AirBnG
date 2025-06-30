@@ -4,6 +4,7 @@ import com.airbng.domain.Locker;
 import com.airbng.domain.base.Available;
 import com.airbng.domain.base.ReservationState;
 import com.airbng.domain.image.Image;
+import com.airbng.dto.jimType.LockerJimTypeResult;
 import com.airbng.dto.locker.LockerDetailResponse;
 import com.airbng.dto.locker.LockerPreviewResult;
 import com.airbng.dto.locker.LockerSearchRequest;
@@ -53,4 +54,6 @@ public interface LockerMapper {
     void toggleLockerIsAvailable(@Param("lockerId") Long lockerId);
 
     Available getIsAvailableById(@Param("lockerId") Long lockerId);
+
+    List<LockerJimTypeResult> getLockerJimTypeById(@Param("lockerId") Long lockerId);
 }

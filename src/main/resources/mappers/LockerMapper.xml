@@ -279,5 +279,21 @@
         WHERE locker_id = #{lockerId};
     </select>
 
+
+    <resultMap id="LockerJimTypeResult" type="com.airbng.dto.jimType.LockerJimTypeResult">
+        <result property="jimTypeId" column="jimtype_id"/>
+        <result property="typeName" column="type_name"/>
+        <result property="pricePerHour" column="price_per_hour"/>
+    </resultMap>
+
+    <select id="getLockerJimTypeById" parameterType="Long" resultMap="LockerJimTypeResult">
+        SELECT ljt.jimtype_id AS jimtype_id,
+               jt.type_name AS type_name,
+               jt.price_per_hour AS price_per_hour
+        FROM LockerJimType ljt
+                 JOIN JimType jt ON ljt.jimtype_id = jt.jimtype_id
+        WHERE ljt.locker_id = #{lockerId}
+    </select>
+
 </mapper>
 
