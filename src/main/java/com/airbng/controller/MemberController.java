@@ -41,6 +41,12 @@ public class MemberController {
         return new BaseResponse<>("사용 가능한 이메일");
     }
 
+    @GetMapping("/check-nickname")
+    public BaseResponse<String> nicknameCheck(@RequestParam String nickname) {
+        memberService.nicknameCheck(nickname);
+        return new BaseResponse<>("사용 가능한 닉네임");
+    }
+
     @GetMapping
     public BaseResponse<MemberMyPageResponse> findUserById(
             @RequestParam @NotNull @Min(1) Long memberId

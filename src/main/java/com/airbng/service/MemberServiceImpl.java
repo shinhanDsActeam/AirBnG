@@ -70,6 +70,11 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
+    public void nicknameCheck(String nickname) {
+        if (memberMapper.findByNickname(nickname))          throw new MemberException(DUPLICATE_NICKNAME);
+    }
+
+    @Override
     public MemberMyPageResponse findUserById(Long memberId) {
         //Long memberId = request.getMemberId();
 

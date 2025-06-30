@@ -51,30 +51,30 @@
 
     <select id="findReservationDetailById" parameterType="Long" resultMap="ReservationWithDropperAndKeeperMap">
         SELECT
-        r.reservation_id,
-        r.state,
-        r.start_time,
-        r.end_time,
+            r.reservation_id,
+            r.state,
+            r.start_time,
+            r.end_time,
 
-        d.member_id AS dropper_id,
-        d.email AS dropper_email,
-        d.name AS dropper_name,
-        d.phone AS dropper_phone,
-        d.nickname AS dropper_nickname,
-        d.password AS dropper_password,
-        d.status AS dropper_status,
+            d.member_id AS dropper_id,
+            d.email AS dropper_email,
+            d.name AS dropper_name,
+            d.phone AS dropper_phone,
+            d.nickname AS dropper_nickname,
+            d.password AS dropper_password,
+            d.status AS dropper_status,
 
-        k.member_id AS keeper_id,
-        k.email AS keeper_email,
-        k.name AS keeper_name,
-        k.phone AS keeper_phone,
-        k.nickname AS keeper_nickname,
-        k.password AS keeper_password,
-        k.status AS keeper_status,
+            k.member_id AS keeper_id,
+            k.email AS keeper_email,
+            k.name AS keeper_name,
+            k.phone AS keeper_phone,
+            k.nickname AS keeper_nickname,
+            k.password AS keeper_password,
+            k.status AS keeper_status,
 
-        rjt.jimtype_id AS jimtype_id,
-        jt.type_name AS type_name,
-        rjt.count AS count
+            rjt.jimtype_id AS jimtype_id,
+            jt.type_name AS type_name,
+            rjt.count AS count
 
         FROM reservation r
         JOIN member d ON r.dropper_id = d.member_id
