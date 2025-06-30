@@ -28,6 +28,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.mock.web.MockHttpSession;
 
 import java.util.Arrays;
 import java.util.List;
@@ -35,17 +36,14 @@ import java.util.List;
 import static com.airbng.common.response.status.BaseResponseStatus.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 
 
 @ExtendWith(MockitoExtension.class)
 class ReservationServiceTest {
-
     @Mock
     private ReservationMapper reservationMapper;
-    @Mock
-    private MemberMapper memberMapper;
     @Mock
     private JimTypeMapper jimTypeMapper;
     @Mock
@@ -163,9 +161,8 @@ class ReservationServiceTest {
             ReservationInsertRequest request = Mockito.spy(perfectRequest);
 
             // when
-            when(memberMapper.isExistMember(보관왕.getMemberId())).thenReturn(true);
             when(lockerMapper.isExistLocker(서울역_보관소.getLockerId())).thenReturn(true);
-            when(lockerMapper.isLockerKeeper(서울역_보관소.getLockerId(), 보관왕.getMemberId())).thenReturn(true);
+            when(lockerMapper.getLockerKepperId(서울역_보관소.getLockerId())).thenReturn(보관왕.getMemberId());
             when(jimTypeMapper.validateLockerJimTypes(서울역_보관소.getLockerId(), List.of(백팩.getJimTypeId(), 캐리어.getJimTypeId()), 2)).thenReturn(true);
             Long insertedId = 1L; // stubbing
             when(request.getId()).thenReturn(insertedId); // 예약 삽입 성공 시 id set 됨
@@ -192,8 +189,6 @@ class ReservationServiceTest {
                 request.setLockerId(999L); // 존재하지 않는 보관소 ID로 변경
 
                 // when
-                when(memberMapper.isExistMember(보관왕.getMemberId())).thenReturn(true);
-
                 when(lockerMapper.isExistLocker(request.getLockerId())).thenReturn(false);
                 LockerException exception = assertThrows(LockerException.class, () -> {
                     reservationService.insertReservation(request);
@@ -235,44 +230,23 @@ class ReservationServiceTest {
                 assertEquals(INVALID_RESERVATION_TIME_ORDER, exception.getBaseResponseStatus());
             }
 
-            @Nested
-            @DisplayName("회원 검증 실패")
-            class ValidateMemberFailure {
-                @Test
-                @DisplayName("존재하지 않는 회원으로 예약을 시도할 때")
-                void 존재하지_않는_회원() {
-                    // given
-                    ReservationInsertRequest request = perfectRequest;
-                    request.setKeeperId(999L); // 존재하지 않는 회원 ID로 변경
+            @Test
+            @DisplayName("dropper와 keeper가 동일할 때")
+            void 맡길사람과_맡겨줄사람이_동일한_경우() {
+                // given
+                ReservationInsertRequest request = perfectRequest;
+                // dropper와 keeper를 동일하게 설정
+                when(lockerMapper.getLockerKepperId(서울역_보관소.getLockerId())).thenReturn(맡김왕.getMemberId());
 
-                    // when
-                    when(memberMapper.isExistMember(999L)).thenReturn(false);
+                // when
+                when(lockerMapper.isExistLocker(request.getLockerId())).thenReturn(true);
+                when(jimTypeMapper.validateLockerJimTypes(anyLong(), anyList(), anyInt())).thenReturn(true);
+                ReservationException exception = assertThrows(ReservationException.class, () -> {
+                    reservationService.insertReservation(request);
+                });
 
-                    MemberException exception = assertThrows(MemberException.class, () -> {
-                        reservationService.insertReservation(request);
-                    });
-
-                    // then
-                    assertEquals(NOT_FOUND_MEMBER, exception.getBaseResponseStatus());
-                }
-
-                @Test
-                @DisplayName("dropper와 keeper가 동일할 때")
-                void 맡길사람과_맡겨줄사람이_동일한_경우() {
-                    // given
-                    ReservationInsertRequest request = perfectRequest;
-                    request.setKeeperId(맡김왕.getMemberId()); // dropper와 keeper를 동일하게 설정
-
-                    // when
-                    when(memberMapper.isExistMember(anyLong())).thenReturn(true);
-
-                    ReservationException exception = assertThrows(ReservationException.class, () -> {
-                        reservationService.insertReservation(request);
-                    });
-
-                    // then
-                    assertEquals(INVALID_RESERVATION_PARTICIPANTS, exception.getBaseResponseStatus());
-                }
+                // then
+                assertEquals(INVALID_RESERVATION_PARTICIPANTS, exception.getBaseResponseStatus());
             }
 
             @Nested
@@ -280,10 +254,10 @@ class ReservationServiceTest {
             class ValidateJimTypesFailure {
                 @BeforeEach
                 void setUp() {
-                    when(memberMapper.isExistMember(보관왕.getMemberId())).thenReturn(true);
-                    when(lockerMapper.isExistLocker(서울역_보관소.getLockerId())).thenReturn(true);
-                    when(lockerMapper.isLockerKeeper(서울역_보관소.getLockerId(), 보관왕.getMemberId())).thenReturn(true);
+//                    when(memberMapper.isExistMember(보관왕.getMemberId())).thenReturn(true);
 //                    when(memberMapper.isExistMember(맡김왕.getMemberId())).thenReturn(true);
+//                    when(lockerMapper.isExistLocker(서울역_보관소.getLockerId())).thenReturn(true);
+//                    when(lockerMapper.isLockerKeeper(서울역_보관소.getLockerId(), 보관왕.getMemberId())).thenReturn(true);
                 }
 
                 @Test
@@ -299,7 +273,7 @@ class ReservationServiceTest {
                     ));
 
                     // when
-                    when(request.getId()).thenReturn(1L); // 예약 삽입 성공 시 id set 됨
+                    when(lockerMapper.isExistLocker(서울역_보관소.getLockerId())).thenReturn(true);
                     when(jimTypeMapper.validateLockerJimTypes(서울역_보관소.getLockerId(), List.of(백팩.getJimTypeId(), 캐리어.getJimTypeId(), 999L), 3))
                             .thenReturn(false);
 
@@ -322,7 +296,7 @@ class ReservationServiceTest {
                             new JimTypeCountResult(초대형캐리어.getJimTypeId(), 1L) // 존재하지 않는 짐타입 ID 추가
                     ));
                     // when
-                    when(request.getId()).thenReturn(1L); // 예약 삽입 성공 시 id set 됨
+                    when(lockerMapper.isExistLocker(서울역_보관소.getLockerId())).thenReturn(true);
                     when(jimTypeMapper.validateLockerJimTypes(서울역_보관소.getLockerId(), List.of(백팩.getJimTypeId(), 캐리어.getJimTypeId(), 초대형캐리어.getJimTypeId()), 3))
                             .thenReturn(false);
 
@@ -341,9 +315,10 @@ class ReservationServiceTest {
                     ReservationInsertRequest request = Mockito.spy(perfectRequest);
 
                     // when
-                    when(request.getId()).thenReturn(1L); // 예약 삽입 성공 시 id set 됨
+                    when(lockerMapper.isExistLocker(서울역_보관소.getLockerId())).thenReturn(true);
                     when(jimTypeMapper.validateLockerJimTypes(서울역_보관소.getLockerId(), List.of(백팩.getJimTypeId(), 캐리어.getJimTypeId()), 2))
                             .thenReturn(true);
+                    when(request.getId()).thenReturn(1L); // 예약 삽입 성공 시 id set 됨
 
                     when(jimTypeMapper.insertReservationJimTypes(1L, request.getJimTypeCounts())).thenReturn(0); // 등록 실패시 0 리턴
 
