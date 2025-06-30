@@ -83,6 +83,9 @@ public class MemberServiceImpl implements MemberService {
         } catch (NullPointerException e) {
             throw new MemberException(INVALID_MEMBER);
         }
+
+    public void nicknameCheck(String nickname) {
+        if (memberMapper.findByNickname(nickname))          throw new MemberException(DUPLICATE_NICKNAME);
     }
 
 

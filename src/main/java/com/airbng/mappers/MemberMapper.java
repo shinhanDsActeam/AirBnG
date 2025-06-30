@@ -13,12 +13,16 @@ import java.util.List;
 @Mapper
 public interface MemberMapper {
     void insertMember(Member member);
-
+  
     boolean findByEmail(String email);
-
+  
     boolean findByNickname(String nickname);
-
+  
     boolean findByPhone(String phone);
+  
+    boolean findById(Long memberId);
+  
+    MemberMyPageResponse findUserById(@Param("memberId") Long memberId);
 
     Member findByEmailAndPassword(@Param("email") String email, @Param("password") String password);
 

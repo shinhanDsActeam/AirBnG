@@ -10,4 +10,5 @@ public interface MemberService {
     void emailCheck(String email);
     MemberMyPageResponse findUserById(Long memberId);
     MemberMyPageResponse updateUserById(MemberUpdateRequest memberUpdateRequest, MultipartFile profileImage);
+    void nicknameCheck(String nickname);
 }
