@@ -3,6 +3,7 @@ package com.airbng.controller;
 
 import com.airbng.common.response.BaseResponse;
 import com.airbng.dto.*;
+import com.airbng.service.ImageService;
 import com.airbng.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -11,6 +12,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.servlet.http.HttpSession;
@@ -26,6 +29,7 @@ import static com.airbng.common.response.status.BaseResponseStatus.SUCCESS_LOGIN
 public class MemberController {
 
     private final MemberService memberService;
+    private final ImageService imageService;
 
     @PostMapping(value = "/signup", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public BaseResponse<String> signup(
@@ -47,7 +51,7 @@ public class MemberController {
         return new BaseResponse<>("사용 가능한 닉네임");
     }
 
-    @GetMapping
+    @GetMapping("/my-page/{memberId}")
     public BaseResponse<MemberMyPageResponse> findUserById(
             @RequestParam @NotNull @Min(1) Long memberId
     ) {
@@ -56,6 +60,18 @@ public class MemberController {
                 .build();
 
         MemberMyPageResponse response = memberService.findUserById(request.getMemberId());
+        return new BaseResponse<>(response);
+    }
+
+    @PostMapping("/my-page/update")
+    public BaseResponse<MemberMyPageResponse> updateUserById(
+            @Valid @RequestPart ("memberUpdateRequest") MemberUpdateRequest memberUpdateRequest,
+            @RequestPart(value = "profileImage", required = false) MultipartFile profileImage) {
+
+        log.info("회원 정보 수정 요청: {}", memberUpdateRequest);
+        log.info("프로필 이미지: {}", profileImage != null ? profileImage.getOriginalFilename() : "없음");
+
+        MemberMyPageResponse response = memberService.updateUserById(memberUpdateRequest, profileImage);
         return new BaseResponse<>(response);
     }
 

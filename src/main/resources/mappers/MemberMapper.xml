@@ -56,7 +56,23 @@
         LEFT JOIN Image i ON m.profile_image_id = i.image_id
         WHERE member_id = #{memberId}
     </select>
-      
+
+    <!-- 회원 정보 수정 -->
+    <update id="updateUserById" parameterType="com.airbng.dto.MemberUpdateRequest">
+        UPDATE Member
+        <set>
+            <if test="email != null and email != ''"> email = #{email}, </if>
+            <if test="name != null and name != ''"> name = #{name}, </if>
+            <if test="phone != null and phone != ''"> phone = #{phone}, </if>
+            <if test="nickname != null and nickname != ''"> nickname = #{nickname}, </if>
+            <if test="profileImageId != null"> profile_image_id = #{profileImageId} </if>
+        </set>
+        <where>
+            member_id = #{memberId}
+        </where>
+    </update>
+
+
     <resultMap id="memberResultMap" type="com.airbng.domain.Member">
         <id property="memberId" column="member_id" />
         <result property="email" column="email" />

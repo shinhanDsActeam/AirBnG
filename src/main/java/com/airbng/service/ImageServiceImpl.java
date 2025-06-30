@@ -45,4 +45,11 @@ public class ImageServiceImpl implements ImageService {
     public Image getDefaultProfileImage() {
         return imageMapper.findDefaultImage();
     }
+
+    public Image updateDefaultProfileImage(MultipartFile file, Long memberId) {
+        if (file != null && !file.isEmpty()) {
+            return this.uploadProfileImage(file);
+        }
+        return imageMapper.findImageIdByMemberId(memberId); // 기존 이미지 유지
+    }
 }
