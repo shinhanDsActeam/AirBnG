@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <title>SSE 테스트 페이지</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 20px;
+            background-color: #f8f9fa;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .config-section {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            background: #f8f9fa;
+        }
+
+        .config-section h4 {
+            margin-top: 0;
+            color: #495057;
+        }
+
+        .input-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .input-group label {
+            min-width: 80px;
+            font-weight: bold;
+        }
+
+        .input-group input {
+            padding: 8px 12px;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .status-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            background: #f8f9fa;
+        }
+
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .connected {
+            color: #28a745;
+            background-color: #28a745;
+        }
+
+        .disconnected {
+            color: #dc3545;
+            background-color: #dc3545;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-right: 10px;
+        }
+
+        .btn-primary {
+            background: #007bff;
+            color: white;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .log-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .log-section {
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .log-header {
+            background: #e9ecef;
+            padding: 10px 15px;
+            font-weight: bold;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .log-content {
+            height: 400px;
+            overflow-y: auto;
+            padding: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            line-height: 1.4;
+            background: #f8f9fa;
+        }
+
+        .message-item {
+            margin-bottom: 10px;
+            padding: 8px;
+            border-radius: 4px;
+            border-left: 4px solid #007bff;
+            background: white;
+        }
+
+        .message-time {
+            color: #6c757d;
+            font-size: 11px;
+            margin-bottom: 4px;
+        }
+
+        .message-type {
+            font-weight: bold;
+            margin-bottom: 4px;
+        }
+
+        .message-data {
+            word-break: break-all;
+        }
+
+        .alarm-message {
+            border-left-color: #28a745;
+        }
+
+        .connect-message {
+            border-left-color: #17a2b8;
+        }
+
+        .error-message {
+            border-left-color: #dc3545;
+        }
+
+        .expired-message {
+            border-left-color: #dc3545;
+            background-color: #fff5f5;
+        }
+
+        .reminder-message {
+            border-left-color: #ffc107;
+            background-color: #fffbf0;
+        }
+
+        .state-change-message {
+            border-left-color: #17a2b8;
+            background-color: #f0f9ff;
+        }
+
+        .cancel-notice-message {
+            border-left-color: #6c757d;
+            background-color: #f8f9fa;
+        }
+
+        .stats {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .stat-item {
+            background: #e9ecef;
+            padding: 10px 15px;
+            border-radius: 5px;
+            text-align: center;
+            flex: 1;
+        }
+
+        .stat-number {
+            font-size: 24px;
+            font-weight: bold;
+            color: #007bff;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #6c757d;
+            margin-top: 4px;
+        }
+
+        .clear-btn {
+            background: #6c757d;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 12px;
+            float: right;
+        }
+
+        .test-section {
+            margin-top: 20px;
+            padding: 15px;
+            border: 1px solid #28a745;
+            border-radius: 8px;
+            background: #f8fff8;
+        }
+
+        .test-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .notification-preview {
+            background: white;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            padding: 10px;
+            margin-top: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+        }
+
+        @media (max-width: 768px) {
+            .log-container {
+                grid-template-columns: 1fr;
+            }
+
+            .stats {
+                flex-direction: column;
+            }
+
+            .test-buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+
+<body>
+<div class="container">
+    <h2>🔔 SSE 알림 수신 테스트</h2>
+
+    <!-- 설정 섹션 -->
+    <div class="config-section">
+        <h4>연결 설정</h4>
+        <div class="input-group">
+            <label>Member ID:</label>
+            <input type="number" id="memberIdInput" value="1" min="1">
+        </div>
+        <div class="input-group">
+            <label>서버 URL:</label>
+            <input type="text" id="serverUrlInput" value="http://localhost:8080" style="flex: 1;">
+        </div>
+    </div>
+
+    <!-- 상태 섹션 -->
+    <div class="status-section">
+        <span class="status-indicator disconnected" id="statusIndicator"></span>
+        <span>연결 상태: <strong id="status">연결되지 않음</strong></span>
+        <button class="btn btn-primary" onclick="startSSE()" id="connectBtn">연결 시작</button>
+        <button class="btn btn-danger" onclick="stopSSE()" id="disconnectBtn" disabled>연결 종료</button>
+        <span id="connectionTime" style="margin-left: auto; color: #6c757d; font-size: 12px;"></span>
+    </div>
+
+    <!-- 통계 섹션 -->
+    <div class="stats">
+        <div class="stat-item">
+            <div class="stat-number" id="totalMessages">0</div>
+            <div class="stat-label">총 메시지</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-number" id="alarmCount">0</div>
+            <div class="stat-label">알림 메시지</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-number" id="errorCount">0</div>
+            <div class="stat-label">에러 발생</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-number" id="reconnectCount">0</div>
+            <div class="stat-label">재연결 횟수</div>
+        </div>
+    </div>
+
+    <!-- 테스트 알림 섹션 -->
+    <div class="test-section">
+        <h4>🧪 테스트 알림</h4>
+        <p><strong>시뮬레이션:</strong> 클라이언트에서만 보이는 가짜 알림</p>
+        <div class="test-buttons">
+            <button class="btn btn-success" onclick="simulateAlarm('EXPIRED')">만료 알림</button>
+            <button class="btn btn-success" onclick="simulateAlarm('REMINDER')">리마인더 알림</button>
+            <button class="btn btn-success" onclick="simulateAlarm('STATE_CHANGE')">상태 변경 알림</button>
+            <button class="btn btn-success" onclick="simulateAlarm('CANCEL_NOTICE')">취소 알림</button>
+        </div>
+
+        <hr style="margin: 15px 0;">
+
+        <p><strong>실제 서버 테스트:</strong> 백엔드에서 실제로 알림 전송</p>
+        <div class="test-buttons">
+            <button class="btn btn-primary" onclick="triggerScheduler()">스케줄러 즉시 실행</button>
+            <button class="btn btn-primary" onclick="sendTestNotification()">실제 테스트 알림 전송</button>
+        </div>
+        <div id="testResults" style="margin-top: 10px; font-size: 12px; color: #666;"></div>
+    </div>
+
+    <!-- 로그 섹션 -->
+    <div class="log-container">
+        <div class="log-section">
+            <div class="log-header">
+                📝 모든 메시지
+                <button class="clear-btn" onclick="clearLog('allMessages')">지우기</button>
+            </div>
+            <div class="log-content" id="allMessages"></div>
+        </div>
+
+        <div class="log-section">
+            <div class="log-header">
+                🔔 알림 메시지만
+                <button class="clear-btn" onclick="clearLog('alarmMessages')">지우기</button>
+            </div>
+            <div class="log-content" id="alarmMessages"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let eventSource = null;
+    let connectionStartTime = null;
+    let messageCount = 0;
+    let alarmCount = 0;
+    let errorCount = 0;
+    let reconnectCount = 0;
+    let reconnectTimer = null;
+
+    function startSSE() {
+        if (eventSource) {
+            logMessage('⚠️ 이미 연결되어 있습니다.', 'warning');
+            return;
+        }
+
+        const memberId = document.getElementById('memberIdInput').value;
+        const serverUrl = document.getElementById('serverUrlInput').value;
+
+        if (!memberId || !serverUrl) {
+            logMessage('❌ Member ID와 서버 URL을 입력해주세요.', 'error');
+            return;
+        }
+
+        try {
+            // 연결 시작
+            connectionStartTime = new Date();
+            const sseUrl = `${serverUrl}/AirBnG/alarms/reservations/alarms?memberId=${memberId}`;
+
+            logMessage(`🔗 SSE 연결 시도: ${sseUrl}`, 'info');
+            eventSource = new EventSource(sseUrl);
+
+            updateConnectionStatus(true);
+            updateButtons(true);
+
+            // 연결 성공 이벤트
+            eventSource.onopen = function(event) {
+                logMessage('✅ SSE 연결이 성공적으로 열렸습니다.', 'connect');
+                updateConnectionTime();
+                clearReconnectTimer();
+            };
+
+            // 일반 메시지 수신
+            eventSource.onmessage = function(event) {
+                logMessage(`📨 [기본 메시지] ${event.data}`, 'message', event.data);
+            };
+
+            // 연결 이벤트 수신
+            eventSource.addEventListener('connect', function(event) {
+                logMessage(`🔗 [연결 완료] ${event.data}`, 'connect', event.data);
+            });
+
+            // 알림 이벤트 수신
+            eventSource.addEventListener('alarm', function(event) {
+                alarmCount++;
+                updateStats();
+
+                let parsedData = null;
+                try {
+                    parsedData = JSON.parse(event.data);
+                } catch (e) {
+                    parsedData = event.data;
+                }
+
+                logMessage(`🔔 [알림 수신] ${event.data}`, 'alarm', parsedData);
+                logAlarmMessage(parsedData);
+            });
+
+            // 에러 처리
+            eventSource.onerror = function(error) {
+                errorCount++;
+                updateStats();
+
+                console.error('SSE Error:', error);
+
+                if (eventSource.readyState === EventSource.CONNECTING) {
+                    logMessage('🔄 SSE 재연결 시도 중...', 'warning');
+                } else if (eventSource.readyState === EventSource.CLOSED) {
+                    logMessage('❌ SSE 연결이 종료되었습니다.', 'error');
+                    updateConnectionStatus(false);
+                    updateButtons(false);
+                    scheduleReconnect();
+                } else {
+                    logMessage('⚠️ SSE 연결에 문제가 발생했습니다.', 'error');
+                }
+            };
+
+        } catch (error) {
+            errorCount++;
+            updateStats();
+            logMessage(`❌ 연결 실패: ${error.message}`, 'error');
+            updateConnectionStatus(false);
+            updateButtons(false);
+        }
+    }
+
+    function stopSSE() {
+        clearReconnectTimer();
+
+        if (eventSource) {
+            eventSource.close();
+            eventSource = null;
+            updateConnectionStatus(false);
+            updateButtons(false);
+            logMessage('🔴 SSE 연결이 수동으로 종료되었습니다.', 'disconnect');
+            connectionStartTime = null;
+        }
+    }
+
+    function scheduleReconnect() {
+        clearReconnectTimer();
+        reconnectTimer = setTimeout(() => {
+            if (!eventSource || eventSource.readyState === EventSource.CLOSED) {
+                reconnectCount++;
+                updateStats();
+                logMessage(`🔄 자동 재연결 시도 #${reconnectCount}`, 'info');
+                startSSE();
+            }
+        }, 5000); // 5초 후 재연결 시도
+    }
+
+    function clearReconnectTimer() {
+        if (reconnectTimer) {
+            clearTimeout(reconnectTimer);
+            reconnectTimer = null;
+        }
+    }
+
+    function updateButtons(connected) {
+        document.getElementById('connectBtn').disabled = connected;
+        document.getElementById('disconnectBtn').disabled = !connected;
+    }
+
+    function logMessage(msg, type = 'info', rawData = null) {
+        messageCount++;
+        updateStats();
+
+        const timestamp = new Date().toLocaleTimeString();
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `message-item ${type}-message`;
+
+        let dataHtml = '';
+        if (rawData) {
+            if (typeof rawData === 'object') {
+                dataHtml = `<div class="message-data"><strong>데이터:</strong><br><pre>${JSON.stringify(rawData, null, 2)}</pre></div>`;
+            } else {
+                dataHtml = `<div class="message-data"><strong>데이터:</strong> ${rawData}</div>`;
+            }
+        }
+
+        messageDiv.innerHTML = `
+            <div class="message-time">${timestamp}</div>
+            <div class="message-type">${msg}</div>
+            ${dataHtml}
+        `;
+
+        const log = document.getElementById('allMessages');
+        log.appendChild(messageDiv);
+        log.scrollTop = log.scrollHeight;
+    }
+
+    function logAlarmMessage(data) {
+        const timestamp = new Date().toLocaleTimeString();
+        const messageDiv = document.createElement('div');
+
+        let messageClass = 'message-item alarm-message';
+        let icon = '🔔';
+
+        // 알림 타입에 따른 스타일링
+        if (typeof data === 'object' && data !== null && data.type) {
+            switch(data.type) {
+                case 'EXPIRED':
+                    messageClass = 'message-item expired-message';
+                    icon = '⏰';
+                    break;
+                case 'REMINDER':
+                    messageClass = 'message-item reminder-message';
+                    icon = '⏰';
+                    break;
+                case 'STATE_CHANGE':
+                    messageClass = 'message-item state-change-message';
+                    icon = '📋';
+                    break;
+                case 'CANCEL_NOTICE':
+                    messageClass = 'message-item cancel-notice-message';
+                    icon = '❌';
+                    break;
+            }
+        }
+
+        // ✅ 닉네임 선택 로직 수정
+        let nickname = (typeof data === 'object' && data !== null && data.nickName) ? data.nickName : 'N/A';
+
+        messageDiv.className = messageClass;
+
+        let content = '';
+        if (typeof data === 'object' && data !== null) {
+            content = `
+                <div class="message-time">${timestamp}</div>
+                <div class="message-type">${icon} ${data.type || '알림'}</div>
+                <div class="message-data">
+                    <strong>예약 ID:</strong> ${data.reservationId || 'N/A'}<br>
+                    <strong>수신자 ID:</strong> ${data.receiverId || 'N/A'}<br>
+                    <strong>닉네임:</strong> ${nickname}<br>
+                    <strong>역할:</strong> ${data.role || 'N/A'}<br>
+                    <strong>메시지:</strong> ${data.message || 'N/A'}<br>
+                    <strong>전송 시간:</strong> ${data.sendTime || 'N/A'}
+                </div>
+            `;
+        } else {
+            content = `
+                <div class="message-time">${timestamp}</div>
+                <div class="message-type">${icon} 알림</div>
+                <div class="message-data">${data}</div>
+            `;
+        }
+
+        messageDiv.innerHTML = content;
+
+        const alarmLog = document.getElementById('alarmMessages');
+        alarmLog.appendChild(messageDiv);
+        alarmLog.scrollTop = alarmLog.scrollHeight;
+    }
+
+    function updateConnectionStatus(connected) {
+        const status = document.getElementById('status');
+        const indicator = document.getElementById('statusIndicator');
+
+        if (connected) {
+            status.textContent = '연결됨';
+            status.style.color = '#28a745';
+            indicator.className = 'status-indicator connected';
+        } else {
+            status.textContent = '연결 종료됨';
+            status.style.color = '#dc3545';
+            indicator.className = 'status-indicator disconnected';
+            document.getElementById('connectionTime').textContent = '';
+        }
+    }
+
+    function updateConnectionTime() {
+        if (connectionStartTime) {
+            const now = new Date();
+            const diff = Math.floor((now - connectionStartTime) / 1000);
+            const minutes = Math.floor(diff / 60);
+            const seconds = diff % 60;
+            document.getElementById('connectionTime').textContent =
+                `연결 시간: ${minutes}분 ${seconds}초`;
+        }
+    }
+
+    function updateStats() {
+        document.getElementById('totalMessages').textContent = messageCount;
+        document.getElementById('alarmCount').textContent = alarmCount;
+        document.getElementById('errorCount').textContent = errorCount;
+        document.getElementById('reconnectCount').textContent = reconnectCount;
+    }
+
+    function clearLog(logId) {
+        document.getElementById(logId).innerHTML = '';
+        if (logId === 'allMessages') {
+            messageCount = 0;
+            alarmCount = 0;
+            errorCount = 0;
+            reconnectCount = 0;
+            updateStats();
+        }
+    }
+
+    // 테스트 알림 시뮬레이션
+    function simulateAlarm(type) {
+        const testNotifications = {
+            'EXPIRED': {
+                reservationId: 123,
+                receiverId: parseInt(document.getElementById('memberIdInput').value),
+                role: 'DROPPER',
+                type: 'EXPIRED',
+                message: '짐 보관이 아직 완료되지 않았어요.',
+                sendTime: new Date().toISOString()
+            },
+            'REMINDER': {
+                reservationId: 124,
+                receiverId: parseInt(document.getElementById('memberIdInput').value),
+                role: 'DROPPER',
+                type: 'REMINDER',
+                message: '곧 짐을 찾아가셔야 해요.',
+                sendTime: new Date().toISOString()
+            },
+            'STATE_CHANGE': {
+                reservationId: 125,
+                receiverId: parseInt(document.getElementById('memberIdInput').value),
+                role: 'DROPPER',
+                type: 'STATE_CHANGE',
+                message: '예약이 확정되었습니다.',
+                sendTime: new Date().toISOString()
+            },
+            'CANCEL_NOTICE': {
+                reservationId: 126,
+                receiverId: parseInt(document.getElementById('memberIdInput').value),
+                role: 'DROPPER',
+                type: 'CANCEL_NOTICE',
+                message: '예약이 취소되었습니다.',
+                sendTime: new Date().toISOString()
+            }
+        };
+
+        const testData = testNotifications[type];
+        if (testData) {
+            alarmCount++;
+            updateStats();
+            logMessage(`🧪 [테스트 알림] ${JSON.stringify(testData)}`, 'alarm', testData);
+            logAlarmMessage(testData);
+        }
+    }
+
+    // 1초마다 연결 시간 업데이트
+    setInterval(updateConnectionTime, 1000);
+
+    // 페이지 닫힐 때 연결 정리
+    window.addEventListener('beforeunload', function() {
+        clearReconnectTimer();
+        if (eventSource) {
+            eventSource.close();
+        }
+    });
+
+    // 실제 서버 테스트 함수들
+    async function triggerScheduler() {
+        const serverUrl = document.getElementById('serverUrlInput').value;
+        const resultDiv = document.getElementById('testResults');
+
+        try {
+            resultDiv.textContent = '스케줄러 실행 중...';
+
+            const response = await fetch(`${serverUrl}/AirBnG/test/trigger-alarms`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (response.ok) {
+                const result = await response.text();
+                resultDiv.textContent = `✅ ${result}`;
+                resultDiv.style.color = '#28a745';
+                logMessage('🧪 스케줄러가 수동으로 실행되었습니다.', 'info');
+            } else {
+                throw new Error(`HTTP ${response.status}`);
+            }
+        } catch (error) {
+            resultDiv.textContent = `❌ 실패: ${error.message}`;
+            resultDiv.style.color = '#dc3545';
+            logMessage(`❌ 스케줄러 실행 실패: ${error.message}`, 'error');
+        }
+    }
+
+    async function sendTestNotification() {
+        const serverUrl = document.getElementById('serverUrlInput').value;
+        const memberId = document.getElementById('memberIdInput').value;
+        const resultDiv = document.getElementById('testResults');
+
+        if (!memberId) {
+            resultDiv.textContent = '❌ Member ID를 입력해주세요.';
+            resultDiv.style.color = '#dc3545';
+            return;
+        }
+
+        try {
+            resultDiv.textContent = '테스트 알림 전송 중...';
+
+            const response = await fetch(`${serverUrl}/AirBnG/test/test-notification/${memberId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (response.ok) {
+                const result = await response.text();
+                resultDiv.textContent = `✅ ${result}`;
+                resultDiv.style.color = '#28a745';
+                logMessage('🧪 실제 테스트 알림이 전송되었습니다.', 'info');
+            } else {
+                throw new Error(`HTTP ${response.status}`);
+            }
+        } catch (error) {
+            resultDiv.textContent = `❌ 실패: ${error.message}`;
+            resultDiv.style.color = '#dc3545';
+            logMessage(`❌ 테스트 알림 전송 실패: ${error.message}`, 'error');
+        }
+    }
+
+    // 페이지 로드 시 초기 설정
+    window.addEventListener('load', function() {
+        updateButtons(false);
+        logMessage('📄 페이지가 로드되었습니다. Member ID를 설정하고 연결을 시작하세요.', 'info');
+    });
+</script>
+</body>
+</html>
