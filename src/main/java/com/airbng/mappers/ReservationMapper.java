@@ -23,7 +23,8 @@ public interface ReservationMapper {
                                              @Param("role") String role,
                                              @Param("state") String state,
                                              @Param("nextCursorId") Long nextCursorId,
-                                             @Param("limit") Long limit
+                                             @Param("limit") Long limit,
+                                             @Param("period") String period
     );
 
     //예약  목록 개수
