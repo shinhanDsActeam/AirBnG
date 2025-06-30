@@ -114,9 +114,9 @@ public class MemberServiceImpl implements MemberService {
         if (memberMapper.findByEmail(request.getEmail()))               throw new MemberException(DUPLICATE_EMAIL);
         if (memberMapper.findByNickname(request.getNickname()))         throw new MemberException(DUPLICATE_NICKNAME);
         if (memberMapper.findByPhone(request.getPhone()))               throw new MemberException(DUPLICATE_PHONE);
-        if (!emailValidator.isValidEmail(request.getEmail()))           throw new MemberException(INVALID_EMAIL);
+        if (request.getEmail() == null || request.getEmail().isEmpty()) request.setEmail(existing.getEmail());
 
-        if (request.getEmail() == null) request.setEmail(existing.getEmail());
+        if (!emailValidator.isValidEmail(request.getEmail()))           throw new MemberException(INVALID_EMAIL);
         if (request.getName() == null) request.setName(existing.getName());
         if (request.getPhone() == null) request.setPhone(existing.getPhone());
         if (request.getNickname() == null) request.setNickname(existing.getNickname());
