@@ -1,6 +1,7 @@
 package com.airbng.util;
 
 import com.airbng.common.exception.MemberException;
+import com.airbng.common.exception.SessionException;
 import com.airbng.common.response.status.BaseResponseStatus;
 
 import javax.servlet.http.HttpServletRequest;
@@ -30,16 +31,16 @@ public class SessionUtils {
 
     public static Long getLoginMemberId(HttpSession session) {
         if (session == null) {
-            throw new MemberException(SESSION_NOT_FOUND);
+            throw new SessionException(SESSION_EXPIRED);
         }
 
         Object memberId = session.getAttribute("memberId");
         if (memberId == null) {
-            throw new MemberException(SESSION_NOT_FOUND);
+            throw new SessionException(SESSION_NOT_FOUND);
         }
 
         if (!(memberId instanceof Long)) {
-            throw new MemberException(SESSION_INVALID_TYPE);
+            throw new SessionException(SESSION_INVALID_TYPE);
         }
         return (Long) memberId;
     }
