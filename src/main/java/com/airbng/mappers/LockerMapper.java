@@ -59,4 +59,6 @@ public interface LockerMapper {
     ReservationFormResponse getLockerInfoById(@Param("lockerId") Long lockerId);
 
     List<LockerJimTypeResult> getLockerJimTypeById(@Param("lockerId") Long lockerId);
+
+    Long getLockerKepperId(@Param("lockerId") Long lockerId);
 }
