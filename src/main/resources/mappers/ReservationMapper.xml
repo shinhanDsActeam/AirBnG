@@ -188,4 +188,41 @@
         WHERE reservation_id = #{reservationId}
     </update>
 
+    <resultMap id="ReservationWithKeeperMap" type="com.airbng.domain.Reservation">
+        <result property="reservationId" column="reservation_id"/>
+        <result property="state" column="state"/>
+        <result property="startTime" column="start_time"/>
+        <result property="endTime" column="end_time"/>
+
+        <association property="keeper" javaType="com.airbng.domain.Member">
+            <result property="memberId" column="keeper_id"/>
+            <result property="email" column="keeper_email"/>
+            <result property="name" column="keeper_name"/>
+            <result property="phone" column="keeper_phone"/>
+            <result property="nickname" column="keeper_nickname"/>
+            <result property="password" column="keeper_password"/>
+            <result property="status" column="keeper_status"/>
+        </association>
+    </resultMap>
+
+    <select id="findReservationWithKeeperById" parameterType="Long" resultMap="ReservationWithKeeperMap">
+        SELECT
+            r.reservation_id,
+            r.state,
+            r.start_time,
+            r.end_time,
+
+            k.member_id AS keeper_id,
+            k.email AS keeper_email,
+            k.name AS keeper_name,
+            k.phone AS keeper_phone,
+            k.nickname AS keeper_nickname,
+            k.password AS keeper_password,
+            k.status AS keeper_status
+
+        FROM reservation r
+                 JOIN member k ON r.keeper_id = k.member_id
+        WHERE r.reservation_id = #{reservationId}
+    </select>
+
 </mapper>
