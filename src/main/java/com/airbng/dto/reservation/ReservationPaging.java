@@ -17,4 +17,5 @@ public class ReservationPaging {
     private final Long nextCursorId;      // 다음 페이지의 커서 ID (페이징을 위한 용도)
     private final boolean hasNextPage;   // 다음 페이지가 있는지 여부
     private Long totalCount;             // 전체 수
+    private String period;              // 기간 (예: "2023-01-01 ~ 2023-01-31")
 }
