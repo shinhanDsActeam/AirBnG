@@ -65,6 +65,8 @@ class ReservationServiceTest {
 
     @BeforeEach
     public void setUp() {
+        MockHttpSession session = new MockHttpSession();
+
         보관왕 = Member.builder()
                 .memberId(1L)
                 .email("keeper1@airbng.com")
@@ -87,6 +89,7 @@ class ReservationServiceTest {
                 .profileImage(new Image(2L, "profile2.jpg", "https://s3.amazonaws.com/airbng/profile.jpg"))
                 .build();
 
+        session.setAttribute("memberId", 맡김왕.getMemberId());
 
         서울역_보관소 = Locker.builder()
                 .lockerId(1L)
@@ -159,10 +162,8 @@ class ReservationServiceTest {
             // given
             ReservationInsertRequest request = Mockito.spy(perfectRequest);
 
-
             // when
             when(memberMapper.isExistMember(보관왕.getMemberId())).thenReturn(true);
-            when(memberMapper.isExistMember(맡김왕.getMemberId())).thenReturn(true);
             when(lockerMapper.isExistLocker(서울역_보관소.getLockerId())).thenReturn(true);
             when(lockerMapper.isLockerKeeper(서울역_보관소.getLockerId(), 보관왕.getMemberId())).thenReturn(true);
             when(jimTypeMapper.validateLockerJimTypes(서울역_보관소.getLockerId(), List.of(백팩.getJimTypeId(), 캐리어.getJimTypeId()), 2)).thenReturn(true);
@@ -192,7 +193,6 @@ class ReservationServiceTest {
 
                 // when
                 when(memberMapper.isExistMember(보관왕.getMemberId())).thenReturn(true);
-                when(memberMapper.isExistMember(맡김왕.getMemberId())).thenReturn(true);
 
                 when(lockerMapper.isExistLocker(request.getLockerId())).thenReturn(false);
                 LockerException exception = assertThrows(LockerException.class, () -> {
@@ -246,7 +246,6 @@ class ReservationServiceTest {
                     request.setKeeperId(999L); // 존재하지 않는 회원 ID로 변경
 
                     // when
-                    when(memberMapper.isExistMember(맡김왕.getMemberId())).thenReturn(true);
                     when(memberMapper.isExistMember(999L)).thenReturn(false);
 
                     MemberException exception = assertThrows(MemberException.class, () -> {
@@ -282,9 +281,9 @@ class ReservationServiceTest {
                 @BeforeEach
                 void setUp() {
                     when(memberMapper.isExistMember(보관왕.getMemberId())).thenReturn(true);
-                    when(memberMapper.isExistMember(맡김왕.getMemberId())).thenReturn(true);
                     when(lockerMapper.isExistLocker(서울역_보관소.getLockerId())).thenReturn(true);
                     when(lockerMapper.isLockerKeeper(서울역_보관소.getLockerId(), 보관왕.getMemberId())).thenReturn(true);
+//                    when(memberMapper.isExistMember(맡김왕.getMemberId())).thenReturn(true);
                 }
 
                 @Test
