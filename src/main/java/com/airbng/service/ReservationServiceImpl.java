@@ -56,24 +56,7 @@ public class ReservationServiceImpl implements ReservationService{
         }
 
         String stateStr = (state != null) ? state.toString() : null;
-//        LocalDateTime localPeriod = null;
-//
-//        // 기간 필터링 처리 (예약 확정일 경우)
-//        if ("COMPLETED".equals(stateStr) && period != null) {
-//            switch (period) {
-//                case "1W": localPeriod = LocalDateTime.now().minusWeeks(1); break;
-//                case "3M": localPeriod = LocalDateTime.now().minusMonths(3); break;
-//                case "6M": localPeriod = LocalDateTime.now().minusMonths(6); break;
-//                case "1Y": localPeriod = LocalDateTime.now().minusYears(1); break;
-//                case "2Y": localPeriod = LocalDateTime.now().minusYears(2); break;
-//                case "ALL": localPeriod = null; break;
-//                default: throw new ReservationException(INVALID_RESERVATION_PERIOD);
-//            }
-//        }
-//
-//        localPeriod = localPeriod != null ? LocalDateTime.parse(localPeriod.toString()) : null;
 
-        log.info("!!요기봐 period: {}", period);
         List<ReservationSearchResponse> reservations = reservationMapper.findAllReservationById(
                 memberId, role, stateStr, nextCursorId, LIMIT + 1, period //다음 페이지 유무 확인
         );
