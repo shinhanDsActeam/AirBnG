@@ -20,10 +20,10 @@ public class ReservationInsertRequest {
     private Long id;
 
     @NotNull @Min(1)
-    private Long dropperId; // 맡길 사람 ID
-    
-    @NotNull @Min(1)
     private Long keeperId;  // 맡길 짐을 보관하는 사람 ID
+    @JsonIgnore
+    private Long dropperId;
+
 
     @NotNull @Min(1)
     private Long lockerId;  // 맡길 짐을 보관하는 락커 ID

@@ -187,11 +187,13 @@ public class ReservationServiceImpl implements ReservationService {
         log.info("insertReservation({})", request);
 
         validateStartTimeAndEndTime(request.getStartTime(), request.getEndTime());
-        validateMember(request.getDropperId(), request.getKeeperId());
         validateLockerKeeper(request.getLockerId(), request.getKeeperId());
         validateJimTypes(request.getLockerId(), request.getJimTypeCounts());
 
+        Long keeperId = lockerMapper.getLockerKepperId(request.getLockerId());
+        request.setKeeperId(keeperId);
         reservationMapper.insertReservation(request);
+
         int cnt = jimTypeMapper.insertReservationJimTypes(request.getId(), request.getJimTypeCounts());
 
         if (cnt != request.getJimTypeCounts().size()) {
