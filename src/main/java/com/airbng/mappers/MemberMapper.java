@@ -26,6 +26,5 @@ public interface MemberMapper {
 
     MemberMyPageResponse findUserById(@Param("memberId") Long memberId);
 
-    //MemberMyPageResponse updateUserById(MemberUpdateRequest memberUpdateRequest);
     int updateUserById(MemberUpdateRequest memberUpdateRequest);
 }

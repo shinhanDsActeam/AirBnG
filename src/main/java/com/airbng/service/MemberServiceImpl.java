@@ -85,6 +85,7 @@ public class MemberServiceImpl implements MemberService {
         }
     }
 
+
     @Override
     public MemberMyPageResponse findUserById(Long memberId) {
         //Long memberId = request.getMemberId();
