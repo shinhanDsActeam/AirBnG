@@ -21,7 +21,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
@@ -187,11 +186,13 @@ public class ReservationServiceImpl implements ReservationService {
         log.info("insertReservation({})", request);
 
         validateStartTimeAndEndTime(request.getStartTime(), request.getEndTime());
-        validateLockerKeeper(request.getLockerId(), request.getKeeperId());
+        validateLocker(request.getLockerId());
         validateJimTypes(request.getLockerId(), request.getJimTypeCounts());
 
         Long keeperId = lockerMapper.getLockerKepperId(request.getLockerId());
         request.setKeeperId(keeperId);
+        validateMember(request.getDropperId(), keeperId);
+
         reservationMapper.insertReservation(request);
 
         int cnt = jimTypeMapper.insertReservationJimTypes(request.getId(), request.getJimTypeCounts());
@@ -219,12 +220,9 @@ public class ReservationServiceImpl implements ReservationService {
         }
     }
 
-    private void validateLockerKeeper(final Long lockerId, final Long keeperId) {
+    private void validateLocker(final Long lockerId) {
         if (!lockerMapper.isExistLocker(lockerId)) {
             throw new LockerException(NOT_FOUND_LOCKER);
-        }
-        if (!lockerMapper.isLockerKeeper(lockerId, keeperId)) {
-            throw new LockerException(LOCKER_KEEPER_MISMATCH);
         }
     }
 
@@ -232,13 +230,6 @@ public class ReservationServiceImpl implements ReservationService {
         // dropper와 keeper가 동일한 경우 예외
         if (dropperId.equals(keeperId)) {
             throw new ReservationException(INVALID_RESERVATION_PARTICIPANTS);
-        }
-        // dropper와 keeper 존재 여부 확인
-        if (!memberMapper.isExistMember(dropperId)) {
-            throw new MemberException(NOT_FOUND_MEMBER);
-        }
-        if (!memberMapper.isExistMember(keeperId)) {
-            throw new MemberException(NOT_FOUND_MEMBER);
         }
     }
 }
