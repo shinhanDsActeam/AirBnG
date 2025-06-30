@@ -9,7 +9,7 @@
 
     <!-- DispatcherServlet Context: defines this servlet's request-processing infrastructure -->
     <!-- Handles HTTP GET requests for /resources/** by efficiently serving up static resources in the ${webappRoot}/resources directory -->
-    <resources mapping="/resources/**" location="classpath:/META-INF/resources/" />
+    <resources mapping="/resources/**" location="/resources/" />
     <resources location="classpath:/META-INF/resources/" mapping="swagger-ui.html"></resources>
     <resources location="classpath:/META-INF/resources/webjars/" mapping="/webjars/**"></resources>
 
