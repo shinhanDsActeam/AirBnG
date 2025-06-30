@@ -48,7 +48,6 @@
         </collection>
     </resultMap>
 
-
     <select id="findReservationDetailById" parameterType="Long" resultMap="ReservationWithDropperAndKeeperMap">
         SELECT
             r.reservation_id,
@@ -85,7 +84,8 @@
         WHERE r.reservation_id = #{reservationId}
     </select>
 
-
+  
+    <!-- 예약 목록 조회 -->
     <resultMap id="ReservationSearch" type="com.airbng.dto.reservation.ReservationSearchResponse">
         <result property="reservationId" column="reservation_id" />
         <result property="state" column="state" />
@@ -93,7 +93,6 @@
         <result property="dropperId" column="dropper_id" />
     </resultMap>
 
-    <!-- 예약 목록 조회 -->
     <select id="findAllReservationById" resultMap="ReservationSearch">
         SELECT
         r.reservation_id,
@@ -123,9 +122,32 @@
                 AND r.state = #{state}
             </if>
             <if test="nextCursorId != null">
+                <!--최신 보관소 보여주기 위해서 내림차순 + nextCursorId보다 작은 id를 출력 (nextCursorId는 높은 숫자부터 내려가야함)-->
                 AND r.reservation_id &lt; #{nextCursorId} <!-- &lt;는 부등호 '<'를 의미-->
             </if>
-            <!--최신 보관소 보여주기 위해서 내림차순 + nextCursorId보다 작은 id를 출력 (nextCursorId는 높은 숫자부터 내려가야함)-->
+            <!-- COMPLETED or CANCELLED 상태일 때만 end_time 기준 필터 -->
+            <if test="state != null and state != '' and period != null and (state.equals('COMPLETED') or state.equals('CANCELLED'))">
+                <choose>
+                    <when test="period.equals('1W')">
+                        AND r.end_time &gt;= DATE_SUB(NOW(), INTERVAL 1 WEEK)
+                    </when>
+                    <when test="period.equals('3M')">
+                        AND r.end_time &gt;= DATE_SUB(NOW(), INTERVAL 3 MONTH)
+                    </when>
+                    <when test="period.equals('6M')">
+                        AND r.end_time &gt;= DATE_SUB(NOW(), INTERVAL 6 MONTH)
+                    </when>
+                    <when test="period.equals('1Y')">
+                        AND r.end_time &gt;= DATE_SUB(NOW(), INTERVAL 1 YEAR)
+                    </when>
+                    <when test="period.equals('2Y')">
+                        AND r.end_time &gt;= DATE_SUB(NOW(), INTERVAL 2 YEAR)
+                    </when>
+                    <when test="period.equals('ALL')">
+                        <!-- 전체: 조건 없음 -->
+                    </when>
+                </choose>
+            </if>
         </where>
         GROUP BY r.reservation_id ORDER BY r.reservation_id desc LIMIT #{limit}
     </select>

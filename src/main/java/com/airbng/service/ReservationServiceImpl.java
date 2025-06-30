@@ -21,6 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
@@ -39,10 +40,11 @@ public class ReservationServiceImpl implements ReservationService{
     private static final Long LIMIT= 10L; // 페이지당 최대 예약 개수
 
     //예약 조회 + 페이징 처리
+
     @Override
-    public ReservationPaging findAllReservationById(Long memberId, String role, ReservationState state, Long nextCursorId) {
-        log.info("Finding reservation by memberId: {}, role: {}, state: {}, nextCursorId: {}, LIMIT:{} ",
-                memberId, role, state, nextCursorId, LIMIT);
+    public ReservationPaging findAllReservationById(Long memberId, String role, ReservationState state, Long nextCursorId, String period) {
+        log.info("Finding reservation by memberId: {}, role: {}, state: {}, nextCursorId: {}, LIMIT:{},  PERIOD: {}",
+                memberId, role, state, nextCursorId, LIMIT, period);
 
         // 초기 커서 ID 설정
         if(nextCursorId == null) {
@@ -52,7 +54,7 @@ public class ReservationServiceImpl implements ReservationService{
         String stateStr = (state != null) ? state.toString() : null;
 
         List<ReservationSearchResponse> reservations = reservationMapper.findAllReservationById(
-                memberId, role, stateStr, nextCursorId, LIMIT + 1 //다음 페이지 유무 확인
+                memberId, role, stateStr, nextCursorId, LIMIT + 1, period //다음 페이지 유무 확인
         );
 
 
@@ -83,6 +85,7 @@ public class ReservationServiceImpl implements ReservationService{
                 .reservations(content)
                 .nextCursorId(nextCursorId)
                 .hasNextPage(hasNextPage)
+                .period(period)
                 .totalCount(reservationMapper.findReservationByMemberId(memberId, role))
                 .build();
         return paging;
