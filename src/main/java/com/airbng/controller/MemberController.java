@@ -1,7 +1,9 @@
 package com.airbng.controller;
 
-
 import com.airbng.common.response.BaseResponse;
+import com.airbng.dto.MemberLoginRequest;
+import com.airbng.dto.MemberLoginResponse;
+import com.airbng.dto.MemberSignupRequest;
 import com.airbng.dto.*;
 import com.airbng.service.ImageService;
 import com.airbng.service.MemberService;
@@ -14,11 +16,11 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.servlet.http.HttpSession;
 
-import static com.airbng.common.response.status.BaseResponseStatus.SUCCESS;
 import static com.airbng.common.response.status.BaseResponseStatus.SUCCESS_LOGIN;
 
 @RestController
@@ -77,16 +79,18 @@ public class MemberController {
 
     @PostMapping("/login")
     public BaseResponse<MemberLoginResponse> login(@RequestBody MemberLoginRequest request,
-                                                   HttpSession session) {
+                                                   HttpSession session,
+                                                   HttpServletRequest httpRequest) {
+        log.info("Controller 도달");
+
+        // Interceptor에서 참조 가능하게 세팅
+        httpRequest.setAttribute("loginEmail", request.getEmail());
         log.info("로그인 요청: email={}, password={}", request.getEmail(), request.getPassword());
 
         MemberLoginResponse response = memberService.login(request.getEmail(), request.getPassword());
-
         log.info("로그인 결과: {}", response);
 
-        // 세션에 memberId 저장
         session.setAttribute("memberId", response.getMemberId());
-
         return new BaseResponse<>(SUCCESS_LOGIN, response);
     }
 

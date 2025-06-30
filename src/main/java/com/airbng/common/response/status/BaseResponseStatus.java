@@ -35,9 +35,9 @@ public enum BaseResponseStatus implements ResponseStatus{
     /**
      * 3000 락커 관련 코드
      */
-    NOT_FOUND_LOCKER(3000,HttpStatus.BAD_REQUEST.value(), "락커를 찾을 수 없습니다."),
-    NOT_FOUND_LOCKERDETAILS(3001,HttpStatus.BAD_REQUEST.value(), "락커를 찾을 수 없습니다."),
-    MEMBER_ALREADY_HAS_LOCKER(3002, HttpStatus.BAD_REQUEST.value(), "한 멤버당 하나의 보관소만 등록할 수 있습니다."),
+    NOT_FOUND_LOCKER(3001,HttpStatus.BAD_REQUEST.value(), "락커를 찾을 수 없습니다."),
+    NOT_FOUND_LOCKERDETAILS(3002,HttpStatus.BAD_REQUEST.value(), "락커를 찾을 수 없습니다."),
+    MEMBER_ALREADY_HAS_LOCKER(3003, HttpStatus.BAD_REQUEST.value(), "한 멤버당 하나의 보관소만 등록할 수 있습니다."),
     LOCKER_KEEPER_MISMATCH(3004, HttpStatus.BAD_REQUEST.value(), "선택한 보관소의 보관자 정보가 일치하지 않습니다."),
     /**
      * 4000 예약 관련 코드
@@ -57,10 +57,10 @@ public enum BaseResponseStatus implements ResponseStatus{
     /**
      * 5000 짐 타입 관련 코드
      */
-    INVALID_JIMTYPE(5000, HttpStatus.UNPROCESSABLE_ENTITY.value(), "존재하지 않는 짐 타입이 포함되어 있습니다."),
-    INVALID_JIMTYPE_COUNT(5001, HttpStatus.BAD_REQUEST.value(), "요청한 짐 타입 개수와 실제 등록된 개수가 일치하지 않습니다."),
-    LOCKER_DOES_NOT_SUPPORT_JIMTYPE(5002, HttpStatus.BAD_REQUEST.value(), "해당 보관소가 관리하지 않는 짐 타입입니다."),
-    DUPLICATE_JIMTYPE(5003, HttpStatus.BAD_REQUEST.value(), "중복된 짐 타입이 존재합니다."),
+    INVALID_JIMTYPE(5001, HttpStatus.UNPROCESSABLE_ENTITY.value(), "존재하지 않는 짐 타입이 포함되어 있습니다."),
+    INVALID_JIMTYPE_COUNT(5002, HttpStatus.BAD_REQUEST.value(), "요청한 짐 타입 개수와 실제 등록된 개수가 일치하지 않습니다."),
+    LOCKER_DOES_NOT_SUPPORT_JIMTYPE(5003, HttpStatus.BAD_REQUEST.value(), "해당 보관소가 관리하지 않는 짐 타입입니다."),
+    DUPLICATE_JIMTYPE(5004, HttpStatus.BAD_REQUEST.value(), "중복된 짐 타입이 존재합니다."),
     /**
      * 6000: image
      */
@@ -71,11 +71,28 @@ public enum BaseResponseStatus implements ResponseStatus{
     EXCEED_FILE_SIZE(6005, HttpStatus.PAYLOAD_TOO_LARGE.value(), "이미지 크기가 초과되었습니다. 최대 10MB까지 업로드 가능합니다."),
 
     /**
+     * 7000: 찜 관련 코드
+     */
+    // 찜 등록 성공
+    SUCCESS_INSERT_ZZIM(7000, HttpStatus.OK.value(), "찜 등록에 성공하였습니다."),
+    SUCCESS_DELETE_ZZIM(7001, HttpStatus.OK.value(), "찜 취소에 성공하였습니다."),
+    DUPLICATE_ZZIM(7002, HttpStatus.BAD_REQUEST.value(), "이미 찜한 락커입니다."),
+    SELF_LOCKER_ZZIM(7003, HttpStatus.BAD_REQUEST.value(), "자신의 보관소는 찜할 수 없습니다."),
+
+    /**
+     * 8000: DDOS / 보안 관련 코드
+     */
+    DDOS_PREVENTION(8001, HttpStatus.TOO_MANY_REQUESTS.value(), "요청이 너무 빠릅니다. 잠시 후 다시 시도해주세요."),
+    REQUEST_RATE_LIMIT_EXCEEDED(8002, HttpStatus.TOO_MANY_REQUESTS.value(), "너무 많은 요청 발생. 잠시 후 다시 시도해주세요."),
+    LOGIN_RATE_LIMIT_EXCEEDED(8003, HttpStatus.TOO_MANY_REQUESTS.value(), "로그인 시도 횟수를 초과했습니다. 잠시 후 다시 시도해주세요."),
+
+    /**
      * 9000: sesssion
      */
-    SESSION_NOT_FOUND(7000, HttpStatus.UNAUTHORIZED.value(), "세션이 존재하지 않습니다. 다시 로그인해주세요."),
-    SESSION_INVALID_TYPE(7001, HttpStatus.UNAUTHORIZED.value(), "세션 정보가 올바르지 않습니다."),
-    SESSION_EXPIRED(7002, HttpStatus.UNAUTHORIZED.value(), "세션이 만료되었습니다."),
+    SESSION_MISMATCH(9001, HttpStatus.UNAUTHORIZED.value(), "세션의 사용자와 요청된 사용자 ID가 일치하지 않습니다."),
+    SESSION_NOT_FOUND(9002, HttpStatus.UNAUTHORIZED.value(), "세션이 존재하지 않습니다. 다시 로그인해주세요."),
+    SESSION_INVALID_TYPE(9003, HttpStatus.UNAUTHORIZED.value(), "세션 정보가 올바르지 않습니다."),
+    SESSION_EXPIRED(9004, HttpStatus.UNAUTHORIZED.value(), "세션이 만료되었습니다."),
 
     ;
 
