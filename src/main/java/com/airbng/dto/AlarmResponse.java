@@ -8,7 +8,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class AlarmRespose {
+public class AlarmResponse {
     private Long reservationId;
 
     private Long receiverId;         // 실제 알림 받는 유저 ID

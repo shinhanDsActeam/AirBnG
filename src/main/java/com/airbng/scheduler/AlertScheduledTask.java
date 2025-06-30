@@ -1,9 +1,8 @@
 package com.airbng.scheduler;
 
-import com.airbng.common.exception.MemberException;
 import com.airbng.common.exception.ReservationException;
 import com.airbng.domain.base.NotificationType;
-import com.airbng.dto.AlarmRespose;
+import com.airbng.dto.AlarmResponse;
 import com.airbng.dto.reservation.ReservationResponse;
 import com.airbng.mappers.ReservationMapper;
 import com.airbng.service.ReservationAlarmCacheService;
@@ -83,7 +82,7 @@ public class AlertScheduledTask {
         //레디스 캐시에 해당 내용의 알림 없으면 알림 발송
         if (!reservationAlarmCacheService.isSent(r.getReservationId(), r.getDropper().getMemberId(), type)) {
             if (sseService.hasConnected(r.getDropper().getMemberId())) {
-                AlarmRespose d = AlarmRespose.builder()
+                AlarmResponse d = AlarmResponse.builder()
                         .reservationId(r.getReservationId())
                         .receiverId(r.getDropper().getMemberId())
                         .nickName(r.getDropper().getNickname())
@@ -105,7 +104,7 @@ public class AlertScheduledTask {
         //레디스 캐시에 해당 내용의 알림 없으면 알림 발송
         if (!reservationAlarmCacheService.isSent(r.getReservationId(), r.getKeeper().getMemberId(), type)) {
             if (sseService.hasConnected(r.getKeeper().getMemberId())) {
-                AlarmRespose k = AlarmRespose.builder()
+                AlarmResponse k = AlarmResponse.builder()
                         .reservationId(r.getReservationId())
                         .receiverId(r.getKeeper().getMemberId())
                         .nickName(r.getKeeper().getNickname())
@@ -130,7 +129,7 @@ public class AlertScheduledTask {
             log.debug("🚫 이미 Redis에 발송됨 표시가 있어 재발송 안함 (reservationId={}, memberId={}, type={})", resId, id, type);
             return;
         }
-        AlarmRespose dto = AlarmRespose.builder()
+        AlarmResponse dto = AlarmResponse.builder()
                 .reservationId(resId)
                 .receiverId(id)
                 .nickName(name)
