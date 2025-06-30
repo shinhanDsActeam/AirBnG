@@ -28,7 +28,6 @@ public interface MemberMapper {
 
     boolean isExistMember(Long memberId);
 
-    MemberMyPageResponse findUserById(@Param("memberId") Long memberId);
 
     int updateUserById(MemberUpdateRequest memberUpdateRequest);
 }
