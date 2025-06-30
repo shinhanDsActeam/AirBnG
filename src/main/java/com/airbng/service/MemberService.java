@@ -12,4 +12,5 @@ public interface MemberService {
     MemberMyPageResponse findUserById(Long memberId);
     MemberLoginResponse login(String email, String password);
     void emailCheck(String email);
+    void nicknameCheck(String nickname);
 }

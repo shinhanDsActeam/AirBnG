@@ -48,7 +48,9 @@ public enum BaseResponseStatus implements ResponseStatus{
     INVALID_RESERVATION_TIME(4004, HttpStatus.BAD_REQUEST.value(), "예약 시간은 시작 시간과 종료 시간이 모두 지정되어야 합니다."),
     INVALID_RESERVATION_TIME_ORDER(4005, HttpStatus.BAD_REQUEST.value(), "시작 시간은 종료 시간보다 작아야합니다."),
     CANNOT_UPDATE_STATE(4006,HttpStatus.BAD_REQUEST.value(), "예약 상태 변경에 실패하였습니다."),
-    NOT_DROPPER_OF_RESERVATION(4007,HttpStatus.BAD_REQUEST.value(), "해당 예약의 드롭퍼가 아닙니다."),
+    NOT_DROPPER_OF_RESERVATION(4007,HttpStatus.BAD_REQUEST.value(), "해당 예약의 짐을 맡긴 사람이 아닙니다."),
+    NOT_KEEPER_OF_RESERVATION(4008,HttpStatus.BAD_REQUEST.value(), "해당 예약의 담당자가 아닙니다."),
+    ALREADY_CANCELLED_RESERVATION(4009, HttpStatus.BAD_REQUEST.value(), "이미 취소된 예약입니다."),
 
 
     /**
