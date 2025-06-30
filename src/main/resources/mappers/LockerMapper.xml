@@ -279,6 +279,22 @@
         WHERE locker_id = #{lockerId};
     </select>
 
+    <resultMap id="ReservationFormResponse" type="com.airbng.dto.reservation.ReservationFormResponse">
+        <result property="lockerId" column="locker_id"/>
+        <result property="lockerName" column="locker_name"/>
+        <result property="addressKr" column="address_kr"/>
+    </resultMap>
+
+    <select id="getLockerInfoById" parameterType="Long" resultMap="ReservationFormResponse">
+        SELECT
+            l.locker_id AS locker_id,
+            l.locker_name AS locker_name,
+            l.member_id AS kepper_id,
+            CONCAT(l.address, ' ', l.address_detail) AS address_kr
+        FROM Locker l
+            JOIN Member m ON l.member_id = m.member_id
+        WHERE l.locker_id = #{lockerId}
+    </select>
 
     <resultMap id="LockerJimTypeResult" type="com.airbng.dto.jimType.LockerJimTypeResult">
         <result property="jimTypeId" column="jimtype_id"/>
