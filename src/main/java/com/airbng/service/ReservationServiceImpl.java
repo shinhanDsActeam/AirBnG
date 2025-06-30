@@ -9,6 +9,7 @@ import com.airbng.domain.Reservation;
 import com.airbng.domain.base.ChargeType;
 import com.airbng.domain.base.ReservationState;
 import com.airbng.dto.jimType.JimTypeCountResult;
+import com.airbng.dto.jimType.LockerJimTypeResult;
 import com.airbng.dto.reservation.*;
 import com.airbng.mappers.JimTypeMapper;
 import com.airbng.mappers.LockerMapper;
@@ -177,6 +178,14 @@ public class ReservationServiceImpl implements ReservationService {
             throw new ReservationException(NOT_DROPPER_OF_RESERVATION); // 있는 보관소가 내거 맞나요
 
         return ReservationDetailResponse.from(reservation);
+    }
+
+    @Override
+    public ReservationFormResponse getReservationForm(Long lockerId){
+        ReservationFormResponse response = lockerMapper.getLockerInfoById(lockerId);
+        List<LockerJimTypeResult> jimTypes = lockerMapper.getLockerJimTypeById(lockerId);
+        response.setLockerJimTypes(jimTypes);
+        return response;
     }
 
     // 예약 등록

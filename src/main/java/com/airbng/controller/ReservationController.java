@@ -38,6 +38,12 @@ public class ReservationController {
         return new BaseResponse<>(reservationService.updateReservationState(reservationId, memberId));
     }
 
+    // 예약 폼 받아오기
+    @GetMapping("/form")
+    public BaseResponse<ReservationFormResponse> getReservationForm(@RequestParam("lockerId") @Min(1) @NotNull Long lockerId) {
+        return new BaseResponse<>(reservationService.getReservationForm(lockerId));
+    }
+
     // 예약 등록
     @PostMapping
     public BaseResponse<String> insertReservation(@RequestBody @Valid ReservationInsertRequest request,
