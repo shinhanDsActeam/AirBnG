@@ -74,7 +74,9 @@ public enum BaseResponseStatus implements ResponseStatus{
     /**
      * 8000: DDOS / 보안 관련 코드
      */
-    DDOS_PREVENTION(8000, HttpStatus.TOO_MANY_REQUESTS.value(), "요청이 너무 빠릅니다. 잠시 후 다시 시도해주세요."),
+    DDOS_PREVENTION(8001, HttpStatus.TOO_MANY_REQUESTS.value(), "요청이 너무 빠릅니다. 잠시 후 다시 시도해주세요."),
+    REQUEST_RATE_LIMIT_EXCEEDED(8002, HttpStatus.TOO_MANY_REQUESTS.value(), "너무 많은 요청 발생. 잠시 후 다시 시도해주세요."),
+    LOGIN_RATE_LIMIT_EXCEEDED(8003, HttpStatus.TOO_MANY_REQUESTS.value(), "로그인 시도 횟수를 초과했습니다. 잠시 후 다시 시도해주세요."),
 
     /**
      * 9000: sesssion
