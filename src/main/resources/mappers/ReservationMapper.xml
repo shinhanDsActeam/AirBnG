@@ -247,4 +247,10 @@
         WHERE r.reservation_id = #{reservationId}
     </select>
 
+    <select id="getLockerKepperId" parameterType="Long">
+        SELECT member_id
+        FROM locker
+        WHERE locker_id = #{lockerId}
+    </select>
+
 </mapper>
