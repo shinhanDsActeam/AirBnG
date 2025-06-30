@@ -17,7 +17,13 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 
 import static com.airbng.common.response.status.BaseResponseStatus.ALREADY_CANCELLED_RESERVATION;
@@ -166,5 +172,88 @@ public class ReservationConfirmServiceTest {
             assertEquals(CANNOT_UPDATE_STATE, exception.getBaseResponseStatus());
             assertEquals(CANNOT_UPDATE_STATE.getMessage(), exception.getMessage());
         }
+    }
+
+    @Nested
+    @DisplayName("동시성 테스트")
+    class ConcurrencyTest {
+
+        @Nested
+        @DisplayName("동시성 테스트 - 반복 실행")
+        class RepeatedConcurrencyTest {
+
+            @RepeatedTest(20)  // 10번 반복 실행
+            @DisplayName("취소와 승인 요청 동시 실행 시, 반드시 한 쪽만 성공하고 다른 한 쪽은 실패해야 한다")
+            void 취소와_승인_동시성_테스트_반복() throws Exception {
+                Long reservationId = 100L;
+                Long dropperId = dropper.getMemberId();
+                Long keeperId = keeper.getMemberId();
+
+                Reservation sharedReservation = Reservation.builder()
+                        .reservationId(reservationId)
+                        .dropper(dropper)
+                        .keeper(keeper)
+                        .startTime(LocalDateTime.now())
+                        .endTime(LocalDateTime.now().plusHours(2))
+                        .state(ReservationState.PENDING)
+                        .build();
+
+                when(memberMapper.findById(dropperId)).thenReturn(true);
+                when(memberMapper.findById(keeperId)).thenReturn(true);
+
+                when(reservationMapper.findReservationWithDropperById(reservationId)).thenReturn(sharedReservation);
+                when(reservationMapper.findReservationWithKeeperById(reservationId)).thenReturn(sharedReservation);
+
+                doAnswer(invocationOnMock -> {
+                    ReservationState newState = invocationOnMock.getArgument(1);
+                    sharedReservation.setState(newState);
+                    return null;
+                }).when(reservationMapper).updateReservationState(anyLong(), any(ReservationState.class));
+
+                ExecutorService executor = Executors.newFixedThreadPool(2);
+                CountDownLatch latch = new CountDownLatch(2);
+                List<Throwable> exceptions = Collections.synchronizedList(new ArrayList<>());
+
+                Runnable cancelTask = () -> {
+                    try {
+                        latch.countDown();
+                        latch.await();
+                        reservationService.updateReservationState(reservationId, dropperId);
+                    } catch (Throwable t) {
+                        exceptions.add(t);
+                    }
+                };
+
+                Runnable confirmTask = () -> {
+                    try {
+                        latch.countDown();
+                        latch.await();
+                        reservationService.confirmReservationState(reservationId, "yes", keeperId);
+                    } catch (Throwable t) {
+                        exceptions.add(t);
+                    }
+                };
+
+                executor.submit(confirmTask);
+                executor.submit(cancelTask);
+                executor.shutdown();
+                executor.awaitTermination(3, TimeUnit.SECONDS);
+
+                // 예외가 몇 건 발생했는지 체크
+                long 예외_건수 = exceptions.stream()
+                        .filter(e -> e instanceof ReservationException &&
+                                ((ReservationException) e).getBaseResponseStatus().equals(CANNOT_UPDATE_STATE))
+                        .count();
+
+                // 예외는 반드시 0갸 또는 1건만 발생해야 한다
+                assertTrue(예외_건수 == 0 || 예외_건수 == 1, "예외는 0개 아니면 1개여야 합니다.");
+
+                // 상태는 CANCELLED 또는 CONFIRMED 중 하나여야 한다
+                assertTrue(sharedReservation.getState() == ReservationState.CANCELLED
+                                || sharedReservation.getState() == ReservationState.CONFIRMED,
+                        "최종 상태는 CANCELLED 또는 CONFIRMED 여야 합니다.");
+            }
+        }
+
     }
 }
