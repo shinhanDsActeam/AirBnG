@@ -9,7 +9,7 @@ import com.airbng.domain.base.ReservationState;
 import com.airbng.domain.image.Image;
 import com.airbng.dto.locker.*;
 import com.airbng.mappers.LockerMapper;
-import com.airbng.util.S3Uploader;
+import com.airbng.util.S3Utils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -28,7 +28,7 @@ import static com.airbng.common.response.status.BaseResponseStatus.*;
 public class LockerServiceImpl implements LockerService {
 
     private final LockerMapper lockerMapper;
-    private final S3Uploader s3Uploader;
+    private final S3Utils s3Utils;
 
 
     @Override
@@ -118,7 +118,7 @@ public class LockerServiceImpl implements LockerService {
                 // 2. 업로드 및 예외 처리
                 String imageUrl;
                 try {
-                    imageUrl = s3Uploader.upload(file, path); // 확장자 검사 포함됨
+                    imageUrl = s3Utils.upload(file, path); // 확장자 검사 포함됨
                 } catch (IOException e) {
                     throw new ImageException(UPLOAD_FAILED); // 필요 시 추가 정의
                 }
@@ -156,4 +156,13 @@ public class LockerServiceImpl implements LockerService {
         }
 
     }
+
+    @Override
+    public void updateLockerActivation(Long lockerId) {
+        if (!lockerMapper.isExistLocker(lockerId))
+            throw new LockerException(NOT_FOUND_LOCKER);
+
+        lockerMapper.toggleLockerIsAvailable(lockerId);
+    }
+
 }
