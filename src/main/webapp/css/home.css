@@ -1,0 +1,216 @@
+body {
+    margin: 0;
+    font-family: 'Pretendard', sans-serif;
+    background-color: #f5f5f5;
+    max-width: 412px;
+    margin: auto;
+}
+
+/* 상단 영역 */
+.top-section {
+    background: linear-gradient(180deg, #716BEC 0%, #3181E2 100%);
+    color: white;
+    padding: 20px;
+    padding-bottom: 260px;
+    border-bottom-left-radius: 30px;
+    border-bottom-right-radius: 30px;
+    position: relative;
+}
+
+.top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo-group {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.brand-text {
+    font-family: 'BMJUA', sans-serif;
+    font-size: 18px;
+    font-weight: bold;
+    line-height: 18px;
+    color: white;
+    text-align: center;
+}
+
+.top-bar img {
+    height: 24px;
+}
+
+.greeting {
+    margin-top: 40px;
+    font-size: 28px;
+    font-weight: 600;
+    line-height: 35px;
+}
+
+/* 예약 카드 */
+.info-card {
+    position: relative;
+    top: -220px;
+    margin: 0 20px;
+    background: white;
+    color: black;
+    border-radius: 20px;
+    padding: 28px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    z-index: 2;
+}
+
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    font-size: 16px;
+}
+
+.info-row label {
+    flex: 1;
+    color: #666;
+    font-weight: bold;
+}
+
+.info-row input,
+.info-row select {
+    flex: 2;
+    padding: 8px 10px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+}
+
+/* 버튼 */
+.find-button {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    margin-top: 10px;
+    background-color: #3181E2;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+/* 카테고리 섹션 전체 */
+.category-section {
+    padding: 0 20px;
+    margin-top: -190px;
+}
+
+/* 섹션 제목 */
+.category-section h3 {
+    font-size: 22px;
+    font-weight: 700;
+    line-height: 22px;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+/* 그리드 배치 */
+.category-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 25px;
+}
+
+/* 카드 스타일 */
+.category-card {
+    background: white;
+    border-radius: 10px;
+    padding: 17px 25px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    font-size: 14px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    gap: 10px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    box-sizing: border-box;
+}
+
+/* 이미지 */
+.category-card img {
+    width: 48px;
+    height: 48px;
+}
+
+/* 텍스트 */
+.category-card p {
+    font-weight: 600;
+    font-size: 17px;
+    line-height: 17px;
+    margin: 0;
+    text-align: left;
+}
+
+.category-card small {
+    font-size: 13px;
+    color: #666;
+    text-align: left;
+}
+
+/* Hover 효과 */
+.category-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* 인기 보관소 */
+.popular-section {
+    padding: 20px;
+}
+
+.popular-section h3 {
+    font-size: 22px;
+    font-weight: 700;
+    line-height: 22px;
+    margin-bottom: 12px;
+    color: #333;
+}
+
+.popular-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.popular-item {
+    display: flex;
+    align-items: center;
+    background: white;
+    padding: 12px;
+    border-radius: 12px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.popular-item .thumb {
+    width: 40px;
+    height: 40px;
+    background: #e0e0e0;
+    border-radius: 8px;
+    margin-right: 12px;
+}
+
+.popular-item .locker-name {
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 2px;
+    line-height: 18px;
+}
+
+.popular-item .locker-address {
+    font-size: 13px;
+    color: #777;
+    line-height: 16px;
+}
