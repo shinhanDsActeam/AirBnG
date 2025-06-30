@@ -182,6 +182,8 @@ public class ReservationServiceImpl implements ReservationService {
     @Override
     public ReservationFormResponse getReservationForm(Long lockerId) {
         ReservationFormResponse response = lockerMapper.getLockerInfoById(lockerId);
+        if(response == null) throw new LockerException(NOT_FOUND_LOCKER);
+
         List<LockerJimTypeResult> jimTypes = lockerMapper.getLockerJimTypeById(lockerId);
         response.setLockerJimTypes(jimTypes);
         return response;
