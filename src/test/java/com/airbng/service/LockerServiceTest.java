@@ -1,13 +1,13 @@
 package com.airbng.service;
 
-import com.airbng.common.exception.ImageException;
 import com.airbng.common.exception.LockerException;
+import com.airbng.mappers.LockerMapper;
+import com.airbng.util.S3Utils;
+import com.airbng.common.exception.ImageException;
 import com.airbng.common.exception.MemberException;
 import com.airbng.domain.base.Available;
 import com.airbng.dto.jimType.JimTypeResult;
 import com.airbng.dto.locker.*;
-import com.airbng.mappers.LockerMapper;
-import com.airbng.util.S3Uploader;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -34,13 +34,13 @@ class LockerServiceTest {
 
     @Mock
     private LockerMapper lockerMapper;
-
+  
     @Mock
-    private S3Uploader s3Uploader;
+    private S3Utils s3Utils;
 
     @InjectMocks
     private LockerServiceImpl lockerService;
-
+  
     private LockerInsertRequest request;
 
     @BeforeEach

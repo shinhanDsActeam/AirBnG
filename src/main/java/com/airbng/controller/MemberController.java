@@ -4,15 +4,19 @@ import com.airbng.common.response.BaseResponse;
 import com.airbng.dto.MemberLoginRequest;
 import com.airbng.dto.MemberLoginResponse;
 import com.airbng.dto.MemberSignupRequest;
+import com.airbng.dto.*;
 import com.airbng.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import javax.servlet.http.HttpSession;
 
 import static com.airbng.common.response.status.BaseResponseStatus.SUCCESS_LOGIN;
@@ -21,6 +25,7 @@ import static com.airbng.common.response.status.BaseResponseStatus.SUCCESS_LOGIN
 @RequestMapping("/members")
 @RequiredArgsConstructor
 @Slf4j
+@Validated
 public class MemberController {
 
     private final MemberService memberService;
@@ -33,11 +38,28 @@ public class MemberController {
         return new BaseResponse<>("회원가입 성공");
     }
 
-    @PostMapping("/check-email")
-    public ResponseEntity<BaseResponse<String>> emailCheck(@RequestParam String email) {
-        boolean exists = memberService.emailCheck(email);
-        String message = exists ? "이미 사용 중인 이메일" : "사용 가능한 이메일";
-        return ResponseEntity.ok(new BaseResponse<>(message));
+    @GetMapping("/check-email")
+    public BaseResponse<String> emailCheck(@RequestParam String email) {
+        memberService.emailCheck(email);
+        return new BaseResponse<>("사용 가능한 이메일");
+    }
+
+    @GetMapping("/check-nickname")
+    public BaseResponse<String> nicknameCheck(@RequestParam String nickname) {
+        memberService.nicknameCheck(nickname);
+        return new BaseResponse<>("사용 가능한 닉네임");
+    }
+
+    @GetMapping
+    public BaseResponse<MemberMyPageResponse> findUserById(
+            @RequestParam @NotNull @Min(1) Long memberId
+    ) {
+        MemberMyPageRequest request = MemberMyPageRequest.builder()
+                .memberId(memberId)
+                .build();
+
+        MemberMyPageResponse response = memberService.findUserById(request.getMemberId());
+        return new BaseResponse<>(response);
     }
 
     @PostMapping("/login")

@@ -255,5 +255,29 @@
         ), 1, 0)
     </select>
 
+    <!-- locker 활성화/비활성화 처리 -->
+    <update id="updateLockerIsAvailable">
+        UPDATE Locker
+        SET is_available = #{isAvailable}
+        WHERE locker_id = #{lockerId}
+    </update>
+
+    <!-- locker 활성화/비활성화 전환 -->
+    <update id="toggleLockerIsAvailable">
+        UPDATE Locker
+        SET is_available =
+                CASE
+                    WHEN is_available = 'YES' THEN 'NO'
+                    ELSE 'YES'
+                    END
+        WHERE locker_id = #{lockerId}
+    </update>
+
+    <select id="getIsAvailableById" resultType="com.airbng.domain.base.Available">
+        SELECT is_available
+        FROM Locker
+        WHERE locker_id = #{lockerId};
+    </select>
+
 </mapper>
 
