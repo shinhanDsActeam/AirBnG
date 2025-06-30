@@ -268,7 +268,7 @@
         JOIN member k ON r.keeper_id = k.member_id
 
         WHERE r.state = 'CONFIRMED'
-        AND r.end_time BETWEEN #{now} AND DATE_ADD(#{now}, INTERVAL 30 MINUTE)
+        AND TIMESTAMPDIFF(MINUTE, #{now}, r.end_time) BETWEEN 0 AND 30
     </select>
 
     <!-- CONFIRMED 상태로 바뀐 예약 -->

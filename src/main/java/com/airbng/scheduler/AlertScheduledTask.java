@@ -47,7 +47,7 @@ public class AlertScheduledTask {
         }
 
         // 2. REMINDER 알림 (30분 전)
-        List<ReservationResponse> remind = reservationMapper.findConfirmedNearEndTime(now.plusMinutes(30));
+        List<ReservationResponse> remind = reservationMapper.findConfirmedNearEndTime(now);
         //예외처리
         if (remind == null) {
             throw new ReservationException(NOT_FOUND_REMINDER_RESERVATION);
@@ -140,6 +140,6 @@ public class AlertScheduledTask {
                 .sendTime(String.valueOf(LocalDateTime.now()))
                 .build();
         sseService.sendMessage(id, dto);
-        reservationAlarmCacheService.markSent(id, resId, type);
+        reservationAlarmCacheService.markSent(resId, id, type);
     }
 }
