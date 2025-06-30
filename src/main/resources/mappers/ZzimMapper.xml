@@ -24,4 +24,16 @@
         AND locker_id = #{lockerId}
     </delete>
 
+    <update id="increaseZzimCount">
+        UPDATE Locker
+        SET zzim_count = zzim_count + 1
+        WHERE locker_id = #{lockerId}
+    </update>
+
+    <update id="decreaseZzimCount">
+        UPDATE Locker
+        SET zzim_count = zzim_count - 1
+        WHERE locker_id = #{lockerId} AND zzim_count > 0
+    </update>
+
 </mapper>

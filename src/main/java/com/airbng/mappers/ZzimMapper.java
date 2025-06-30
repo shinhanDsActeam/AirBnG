@@ -12,4 +12,8 @@ public interface ZzimMapper {
 
     void deleteZzim(@Param("memberId") Long memberId, @Param("lockerId") Long lockerId);
 
+    void increaseZzimCount(@Param("lockerId") Long lockerId);
+
+    void decreaseZzimCount(@Param("lockerId") Long lockerId);
+
 }
