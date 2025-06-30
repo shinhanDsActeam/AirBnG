@@ -49,10 +49,12 @@ public enum BaseResponseStatus implements ResponseStatus{
     INVALID_RESERVATION_TIME_ORDER(4005, HttpStatus.BAD_REQUEST.value(), "시작 시간은 종료 시간보다 작아야합니다."),
     CANNOT_UPDATE_STATE(4006,HttpStatus.BAD_REQUEST.value(), "예약 상태 변경에 실패하였습니다."),
     NOT_DROPPER_OF_RESERVATION(4007,HttpStatus.BAD_REQUEST.value(), "해당 예약의 짐을 맡긴 사람이 아닙니다."),
-    NOT_FOUND_EXPIRED_RESERVATION(4008,HttpStatus.NOT_FOUND.value(), "예약 만료 데이터를 조회할 수 없습니다."),
-    NOT_FOUND_REMINDER_RESERVATION(4009,HttpStatus.NOT_FOUND.value(), "곧 종료 예정(30분 전) 예약 데이터를 조회할 수 없습니다."),
-    NOT_FOUND_STATE_CHANGE_RESERVATION(4010,HttpStatus.NOT_FOUND.value(), "상태 변경(CONFIRMED)된 예약 데이터를 조회할 수 없습니다."),
-    NOT_FOUND_CANCEL_NOTICE_RESERVATION(4011,HttpStatus.NOT_FOUND.value(), "상태 변경(CANCELLED)된 예약 데이터를 조회할 수 없습니다."),
+    NOT_KEEPER_OF_RESERVATION(4008,HttpStatus.BAD_REQUEST.value(), "해당 예약의 담당자가 아닙니다."),
+    ALREADY_CANCELLED_RESERVATION(4009, HttpStatus.BAD_REQUEST.value(), "이미 취소된 예약입니다."),
+    NOT_FOUND_EXPIRED_RESERVATION(4010,HttpStatus.NOT_FOUND.value(), "예약 만료 데이터를 조회할 수 없습니다."),
+    NOT_FOUND_REMINDER_RESERVATION(4011,HttpStatus.NOT_FOUND.value(), "곧 종료 예정(30분 전) 예약 데이터를 조회할 수 없습니다."),
+    NOT_FOUND_STATE_CHANGE_RESERVATION(4012,HttpStatus.NOT_FOUND.value(), "상태 변경(CONFIRMED)된 예약 데이터를 조회할 수 없습니다."),
+    NOT_FOUND_CANCEL_NOTICE_RESERVATION(4013,HttpStatus.NOT_FOUND.value(), "상태 변경(CANCELLED)된 예약 데이터를 조회할 수 없습니다."),
 
     /**
      * 5000 짐 타입 관련 코드

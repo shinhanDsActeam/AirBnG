@@ -2,16 +2,14 @@ package com.airbng.controller;
 
 import com.airbng.common.response.BaseResponse;
 import com.airbng.domain.base.ReservationState;
-import com.airbng.dto.reservation.ReservationCancelResponse;
-import com.airbng.dto.reservation.ReservationDetailResponse;
-import com.airbng.dto.reservation.ReservationInsertRequest;
-import com.airbng.dto.reservation.ReservationPaging;
+import com.airbng.dto.reservation.*;
 import com.airbng.service.ReservationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -23,6 +21,15 @@ import javax.validation.constraints.NotNull;
 @Slf4j
 public class ReservationController {
     private final ReservationService reservationService;
+
+    //예약 승인 취소
+    @PatchMapping("/{reservation-id}/members/{member-id}/confirm")
+    public BaseResponse<ReservationConfirmResponse> confirmResponse(
+            @PathVariable("reservation-id") @NotNull @Min(1) Long reservationId,
+            @PathVariable("member-id") Long memberId,
+            @RequestParam("approve") String approve) {
+        return new BaseResponse<>(reservationService.confirmReservationState(reservationId, approve, memberId));
+    }
 
     @PostMapping("/{reservation-id}/members/{member-id}/cancel")
     public BaseResponse<ReservationCancelResponse> updateResponse(@PathVariable("reservation-id") Long reservationId, @PathVariable("member-id") Long memberId) {
