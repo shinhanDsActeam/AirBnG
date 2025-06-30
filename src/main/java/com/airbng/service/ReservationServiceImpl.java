@@ -8,13 +8,8 @@ import com.airbng.common.response.status.BaseResponseStatus;
 import com.airbng.domain.base.ReservationState;
 import com.airbng.domain.Reservation;
 import com.airbng.domain.base.ChargeType;
-import com.airbng.domain.base.ReservationState;
 import com.airbng.dto.jimType.JimTypeCountResult;
-import com.airbng.dto.reservation.ReservationCancelResponse;
-import com.airbng.dto.reservation.ReservationDetailResponse;
-import com.airbng.dto.reservation.ReservationInsertRequest;
-import com.airbng.dto.reservation.ReservationPaging;
-import com.airbng.dto.reservation.ReservationSearchResponse;
+import com.airbng.dto.reservation.*;
 import com.airbng.mappers.JimTypeMapper;
 import com.airbng.mappers.LockerMapper;
 import com.airbng.mappers.MemberMapper;
@@ -131,6 +126,44 @@ public class ReservationServiceImpl implements ReservationService{
                 lock.unlock();
             }
     }
+
+    @Override
+    @Transactional
+    public ReservationConfirmResponse confirmReservationState(Long reservationId, String approve, Long memberId) {
+        ReentrantLock lock = reservationLocks.get(reservationId, key -> new ReentrantLock());
+        try {
+            //락 걸어
+            lock.lock();
+            //멤버 존재 유무 파악
+            if (!memberMapper.findById(memberId)) throw new MemberException(NOT_FOUND_MEMBER);
+
+            //예약건의 존재 여부 파악
+            Reservation reservation = reservationMapper.findReservationWithKeeperById(reservationId);
+            if (reservation == null) throw new ReservationException(NOT_FOUND_RESERVATION);
+
+            //짐을 맡아주는 사람인지 확인
+            if (!reservation.getKeeper().getMemberId().equals(memberId)) throw new ReservationException(NOT_KEEPER_OF_RESERVATION);
+
+            //취소, 완료상태는 상태변경 불가
+            reservation.getState().isAvailableUpdate(reservation.getState());
+
+            //상태값 저장
+            ReservationState newState;
+            if ("yes".equalsIgnoreCase(approve)) {
+                newState = ReservationState.CONFIRMED;
+            } else if ("no".equalsIgnoreCase(approve)) {
+                newState = ReservationState.CANCELLED;
+            } else {
+                throw new ReservationException(CANNOT_UPDATE_STATE);
+            }
+            reservationMapper.updateReservationState(reservationId, newState);
+
+            return ReservationConfirmResponse.of(reservation, newState);
+        } finally {
+            lock.unlock();
+        }
+    }
+
     // 예약 등록
     @Override
     @Transactional // 짐타입 등록 실패한 경우 예약 등록까지 롤백

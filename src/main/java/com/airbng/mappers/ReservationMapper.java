@@ -17,10 +17,10 @@ public interface ReservationMapper {
 
     void updateReservationState(@Param("reservationId")Long reservationId, @Param("state")ReservationState state);
     Reservation findReservationWithDropperById(Long reservationId);
-  
+    Reservation findReservationWithKeeperById(Long reservationId);
+
     void insertReservation(ReservationInsertRequest reservation);
     Reservation findReservationDetailById(@Param("reservationId") Long reservationId);
-
     // 예약 조회 + 페이징 처리
     List<ReservationSearchResponse> findAllReservationById(
                                              @Param("memberId") Long memberId,
@@ -29,7 +29,6 @@ public interface ReservationMapper {
                                              @Param("nextCursorId") Long nextCursorId,
                                              @Param("limit") Long limit
     );
-
     //예약  목록 개수
     Long findReservationByMemberId(@Param("memberId") Long memberId, @Param("role") String role);
 
