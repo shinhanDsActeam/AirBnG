@@ -41,11 +41,12 @@ public class ReservationController {
             @RequestParam(value = "isDropper") @NotNull Boolean isDropper,
             @RequestParam(value = "memberId") @Min(1) @NotNull Long memberId,
             @RequestParam(required = false) ReservationState state,
-            @RequestParam(value = "nextCursorId", required = false) Long nextCursorId
+            @RequestParam(value = "nextCursorId", required = false) Long nextCursorId,
+            @RequestParam(value = "period", required = false, defaultValue = "ALL") String period // 예: "1W", "3M", "6M", "1Y", "2Y"
     ) {
 
         String role = isDropper ? "DROPPER" : "KEEPER";
-        ReservationPaging response = reservationService.findAllReservationById(memberId, role, state, nextCursorId );
+        ReservationPaging response = reservationService.findAllReservationById(memberId, role, state, nextCursorId, period );
 
         return new BaseResponse<>(response); // 이렇게 객체로 감싼 채로 반환
     }
