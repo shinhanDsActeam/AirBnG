@@ -39,6 +39,8 @@ public enum BaseResponseStatus implements ResponseStatus{
     NOT_FOUND_LOCKERDETAILS(3002,HttpStatus.BAD_REQUEST.value(), "락커를 찾을 수 없습니다."),
     MEMBER_ALREADY_HAS_LOCKER(3003, HttpStatus.BAD_REQUEST.value(), "한 멤버당 하나의 보관소만 등록할 수 있습니다."),
     LOCKER_KEEPER_MISMATCH(3004, HttpStatus.BAD_REQUEST.value(), "선택한 보관소의 보관자 정보가 일치하지 않습니다."),
+    LOCKER_NOT_AVAILABLE(3005, HttpStatus.LOCKED.value(), "비활성화된 보관소입니다."),
+
     /**
      * 4000 예약 관련 코드
      */

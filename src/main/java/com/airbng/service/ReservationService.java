@@ -19,6 +19,9 @@ public interface ReservationService {
     //예약 승인/거절
     ReservationConfirmResponse confirmReservationState(Long reservationId, String approve, Long memberId);
 
+    // 예약 폼 데이터 받아오기
+    ReservationFormResponse getReservationForm(Long lockerId);
+
     // 예약 등록
     BaseResponseStatus insertReservation(ReservationInsertRequest request);
 
