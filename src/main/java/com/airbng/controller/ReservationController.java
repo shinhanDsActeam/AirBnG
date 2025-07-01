@@ -13,6 +13,7 @@ import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 @RestController
 @RequestMapping("/reservations")
@@ -55,7 +56,7 @@ public class ReservationController {
     public BaseResponse<ReservationPaging> findAllReservationById(
             @RequestParam(value = "isDropper") @NotNull Boolean isDropper,
             @RequestParam(value = "memberId") @Min(1) @NotNull Long memberId,
-            @RequestParam(required = false) ReservationState state,
+            @RequestParam(required = false) List<ReservationState> state,
             @RequestParam(value = "nextCursorId", required = false) Long nextCursorId,
             @RequestParam(value = "period", required = false, defaultValue = "ALL") String period // 예: "1W", "3M", "6M", "1Y", "2Y"
     ) {

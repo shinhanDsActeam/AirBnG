@@ -22,7 +22,7 @@ public class ReservationSearchResponse {
     private String startTime;
     private String endTime;
     private String dateOnly;
-    private Integer durationHours;
+    private Double durationHours;
 //    private String itemNames; // 예: "가방, 신발"
     private List<JimTypeResult> jimTypeResults;
 }

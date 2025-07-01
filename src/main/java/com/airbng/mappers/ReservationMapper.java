@@ -23,7 +23,7 @@ public interface ReservationMapper {
     List<ReservationSearchResponse> findAllReservationById(
                                              @Param("memberId") Long memberId,
                                              @Param("role") String role,
-                                             @Param("state") String state,
+                                             @Param("state")  List<ReservationState> state,
                                              @Param("nextCursorId") Long nextCursorId,
                                              @Param("limit") Long limit,
                                              @Param("period") String period

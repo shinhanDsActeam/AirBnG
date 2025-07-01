@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
@@ -42,7 +43,7 @@ public class ReservationServiceImpl implements ReservationService{
     //예약 조회 + 페이징 처리
 
     @Override
-    public ReservationPaging findAllReservationById(Long memberId, String role, ReservationState state, Long nextCursorId, String period) {
+    public ReservationPaging findAllReservationById(Long memberId, String role, Object state, Long nextCursorId, String period) {
         log.info("Finding reservation by memberId: {}, role: {}, state: {}, nextCursorId: {}, LIMIT:{},  PERIOD: {}",
                 memberId, role, state, nextCursorId, LIMIT, period);
 
@@ -52,10 +53,19 @@ public class ReservationServiceImpl implements ReservationService{
         }
         log.info("!!! nextCursorId: {}", nextCursorId);
 
-        String stateStr = (state != null) ? state.toString() : null;
+        List<ReservationState> stateList = null;
+
+        if (state == null) {
+            stateList = null;
+        } else if (state instanceof List<?>) {
+            stateList = (List<ReservationState>) state;
+        } else {
+            // 단일값이면 리스트로 감싸기
+            stateList = Collections.singletonList((ReservationState) state);
+        }
 
         List<ReservationSearchResponse> reservations = reservationMapper.findAllReservationById(
-                memberId, role, stateStr, nextCursorId, LIMIT + 1, period //다음 페이지 유무 확인
+                memberId, role, stateList, nextCursorId, LIMIT + 1, period //다음 페이지 유무 확인
         );
 
         // 예외 처리: 예약이 없을 경우

@@ -116,7 +116,7 @@
             DATE_FORMAT(r.start_time, '%Y-%m-%d') AS date_only,
             l.locker_name,
             i.url AS locker_image,
-            TIMESTAMPDIFF(HOUR, r.start_time, r.end_time) AS duration_hours,
+            TIMESTAMPDIFF(MINUTE, r.start_time, r.end_time) / 60.0 AS duration_hours,
             jt.jimtype_id,
             jt.type_name
 
@@ -155,8 +155,11 @@
                 </when>
             </choose>
 
-            <if test="state != null and state != ''">
-                AND r.state = #{state}
+            <if test="state != null and state.size() > 0">
+                AND r.state IN
+                <foreach collection="state" item="s" open="(" separator="," close=")">
+                    #{s}
+                </foreach>
             </if>
 
             <if test="nextCursorId != null">
