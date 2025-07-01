@@ -1,3 +1,14 @@
+body {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+.main-wrapper {
+    width: 412px;
+    margin: 0 auto;
+}
+
 .date-btn {
     /*@apply w-10 h-10 rounded-lg border text-sm font-medium transition-colors;*/
     padding: 6px 12px;
@@ -16,21 +27,12 @@
 }
 .date-btn.in-range {
     /*@apply bg-blue-200 text-blue-800 border-blue-300;*/
-    background-color: rgba(69, 97, 219, 0.3);
+    background-color: rgba(69, 97, 219, 0.2);
     color: #4561DB;
-    border-color: rgba(69, 97, 219, 0.3);
+    border-color: rgba(69, 97, 219, 0.2);
 }
 .date-btn:not(.selected):not(.in-range) {
     @apply bg-white text-gray-700 border-gray-300 hover:bg-gray-50;
-}
-.jim-type-card {
-    @apply border rounded-lg p-4 transition-colors;
-}
-.jim-type-card.selected {
-    @apply border-pink-500 bg-pink-50;
-}
-.jim-type-card:not(.selected) {
-    @apply border-gray-300;
 }
 .custom-select {
     @apply appearance-none bg-white border border-gray-300 rounded-lg px-3 py-2 pr-8 text-gray-700 focus:outline-none focus:border-blue-500;
@@ -66,15 +68,72 @@
     box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
-.jimtype{
-    padding: 5px 10px;
-    border: 1px solid #e5e7eb; /* 연한 회색 테두리 */
+.jim-type-card {
+    /*@apply border rounded-lg p-4 transition-colors;*/
+    border: 1px solid #e5e7eb;
+    padding: 20px;
     border-radius: 6px;
 }
 
-.quantity{
-    padding-left: 10px;
+.jim-type-card.selected {
+    border: 1px solid #4561DB;
+    transition: background-color 0.2s;
+    background-color: rgba(59, 130, 246, 0.1);
 }
+
+.jim-type-card:not(.selected) {
+    @apply border-gray-300;
+}
+
+.quantity-btn {
+    @apply w-8 h-8 border rounded text-lg font-medium transition-colors;
+    /*border: 1px solid #e5e7eb;*/
+    /*background-color: white;*/
+    padding: 4px 8px;
+}
+
+.quantity-btn:hover {
+    background-color: #f3f4f6;
+    border-radius: 10%;
+}
+.quantity-input {
+    width: 40px;
+    height: 36px;
+    padding: 0;
+    text-align: center;
+    line-height: 36px;
+    font-weight: 500;
+    font-size: 16px;
+    color: rgba(55, 65, 81, 0.5);
+    background-color: rgba(255, 255, 255, 1);
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+
+    /* 숫자 input 기본 화살표 제거 */
+    -moz-appearance: textfield;
+}
+.quantity-input::-webkit-outer-spin-button,
+.quantity-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.jim-type-card.selected .quantity-btn {
+    border-color: #4561DB;
+    color: #4561DB;
+}
+
+.jim-type-card.selected .quantity-btn:hover {
+    background-color: rgba(69, 97, 219, 0.1);
+    border-radius: 10%;
+}
+
+.jim-type-card.selected .quantity-input {
+    border-color: #4561DB;
+    color: #4561DB;
+    font-weight: 600;
+}
+
 
 .submit-btn{
     background-color: rgba(69, 97, 219);

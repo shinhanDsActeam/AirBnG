@@ -412,15 +412,14 @@ function generateJimTypes(jimTypes) {
 
         card.innerHTML = `
             <div class="flex items-center justify-between">
-                <div class="jimtype flex items-center flex-1">
-                    <div class="flex-1">
-                        <div class="font-medium">${jimType.typeName}</div>
-                        <div class="text-sm text-gray-600">시간당 ${jimType.pricePerHour.toLocaleString()}원</div>
-                    </div>
+                <div class="flex-1">
+                    <div class="font-medium">${jimType.typeName}</div>
+                    <div class="text-sm text-gray-600">시간당 ${jimType.pricePerHour.toLocaleString()}원</div>
                 </div>
                 <div class="quantity flex items-center space-x-2">
                     <button type="button" class="quantity-btn" onclick="changeQuantity(${jimType.jimTypeId}, -1)">-</button>
-                    <input type="number" class="quantity-input" id="qty_${jimType.jimTypeId}" value="0" min="0" 
+                    <input type="number" class="quantity-input rounded text-center" 
+                           id="qty_${jimType.jimTypeId}" value="0" min="0" 
                            onchange="updateQuantity(${jimType.jimTypeId}, this.value)" readonly>
                     <button type="button" class="quantity-btn" onclick="changeQuantity(${jimType.jimTypeId}, 1)">+</button>
                 </div>
