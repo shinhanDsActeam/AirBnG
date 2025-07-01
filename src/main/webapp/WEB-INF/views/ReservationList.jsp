@@ -8,8 +8,7 @@
     <title>예약 내역</title>
     <link rel="stylesheet" href="<c:url value='/css/ReservationList.css'/>">
 </head>
-<body>
-    <!-- 헤더 -->
+ <!-- 헤더 -->
     <div class="header">
         <div class="header-content">
             <button class="back-btn" onclick="history.back()">←</button>
@@ -31,7 +30,9 @@
         <div class="period-dropdown">
             <button class="dropdown-btn" onclick="toggleDropdown()">
                 <span id="selected-period">전체</span>
-                <span>▼</span>
+                <svg class="dropdown-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="6,9 12,15 18,9"></polyline>
+                </svg>
             </button>
             <div class="dropdown-menu" id="period-dropdown">
                 <div class="dropdown-item" onclick="selectPeriod('ALL', '전체')">전체</div>
@@ -61,6 +62,7 @@
     <div class="loading" id="loading" style="display:none;">
         <p>로딩 중...</p>
     </div>
+
     <script src="<c:url value='/js/ReservationList.js'/>"></script>
 
 </body>
