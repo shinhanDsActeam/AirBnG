@@ -1,5 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
+<link rel="stylesheet" href="<c:url value='/css/navigation.css'/>" />
 <!-- navbar.jsp는 네비게이션 바만 포함 -->
 <nav class="bottom-nav">
     <a href="shopping-cart.jsp" class="nav-item" data-page="shopping-cart">
@@ -22,7 +24,7 @@
         <span class="nav-text">예약</span>
     </a>
 
-    <a href="mypage.jsp" class="nav-item" data-page="mypage">
+    <a href="${pageContext.request.contextPath}/page/mypage" class="nav-item" data-page="mypage">
         <img src="<c:url value='/images/user.svg'/>" alt="마이" class="nav-icon">
         <span class="nav-text">마이</span>
     </a>
