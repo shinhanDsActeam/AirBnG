@@ -10,6 +10,7 @@ let jimTypeCounts = {};
 document.addEventListener('DOMContentLoaded', function() {
     loadLockerData();
     generateDateButtons();
+    updateTimeOptions();
     // 폼 제출 처리
     document.getElementById('reservationForm').addEventListener('submit', function(e) {
         e.preventDefault();
@@ -108,6 +109,12 @@ function loadLockerData() {
         });
 }
 
+function formatDateTimeForServer(date) {
+    const yyyy = date.getFullYear();
+    const mm = String(date.getMonth() + 1).padStart(2, '0');
+    const dd = String(date.getDate()).padStart(2, '0');
+    return `${yyyy}-${mm}-${dd}`;
+}
 
 function generateDateButtons() {
     const container = document.getElementById('date-buttons');
@@ -151,7 +158,40 @@ function generateDateButtons() {
     container.appendChild(btnContainer);
 }
 
+function selectDate(index) {
+
+    if (selectedDateRange.startDate === -1) {
+        // 첫 번째 날짜 선택
+        selectedDateRange.startDate = selectedDateRange.endDate = index;
+    } else if (selectedDateRange.startDate === selectedDateRange.endDate) {
+        // 두 번째 날짜 선택
+        if (index < selectedDateRange.startDate) {
+            selectedDateRange.startDate = index;
+        } else if (index > selectedDateRange.endDate) {
+            selectedDateRange.endDate = index;
+        } else if (index === selectedDateRange.startDate) {
+            // 같은 날짜 선택 시 초기화
+            selectedDateRange.startDate = selectedDateRange.endDate = index;
+        }
+    } else {
+        // 범위가 이미 설정된 상태에서 추가 선택
+        if (index === selectedDateRange.startDate || index === selectedDateRange.endDate) {
+            // 시작/끝 날짜 클릭 시 초기화
+            selectedDateRange.startDate = selectedDateRange.endDate = index;
+        } else if (index < selectedDateRange.startDate) {
+            selectedDateRange.startDate = index;
+        } else if (index > selectedDateRange.endDate) {
+            selectedDateRange.endDate = index;
+        } else {
+            // 범위 내부 클릭 시 끝 날짜 갱신
+            selectedDateRange.endDate = index;
+        }
+    }
+
+
     updateDateButtons();
+    // 날짜 변경시 시간 옵션 업데이트
+    updateTimeOptions();
     calculateTotal();
 }
 
@@ -167,6 +207,199 @@ function updateDateButtons() {
             console.log(index, " = in-range");
         }
     });
+}
+
+function updateTimeOptions() {
+    updateStartTimeOptions();
+    updateEndTimeOptions();
+}
+
+function updateStartTimeOptions() {
+    const startSelect = document.getElementById('startTimeSelect');
+    const currentStartTime = startSelect.value; // 현재 선택된 값 저장
+
+    startSelect.innerHTML = '';
+
+    const isToday = selectedDateRange.startDate === 0;
+    let startHour = 0;
+    let startMinute = 0;
+
+    if (isToday) {
+        const now = new Date();
+        const currentHour = now.getHours();
+        const currentMinute = now.getMinutes();
+
+        // 현재 시간에서 가장 가까운 30분 단위로 올림
+        if (currentMinute <= 30) {
+            startHour = currentHour;
+            startMinute = 30;
+        } else {
+            startHour = currentHour + 1;
+            startMinute = 0;
+        }
+
+        // 24시를 넘어가면 다음날 00:00부터
+        if (startHour >= 24) {
+            startHour = 0;
+            startMinute = 0;
+        }
+    }
+
+    // 시작 시간 옵션 생성 (30분 단위)
+    let currentHour = startHour;
+    let currentMin = startMinute;
+
+    while (true) {
+        const timeStr = `${currentHour.toString().padStart(2, '0')}:${currentMin.toString().padStart(2, '0')}`;
+        const option = document.createElement('option');
+        option.value = timeStr;
+        option.textContent = timeStr;
+        startSelect.appendChild(option);
+
+        // 다음 30분 단위로 증가
+        currentMin += 30;
+        if (currentMin >= 60) {
+            currentHour += 1;
+            currentMin = 0;
+        }
+
+        // 오늘인 경우 23:30까지, 오늘이 아닌 경우 23:30에서 다시 00:00으로
+        if (isToday && currentHour >= 24) {
+            break;
+        } else if (!isToday && currentHour >= 24) {
+            currentHour = 0;
+        }
+
+        // 오늘이 아닌 경우 한 바퀴 돌면 종료
+        if (!isToday && currentHour === startHour && currentMin === startMinute) {
+            break;
+        }
+    }
+
+    // 이전에 선택된 값이 새로운 옵션에 있으면 그대로 선택
+    if (currentStartTime) {
+        const optionExists = Array.from(startSelect.options).some(opt => opt.value === currentStartTime);
+        if (optionExists) {
+            startSelect.value = currentStartTime;
+        } else if (startSelect.options.length > 0) {
+            startSelect.selectedIndex = 0;
+        }
+    } else if (startSelect.options.length > 0) {
+        startSelect.selectedIndex = 0;
+    }
+}
+
+function updateEndTimeOptions() {
+    const startSelect = document.getElementById('startTimeSelect');
+    const endSelect = document.getElementById('endTimeSelect');
+    const currentEndTime = endSelect.value; // 현재 선택된 값 저장
+    const startTime = startSelect.value;
+
+    if (!startTime) return;
+
+    endSelect.innerHTML = '';
+
+    const [startH, startM] = startTime.split(':').map(Number);
+    const isSameDate = selectedDateRange.startDate === selectedDateRange.endDate;
+
+    if (isSameDate) {
+        // 같은 날: 시작시간 + 30분부터 00:00까지
+        let currentHour = startH;
+        let currentMin = startM + 30;
+
+        // 30분 추가 후 시간 조정
+        if (currentMin >= 60) {
+            currentHour += 1;
+            currentMin = 0;
+        }
+
+        // 24시를 넘어가면 00:00
+        if (currentHour >= 24) {
+            currentHour = 0;
+            currentMin = 0;
+        }
+
+        // 종료 시간 옵션 생성
+        const startPoint = { hour: currentHour, min: currentMin };
+
+        while (true) {
+            const timeStr = `${currentHour.toString().padStart(2, '0')}:${currentMin.toString().padStart(2, '0')}`;
+            const option = document.createElement('option');
+            option.value = timeStr;
+            option.textContent = timeStr;
+            endSelect.appendChild(option);
+
+            // 00:00에 도달하면 종료
+            if (currentHour === 0 && currentMin === 0 && endSelect.options.length > 1) {
+                break;
+            }
+
+            // 다음 30분 단위로 증가
+            currentMin += 30;
+            if (currentMin >= 60) {
+                currentHour += 1;
+                currentMin = 0;
+            }
+
+            // 24시를 넘어가면 00:00으로
+            if (currentHour >= 24) {
+                currentHour = 0;
+                currentMin = 0;
+            }
+
+            // 무한루프 방지: 시작점으로 돌아오면 종료 (단, 00:00이 아닌 경우)
+            if (currentHour === startPoint.hour && currentMin === startPoint.min && !(currentHour === 0 && currentMin === 0)) {
+                break;
+            }
+        }
+
+    } else {
+        // 다른 날: 00:00부터 23:30까지 모든 시간
+        for (let h = 0; h < 24; h++) {
+            for (let m = 0; m < 60; m += 30) {
+                const timeStr = `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`;
+                const option = document.createElement('option');
+                option.value = timeStr;
+                option.textContent = timeStr;
+                endSelect.appendChild(option);
+            }
+        }
+    }
+
+    // 이전에 선택된 값 복원 로직
+    if (currentEndTime) {
+        const optionExists = Array.from(endSelect.options).some(opt => opt.value === currentEndTime);
+
+        if (optionExists) {
+            // 이전 값이 새로운 옵션에 있으면 그대로 선택
+            endSelect.value = currentEndTime;
+        } else if (isSameDate) {
+            // 같은 날인데 이전 값이 없으면 (시작시간 >= 종료시간인 경우)
+            // 첫 번째 옵션 선택 (시작시간 + 30분)
+            if (endSelect.options.length > 0) {
+                endSelect.selectedIndex = 0;
+            }
+        } else {
+            // 다른 날인데 이전 값이 없으면 원래 값 유지 시도
+            // 만약 시작시간보다 큰 값이었다면 그대로 두고, 작은 값이었다면 첫 번째 옵션
+            const [currentEndH, currentEndM] = currentEndTime.split(':').map(Number);
+            const currentEndTotalMin = currentEndH * 60 + currentEndM;
+            const startTotalMin = startH * 60 + startM;
+
+            if (currentEndTotalMin > startTotalMin) {
+                // 시작시간보다 큰 경우 원래 값으로 복원 (새로운 옵션에는 있을 것임)
+                endSelect.value = currentEndTime;
+            } else {
+                // 시작시간보다 작거나 같은 경우 첫 번째 옵션
+                if (endSelect.options.length > 0) {
+                    endSelect.selectedIndex = 0;
+                }
+            }
+        }
+    } else if (endSelect.options.length > 0) {
+        // 이전 선택값이 없으면 첫 번째 옵션
+        endSelect.selectedIndex = 0;
+    }
 }
 
 function generateJimTypes(jimTypes) {
