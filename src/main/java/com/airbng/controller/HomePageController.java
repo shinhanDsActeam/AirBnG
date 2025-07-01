@@ -7,16 +7,18 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
+@RequestMapping("/page")
 public class HomePageController {
 
     private final LockerMapper lockerMapper;
 
-    @GetMapping("/page/home")
+    @GetMapping("/home")
     public String home() {
         return "home"; // ✨ 더 이상 popularLockers를 모델에 넣지 않음
     }

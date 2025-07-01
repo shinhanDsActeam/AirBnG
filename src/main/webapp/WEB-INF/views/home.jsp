@@ -16,9 +16,25 @@
             <span class="brand-text">에어비앤짐</span>
         </div>
         <img src="<c:url value='/images/bell_ic.svg' />" alt="알림" />
+
+        <div class="bell-ring"></div>
     </div>
+
     <div class="greeting">
-        반갑습니다<br><span>${name}님.</span>
+        <c:choose>
+            <c:when test="${not empty sessionScope.nickname}">
+                반갑습니다<br><span>${sessionScope.nickname}님.</span>
+            </c:when>
+            <c:otherwise>
+                Welcome, <span>AirBnG!</span>
+            </c:otherwise>
+        </c:choose>
+
+        <!-- outer 링 -->
+        <div class="greeting-ring"></div>
+
+        <!-- inner 링 추가 -->
+        <div class="greeting-ring-inner"></div>
     </div>
 </div>
 
@@ -30,7 +46,11 @@
 
     <div class="info-row">
         <label for="date">날짜</label>
-        <input type="date" id="date" name="date" value="${reservationDate}" />
+
+        <div class="date-wrapper">
+            <div class="custom-date-display" id="dateDisplay">연도-월-일</div>
+            <input type="date" id="date" name="date" class="real-date" />
+        </div>
     </div>
 
     <div class="info-row">
@@ -62,8 +82,8 @@
             <p>박스/큰 짐<br><small>시간당 4,000원부터</small></p>
         </div>
         <div class="category-card">
-            <img src="<c:url value='/images/sports_img.svg' />" alt="스포츠 용품" />
-            <p>스포츠 용품<br><small>시간당 5,000원부터</small></p>
+            <img src="<c:url value='/images/stroller_img.svg' />" alt="유모차" />
+            <p>유모차<br><small>시간당 5,000원부터</small></p>
         </div>
     </div>
 </section>
