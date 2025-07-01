@@ -134,10 +134,11 @@
 
     <div class="spacer"></div>
     <script>
-                // 서버에서 전달받은 데이터를 JavaScript 변수로 설정
+        // 서버에서 전달받은 데이터를 JavaScript 변수로 설정
         window.serverData = {
-        reservationId: ${param.reservationId != null ? param.reservationId : 1},
-        memberId: ${param.memberId != null ? param.memberId : 3}
+            reservationId: ${param.reservationId != null ? param.reservationId : 1},
+            memberId: ${param.memberId != null ? param.memberId : 3},
+            contextPath: '${contextPath}'
         };
     </script>
     <script src="<c:url value='/js/reservationDetails.js'/>"></script>

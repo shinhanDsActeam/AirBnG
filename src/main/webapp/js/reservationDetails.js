@@ -1,11 +1,12 @@
-// 예시로 reservationId=1, memberId=3 사용
-const reservationId = 1;
-const memberId = 3;
+// 서버에서 전달받은 데이터 사용
+const reservationId = window.serverData.reservationId;
+const memberId = window.serverData.memberId;
+const contextPath = window.serverData.contextPath;
 let currentReservationState = null;
 
 async function fetchReservationDetail() {
     try {
-        const response = await fetch('http://localhost:8080/AirBnG/reservations/' + reservationId + '/members/' + memberId + '/detail');
+        const response = await fetch(contextPath + '/reservations/' + reservationId + '/members/' + memberId + '/detail');
         const data = await response.json();
 
         if (data.code === 1000) {
@@ -105,7 +106,7 @@ function getStateClass(state) {
 // 예약 취소 API 호출
 async function cancelReservation() {
     try {
-        const response = await fetch('http://localhost:8080/AirBnG/reservations/' + reservationId + '/members/' + memberId + '/cancel', {
+        const response = await fetch(contextPath + '/reservations/' + reservationId + '/members/' + memberId + '/cancel', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
