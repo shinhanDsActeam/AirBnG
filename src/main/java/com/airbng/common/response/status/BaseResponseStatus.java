@@ -30,6 +30,7 @@ public enum BaseResponseStatus implements ResponseStatus{
     DUPLICATE_PHONE(2005,HttpStatus.BAD_REQUEST.value(),"휴대폰 번호 중복 오류"),
     INVALID_EMAIL(2006, HttpStatus.BAD_REQUEST.value(),"이메일 형식을 지켜주세요"),
     INVALID_MEMBER(2007, HttpStatus.UNAUTHORIZED.value(), "유효하지 않은 멤버입니다."),
+    NOT_UPDATE_MEMBER(2008, HttpStatus.NO_CONTENT.value(), "멤버 정보가 변경되지 않았습니다."),
 
     /**
      * 3000 락커 관련 코드
@@ -67,6 +68,7 @@ public enum BaseResponseStatus implements ResponseStatus{
     EMPTY_FILE(6002, HttpStatus.BAD_REQUEST.value(),"업로드할 이미지가 없습니다."),
     INVALID_EXTENSIONS(6003, HttpStatus.UNSUPPORTED_MEDIA_TYPE.value(),"허용되지 않는 파일 확장자입니다."),
     EXCEED_IMAGE_COUNT(6004, HttpStatus.PAYLOAD_TOO_LARGE.value(), "이미지 개수가 초과되었습니다. 최대 5개까지 업로드 가능합니다."),
+    EXCEED_FILE_SIZE(6005, HttpStatus.PAYLOAD_TOO_LARGE.value(), "이미지 크기가 초과되었습니다. 최대 10MB까지 업로드 가능합니다."),
 
     /**
      * 7000: 찜 관련 코드

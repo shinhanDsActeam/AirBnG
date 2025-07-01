@@ -8,4 +8,8 @@ public interface ImageMapper {
     void insertImage(Image image);
 
     Image findDefaultImage();
+
+    Image updateDefaultProfileImage(Image image);
+
+    Image findImageIdByMemberId(Long memberId);
 }

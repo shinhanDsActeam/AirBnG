@@ -21,4 +21,13 @@
         FROM Image
         WHERE image_id = 1
     </select>
+
+    <select id="findImageIdByMemberId" parameterType="com.airbng.domain.image.Image">
+        SELECT
+            m.profile_image_id,
+            i.url
+        FROM Member m
+        LEFT JOIN Image i ON m.profile_image_id = i.image_id
+        WHERE m.member_id = #{memberId}
+    </select>
 </mapper>
