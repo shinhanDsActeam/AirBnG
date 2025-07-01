@@ -7,8 +7,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 @RequestMapping("/page/reservation")
 public class ReservationPageController {
-    @GetMapping("/detail")
+    @GetMapping("/details")
     public String index() {
-        return "reservationDetail";
+        return "reservationDetails";
     }
 }
