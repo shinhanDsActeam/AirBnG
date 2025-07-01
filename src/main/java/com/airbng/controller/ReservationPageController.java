@@ -26,4 +26,9 @@ public class ReservationPageController {
 
         return "reservationDetails";
     }
+
+    @GetMapping("/form")
+    public String getForm() {
+        return "reservationForm";
+    }
 }
