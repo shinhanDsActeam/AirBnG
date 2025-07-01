@@ -1,3 +1,27 @@
+/* 기존 CSS에 추가 */
+
+/* 기본 아이콘 색상 (회색) */
+.nav-icon {
+    width: 24px;
+    height: 24px;
+    margin-bottom: 4px;
+    transition: filter 0.2s ease;
+    /* 회색 (#D5D5D5)에 해당하는 filter */
+    filter: invert(84%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(100%) contrast(100%);
+}
+
+/* 활성 상태 아이콘 색상 (#4561DB) */
+.nav-item.active .nav-icon {
+    /* 파란색 (#4561DB)에 해당하는 filter */
+    filter: invert(36%) sepia(94%) saturate(3547%) hue-rotate(228deg) brightness(87%) contrast(86%);
+}
+
+/* 호버 상태에서도 색상 변경 원한다면 */
+.nav-item:hover .nav-icon {
+    filter: invert(36%) sepia(94%) saturate(3547%) hue-rotate(228deg) brightness(87%) contrast(86%);
+}
+
+/* 나머지 CSS는 그대로 유지 */
 * {
     margin: 0;
     padding: 0;
@@ -20,11 +44,11 @@ body {
 .main-content {
     max-width: 412px;
     margin: 0 auto;
-    flex: 1; /* 남은 공간을 모두 차지 */
+    flex: 1;
     padding: 20px;
+    padding-bottom: 100px;
 }
 
-/* 하단 네비게이션 바 스타일 - 다시 FIXED로 설정 */
 .bottom-nav {
     position: fixed;
     bottom: 0;
@@ -59,14 +83,6 @@ body {
     background-color: #f8f9fa;
 }
 
-.nav-icon {
-    width: 24px;
-    height: 24px;
-    margin-bottom: 4px;
-    filter: brightness(0) saturate(100%) invert(84%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(100%) contrast(100%);
-    transition: filter 0.2s ease;
-}
-
 .nav-text {
     font-size: 12px;
     font-weight: 400;
@@ -74,25 +90,14 @@ body {
     text-align: center;
 }
 
-/* 활성 상태 스타일 */
 .nav-item.active {
-    color: #3181E2;
-}
-
-.nav-item.active .nav-icon {
-    filter: brightness(0) saturate(100%) invert(42%) sepia(93%) saturate(1352%) hue-rotate(204deg) brightness(103%) contrast(101%);
+    color: #4561DB;
 }
 
 .nav-item.active .nav-text {
     font-weight: 600;
 }
 
-/* 메인 컨텐츠에 하단 패딩 추가 (네비게이션 바 높이만큼) */
-.main-content {
-    padding-bottom: 100px; /* 네비게이션 바 높이 + 여유 공간 */
-}
-
-/* 반응형 디자인 */
 @media (max-width: 412px) {
     .nav-item {
         min-width: 50px;
