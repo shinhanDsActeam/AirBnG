@@ -84,6 +84,8 @@ public class MemberController {
         httpRequest.setAttribute("loginEmail", request.getEmail());
         MemberLoginResponse response = memberService.login(request.getEmail(), request.getPassword());
         session.setAttribute("memberId", response.getMemberId());
+        session.setAttribute(("nickname"), response.getNickname());
+
         return new BaseResponse<>(SUCCESS_LOGIN, response);
     }
 }
