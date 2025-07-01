@@ -31,7 +31,6 @@ import static com.airbng.common.response.status.BaseResponseStatus.SUCCESS_LOGIN
 public class MemberController {
 
     private final MemberService memberService;
-    private final ImageService imageService;
 
     @PostMapping(value = "/signup", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public BaseResponse<String> signup(
@@ -81,17 +80,10 @@ public class MemberController {
     public BaseResponse<MemberLoginResponse> login(@RequestBody MemberLoginRequest request,
                                                    HttpSession session,
                                                    HttpServletRequest httpRequest) {
-        log.info("Controller 도달");
-
         // Interceptor에서 참조 가능하게 세팅
         httpRequest.setAttribute("loginEmail", request.getEmail());
-        log.info("로그인 요청: email={}, password={}", request.getEmail(), request.getPassword());
-
         MemberLoginResponse response = memberService.login(request.getEmail(), request.getPassword());
-        log.info("로그인 결과: {}", response);
-
         session.setAttribute("memberId", response.getMemberId());
         return new BaseResponse<>(SUCCESS_LOGIN, response);
     }
-
 }
