@@ -129,7 +129,7 @@ body {
 /* 예약 리스트 */
 .reservation-list {
     padding: 15px;
-
+    margin-top: 50px;
 }
 
 .reservation-card {
