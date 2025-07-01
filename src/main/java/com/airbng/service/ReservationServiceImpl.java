@@ -48,15 +48,15 @@ public class ReservationServiceImpl implements ReservationService{
 
         // 초기 커서 ID 설정
         if(nextCursorId == null) {
-            nextCursorId = -1L;
+            nextCursorId = (reservationMapper.findAllReservationByMemberId())+1L; // 커서 ID 초기화
         }
+        log.info("!!! nextCursorId: {}", nextCursorId);
 
         String stateStr = (state != null) ? state.toString() : null;
 
         List<ReservationSearchResponse> reservations = reservationMapper.findAllReservationById(
                 memberId, role, stateStr, nextCursorId, LIMIT + 1, period //다음 페이지 유무 확인
         );
-
 
         // 예외 처리: 예약이 없을 경우
         if (reservations == null || reservations.isEmpty()) {

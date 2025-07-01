@@ -30,4 +30,6 @@ public interface ReservationMapper {
     );
     //예약  목록 개수
     Long findReservationByMemberId(@Param("memberId") Long memberId, @Param("role") String role);
+
+    Long findAllReservationByMemberId();
 }
