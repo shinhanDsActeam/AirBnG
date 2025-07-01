@@ -1,6 +1,6 @@
 setTimeout(function () {
     window.location.href = contextPath + '/page/home';
-}, 2000);
+}, 5000);
 
 document.addEventListener('click', function () {
     window.location.href = contextPath + '/page/home';
