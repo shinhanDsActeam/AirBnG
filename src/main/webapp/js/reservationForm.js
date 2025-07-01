@@ -9,6 +9,7 @@ let jimTypeCounts = {};
 // 페이지 로드 시 초기화
 document.addEventListener('DOMContentLoaded', function() {
     loadLockerData();
+    generateDateButtons();
     // 폼 제출 처리
     document.getElementById('reservationForm').addEventListener('submit', function(e) {
         e.preventDefault();
@@ -105,6 +106,67 @@ function loadLockerData() {
             console.error("API 요청 실패:", err);
             alert("서버 오류가 발생했습니다.");
         });
+}
+
+
+function generateDateButtons() {
+    const container = document.getElementById('date-buttons');
+    const labelContainer = document.createElement('div');
+    const btnContainer = document.createElement('div');
+    labelContainer.className = 'flex justify-around w-full mb-2 text-center text-sm text-gray-500';
+    btnContainer.className = 'inline-flex overflow-hidden w-full rounded-md text-sm';
+
+    const today = new Date();
+    const days = ['일', '월', '화', '수', '목', '금', '토'];
+
+    for (let i = 0; i < 7; i++) {
+        const targetDate = new Date(today);
+        targetDate.setDate(today.getDate() + i);
+        const dayName = days[targetDate.getDay()];
+        const dayNum = targetDate.getDate();
+
+        const label = document.createElement('div');
+        label.className = 'flex-1 text-center'; // 또는 w-10
+
+        label.textContent = dayName;
+
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'date-btn flex-1 h-12 text-sm font-semibold border-r last:border-r-0 flex items-center justify-center';
+        if(i === 0){
+            button.className += ' selected';
+        }
+        button.textContent = dayNum;
+        button.dataset.date = formatDateTimeForServer(targetDate);
+        button.dataset.index = i;
+
+        button.onclick = function() {
+            selectDate(i);
+        };
+
+        labelContainer.appendChild(label);
+        btnContainer.appendChild(button);
+    }
+    container.appendChild(labelContainer);
+    container.appendChild(btnContainer);
+}
+
+    updateDateButtons();
+    calculateTotal();
+}
+
+function updateDateButtons() {
+    const buttons = document.querySelectorAll('.date-btn');
+    buttons.forEach((btn, index) => {
+        btn.classList.remove('selected', 'in-range');
+        if (index === selectedDateRange.startDate || index === selectedDateRange.endDate) {
+            btn.classList.add('selected');
+            console.log(index, " = selected");
+        } else if (index > selectedDateRange.startDate && index < selectedDateRange.endDate) {
+            btn.classList.add('in-range');
+            console.log(index, " = in-range");
+        }
+    });
 }
 
 function generateJimTypes(jimTypes) {
