@@ -14,6 +14,8 @@ import com.airbng.domain.image.LockerImage;
 import com.airbng.domain.jimtype.JimType;
 import com.airbng.domain.jimtype.LockerJimType;
 import com.airbng.dto.jimType.JimTypeCountResult;
+import com.airbng.dto.jimType.LockerJimTypeResult;
+import com.airbng.dto.reservation.ReservationFormResponse;
 import com.airbng.dto.reservation.ReservationInsertRequest;
 import com.airbng.mappers.JimTypeMapper;
 import com.airbng.mappers.LockerMapper;
@@ -32,10 +34,10 @@ import org.springframework.mock.web.MockHttpSession;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.airbng.common.response.status.BaseResponseStatus.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 
@@ -332,5 +334,77 @@ class ReservationServiceTest {
             }
         }
 
+    }
+
+    @Nested
+    @DisplayName("예약 폼 받아오기 테스트")
+    class GetReservationFormTest {
+        Locker 임시_보관소;
+        @BeforeEach
+        void setUp(){
+            임시_보관소 = Locker.builder()
+                    .lockerId(4L)
+                    .lockerName("임시 보관소")
+                    .isAvailable(Available.YES)
+                    .address("임시 임구 임시로 19-14")
+                    .addressEnglish("temp tempro 19-14")
+                    .addressDetail("503호")
+                    .latitude(35.127197)
+                    .longitude(126.912106)
+                    .keeper(보관왕)
+                    .build();
+        }
+
+        @Test
+        @DisplayName("예약 폼 받아오기 성공")
+        void 폼_받기_성공() {
+            // given
+            List<LockerJimTypeResult> jimTypes = 서울역_보관소.getLockerJimTypes().stream()
+                    .map(LockerJimTypeResult::from)
+                    .collect(Collectors.toList());
+
+            // when
+            when(lockerMapper.getLockerInfoById(임시_보관소.getLockerId()))
+                    .thenReturn(ReservationFormResponse.from(임시_보관소));
+
+            when(lockerMapper.getLockerJimTypeById(임시_보관소.getLockerId()))
+                    .thenReturn(jimTypes);
+
+            // then
+            ReservationFormResponse response = reservationService.getReservationForm(임시_보관소.getLockerId());
+            assertEquals(response.getLockerId(), 임시_보관소.getLockerId());
+
+        }
+
+        @Nested
+        @DisplayName("실패")
+        class fail{
+            @Test
+            @DisplayName("없는 보관소")
+            void 없는_보관소() {
+                LockerException exception = assertThrows(LockerException.class, () -> {
+                    reservationService.getReservationForm(999L);
+                });
+
+                // then
+                assertEquals(NOT_FOUND_LOCKER, exception.getBaseResponseStatus());
+            }
+            @Test
+            @DisplayName("보관소 비활성화 상태")
+            void 비활성화_보관소() {
+                // given
+                임시_보관소.setIsAvailable(Available.NO);
+
+                // when
+                when(lockerMapper.getIsAvailableById(임시_보관소.getLockerId())).thenReturn(Available.NO);
+
+                LockerException exception = assertThrows(LockerException.class, () -> {
+                    reservationService.getReservationForm(임시_보관소.getLockerId());
+                });
+
+                // then
+                assertEquals(LOCKER_NOT_AVAILABLE, exception.getBaseResponseStatus());
+            }
+        }
     }
 }
