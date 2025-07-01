@@ -8,10 +8,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/gh/webfontworld/bmjua/BMJUA.css" rel="stylesheet">
     <link rel="stylesheet" href="<c:url value='/css/home.css' />" />
-    <!-- navigation.css를 여기서 한번만 로드 -->
-    <link rel="stylesheet" href="<c:url value='/css/navigation.css'/>" />
 </head>
-<body>
+<body class="airbng-home">
 
 <div class="top-section">
     <div class="top-bar">

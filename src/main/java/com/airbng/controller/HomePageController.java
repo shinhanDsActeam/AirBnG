@@ -20,7 +20,7 @@ public class HomePageController {
 
     @GetMapping("/home")
     public String home() {
-        return "home"; // ✨ 더 이상 popularLockers를 모델에 넣지 않음
+        return "home";
     }
 
 }
