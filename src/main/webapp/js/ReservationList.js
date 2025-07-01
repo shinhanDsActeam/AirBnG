@@ -22,6 +22,7 @@ function changeTab(newStates, tabElem) {
     currentStates = newStates;
     nextCursorId = null;
     hasNextPage = true;
+    currentPeriod = 'ALL'; // 탭 변경시 기간 초기화
 
     // 탭 UI 업데이트
     document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
@@ -29,10 +30,18 @@ function changeTab(newStates, tabElem) {
 
     // 필터 섹션 표시/숨김 (이용후, 취소됨 탭에서만 표시)
     const filterSection = document.getElementById('filter-section');
+//    if (newStates.includes('COMPLETED') || newStates.includes('CANCELLED')) {
+//        filterSection.style.display = 'block';
+//        // 기간 드롭다운 초기화
+//        document.getElementById('selected-period').textContent = '전체';
+//    } else {
+//        filterSection.style.display = 'none';
+//    }
     if (newStates.includes('COMPLETED') || newStates.includes('CANCELLED')) {
-        filterSection.style.display = 'block';
+        filterSection.classList.add('show');
+        document.getElementById('selected-period').textContent = '전체';
     } else {
-        filterSection.style.display = 'none';
+        filterSection.classList.remove('show');
     }
 
     // 리스트 초기화
@@ -81,7 +90,9 @@ function getApiUrl() {
         url += '&state=' + state;
     });
 
-    if (currentPeriod && currentPeriod !== 'ALL') {
+    // 이용후, 취소됨 탭에서만 period 파라미터 추가
+    if ((currentStates.includes('COMPLETED') || currentStates.includes('CANCELLED')) &&
+        currentPeriod && currentPeriod !== 'ALL') {
         url += '&period=' + currentPeriod;
     }
 
@@ -112,6 +123,32 @@ function getStatusText(state) {
     return `<span class="status-text ${status.class}">${status.text}</span>`;
 }
 
+// 예약 삭제 함수
+function deleteReservation(reservationId) {
+    if (!confirm('정말 이 예약 기록을 삭제하시겠습니까?')) return;
+
+    fetch(`/AirBnG/reservations/${reservationId}/members/3/delete`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' }
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.code === 1000) {
+            alert('삭제가 완료되었습니다.');
+            nextCursorId = null;
+            hasNextPage = true;
+            clearReservationList();
+            fetchReservations(true);
+        } else {
+            alert('삭제 실패: ' + data.message);
+        }
+    })
+    .catch(err => {
+        alert('삭제 중 오류 발생');
+        console.error(err);
+    });
+}
+
 // 액션 버튼 생성
 function getActionButtons(reservation) {
     switch(reservation.state) {
@@ -127,13 +164,6 @@ function getActionButtons(reservation) {
                     <button class="btn btn-cancel" onclick="cancelReservation(${reservation.reservationId})">취소요청</button>
                 </div>
             `;
-//        case 'COMPLETED':
-//            return `
-//                <div class="action-buttons">
-//                    <button class="btn btn-primary" onclick="reBooking(${reservation.lockerId || 1})">다시예약</button>
-//                </div>
-//            `;
-//
         case 'COMPLETED':
             return `
                 <div class="action-buttons">
@@ -143,36 +173,10 @@ function getActionButtons(reservation) {
                     </div>
                 </div>
             `;
-
         case 'CANCELLED':
         default:
             return '';
     }
-
-      function deleteReservation(reservationId) {
-                if (!confirm('정말 이 예약 기록을 삭제하시겠습니까?')) return;
-
-                fetch(`/AirBnG/reservations/${reservationId}/members/3/delete`, {
-                    method: 'DELETE',
-                    headers: { 'Content-Type': 'application/json' }
-                })
-                .then(res => res.json())
-                .then(data => {
-                    if (data.code === 1000) {
-                        alert('삭제가 완료되었습니다.');
-                        nextCursorId = null;
-                        hasNextPage = true;
-                        clearReservationList();
-                        fetchReservations(true);
-                    } else {
-                        alert('삭제 실패: ' + data.message);
-                    }
-                })
-                .catch(err => {
-                    alert('삭제 중 오류 발생');
-                    console.error(err);
-                });
-            }
 }
 
 // 날짜 포맷팅
@@ -213,8 +217,8 @@ function formatDuration(hours) {
     return result.trim();
 }
 
-// 날짜 포맷팅 (MM.DD (요일))
-function formatDate(dateStr) {
+// 날짜 포맷팅 (MM.DD (요일) HH:mm)
+function formatDateTime(dateStr) {
     if (!dateStr) return '';
 
     const date = new Date(dateStr);
@@ -263,8 +267,8 @@ function renderReservations(reservations) {
         const formattedDate = formatDate(reservation.dateOnly);
         const formattedDuration = formatDuration(reservation.durationHours);
 
-        const formattedstart = formatDate(reservation.startTime); // 예: "6.29 (토)"
-        const formattedend = formatDate(reservation.endTime);     // 예: "7.1 (월)"
+        const formattedstart = formatDateTime(reservation.startTime);
+        const formattedend = formatDateTime(reservation.endTime);
 
         card.innerHTML = `
             <div class="reservation-header">
@@ -282,7 +286,7 @@ function renderReservations(reservations) {
                     <div class="item-types">짐 종류: ${jimTypes}</div>
                 </div>
             </div>
-             <div>
+            <div>
                 <div class="item-date-row">
                     <div class="item-date-col">
                         <div class="label">시작 날짜</div>
@@ -293,14 +297,13 @@ function renderReservations(reservations) {
                         <div class="value">${formattedend || '시간 정보 없음'}</div>
                     </div>
                 </div>
+            </div>
             ${actionButtons}
         `;
 
         list.appendChild(card);
     });
 }
-
-
 
 // 예약 데이터 로드
 function fetchReservations(isFirst = false) {

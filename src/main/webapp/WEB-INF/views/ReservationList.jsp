@@ -27,7 +27,7 @@
     </div>
 
     <!-- 필터 섹션 (탭 메뉴 아래) -->
-    <div class="filter-section" id="filter-section" style="display:none;">
+    <div class="filter-section" id="filter-section">
         <div class="period-dropdown">
             <button class="dropdown-btn" onclick="toggleDropdown()">
                 <span id="selected-period">전체</span>

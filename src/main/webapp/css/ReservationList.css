@@ -44,7 +44,9 @@ body {
 .tab-container {
     background: white;
     border-bottom: 1px solid #eee;
-    top: 184px; /* 첫 카드만 위에 간격 */
+    position: sticky;
+    top: 60px; /* 헤더 높이만큼 */
+    z-index: 99;
 }
 
 .tab-section {
@@ -77,13 +79,52 @@ body {
 
 /* 필터 섹션 */
 .filter-section {
-    padding: 0;
+height: 48px; /* 고정 높이 */
+    padding: 15px 20px;
+    background: white;
+    display: none; /* 기본적으로 숨김 */
+    position: sticky;
+    top: 118px; /* 헤더 + 탭 높이 */
+    z-index: 98;
+
+    display: flex;
+    justify-content: flex-end; /* 오른쪽 정렬 */
+}
+
+
+.filter-section .period-dropdown {
+    display: none;
+}
+
+.filter-section.show .period-dropdown {
+    display: block;
+}
+
+.filter-row {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
 }
 
 .period-dropdown {
     position: relative;
     display: inline-block;
 }
+
+
+.period-dropdown .dropdown-btn {
+    width: 101px;
+    height: 28px;
+    border-radius: 5px;
+    border: 0.5px solid #ccc;
+    padding: 5px 13px;
+    gap: 3px;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
 
 .dropdown-btn {
     background: white;
@@ -96,6 +137,12 @@ body {
     gap: 10px;
     min-width: 120px;
     font-size: 14px;
+}
+
+.dropdown-btn::after {
+    content: '▼';
+    font-size: 10px;
+    color: #666;
 }
 
 .dropdown-menu {
@@ -129,7 +176,7 @@ body {
 /* 예약 리스트 */
 .reservation-list {
     padding: 15px;
-    margin-top: 50px;
+    margin-top: 15px; /* 탭/필터와의 간격 */
 }
 
 .reservation-card {
@@ -140,11 +187,8 @@ body {
     box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     position: relative;
     transition: all 0.3s;
-    width:372px;
+    width: 372px;
     height: 355px;
-}
-.reservation-item:first-child {
-    margin-top: 234px; /* 첫 카드만 위에 간격 */
 }
 
 .reservation-card.cancelled {
@@ -202,7 +246,7 @@ body {
     background-color: white;
     padding: 12px;
     gap: 12px;
-   border-top: 1px solid #eee;
+    border-top: 1px solid #eee;
 }
 
 .item-image {
@@ -210,6 +254,7 @@ body {
     height: 80px;
     border-radius: 8px;
     object-fit: cover;
+    background-color: #f8f9fa;
 }
 
 .item-info {
@@ -248,14 +293,13 @@ body {
     margin-bottom: 2px;
 }
 
-/* 날짜 정보 섹션 - 사진과 동일하게 수정 */
+/* 날짜 정보 섹션 */
 .item-date-row {
     display: flex;
     justify-content: space-between;
     margin-top: 8px;
     padding-top: 8px;
     gap: 20px;
-
 }
 
 .item-date-col {
@@ -264,7 +308,7 @@ body {
     flex-direction: column;
     font-size: 13px;
     color: #444;
-    width50%;
+    width: 50%;
 }
 
 .item-date-col .label {
@@ -279,25 +323,6 @@ body {
     font-weight: 600;
     color: #222;
     font-size: 13px;
-}
-
-/* 날짜와 요일을 한 줄에 표시 */
-.item-date-col .date-with-day {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-}
-
-.item-date-col .date {
-    font-weight: 600;
-    color: #222;
-    font-size: 13px;
-}
-
-.item-date-col .day {
-    font-weight: 400;
-    color: #666;
-    font-size: 12px;
 }
 
 /* 액션 버튼 */
@@ -348,29 +373,6 @@ body {
 .btn-primary:hover:not(.btn-disabled) {
     background: #2768c7;
     border-color: #2768c7;
-}
-
-/* 전체 너비 버튼 */
-.action-buttons .btn.full-width {
-    width: 100%;
-    flex: none;
-}
-
-/* 두 개 버튼 병렬 배치 */
-.double-btn {
-    display: flex;
-    gap: 8px;
-    width: 100%;
-    margin-top: 15px;
-    padding: 0 5px;
-}
-
-.double-btn .btn {
-    flex: 1;
-}
-
-.double-btn .small-btn {
-    flex: 0.6;
 }
 
 /* 빈 상태 */
