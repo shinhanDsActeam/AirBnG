@@ -280,7 +280,7 @@ body {
 .modal-icon {
     width: 64px;
     height: 64px;
-    background: #3181E2;
+    background: #4561DB;
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -325,7 +325,7 @@ body {
 }
 
 .modal-btn:last-child {
-    color: #3181E2;
+    color: #4561DB;
 }
 
 .modal-btn:hover {
