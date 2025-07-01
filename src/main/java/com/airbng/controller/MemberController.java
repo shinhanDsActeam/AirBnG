@@ -70,6 +70,7 @@ public class MemberController {
 
         // 세션에 memberId 저장
         session.setAttribute("memberId", response.getMemberId());
+        session.setAttribute(("nickname"), response.getNickname());
 
         return new BaseResponse<>(SUCCESS_LOGIN, response);
     }
