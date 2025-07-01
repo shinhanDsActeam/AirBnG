@@ -7,7 +7,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>예약 상세</title>
-    <link rel="stylesheet" href="<c:url value='/css/reservationDetail.css' />" />
+    <link rel="stylesheet" href="<c:url value='/css/reservationDetails.css' />" />
 </head>
 <body>
     <div class="header">
@@ -140,6 +140,6 @@
         memberId: ${param.memberId != null ? param.memberId : 3}
         };
     </script>
-    <script src="<c:url value='/js/reservationDetail.js'/>"></script>
+    <script src="<c:url value='/js/reservationDetails.js'/>"></script>
 </body>
 </html>
