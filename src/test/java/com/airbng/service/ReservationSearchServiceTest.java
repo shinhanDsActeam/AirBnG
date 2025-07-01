@@ -15,6 +15,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -32,7 +33,7 @@ class ReservationSearchServiceTest {
 
     private final Long memberId = 3L;
     private final String role = "DROPPER";
-    private final ReservationState state = ReservationState.COMPLETED;
+    private final List<ReservationState> state = Arrays.asList(ReservationState.COMPLETED, ReservationState.CANCELLED);
     private static final Long LIMIT = 10L;
 
     private List<ReservationSearchResponse> stubReservations;
@@ -50,6 +51,7 @@ class ReservationSearchServiceTest {
     @Nested
     @DisplayName("기간 필터링 테스트")
     class PeriodFilterTests {
+
 
         @Test
         @DisplayName("1주 필터")
@@ -85,8 +87,9 @@ class ReservationSearchServiceTest {
         @DisplayName("전체 기간 필터 (ALL)")
         void testPeriod_ALL() {
             when(reservationMapper.findAllReservationById(
-                    eq(memberId), eq(role), eq("COMPLETED"), eq(-1L), eq(LIMIT + 1), eq("ALL"))
-            ).thenReturn(stubReservations);
+                    eq(memberId), eq(role), eq(state), eq(-1L), eq(LIMIT + 1), eq("ALL")
+            )).thenReturn(stubReservations);
+
 
             when(reservationMapper.findReservationByMemberId(eq(memberId), eq(role))).thenReturn(1000L);
 
@@ -98,14 +101,14 @@ class ReservationSearchServiceTest {
             assertEquals(-1L, result.getNextCursorId());
 
             verify(reservationMapper).findAllReservationById(
-                    eq(memberId), eq(role), eq("COMPLETED"), eq(-1L), eq(LIMIT + 1), eq("ALL")
+                    eq(memberId), eq(role), eq(state), eq(-1L), eq(LIMIT + 1), eq("ALL")
             );
         }
 
         void testPeriod(String period) {
             when(reservationMapper.findAllReservationById(
-                    eq(memberId), eq(role), eq("COMPLETED"), eq(-1L), eq(LIMIT + 1), eq(period))
-            ).thenReturn(stubReservations);
+                    eq(memberId), eq(role), eq(state), eq(-1L), eq(LIMIT + 1), eq(period)
+            )).thenReturn(stubReservations);
 
             when(reservationMapper.findReservationByMemberId(eq(memberId), eq(role))).thenReturn(1000L);
 
@@ -117,7 +120,7 @@ class ReservationSearchServiceTest {
             assertEquals(-1L, result.getNextCursorId());
 
             verify(reservationMapper).findAllReservationById(
-                    eq(memberId), eq(role), eq("COMPLETED"), eq(-1L), eq(LIMIT + 1), eq(period)
+                    eq(memberId), eq(role), eq(state), eq(-1L), eq(LIMIT + 1), eq(period)
             );
         }
     }
@@ -128,8 +131,9 @@ class ReservationSearchServiceTest {
         String period = "1W";
 
         when(reservationMapper.findAllReservationById(
-                eq(memberId), eq(role), eq("COMPLETED"), eq(-1L), eq(LIMIT + 1), eq(period))
-        ).thenReturn(Collections.emptyList());
+                eq(memberId), eq(role), eq(state), eq(-1L), eq(LIMIT + 1), eq(period)
+        )).thenReturn(Collections.emptyList());
+
 
         assertThrows(ReservationException.class, () ->
                 reservationService.findAllReservationById(memberId, role, state, -1L, period));
