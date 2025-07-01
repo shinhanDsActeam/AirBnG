@@ -22,7 +22,7 @@
         <span class="nav-text">예약</span>
     </a>
 
-    <a href="mypage.jsp" class="nav-item" data-page="mypage">
+    <a href="${pageContext.request.contextPath}/page/mypage" class="nav-item" data-page="mypage">
         <img src="<c:url value='/images/user.svg'/>" alt="마이" class="nav-icon">
         <span class="nav-text">마이</span>
     </a>
