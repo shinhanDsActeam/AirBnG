@@ -7,7 +7,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>마이페이지 - 에어비앤짐</title>
     <link rel="stylesheet" href="<c:url value='/css/mypage.css'/>" />
-    <link rel="stylesheet" href="<c:url value='/css/navigation.css'/>" />
 </head>
 <body data-logged-in="${not empty sessionScope.user}"
       data-user-name="${sessionScope.user.name}"
