@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.airbng.mappers.ZzimMapper">
+
+    <select id="isExistZzim" resultType="int">
+        SELECT EXISTS (
+        SELECT 1 FROM Zzim
+        WHERE member_id = #{memberId}
+        AND locker_id = #{lockerId}
+        )
+    </select>
+
+    <insert id="insertZzim">
+        INSERT INTO Zzim (member_id, locker_id)
+        VALUES (#{memberId}, #{lockerId})
+    </insert>
+
+    <delete id="deleteZzim">
+        DELETE FROM Zzim
+        WHERE member_id = #{memberId}
+        AND locker_id = #{lockerId}
+    </delete>
+
+    <update id="increaseZzimCount">
+        UPDATE Locker
+        SET zzim_count = zzim_count + 1
+        WHERE locker_id = #{lockerId}
+    </update>
+
+    <update id="decreaseZzimCount">
+        UPDATE Locker
+        SET zzim_count = zzim_count - 1
+        WHERE locker_id = #{lockerId} AND zzim_count > 0
+    </update>
+
+</mapper>

@@ -1,11 +1,15 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<html>
+<!DOCTYPE html>
+<html lang="ko">
 <head>
     <title>AirBnG 홈</title>
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/gh/webfontworld/bmjua/BMJUA.css" rel="stylesheet">
     <link rel="stylesheet" href="<c:url value='/css/home.css' />" />
+    <!-- navigation.css를 여기서 한번만 로드 -->
+    <link rel="stylesheet" href="<c:url value='/css/navigation.css'/>" />
 </head>
 <body>
 
@@ -95,6 +99,9 @@
         <!-- JS가 이 안에 동적으로 데이터를 채워 넣음 -->
     </div>
 </section>
+
+<!-- 네비게이션 바 include - page-container 밖에 위치 -->
+<%@ include file="navbar.jsp" %>
 
 <script>
     const contextPath = '${pageContext.request.contextPath}';

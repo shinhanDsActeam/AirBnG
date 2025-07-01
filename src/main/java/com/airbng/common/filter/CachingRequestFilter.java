@@ -1,5 +1,7 @@
 package com.airbng.common.filter;
 
+import org.springframework.core.annotation.Order;
+import org.springframework.stereotype.Component;
 import org.springframework.web.util.ContentCachingRequestWrapper;
 
 import javax.servlet.*;
@@ -11,6 +13,8 @@ import java.io.IOException;
  * inputStream을 읽으면 request body가 소진되기 때문에<br>
  * RequestWrapper를 사용하여 request body를 캐싱
  */
+@Component
+@Order(1)
 public class CachingRequestFilter implements Filter {
 
     @Override
@@ -22,4 +26,5 @@ public class CachingRequestFilter implements Filter {
             chain.doFilter(request, response);
         }
     }
+
 }

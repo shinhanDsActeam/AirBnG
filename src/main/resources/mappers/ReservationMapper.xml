@@ -48,7 +48,6 @@
         </collection>
     </resultMap>
 
-
     <select id="findReservationDetailById" parameterType="Long" resultMap="ReservationWithDropperAndKeeperMap">
         SELECT
             r.reservation_id,
@@ -85,7 +84,8 @@
         WHERE r.reservation_id = #{reservationId}
     </select>
 
-
+  
+    <!-- 예약 목록 조회 -->
     <resultMap id="ReservationSearch" type="com.airbng.dto.reservation.ReservationSearchResponse">
         <result property="reservationId" column="reservation_id" />
         <result property="state" column="state" />
@@ -93,7 +93,6 @@
         <result property="dropperId" column="dropper_id" />
     </resultMap>
 
-    <!-- 예약 목록 조회 -->
     <select id="findAllReservationById" resultMap="ReservationSearch">
         SELECT
         r.reservation_id,
@@ -123,9 +122,32 @@
                 AND r.state = #{state}
             </if>
             <if test="nextCursorId != null">
+                <!--최신 보관소 보여주기 위해서 내림차순 + nextCursorId보다 작은 id를 출력 (nextCursorId는 높은 숫자부터 내려가야함)-->
                 AND r.reservation_id &lt; #{nextCursorId} <!-- &lt;는 부등호 '<'를 의미-->
             </if>
-            <!--최신 보관소 보여주기 위해서 내림차순 + nextCursorId보다 작은 id를 출력 (nextCursorId는 높은 숫자부터 내려가야함)-->
+            <!-- COMPLETED or CANCELLED 상태일 때만 end_time 기준 필터 -->
+            <if test="state != null and state != '' and period != null and (state.equals('COMPLETED') or state.equals('CANCELLED'))">
+                <choose>
+                    <when test="period.equals('1W')">
+                        AND r.end_time &gt;= DATE_SUB(NOW(), INTERVAL 1 WEEK)
+                    </when>
+                    <when test="period.equals('3M')">
+                        AND r.end_time &gt;= DATE_SUB(NOW(), INTERVAL 3 MONTH)
+                    </when>
+                    <when test="period.equals('6M')">
+                        AND r.end_time &gt;= DATE_SUB(NOW(), INTERVAL 6 MONTH)
+                    </when>
+                    <when test="period.equals('1Y')">
+                        AND r.end_time &gt;= DATE_SUB(NOW(), INTERVAL 1 YEAR)
+                    </when>
+                    <when test="period.equals('2Y')">
+                        AND r.end_time &gt;= DATE_SUB(NOW(), INTERVAL 2 YEAR)
+                    </when>
+                    <when test="period.equals('ALL')">
+                        <!-- 전체: 조건 없음 -->
+                    </when>
+                </choose>
+            </if>
         </where>
         GROUP BY r.reservation_id ORDER BY r.reservation_id desc LIMIT #{limit}
     </select>
@@ -187,5 +209,48 @@
         SET state = #{state}
         WHERE reservation_id = #{reservationId}
     </update>
+
+    <resultMap id="ReservationWithKeeperMap" type="com.airbng.domain.Reservation">
+        <result property="reservationId" column="reservation_id"/>
+        <result property="state" column="state"/>
+        <result property="startTime" column="start_time"/>
+        <result property="endTime" column="end_time"/>
+
+        <association property="keeper" javaType="com.airbng.domain.Member">
+            <result property="memberId" column="keeper_id"/>
+            <result property="email" column="keeper_email"/>
+            <result property="name" column="keeper_name"/>
+            <result property="phone" column="keeper_phone"/>
+            <result property="nickname" column="keeper_nickname"/>
+            <result property="password" column="keeper_password"/>
+            <result property="status" column="keeper_status"/>
+        </association>
+    </resultMap>
+
+    <select id="findReservationWithKeeperById" parameterType="Long" resultMap="ReservationWithKeeperMap">
+        SELECT
+            r.reservation_id,
+            r.state,
+            r.start_time,
+            r.end_time,
+
+            k.member_id AS keeper_id,
+            k.email AS keeper_email,
+            k.name AS keeper_name,
+            k.phone AS keeper_phone,
+            k.nickname AS keeper_nickname,
+            k.password AS keeper_password,
+            k.status AS keeper_status
+
+        FROM reservation r
+                 JOIN member k ON r.keeper_id = k.member_id
+        WHERE r.reservation_id = #{reservationId}
+    </select>
+
+    <select id="getLockerKepperId" parameterType="Long">
+        SELECT member_id
+        FROM locker
+        WHERE locker_id = #{lockerId}
+    </select>
 
 </mapper>

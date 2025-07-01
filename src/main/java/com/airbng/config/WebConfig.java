@@ -1,18 +1,29 @@
 package com.airbng.config;
 
+import com.airbng.interceptor.*;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.validation.beanvalidation.MethodValidationPostProcessor;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.servlet.config.annotation.*;
+
+import java.util.List;
 
 @Configuration
 @EnableWebMvc
 @ComponentScan(basePackages = "com.airbng")
 @EnableTransactionManagement
+@RequiredArgsConstructor
 public class WebConfig implements WebMvcConfigurer {
+
+    private final RequestRateLimitInterceptor rateLimitInterceptor;
+    private final RedisRateLimitInterceptor redisRateLimitInterceptor;
+    private final LoginRateLimitInterceptor loginRateLimitInterceptor;
 
     @Override
     public void configureViewResolvers(ViewResolverRegistry registry) {
@@ -28,7 +39,23 @@ public class WebConfig implements WebMvcConfigurer {
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("swagger-ui.html")
                 .addResourceLocations("classpath:/META-INF/resources/");
+    }
 
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        // 기존 메모리 기반 인터셉터
+        registry.addInterceptor(rateLimitInterceptor)
+                .addPathPatterns("/lockers/**/members/**/zzim")
+                .excludePathPatterns("/swagger-ui.html", "/swagger-resources/**", "/v2/api-docs");
+
+        // Redis 기반 인터셉터 추가 등록
+        registry.addInterceptor(redisRateLimitInterceptor)
+                .addPathPatterns("/members/**") // Path 수정 가능, 예: "/lockers/**"
+                .excludePathPatterns("/swagger-ui.html", "/swagger-resources/**", "/v2/api-docs");
+
+        registry.addInterceptor(loginRateLimitInterceptor)
+                .addPathPatterns("/**/members/login")
+                .excludePathPatterns("/swagger-ui.html", "/swagger-resources/**", "/v2/api-docs");
     }
 
     //이미지 파일 처리
@@ -43,5 +70,10 @@ public class WebConfig implements WebMvcConfigurer {
     @Bean
     public MethodValidationPostProcessor methodValidationPostProcessor() {
         return new MethodValidationPostProcessor();
+    }
+
+    @Bean
+    public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
+        return new PropertySourcesPlaceholderConfigurer();
     }
 }
