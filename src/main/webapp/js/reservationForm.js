@@ -5,6 +5,7 @@ let selectedDateRange = {
 
 let currentJimTypes = [];
 let jimTypeCounts = {};
+let dateArray = [];
 
 // 페이지 로드 시 초기화
 document.addEventListener('DOMContentLoaded', function() {
@@ -144,7 +145,9 @@ function generateDateButtons() {
             button.className += ' selected';
         }
         button.textContent = dayNum;
-        button.dataset.date = formatDateTimeForServer(targetDate);
+        const formatted = formatDateTimeForServer(targetDate);
+        button.dataset.date = formatted;
+        dateArray.push(formatted);
         button.dataset.index = i;
 
         button.onclick = function() {
@@ -474,18 +477,16 @@ function calculateTotal() {
     const startTime = startTimeSelect.value;
     const endTime = endTimeSelect.value;
 
-    // 시간 차이 계산
-    const [startH, startM] = startTime.split(':').map(Number);
-    const [endH, endM] = endTime.split(':').map(Number);
 
-    let totalMinutes = (endH * 60 + endM) - (startH * 60 + startM);
-    if (totalMinutes <= 0) {
-        totalMinutes += 24 * 60; // 다음날로 넘어가는 경우
-    }
+    const startDate = dateArray[selectedDateRange.startDate];
+    const endDate = dateArray[selectedDateRange.endDate];
 
-    const hours = totalMinutes / 60;
-    const days = selectedDateRange.endDate - selectedDateRange.startDate + 1;
-    const totalHours = hours * days;
+    const startDateTime = new Date(startDate + "T" + startTime);
+    const endDateTime = new Date(endDate + "T" + endTime);
+    console.log(startDateTime, "~", endDateTime);
+
+    const diffMs = endDateTime - startDateTime; // 밀리초 차이
+    const totalHours = diffMs / (1000 * 60 * 60); // 밀리초 → 시간으로 변환
 
     let totalItemPrice = 0;
     const itemsList = document.getElementById('itemsList');
