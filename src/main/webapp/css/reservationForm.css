@@ -1,0 +1,86 @@
+.date-btn {
+    /*@apply w-10 h-10 rounded-lg border text-sm font-medium transition-colors;*/
+    padding: 6px 12px;
+    /*margin: 0 2px;*/
+    font-weight: 500;
+    border: none;
+    background-color: white;
+    color: black;
+    transition: background-color 0.2s;
+}
+.date-btn.selected {
+    background-color: #4561DB;
+    color: white;
+    border-color: #4561DB;
+    border-radius: 10%;
+}
+.date-btn.in-range {
+    /*@apply bg-blue-200 text-blue-800 border-blue-300;*/
+    background-color: rgba(69, 97, 219, 0.3);
+    color: #4561DB;
+    border-color: rgba(69, 97, 219, 0.3);
+}
+.date-btn:not(.selected):not(.in-range) {
+    @apply bg-white text-gray-700 border-gray-300 hover:bg-gray-50;
+}
+.jim-type-card {
+    @apply border rounded-lg p-4 transition-colors;
+}
+.jim-type-card.selected {
+    @apply border-pink-500 bg-pink-50;
+}
+.jim-type-card:not(.selected) {
+    @apply border-gray-300;
+}
+.custom-select {
+    @apply appearance-none bg-white border border-gray-300 rounded-lg px-3 py-2 pr-8 text-gray-700 focus:outline-none focus:border-blue-500;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+    background-position: right 0.5rem center;
+    background-repeat: no-repeat;
+    background-size: 1.5em 1.5em;
+}
+.quantity-input {
+    @apply w-16 px-2 py-1 border border-gray-300 rounded text-center;
+}
+.quantity-btn {
+    @apply w-8 h-8 border border-gray-300 rounded text-lg font-medium hover:bg-gray-50 transition-colors;
+}
+
+.custom-select option:checked {
+    background-color: #4561DB;
+    color: white;
+}
+
+.custom-select {
+    appearance: none;
+    background-color: white;
+    border: 1px solid #e5e7eb; /* 연한 회색 테두리 */
+    border-radius: 6px;
+    padding: 10px;
+    width: 100%;
+}
+
+.custom-select:focus {
+    outline: none;
+    border-color: #4561DB;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.jimtype{
+    padding: 5px 10px;
+    border: 1px solid #e5e7eb; /* 연한 회색 테두리 */
+    border-radius: 6px;
+}
+
+.quantity{
+    padding-left: 10px;
+}
+
+.submit-btn{
+    background-color: rgba(69, 97, 219);
+
+}
+.submit-btn:hover{
+    background-color: rgba(47, 70, 183);
+
+}
