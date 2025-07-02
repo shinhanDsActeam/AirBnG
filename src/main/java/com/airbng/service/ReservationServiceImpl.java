@@ -64,14 +64,32 @@ public class ReservationServiceImpl implements ReservationService{
             stateList = Collections.singletonList((ReservationState) state);
         }
 
+        // isHistoryTab 여부 판단
+        boolean isHistoryTab = stateList != null &&
+                (stateList.contains(ReservationState.COMPLETED) || stateList.contains(ReservationState.CANCELLED));
+
         List<ReservationSearchResponse> reservations = reservationMapper.findAllReservationById(
-                memberId, role, stateList, nextCursorId, LIMIT + 1, period //다음 페이지 유무 확인
+                memberId, role, stateList, nextCursorId, LIMIT + 1, period, isHistoryTab //다음 페이지 유무 확인
         );
 
         // 예외 처리: 예약이 없을 경우
         if (reservations == null || reservations.isEmpty()) {
+            // 만약 isHistoryTab이 true라면, 예약이 없더라도 빈 페이지를 반환
+            if (isHistoryTab) {
+                return ReservationPaging.builder()
+                        .reservations(Collections.emptyList())
+                        .nextCursorId(-1L) // 더 이상 페이지가 없음을 나타냄
+                        .hasNextPage(false)
+                        .period(period)
+                        .totalCount(0L)
+                        .build();
+            }
+            // 일반 예약 조회에서 예약이 없으면 예외 발생
             throw new ReservationException(NOT_FOUND_RESERVATION);
         }
+//        if (reservations == null || reservations.isEmpty()) {
+//            throw new ReservationException(NOT_FOUND_RESERVATION);
+//        }
 
         //hasNextPage 값 설정 : 다음 페이지 유무
         boolean hasNextPage = reservations.size() > LIMIT;

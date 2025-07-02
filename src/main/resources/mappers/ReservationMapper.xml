@@ -167,7 +167,7 @@
                 AND r.reservation_id &lt; #{nextCursorId}
             </if>
             <!-- COMPLETED or CANCELLED 상태일 때만 end_time 기준 필터 -->
-            <if test="state != null and state != '' and period != null and (state.equals('COMPLETED') or state.equals('CANCELLED'))">
+            <if test="isHistoryTab == true and period != null">
                 <choose>
                     <when test="period.equals('1W')">
                         AND r.end_time &gt;= DATE_SUB(NOW(), INTERVAL 1 WEEK)

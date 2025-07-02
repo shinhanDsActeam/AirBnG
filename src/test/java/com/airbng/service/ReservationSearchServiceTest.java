@@ -86,10 +86,11 @@ class ReservationSearchServiceTest {
         @Test
         @DisplayName("전체 기간 필터 (ALL)")
         void testPeriod_ALL() {
-            when(reservationMapper.findAllReservationById(
-                    eq(memberId), eq(role), eq(state), eq(-1L), eq(LIMIT + 1), eq("ALL")
-            )).thenReturn(stubReservations);
+            boolean isHistoryTab = true; // COMPLETED or CANCELLED 포함됨
 
+            when(reservationMapper.findAllReservationById(
+                    eq(memberId), eq(role), eq(state), eq(-1L), eq(LIMIT + 1), eq("ALL"), eq(isHistoryTab)
+            )).thenReturn(stubReservations);
 
             when(reservationMapper.findReservationByMemberId(eq(memberId), eq(role))).thenReturn(1000L);
 
@@ -101,13 +102,14 @@ class ReservationSearchServiceTest {
             assertEquals(-1L, result.getNextCursorId());
 
             verify(reservationMapper).findAllReservationById(
-                    eq(memberId), eq(role), eq(state), eq(-1L), eq(LIMIT + 1), eq("ALL")
+                    eq(memberId), eq(role), eq(state), eq(-1L), eq(LIMIT + 1), eq("ALL"), eq(isHistoryTab)
             );
         }
-
         void testPeriod(String period) {
+            boolean isHistoryTab = true; // COMPLETED or CANCELLED 포함됨
+
             when(reservationMapper.findAllReservationById(
-                    eq(memberId), eq(role), eq(state), eq(-1L), eq(LIMIT + 1), eq(period)
+                    eq(memberId), eq(role), eq(state), eq(-1L), eq(LIMIT + 1), eq(period), eq(isHistoryTab)
             )).thenReturn(stubReservations);
 
             when(reservationMapper.findReservationByMemberId(eq(memberId), eq(role))).thenReturn(1000L);
@@ -120,7 +122,7 @@ class ReservationSearchServiceTest {
             assertEquals(-1L, result.getNextCursorId());
 
             verify(reservationMapper).findAllReservationById(
-                    eq(memberId), eq(role), eq(state), eq(-1L), eq(LIMIT + 1), eq(period)
+                    eq(memberId), eq(role), eq(state), eq(-1L), eq(LIMIT + 1), eq(period), eq(isHistoryTab)
             );
         }
     }
@@ -129,11 +131,11 @@ class ReservationSearchServiceTest {
     @DisplayName("예약 결과 없음 예외")
     void 예약_결과_없음() {
         String period = "1W";
+        boolean isHistoryTab = true;
 
         when(reservationMapper.findAllReservationById(
-                eq(memberId), eq(role), eq(state), eq(-1L), eq(LIMIT + 1), eq(period)
+                eq(memberId), eq(role), eq(state), eq(-1L), eq(LIMIT + 1), eq(period), eq(isHistoryTab)
         )).thenReturn(Collections.emptyList());
-
 
         assertThrows(ReservationException.class, () ->
                 reservationService.findAllReservationById(memberId, role, state, -1L, period));
