@@ -25,7 +25,7 @@
     <div class="greeting">
         <c:choose>
             <c:when test="${not empty sessionScope.nickname}">
-                반갑습니다<br><span>${sessionScope.nickname}님.</span>
+                반갑습니다<br><span class="nickname">${sessionScope.nickname}</span>님.
             </c:when>
             <c:otherwise>
                 Welcome, <span>AirBnG!</span>
@@ -41,29 +41,30 @@
 </div>
 
 <div class="info-card">
-    <div class="info-row">
-        <label for="location">장소</label>
-        <input type="text" id="location" name="location" value="${locationName}" placeholder="예: 강남구" />
-    </div>
+    <div class="info-row-group">
+        <div class="info-row">
+            <label for="location">장소</label>
+            <input type="text" id="location" name="location" value="${locationName}" placeholder="예: 강남구" />
+        </div>
 
-    <div class="info-row">
-        <label for="date">날짜</label>
+        <div class="info-row">
+            <label for="date">날짜</label>
 
-        <div class="date-wrapper">
-            <div class="custom-date-display" id="dateDisplay">연도-월-일</div>
-            <input type="date" id="date" name="date" class="real-date" />
+            <div class="date-wrapper">
+                <div class="custom-date-display" id="dateDisplay">연도-월-일</div>
+                <input type="date" id="date" name="date" class="real-date" />
+            </div>
+        </div>
+
+        <div class="info-row">
+            <label for="time">시간</label>
+            <select id="time" name="time">
+                <option value="18:00~20:00">(18:00~20:00) 2시간</option>
+                <option value="20:00~22:00">(20:00~22:00) 2시간</option>
+                <option value="22:00~24:00">(22:00~24:00) 2시간</option>
+            </select>
         </div>
     </div>
-
-    <div class="info-row">
-        <label for="time">시간</label>
-        <select id="time" name="time">
-            <option value="18:00~20:00">(18:00~20:00) 2시간</option>
-            <option value="20:00~22:00">(20:00~22:00) 2시간</option>
-            <option value="22:00~24:00">(22:00~24:00) 2시간</option>
-        </select>
-    </div>
-
     <button class="find-button">보관소 찾기</button>
 </div>
 
