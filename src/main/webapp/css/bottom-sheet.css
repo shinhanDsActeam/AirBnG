@@ -29,55 +29,55 @@ html, body {
 }
 
 .bottom-sheet {
-            position: absolute;
-            bottom: 0;
-            left: 50%;
-            width: 100%;
-            max-width: 412px;
-            height: 60%;
-            background: white;
-            border-top-left-radius: 20px;
-            border-top-right-radius: 20px;
-            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
-            transform: translateX(-50%) translateY(70%);
-            transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-            display: flex;
-            flex-direction: column;
-            z-index: 100;
-            touch-action: none;
-            user-select: none;
-        }
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 100%;
+    max-width: 412px;
+    height: 60%;
+    background: white;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+    transform: translateX(-50%) translateY(70%);
+    transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    display: flex;
+    flex-direction: column;
+    z-index: 100;
+    touch-action: none;
+    user-select: none;
+}
 
-        .bottom-sheet.dragging {
-            transition: none;
-        }
+.bottom-sheet.dragging {
+    transition: none;
+}
 
-        .sheet-header {
-            padding: 15px 0;
-            text-align: center;
-            cursor: grab;
-            user-select: none;
-            background: white;
-            border-top-left-radius: 20px;
-            border-top-right-radius: 20px;
-        }
+.sheet-header {
+    padding: 15px 0;
+    text-align: center;
+    cursor: grab;
+    user-select: none;
+    background: white;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+}
 
-        .sheet-header:active {
-            cursor: grabbing;
-        }
+.sheet-header:active {
+    cursor: grabbing;
+}
 
-        .sheet-drag-handle {
-            width: 40px;
-            height: 5px;
-            background: #ccc;
-            border-radius: 5px;
-            margin: 8px auto;
-            transition: background-color 0.2s;
-        }
+.sheet-drag-handle {
+    width: 40px;
+    height: 5px;
+    background: #ccc;
+    border-radius: 5px;
+    margin: 8px auto;
+    transition: background-color 0.2s;
+}
 
-        .sheet-header:hover .sheet-drag-handle {
-            background: #bbb;
-        }
+.sheet-header:hover .sheet-drag-handle {
+    background: #bbb;
+}
 
 .sheet-content {
     flex: 1;
@@ -121,23 +121,14 @@ html, body {
 .storage-button {
     background: #4f75ff;
     color: white;
-    padding: 5px 12px;
+    padding: 8px 16px;
     border-radius: 15px;
     border: none;
     font-size: 0.8em;
+    cursor: pointer;
 }
 
-.storage-button {
-            background: #4f75ff;
-            color: white;
-            padding: 8px 16px;
-            border-radius: 15px;
-            border: none;
-            font-size: 0.8em;
-            cursor: pointer;
-        }
-
 .disabled .storage-button {
-            background: #ccc;
-            cursor: not-allowed;
-        }
+    background: #ccc;
+    cursor: not-allowed;
+}
