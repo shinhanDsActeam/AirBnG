@@ -13,6 +13,7 @@
         <div class="header-content">
             <button class="back-btn" onclick="history.back()">←</button>
             <h1 class="header-title">예약 내역</h1>
+            <span>${sessionScope.memberId}님.</span>
         </div>
     </div>
 

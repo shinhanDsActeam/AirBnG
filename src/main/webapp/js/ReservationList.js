@@ -3,17 +3,47 @@ let currentPeriod = 'ALL';
 let nextCursorId = null;
 let loading = false;
 let hasNextPage = true;
+let currentUser = null; // 세션에서 가져올 사용자 정보
 
 // 페이지 로드시 초기화
 document.addEventListener('DOMContentLoaded', function() {
-    initTabs();
-    fetchReservations(true);
+    // 세션에서 사용자 정보 가져오기
+    getCurrentUser().then(() => {
+        initTabs();
+        fetchReservations(true);
 
-    // 더보기 버튼 이벤트
-    document.getElementById('load-more-btn').addEventListener('click', function() {
-        fetchReservations(false);
+        // 더보기 버튼 이벤트
+        document.getElementById('load-more-btn').addEventListener('click', function() {
+            fetchReservations(false);
+        });
     });
 });
+
+// 세션에서 현재 사용자 정보 가져오기
+async function getCurrentUser() {
+    try {
+        console.log('세션에서 사용자 정보 로드 중...');
+        const response = await fetch('/AirBnG/members/login');
+        if (response.ok) {
+            const data = await response.json();
+            if (data.code === 1000) {
+                currentUser = data.result;
+                console.log('현재 사용자:', currentUser);
+            } else {
+                console.error('사용자 정보 가져오기 실패:', data.message);
+                // 로그인 페이지로 리다이렉트 등의 처리
+                alert('로그인이 필요합니다.');
+                window.location.href = '/AirBnG/page/login';
+            }
+        } else {
+            throw new Error('세션 정보를 가져올 수 없습니다.');
+        }
+    } catch (error) {
+        console.error('사용자 정보 로드 오류:', error);
+        alert('사용자 정보를 불러올 수 없습니다. 다시 로그인해주세요.');
+        window.location.href = '/AirBnG/page/login';
+    }
+}
 
 // 탭 초기화
 function initTabs() {
@@ -112,15 +142,24 @@ function toggleMoreMenu(reservationId) {
 
 // API URL 생성
 function getApiUrl() {
-    let url = '/AirBnG/reservations?isDropper=true&memberId=3';
+    if (!currentUser) {
+        console.error('사용자 정보가 없습니다.');
+        return null;
+    }
 
+    let url = `/AirBnG/reservations?memberId=${currentUser.memberId}`;
+
+    // isDropper 설정 - 사용자 역할이 DROPPER면 true, 아니면 false
+    const isDropper = currentUser.role === 'DROPPER';
+    url += `&isDropper=${isDropper}`;
+
+    // 상태 파라미터 추가
     currentStates.forEach(state => {
         url += '&state=' + state;
     });
 
-    // 이용후, 취소됨 탭에서만 period 파라미터 추가
-    if ((currentStates.includes('COMPLETED') || currentStates.includes('CANCELLED')) &&
-        currentPeriod && currentPeriod !== 'ALL') {
+    // 기간 파라미터 추가 (ALL이 아닐 때만)
+    if (currentPeriod && currentPeriod !== 'ALL') {
         url += '&period=' + currentPeriod;
     }
 
@@ -181,7 +220,12 @@ function cancelReservation(reservationId) {
 function deleteReservation(reservationId) {
     if (!confirm('정말 이 예약 기록을 삭제하시겠습니까?')) return;
 
-    fetch(`/AirBnG/reservations/${reservationId}/members/3/delete`, {
+    if (!currentUser) {
+        alert('사용자 정보를 불러올 수 없습니다.');
+        return;
+    }
+
+    fetch(`/AirBnG/reservations/${reservationId}/members/${currentUser.memberId}/delete`, {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' }
     })
@@ -384,13 +428,18 @@ function renderReservations(reservations) {
 function fetchReservations(isFirst = false) {
     if (loading || (!hasNextPage && !isFirst)) return;
 
+    const apiUrl = getApiUrl();
+    if (!apiUrl) {
+        console.error('API URL을 생성할 수 없습니다.');
+        return;
+    }
+
     loading = true;
 
     if (isFirst) {
         document.getElementById('loading').style.display = 'block';
     }
 
-    const apiUrl = getApiUrl();
     console.log('API 호출 URL:', apiUrl);
 
     fetch(apiUrl)

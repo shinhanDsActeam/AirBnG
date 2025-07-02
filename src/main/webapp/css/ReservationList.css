@@ -1,479 +1,479 @@
  * {
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Noto Sans KR', sans-serif;
-            background-color: #ffffff;
-            color: #333;
-            width: 412px;
-            margin: 0 auto;
-            min-height: 100vh;
-        }
-
-        /* 헤더 */
-        .header {
-            background: white;
-            padding: 15px 20px;
-            border-bottom: 1px solid #eee;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-
-        .header-content {
-            display: flex;
-            align-items: center;
-        }
-
-        .back-btn {
-            background: none;
-            border: none;
-            font-size: 24px;
-            cursor: pointer;
-            margin-right: 15px;
-            color: #333;
-        }
-
-        .header-title {
-            font-size: 18px;
-            font-weight: 600;
-        }
-
-        /* 탭 메뉴 */
-        .tab-container {
-            background: white;
-            border-bottom: 1px solid #eee;
-            position: sticky;
-            top: 60px;
-            z-index: 99;
-        }
-
-        .tab-section {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 20px;
-        }
-
-        .tabs {
-            display: flex;
-        }
-
-        .tab {
-            padding: 15px 20px;
-            text-align: center;
-            text-decoration: none;
-            color: #666;
-            border-bottom: 2px solid transparent;
-            transition: all 0.3s;
-            cursor: pointer;
-            font-size: 14px;
-        }
-
-        .tab.active {
-            color: #3181E2;
-            border-bottom-color: #3181E2;
-            font-weight: 600;
-        }
-
-        /* 필터 섹션 */
-        .filter-section {
-            height: 48px;
-            padding: 15px 20px;
-            background: white;
-            display: flex;
-            position: sticky;
-            top: 118px;
-            z-index: 98;
-            justify-content: flex-end;
-        }
-
-        .filter-section.show {
-            display: flex;
-        }
-
-
-        .filter-section .period-dropdown {
-            display: none;
-        }
-
-        .filter-section.show .period-dropdown {
-            display: block;
-        }
-
-        .period-dropdown {
-            position: relative;
-            display: inline-block;
-        }
-
-        .period-dropdown .dropdown-btn {
-            width: 101px;
-            height: 28px;
-            border-radius: 5px;
-            border-width: 0.5px;
-            border-style: solid;
-            border-color: #ccc;
-            padding-top: 5px;
-            padding-right: 13px;
-            padding-bottom: 5px;
-            padding-left: 13px;
-            gap: 3px;
-            font-size: 13px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background: white;
-            cursor: pointer;
-
-
-        }
-
-        .dropdown-arrow {
-            width: 12px;
-            height: 12px;
-            transition: transform 0.3s;
-        }
-
-        .dropdown-btn.open .dropdown-arrow {
-            transform: rotate(180deg);
-        }
-
-        .dropdown-menu {
-            position: absolute;
-            top: 100%;
-            right: 0;
-            background: white;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            min-width: 150px;
-            z-index: 1000;
-            display: none;
-        }
-
-        .dropdown-menu.show {
-            display: block;
-        }
-
-        .dropdown-item {
-            padding: 10px 15px;
-            cursor: pointer;
-            transition: background-color 0.2s;
-            font-size: 14px;
-        }
-
-        .dropdown-item:hover {
-            background-color: #f8f9fa;
-        }
-
-        /* 예약 리스트 */
-        .reservation-list {
-            padding: 15px;
-            margin-top: 15px;
-        }
-
-        .reservation-card {
-            background: white;
-            border-radius: 10px;
-            padding: 30px;
-            margin-bottom: 15px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            position: relative;
-            transition: all 0.3s;
-            width: 372px;
-            height: auto;
-            min-height: 355px;
-        }
-
-        .reservation-card.cancelled {
-            opacity: 0.5;
-        }
-
-        .reservation-header {
-            margin-bottom: 15px;
-        }
-
-        .reservation-date {
-            font-size: 16px;
-            font-weight: 600;
-            color: #333;
-            margin-bottom: 8px;
-        }
-
-        .reservation-info-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-direction: row-reverse;
-            margin: 15px 0;
-        }
-
-        .view-details {
-            color: #3181E2;
-            text-decoration: none;
-            font-size: 13px;
-        }
-
-        .status-text {
-            font-size: 13px;
-            font-weight: 600;
-        }
-
-        .status-text.confirmed {
-            color: #28a745;
-        }
-
-        .status-text.pending {
-            color: #ffc107;
-        }
-
-        .status-text.completed {
-            color: #6c757d;
-        }
-
-        .status-text.cancelled {
-            color: #dc3545;
-        }
-
-        .reservation-item {
-            display: flex;
-            background-color: white;
-            padding: 12px;
-            gap: 12px;
-            border-top: 1px solid #eee;
-        }
-
-        .item-image {
-            width: 80px;
-            height: 80px;
-            border-radius: 8px;
-            object-fit: cover;
-            background-color: #f8f9fa;
-        }
-
-        .item-info {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            min-width: 0;
-        }
-
-        .item-title {
-            font-size: 15px;
-            font-weight: 600;
-            margin-bottom: 4px;
-            color: #333;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .item-details {
-            font-size: 13px;
-            color: #666;
-            margin-bottom: 2px;
-        }
-
-        .item-time {
-            font-size: 13px;
-            color: #666;
-            margin-bottom: 2px;
-        }
-
-        .item-types {
-            font-size: 13px;
-            color: #666;
-            margin-bottom: 2px;
-        }
-
-        /* 날짜 정보 섹션 */
-        .item-date-row {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 8px;
-            padding-top: 8px;
-            gap: 20px;
-        }
-
-        .item-date-col {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            font-size: 13px;
-            color: #444;
-            width: 50%;
-        }
-
-        .item-date-col .label {
-            font-weight: 500;
-            color: #999;
-            margin-bottom: 4px;
-            font-size: 12px;
-            text-align: left;
-        }
-
-        .item-date-col .value {
-            font-weight: 600;
-            color: #222;
-            font-size: 13px;
-        }
-
-        /* 액션 버튼 */
-        .action-buttons {
-            display: flex;
-            gap: 8px;
-            justify-content: center;
-            margin-top: 15px;
-            padding: 0 5px;
-        }
-
-        .btn {
-            padding: 12px 20px;
-            border-radius: 8px;
-            border: none;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 500;
-            transition: all 0.2s;
-            flex: 1;
-            text-align: center;
-        }
-
-        .btn-disabled {
-            background: #f8f9fa;
-            color: #6c757d;
-            cursor: not-allowed;
-            border: 1px solid #e9ecef;
-        }
-
-        .btn-cancel {
-            background: #ffffff;
-            color: #dc3545;
-            border: 1px solid #dc3545;
-        }
-
-        .btn-cancel:hover:not(.btn-disabled) {
-            background: #dc3545;
-            color: white;
-        }
-
-        .btn-primary {
-            background: #3181E2;
-            color: white;
-            border: 1px solid #3181E2;
-        }
-
-        .btn-primary:hover:not(.btn-disabled) {
-            background: #2768c7;
-            border-color: #2768c7;
-        }
-
-        /* 이용후 전용 버튼 레이아웃 */
-        .completed-actions {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-top: 15px;
-        }
-
-        .rebook-btn {
-            flex: 1;
-            padding: 12px 20px;
-            border-radius: 8px;
-            background: #3181E2;
-            color: white;
-            border: 1px solid #3181E2;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 500;
-            transition: all 0.2s;
-        }
-
-        .rebook-btn:hover {
-            background: #2768c7;
-            border-color: #2768c7;
-        }
-
-        .more-btn {
-            width: 40px;
-            height: 40px;
-            border-radius: 8px;
-            background: #f8f9fa;
-            border: 1px solid #e9ecef;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-        }
-
-        .more-btn:hover {
-            background: #e9ecef;
-        }
-
-        /* 더보기 메뉴 */
-        .more-menu {
-            position: absolute;
-            top: 100%;
-            right: 0;
-            background: white;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            min-width: 80px;
-            z-index: 1000;
-            display: none;
-        }
-
-        .more-menu.show {
-            display: block;
-        }
-
-        .more-menu-item {
-            padding: 10px 15px;
-            cursor: pointer;
-            transition: background-color 0.2s;
-            font-size: 14px;
-            color: #dc3545;
-            text-align: center;
-        }
-
-        .more-menu-item:hover {
-            background-color: #f8f9fa;
-        }
-
-        /* 빈 상태 */
-        .empty-state {
-            text-align: center;
-            padding: 60px 20px;
-            color: #666;
-        }
-
-        /* 더보기 버튼 */
-        .load-more {
-            text-align: center;
-            padding: 20px;
-        }
-
-        .load-more-btn {
-            background: #3181E2;
-            color: white;
-            border: none;
-            padding: 12px 30px;
-            border-radius: 25px;
-            cursor: pointer;
-            font-size: 14px;
-        }
-
-        .load-more-btn:hover {
-            background: #2768c7;
-        }
-
-        /* 로딩 */
-        .loading {
-            text-align: center;
-            padding: 40px;
-            color: #666;
-        }
+             box-sizing: border-box;
+         }
+
+         body {
+             font-family: 'Noto Sans KR', sans-serif;
+             background-color: #ffffff;
+             color: #333;
+             width: 412px;
+             margin: 0 auto;
+             min-height: 100vh;
+         }
+
+         /* 헤더 */
+         .header {
+             background: white;
+             padding: 15px 20px;
+             border-bottom: 1px solid #eee;
+             position: sticky;
+             top: 0;
+             z-index: 100;
+         }
+
+         .header-content {
+             display: flex;
+             align-items: center;
+         }
+
+         .back-btn {
+             background: none;
+             border: none;
+             font-size: 24px;
+             cursor: pointer;
+             margin-right: 15px;
+             color: #333;
+         }
+
+         .header-title {
+             font-size: 18px;
+             font-weight: 600;
+         }
+
+         /* 탭 메뉴 */
+         .tab-container {
+             background: white;
+             border-bottom: 1px solid #eee;
+             position: sticky;
+             top: 60px;
+             z-index: 99;
+         }
+
+         .tab-section {
+             display: flex;
+             align-items: center;
+             justify-content: space-between;
+             padding: 0 20px;
+         }
+
+         .tabs {
+             display: flex;
+         }
+
+         .tab {
+             padding: 15px 20px;
+             text-align: center;
+             text-decoration: none;
+             color: #666;
+             border-bottom: 2px solid transparent;
+             transition: all 0.3s;
+             cursor: pointer;
+             font-size: 14px;
+         }
+
+         .tab.active {
+             color: #3181E2;
+             border-bottom-color: #3181E2;
+             font-weight: 600;
+         }
+
+         /* 필터 섹션 */
+         .filter-section {
+             height: 48px;
+             padding: 15px 20px;
+             background: white;
+             display: flex;
+             position: sticky;
+             top: 118px;
+             z-index: 98;
+             justify-content: flex-end;
+         }
+
+         .filter-section.show {
+             display: flex;
+         }
+
+
+         .filter-section .period-dropdown {
+             display: none;
+         }
+
+         .filter-section.show .period-dropdown {
+             display: block;
+         }
+
+         .period-dropdown {
+             position: relative;
+             display: inline-block;
+         }
+
+         .period-dropdown .dropdown-btn {
+             width: 101px;
+             height: 28px;
+             border-radius: 5px;
+             border-width: 0.5px;
+             border-style: solid;
+             border-color: #ccc;
+             padding-top: 5px;
+             padding-right: 13px;
+             padding-bottom: 5px;
+             padding-left: 13px;
+             gap: 3px;
+             font-size: 13px;
+             display: flex;
+             align-items: center;
+             justify-content: space-between;
+             background: white;
+             cursor: pointer;
+
+
+         }
+
+         .dropdown-arrow {
+             width: 12px;
+             height: 12px;
+             transition: transform 0.3s;
+         }
+
+         .dropdown-btn.open .dropdown-arrow {
+             transform: rotate(180deg);
+         }
+
+         .dropdown-menu {
+             position: absolute;
+             top: 100%;
+             right: 0;
+             background: white;
+             border: 1px solid #ddd;
+             border-radius: 5px;
+             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+             min-width: 150px;
+             z-index: 1000;
+             display: none;
+         }
+
+         .dropdown-menu.show {
+             display: block;
+         }
+
+         .dropdown-item {
+             padding: 10px 15px;
+             cursor: pointer;
+             transition: background-color 0.2s;
+             font-size: 14px;
+         }
+
+         .dropdown-item:hover {
+             background-color: #f8f9fa;
+         }
+
+         /* 예약 리스트 */
+         .reservation-list {
+             padding: 15px;
+             margin-top: 15px;
+         }
+
+         .reservation-card {
+             background: white;
+             border-radius: 10px;
+             padding: 30px;
+             margin-bottom: 15px;
+             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+             position: relative;
+             transition: all 0.3s;
+             width: 372px;
+             height: auto;
+             min-height: 355px;
+         }
+
+         .reservation-card.cancelled {
+             opacity: 0.5;
+         }
+
+         .reservation-header {
+             margin-bottom: 15px;
+         }
+
+         .reservation-date {
+             font-size: 16px;
+             font-weight: 600;
+             color: #333;
+             margin-bottom: 8px;
+         }
+
+         .reservation-info-row {
+             display: flex;
+             justify-content: space-between;
+             align-items: center;
+             flex-direction: row-reverse;
+             margin: 15px 0;
+         }
+
+         .view-details {
+             color: #3181E2;
+             text-decoration: none;
+             font-size: 13px;
+         }
+
+         .status-text {
+             font-size: 13px;
+             font-weight: 600;
+         }
+
+         .status-text.confirmed {
+             color: #28a745;
+         }
+
+         .status-text.pending {
+             color: #ffc107;
+         }
+
+         .status-text.completed {
+             color: #6c757d;
+         }
+
+         .status-text.cancelled {
+             color: #dc3545;
+         }
+
+         .reservation-item {
+             display: flex;
+             background-color: white;
+             padding: 12px;
+             gap: 12px;
+             border-top: 1px solid #eee;
+         }
+
+         .item-image {
+             width: 80px;
+             height: 80px;
+             border-radius: 8px;
+             object-fit: cover;
+             background-color: #f8f9fa;
+         }
+
+         .item-info {
+             flex: 1;
+             display: flex;
+             flex-direction: column;
+             justify-content: space-between;
+             min-width: 0;
+         }
+
+         .item-title {
+             font-size: 15px;
+             font-weight: 600;
+             margin-bottom: 4px;
+             color: #333;
+             white-space: nowrap;
+             overflow: hidden;
+             text-overflow: ellipsis;
+         }
+
+         .item-details {
+             font-size: 13px;
+             color: #666;
+             margin-bottom: 2px;
+         }
+
+         .item-time {
+             font-size: 13px;
+             color: #666;
+             margin-bottom: 2px;
+         }
+
+         .item-types {
+             font-size: 13px;
+             color: #666;
+             margin-bottom: 2px;
+         }
+
+         /* 날짜 정보 섹션 */
+         .item-date-row {
+             display: flex;
+             justify-content: space-between;
+             margin-top: 8px;
+             padding-top: 8px;
+             gap: 20px;
+         }
+
+         .item-date-col {
+             flex: 1;
+             display: flex;
+             flex-direction: column;
+             font-size: 13px;
+             color: #444;
+             width: 50%;
+         }
+
+         .item-date-col .label {
+             font-weight: 500;
+             color: #999;
+             margin-bottom: 4px;
+             font-size: 12px;
+             text-align: left;
+         }
+
+         .item-date-col .value {
+             font-weight: 600;
+             color: #222;
+             font-size: 13px;
+         }
+
+         /* 액션 버튼 */
+         .action-buttons {
+             display: flex;
+             gap: 8px;
+             justify-content: center;
+             margin-top: 15px;
+             padding: 0 5px;
+         }
+
+         .btn {
+             padding: 8px 20px;
+             border-radius: 8px;
+             border: none;
+             cursor: pointer;
+             font-size: 14px;
+             font-weight: 500;
+             transition: all 0.2s;
+             flex: 1;
+             text-align: center;
+         }
+
+         .btn-disabled {
+             background: #f8f9fa;
+             color: #6c757d;
+             cursor: not-allowed;
+             border: 1px solid #e9ecef;
+         }
+
+         .btn-cancel {
+             background: #ffffff;
+             color: #dc3545;
+             border: 1px solid #dc3545;
+         }
+
+         .btn-cancel:hover:not(.btn-disabled) {
+             background: #dc3545;
+             color: white;
+         }
+
+         .btn-primary {
+             background: #3181E2;
+             color: white;
+             border: 1px solid #3181E2;
+         }
+
+         .btn-primary:hover:not(.btn-disabled) {
+             background: #2768c7;
+             border-color: #2768c7;
+         }
+
+         /* 이용후 전용 버튼 레이아웃 */
+         .completed-actions {
+             display: flex;
+             align-items: center;
+             gap: 8px;
+             margin-top: 15px;
+         }
+
+         .rebook-btn {
+             flex: 1;
+             padding: 8px 20px;
+             border-radius: 8px;
+             background: #3181E2;
+             color: white;
+             border: 1px solid #3181E2;
+             cursor: pointer;
+             font-size: 14px;
+             font-weight: 500;
+             transition: all 0.2s;
+         }
+
+         .rebook-btn:hover {
+             background: #2768c7;
+             border-color: #2768c7;
+         }
+
+         .more-btn {
+             width: 40px;
+             height: 40px;
+             border-radius: 8px;
+             background: #f8f9fa;
+             border: 1px solid #e9ecef;
+             cursor: pointer;
+             display: flex;
+             align-items: center;
+             justify-content: center;
+             position: relative;
+         }
+
+         .more-btn:hover {
+             background: #e9ecef;
+         }
+
+         /* 더보기 메뉴 */
+         .more-menu {
+             position: absolute;
+             top: 100%;
+             right: 0;
+             background: white;
+             border: 1px solid #ddd;
+             border-radius: 5px;
+             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+             min-width: 80px;
+             z-index: 1000;
+             display: none;
+         }
+
+         .more-menu.show {
+             display: block;
+         }
+
+         .more-menu-item {
+             padding: 10px 15px;
+             cursor: pointer;
+             transition: background-color 0.2s;
+             font-size: 14px;
+             color: #dc3545;
+             text-align: center;
+         }
+
+         .more-menu-item:hover {
+             background-color: #f8f9fa;
+         }
+
+         /* 빈 상태 */
+         .empty-state {
+             text-align: center;
+             padding: 60px 20px;
+             color: #666;
+         }
+
+         /* 더보기 버튼 */
+         .load-more {
+             text-align: center;
+             padding: 20px;
+         }
+
+         .load-more-btn {
+             background: #3181E2;
+             color: white;
+             border: none;
+             padding: 12px 30px;
+             border-radius: 25px;
+             cursor: pointer;
+             font-size: 14px;
+         }
+
+         .load-more-btn:hover {
+             background: #2768c7;
+         }
+
+         /* 로딩 */
+         .loading {
+             text-align: center;
+             padding: 40px;
+             color: #666;
+         }
