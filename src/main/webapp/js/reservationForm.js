@@ -8,12 +8,12 @@ let jimTypeCounts = {};
 let dateArray = [];
 
 // 페이지 로드 시 초기화
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     loadLockerData();
     generateDateButtons();
     updateTimeOptions();
     // 폼 제출 처리
-    document.getElementById('reservationForm').addEventListener('submit', function(e) {
+    document.getElementById('reservationForm').addEventListener('submit', function (e) {
         e.preventDefault();
 
         if (!selectedDateRange.startDate && selectedDateRange.startDate !== 0) {
@@ -141,7 +141,7 @@ function generateDateButtons() {
         const button = document.createElement('button');
         button.type = 'button';
         button.className = 'date-btn flex-1 h-12 text-sm font-semibold border-r last:border-r-0 flex items-center justify-center';
-        if(i === 0){
+        if (i === 0) {
             button.className += ' selected';
         }
         button.textContent = dayNum;
@@ -150,7 +150,7 @@ function generateDateButtons() {
         dateArray.push(formatted);
         button.dataset.index = i;
 
-        button.onclick = function() {
+        button.onclick = function () {
             selectDate(i);
         };
 
@@ -295,7 +295,7 @@ function updateStartTimeOptions() {
 function updateEndTimeOptions() {
     const startSelect = document.getElementById('startTimeSelect');
     const endSelect = document.getElementById('endTimeSelect');
-    const currentEndTime = endSelect.value; // 현재 선택된 값 저장
+    const currentEndTime = endSelect.value;
     const startTime = startSelect.value;
 
     if (!startTime) return;
@@ -306,36 +306,33 @@ function updateEndTimeOptions() {
     const isSameDate = selectedDateRange.startDate === selectedDateRange.endDate;
 
     if (isSameDate) {
-        // 같은 날: 시작시간 + 30분부터 00:00까지
+        // 시작시간 + 30분부터 24:00까지
         let currentHour = startH;
         let currentMin = startM + 30;
 
-        // 30분 추가 후 시간 조정
         if (currentMin >= 60) {
             currentHour += 1;
             currentMin = 0;
         }
 
-        // 24시를 넘어가면 00:00
-        if (currentHour >= 24) {
-            currentHour = 0;
-            currentMin = 0;
-        }
-
-        // 종료 시간 옵션 생성
-        const startPoint = { hour: currentHour, min: currentMin };
-
         while (true) {
-            const timeStr = `${currentHour.toString().padStart(2, '0')}:${currentMin.toString().padStart(2, '0')}`;
+            // 24:00이 넘으면 종료
+            if (currentHour > 24 || (currentHour === 24 && currentMin > 0)) break;
+
+            let timeStr;
+            if (currentHour === 24 && currentMin === 0) {
+                timeStr = "24:00"; // 종료시간이 24:00인 경우
+            } else {
+                timeStr = `${currentHour.toString().padStart(2, '0')}:${currentMin.toString().padStart(2, '0')}`;
+            }
+
             const option = document.createElement('option');
             option.value = timeStr;
             option.textContent = timeStr;
             endSelect.appendChild(option);
 
-            // 00:00에 도달하면 종료
-            if (currentHour === 0 && currentMin === 0 && endSelect.options.length > 1) {
-                break;
-            }
+            // 24:00까지 돌았으면 끝
+            if (timeStr === "24:00") break;
 
             // 다음 30분 단위로 증가
             currentMin += 30;
@@ -343,64 +340,35 @@ function updateEndTimeOptions() {
                 currentHour += 1;
                 currentMin = 0;
             }
-
-            // 24시를 넘어가면 00:00으로
-            if (currentHour >= 24) {
-                currentHour = 0;
-                currentMin = 0;
-            }
-
-            // 무한루프 방지: 시작점으로 돌아오면 종료 (단, 00:00이 아닌 경우)
-            if (currentHour === startPoint.hour && currentMin === startPoint.min && !(currentHour === 0 && currentMin === 0)) {
-                break;
-            }
         }
-
     } else {
-        // 다른 날: 00:00부터 23:30까지 모든 시간
-        for (let h = 0; h < 24; h++) {
-            for (let m = 0; m < 60; m += 30) {
-                const timeStr = `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`;
-                const option = document.createElement('option');
-                option.value = timeStr;
-                option.textContent = timeStr;
-                endSelect.appendChild(option);
-            }
+        // 다른 날은 00:00 ~ 24:00까지 1시간 단위
+        for (let h = 0; h <= 24; h++) {
+            const timeStr = `${h.toString().padStart(2, '0')}:00`;
+            const option = document.createElement('option');
+            option.value = timeStr;
+            option.textContent = timeStr;
+            endSelect.appendChild(option);
         }
     }
 
-    // 이전에 선택된 값 복원 로직
+    // 선택값 복원 또는 기본값 설정
     if (currentEndTime) {
         const optionExists = Array.from(endSelect.options).some(opt => opt.value === currentEndTime);
 
         if (optionExists) {
-            // 이전 값이 새로운 옵션에 있으면 그대로 선택
             endSelect.value = currentEndTime;
-        } else if (isSameDate) {
-            // 같은 날인데 이전 값이 없으면 (시작시간 >= 종료시간인 경우)
-            // 첫 번째 옵션 선택 (시작시간 + 30분)
-            if (endSelect.options.length > 0) {
-                endSelect.selectedIndex = 0;
-            }
         } else {
-            // 다른 날인데 이전 값이 없으면 원래 값 유지 시도
-            // 만약 시작시간보다 큰 값이었다면 그대로 두고, 작은 값이었다면 첫 번째 옵션
             const [currentEndH, currentEndM] = currentEndTime.split(':').map(Number);
             const currentEndTotalMin = currentEndH * 60 + currentEndM;
             const startTotalMin = startH * 60 + startM;
-
             if (currentEndTotalMin > startTotalMin) {
-                // 시작시간보다 큰 경우 원래 값으로 복원 (새로운 옵션에는 있을 것임)
                 endSelect.value = currentEndTime;
             } else {
-                // 시작시간보다 작거나 같은 경우 첫 번째 옵션
-                if (endSelect.options.length > 0) {
-                    endSelect.selectedIndex = 0;
-                }
+                endSelect.selectedIndex = 0;
             }
         }
     } else if (endSelect.options.length > 0) {
-        // 이전 선택값이 없으면 첫 번째 옵션
         endSelect.selectedIndex = 0;
     }
 }
@@ -508,8 +476,9 @@ function calculateTotal() {
         }
     });
 
-    const serviceFee = 400;
+    const serviceFee = totalItemPrice * 0.05;
     const totalPrice = totalItemPrice + serviceFee;
 
+    document.getElementById('serviceFee').textContent = serviceFee.toLocaleString() + '원';
     document.getElementById('totalPrice').textContent = totalPrice.toLocaleString() + '원';
 }

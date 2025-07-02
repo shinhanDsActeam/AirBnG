@@ -66,8 +66,8 @@
                 <div id="itemsList">
                 </div>
                 <div class="flex justify-between text-sm">
-                    <span>서비스 수수료</span>
-                    <span>400원</span>
+                    <span>서비스 수수료 (5%)</span>
+                    <span id="serviceFee">0원</span>
                 </div>
                 <hr class="border-gray-300">
                 <div class="flex justify-between font-semibold">
