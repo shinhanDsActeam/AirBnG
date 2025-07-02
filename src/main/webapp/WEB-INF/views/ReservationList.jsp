@@ -1,5 +1,7 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<c:set var="loginMemberId" value="${sessionScope.memberId}" />
+
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -64,6 +66,10 @@
         <p>로딩 중...</p>
     </div>
 
+    <script>
+            const memberId = '${loginMemberId}';
+            console.log('로그인한 회원 ID:', memberId);
+     </script>
     <script src="<c:url value='/js/ReservationList.js'/>"></script>
 
 </body>

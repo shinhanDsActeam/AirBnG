@@ -1,4 +1,4 @@
- * {
+* {
              box-sizing: border-box;
          }
 
@@ -61,6 +61,7 @@
          }
 
          .tab {
+            flex: 1;
              padding: 15px 20px;
              text-align: center;
              text-decoration: none;
@@ -69,6 +70,18 @@
              transition: all 0.3s;
              cursor: pointer;
              font-size: 14px;
+         }
+
+         .tab#tab-before {
+             padding-left: 20px;
+         }
+
+         .tab#tab-after {
+             text-align: center;
+         }
+
+         .tab#tab-cancelled {
+             padding-right: 20px;
          }
 
          .tab.active {
@@ -108,9 +121,8 @@
          }
 
          .period-dropdown .dropdown-btn {
-             width: 101px;
              height: 28px;
-             border-radius: 5px;
+             border-radius: 5px;s
              border-width: 0.5px;
              border-style: solid;
              border-color: #ccc;
@@ -176,7 +188,7 @@
          .reservation-card {
              background: white;
              border-radius: 10px;
-             padding: 30px;
+             padding:24px;
              margin-bottom: 15px;
              box-shadow: 0 2px 8px rgba(0,0,0,0.1);
              position: relative;
@@ -184,6 +196,15 @@
              width: 372px;
              height: auto;
              min-height: 355px;
+         }
+
+         /* 이용완료/취소완료 상태의 카드 높이 조정 */
+         .reservation-card.completed {
+             min-height: 250px;
+         }
+
+         .reservation-card.cancelled-state {
+             min-height: 220px;
          }
 
          .reservation-card.cancelled {
@@ -242,6 +263,15 @@
              padding: 12px;
              gap: 12px;
              border-top: 1px solid #eee;
+         }
+
+         /* 이용완료/취소완료 상태의 카드 높이 조정 */
+         .reservation-card.completed {
+             min-height: 200px;
+         }
+
+         .reservation-card.cancelled-state {
+             min-height: 150px;
          }
 
          .item-image {
@@ -408,7 +438,6 @@
              justify-content: center;
              position: relative;
          }
-
          .more-btn:hover {
              background: #e9ecef;
          }
