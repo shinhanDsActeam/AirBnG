@@ -379,14 +379,22 @@
          }
 
          .btn-cancel {
-             background: #ffffff;
-             color: #dc3545;
-             border: 1px solid #dc3545;
+             background: #f1f3f5;          /* 연한 회색 배경 */
+             color: #495057;               /* 짙은 회색 텍스트 */
+             border: 1px solid #3181E2;
+             border-radius: 8px;
+             padding: 8px 20px;
+             font-size: 14px;
+             font-weight: 500;
+             cursor: pointer;
+             transition: all 0.2s;
+             flex: 1;
+             text-align: center;
          }
 
          .btn-cancel:hover:not(.btn-disabled) {
-             background: #dc3545;
-             color: white;
+            background: #e9ecef;          /* hover 시 조금 더 어두운 회색 */
+            border-color: #e9ecef;
          }
 
          .btn-primary {
@@ -412,8 +420,8 @@
              flex: 1;
              padding: 8px 20px;
              border-radius: 8px;
-             background: #3181E2;
-             color: white;
+             background: #f1f3f5;
+             color: #495057;
              border: 1px solid #3181E2;
              cursor: pointer;
              font-size: 14px;
@@ -422,8 +430,8 @@
          }
 
          .rebook-btn:hover {
-             background: #2768c7;
-             border-color: #2768c7;
+             background: #e9ecef;
+             border-color: #e9ecef;
          }
 
          .more-btn {
@@ -437,17 +445,24 @@
              align-items: center;
              justify-content: center;
              position: relative;
+             padding: 0;
          }
+
          .more-btn:hover {
              background: #e9ecef;
          }
 
-         /* 더보기 메뉴 */
+         .more-icon {
+             width: 16px;
+             height: 16px;
+         }
+
+         /* 삭제 메뉴 스타일 (배경색 EBEBEB로 적용) */
          .more-menu {
              position: absolute;
              top: 100%;
              right: 0;
-             background: white;
+             background: #EBEBEB;  /* 변경된 배경 색상 */
              border: 1px solid #ddd;
              border-radius: 5px;
              box-shadow: 0 2px 10px rgba(0,0,0,0.1);
@@ -470,7 +485,7 @@
          }
 
          .more-menu-item:hover {
-             background-color: #f8f9fa;
+             background-color: #f1f1f1;
          }
 
          /* 빈 상태 */

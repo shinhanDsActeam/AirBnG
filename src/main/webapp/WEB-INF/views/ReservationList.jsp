@@ -66,6 +66,12 @@
         <p>로딩 중...</p>
     </div>
 
+    <div id="svg-paths"
+         data-spot-url="<c:url value='/images/spot.svg' />"
+         data-blodspot-url="<c:url value='/images/blodspot.svg' />"
+         style="display:none;">
+    </div>
+
     <script>
             const memberId = '${loginMemberId}';
             console.log('로그인한 회원 ID:', memberId);

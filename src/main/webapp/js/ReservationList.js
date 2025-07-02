@@ -4,6 +4,13 @@ let nextCursorId = null;
 let loading = false;
 let hasNextPage = true;
 
+const svgPaths = document.getElementById('svg-paths');
+const spotSvgUrl = svgPaths?.dataset.spotUrl || '/images/spot.svg';       // 이용완료용
+const blodspotSvgUrl = svgPaths?.dataset.blodspotUrl || '/images/blodspot.svg'; // 취소됨용
+
+console.log(`Spot SVG URL: ${spotSvgUrl}`);
+console.log(`Blodspot SVG URL: ${blodspotSvgUrl}`);
+
 // 초기화
 document.addEventListener('DOMContentLoaded', () => {
     initTabs();
@@ -216,7 +223,7 @@ function renderReservations(reservations) {
                 <div class="reservation-header">
                     <div class="reservation-info-row">
                         <div class="more-btn" onclick="toggleMoreMenu(${res.reservationId})">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="black"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></svg>
+                            <img src="${blodspotSvgUrl}" alt="더보기 아이콘" />
                             <div class="more-menu" id="more-menu-${res.reservationId}">
                                 <div class="more-menu-item" onclick="deleteReservation(${res.reservationId})">삭제</div>
                             </div>
@@ -279,7 +286,7 @@ function getActionButtons(reservation) {
             <div class="completed-actions">
                 <button class="rebook-btn" onclick="reBooking(${reservation.lockerId || 1})">다시 예약</button>
                 <div class="more-btn" onclick="toggleMoreMenu(${reservation.reservationId})">
-                    <svg width="16" height="16" viewBox="0 0 24 24"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></svg>
+                    <img src="${spotSvgUrl}" class="more-icon" alt="더보기 아이콘" />
                     <div class="more-menu" id="more-menu-${reservation.reservationId}">
                         <div class="more-menu-item" onclick="deleteReservation(${reservation.reservationId})">삭제</div>
                     </div>
