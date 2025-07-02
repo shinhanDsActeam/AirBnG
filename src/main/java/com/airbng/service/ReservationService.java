@@ -14,7 +14,7 @@ public interface ReservationService {
     /**
      * 예약 취소 기능
      * */
-    public ReservationCancelResponse updateReservationState(Long reservationId, Long memberId);
+    ReservationCancelResponse updateReservationState(Long reservationId, Long memberId);
 
     //예약 승인/거절
     ReservationConfirmResponse confirmReservationState(Long reservationId, String approve, Long memberId);
@@ -27,4 +27,7 @@ public interface ReservationService {
 
     //예약 상새
     ReservationDetailResponse findReservationDetail(Long reservationId, Long memberId);
+
+    //삭제
+    void deleteReservationById(Long reservationId);
 }

@@ -253,8 +253,14 @@
         WHERE locker_id = #{lockerId}
     </select>
 
+
+    <delete id="deleteReservationJimtypeByReservationId" parameterType="long">
+        DELETE FROM reservationjimtype
+        WHERE reservation_id = #{reservationId}
+    </delete>
+
     <select id="deleteReservationById" parameterType="Long">
-        DELETE Reservation
+        DELETE FROM Reservation
         WHERE reservation_id = #{reservationId}
     </select>
 
