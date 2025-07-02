@@ -50,7 +50,7 @@ public class WebConfig implements WebMvcConfigurer {
 
         // Redis 기반 인터셉터 추가 등록
         registry.addInterceptor(redisRateLimitInterceptor)
-                .addPathPatterns("/members/**") // Path 수정 가능, 예: "/lockers/**"
+                .addPathPatterns("/members/qqqq/**") // Path 수정 가능, 예: "/lockers/**"
                 .excludePathPatterns("/swagger-ui.html", "/swagger-resources/**", "/v2/api-docs");
 
         registry.addInterceptor(loginRateLimitInterceptor)

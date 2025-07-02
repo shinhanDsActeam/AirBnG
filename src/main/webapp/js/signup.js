@@ -118,7 +118,10 @@ async function checkNicknameDuplicate() {
             nicknameButton.classList.add('success');
             nicknameButton.textContent = '확인완료';
             nicknameChecked = true;
-        } else {
+        } else if (response.status === 429) {
+            showValidationMessage('nickname', '너무 많은 요청 발생. 잠시 후 다시 시도해주세요.', 'error')
+        }
+        else {
             showValidationMessage('nickname',  '이미 사용 중인 닉네임입니다.', 'error');
         }
     } catch (error) {
