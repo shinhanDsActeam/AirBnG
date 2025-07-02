@@ -1,5 +1,8 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<c:set var="loginMemberId" value="${sessionScope.memberId}" />
+<c:set var="loginNickname" value="${sessionScope.nickname}" />
+<c:set var="loginEmail" value="${sessionScope.email}" />
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -8,9 +11,10 @@
     <title>마이페이지 - 에어비앤짐</title>
     <link rel="stylesheet" href="<c:url value='/css/mypage.css'/>" />
 </head>
-<body data-logged-in="${not empty sessionScope.user}"
-      data-user-name="${sessionScope.user.name}"
-      data-user-email="${sessionScope.user.email}">
+<body data-logged-in="${not empty sessionScope.memberId}"
+      data-user-name="${sessionScope.nickname}"
+      data-user-email="${sessionScope.email}"
+      data-member-id="${sessionScope.memberId}">
     <div class="container">
         <!-- 헤더 -->
         <header class="header">
@@ -75,8 +79,16 @@
                             <div class="profile-avatar"></div>
                         </div>
                         <div class="user-details">
-                            <h2 class="username">${sessionScope.user.name}님</h2>
-                            <p class="user-email">${sessionScope.user.email}</p>
+                            <h2 class="username">
+                                <c:choose>
+                                    <c:when test="${not empty sessionScope.nickname}">
+                                        ${sessionScope.nickname}님
+                                    </c:when>
+                                    <c:otherwise>
+                                        사용자님
+                                    </c:otherwise>
+                                </c:choose>
+                            </h2>
                         </div>
                     </div>
                 </div>
@@ -124,6 +136,28 @@
     </div>
     <%@ include file="navbar.jsp" %>
 
+    <script>
+        // 서버에서 렌더링된 세션 데이터를 JavaScript 전역 변수로 설정
+        const sessionData = {
+            memberId: '${loginMemberId}',
+            nickname: '${loginNickname}',
+            email: '${loginEmail}',
+            isLoggedIn: ${not empty sessionScope.memberId}
+        };
+
+        // 컨텍스트 패스 설정
+        const contextPath = '${pageContext.request.contextPath}';
+
+        // 디버깅용 로그
+        console.log('=== 세션 디버깅 ===');
+        console.log('memberId:', sessionData.memberId);
+        console.log('nickname:', sessionData.nickname);
+        console.log('email:', sessionData.email);
+        console.log('isLoggedIn:', sessionData.isLoggedIn);
+        console.log('contextPath:', contextPath);
+        console.log('==================');
+    </script>
     <script src="<c:url value='/js/mypage.js'/>"></script>
+
 </body>
 </html>

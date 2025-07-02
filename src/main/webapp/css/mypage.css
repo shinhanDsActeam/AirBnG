@@ -1,5 +1,3 @@
-
-
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
     background: #f8f9fa;
@@ -56,9 +54,11 @@ body {
 
 /* 메인 컨텐츠 */
 .main-content {
-    padding: 20px;
+    padding: 10px;
 }
-
+.menu-section {
+    width: 360px;
+}
 /* 웰컴 섹션 (로그인 전) */
 .welcome-section {
     text-align: center;
@@ -352,7 +352,7 @@ body {
 
 .menu-content h3 {
     font-size: 16px;
-    font-weight: 600;
+    font-weight: 800;
     margin-bottom: 4px;
     color: #333;
 }
