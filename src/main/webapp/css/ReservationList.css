@@ -207,9 +207,41 @@
              min-height: 220px;
          }
 
-         .reservation-card.cancelled {
-                 opacity: 0.5;
-                 position: relative;
+         /* 흐림 효과는 본문 영역만 */
+         .reservation-card.cancelled .reservation-body {
+           opacity: 0.5;
+         }
+
+         .status-text.cancelled {
+           opacity: 0.5;
+           font-size: 14px;
+           margin-left: 4px;
+         }
+
+         .reservation-card.cancelled .reservation-info-row {
+             display: flex;
+             justify-content: space-between;
+             align-items: center;
+             padding: 4px 12px; /* 상하 여백 4px, 좌우는 12px 유지 */
+             margin-bottom: 4px; /* 아래 구분선과의 거리도 줄이기 */
+         }
+
+         .reservation-card.cancelled .more-btn.always-visible {
+           opacity: 1;
+           background: none;
+           border: none;
+           width: 28px;
+           height: 28px;
+           border-radius: 6px;
+           padding: 0;
+           display: flex;
+           align-items: center;
+           justify-content: center;
+         }
+
+         .reservation-card.cancelled .more-btn.always-visible img.more-icon {
+           width: 20px;
+           height: 20px;
          }
 
          .reservation-header {
