@@ -265,3 +265,43 @@ form {
 .dropdown-options::-webkit-scrollbar-thumb:hover {
     background: #a8a8a8;
 }
+
+
+/* 하이라이팅 */
+#jimSection{
+    position: relative;
+}
+
+/* 짐 타입 박스 하이라이팅 효과 */
+.jim-item-highlight {
+    border: 2px solid #d64d5c !important;
+    box-shadow: 0 0 0 3px rgba(214, 77, 92, 0.2) !important;
+    background-color: rgba(214, 77, 92, 0.05) !important;
+    animation: shake 0.5s ease-in-out, pulse 2s ease-in-out infinite;
+    transform-origin: center;
+}
+
+.jim-title-highlight {
+    color: #d64d5c !important;
+    animation: blink 1s ease-in-out 3;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+}
+
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+}
+
+@keyframes pulse {
+    0%, 100% {
+        box-shadow: 0 0 0 3px rgba(214, 77, 92, 0.2);
+    }
+    50% {
+        box-shadow: 0 0 0 6px rgba(214, 77, 92, 0.4);
+    }
+}

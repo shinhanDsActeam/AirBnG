@@ -20,9 +20,8 @@ document.addEventListener('DOMContentLoaded', function () {
             alert('보관 날짜를 선택해주세요.');
             return;
         }
-        const startTimeSelect = document.getElementById('startTimeSelect');
-        const endTimeSelect = document.getElementById('endTimeSelect');
-        if (!startTimeSelect.value || !endTimeSelect.value) {
+
+        if (!selectedStartTime || !selectedEndTime) {
             alert('보관 시간을 선택해주세요.');
             return;
         }
@@ -30,7 +29,7 @@ document.addEventListener('DOMContentLoaded', function () {
         // 선택된 짐 종류가 있는지 확인
         const hasSelectedItems = Object.values(jimTypeCounts).some(count => count > 0);
         if (!hasSelectedItems) {
-            alert('짐 종류를 선택해주세요.');
+            highlightJimSection();
             return;
         }
 
@@ -453,6 +452,7 @@ function generateJimTypes(jimTypes) {
 }
 
 function changeQuantity(jimTypeId, change) {
+    clearHighlight();
     const input = document.getElementById(`qty_${jimTypeId}`);
     let newValue = parseInt(input.value) + change;
     if (newValue < 0) newValue = 0;
@@ -525,4 +525,49 @@ function calculateTotal() {
 
     document.getElementById('serviceFee').textContent = serviceFee.toLocaleString() + '원';
     document.getElementById('totalPrice').textContent = totalPrice.toLocaleString() + '원';
+}
+// 짐 타입 박스들에 하이라이팅 효과 적용
+function highlightJimSection() {
+    const jimTitle = document.querySelector('#jimSection h3'); // h3로 변경
+    const jimItems = document.querySelectorAll('#jimTypes > div'); // 실제 짐 타입 박스들
+
+    // 기존 효과 제거
+    clearHighlight();
+
+    // 제목 하이라이팅
+    if (jimTitle) {
+        jimTitle.classList.add('jim-title-highlight');
+    }
+
+    // 각 짐 타입 박스에 하이라이팅 효과 (순차적으로)
+    jimItems.forEach((item, index) => {
+        setTimeout(() => {
+            item.classList.add('jim-item-highlight');
+        }, index * 150); // 0.15초씩 차이나게 순차 적용
+    });
+
+    // 스크롤하여 해당 섹션으로 이동
+    const jimSection = document.getElementById('jimSection');
+    jimSection.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center'
+    });
+
+    // 3초 후 효과 제거
+    setTimeout(() => {
+        clearHighlight();
+    }, 3000);
+}
+
+function clearHighlight() {
+    const jimTitle = document.querySelector('#jimSection h3');
+    const jimItems = document.querySelectorAll('#jimTypes > div');
+
+    if (jimTitle) {
+        jimTitle.classList.remove('jim-title-highlight');
+    }
+
+    jimItems.forEach(item => {
+        item.classList.remove('jim-item-highlight');
+    });
 }

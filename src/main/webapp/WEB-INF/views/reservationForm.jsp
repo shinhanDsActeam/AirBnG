@@ -73,7 +73,7 @@
             </div>
 
             <!-- 짐 종류 -->
-            <div>
+            <div id = "jimSection">
                 <h3 class="font-medium text-gray-900 mb-3">짐 종류</h3>
                 <div class="space-y-3" id="jimTypes">
                 </div>
