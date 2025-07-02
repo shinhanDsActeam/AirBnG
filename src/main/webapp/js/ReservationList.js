@@ -218,19 +218,18 @@ function renderReservations(reservations) {
                 ${getActionButtons(res)}
             `;
         } else if (res.state === 'CANCELLED') {
-            // 취소완료: 날짜, 시작날짜, 찾는날짜, 버튼 모두 제거, 더보기 메뉴 추가
-            card.innerHTML = `
-                <div class="reservation-header">
-                    <div class="reservation-info-row">
-                        <div class="more-btn" onclick="toggleMoreMenu(${res.reservationId})">
-                            <img src="${blodspotSvgUrl}" alt="더보기 아이콘" />
-                            <div class="more-menu" id="more-menu-${res.reservationId}">
-                                <div class="more-menu-item" onclick="deleteReservation(${res.reservationId})">삭제</div>
-                            </div>
-                        </div>
-                        ${getStatusText(res.state)}
-                    </div>
-                </div>
+              card.innerHTML = `
+                  <div class="reservation-header">
+                      <div class="reservation-info-row">
+                          <div class="more-btn no-opacity" onclick="toggleMoreMenu(${res.reservationId})">
+                              <img src="${blodspotSvgUrl}" alt="더보기 아이콘" class="more-icon"/>
+                              <div class="more-menu" id="more-menu-${res.reservationId}">
+                                  <div class="more-menu-item" onclick="deleteReservation(${res.reservationId})">삭제</div>
+                              </div>
+                          </div>
+                          ${getStatusText(res.state)}
+                      </div>
+                  </div>
                 <div class="reservation-item">
                     ${imageHtml}
                     <div class="item-info">

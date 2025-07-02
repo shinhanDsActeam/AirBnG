@@ -85,8 +85,8 @@
          }
 
          .tab.active {
-             color: #3181E2;
-             border-bottom-color: #3181E2;
+             color: #4561DB;
+             border-bottom-color: #4561DB;
              font-weight: 600;
          }
 
@@ -208,7 +208,8 @@
          }
 
          .reservation-card.cancelled {
-             opacity: 0.5;
+                 opacity: 0.5;
+                 position: relative;
          }
 
          .reservation-header {
@@ -228,12 +229,14 @@
              align-items: center;
              flex-direction: row-reverse;
              margin: 15px 0;
+             position: relative;
          }
 
          .view-details {
-             color: #3181E2;
+             color: #4561DB;
              text-decoration: none;
              font-size: 13px;
+             font-weight: 580;
          }
 
          .status-text {
@@ -273,6 +276,30 @@
          .reservation-card.cancelled-state {
              min-height: 150px;
          }
+
+         /* 취소완료 카드의 더보기 아이콘은 흐림 효과에서 제외 */
+         .reservation-card.cancelled .more-btn {
+             position: relative;
+             z-index: 1;
+         }
+
+        /* 아이콘과 버튼 흐림 방지 */
+        .reservation-card.cancelled .more-icon,
+        .reservation-card.cancelled .more-btn {
+            opacity: 1 !important;
+            filter: none !important;
+        }
+
+          /* 취소완료 상태에서 more-btn 스타일 제거 */
+          .reservation-card.cancelled .more-btn {
+              background: transparent !important;
+              border: none !important;
+              box-shadow: none !important;
+              padding: 0;
+              width: auto;
+              height: auto;
+          }
+
 
          .item-image {
              width: 80px;
@@ -381,7 +408,7 @@
          .btn-cancel {
              background: #f1f3f5;          /* 연한 회색 배경 */
              color: #495057;               /* 짙은 회색 텍스트 */
-             border: 1px solid #3181E2;
+             border: 2px solid #4561DB;
              border-radius: 8px;
              padding: 8px 20px;
              font-size: 14px;
@@ -398,9 +425,9 @@
          }
 
          .btn-primary {
-             background: #3181E2;
+             background: #4561DB;
              color: white;
-             border: 1px solid #3181E2;
+             border: 1px solid #4561DB;
          }
 
          .btn-primary:hover:not(.btn-disabled) {
@@ -422,7 +449,7 @@
              border-radius: 8px;
              background: #f1f3f5;
              color: #495057;
-             border: 1px solid #3181E2;
+             border: 2px solid #4561DB;
              cursor: pointer;
              font-size: 14px;
              font-weight: 500;
@@ -460,7 +487,7 @@
          /* 삭제 메뉴 스타일 (배경색 EBEBEB로 적용) */
          .more-menu {
              position: absolute;
-             top: 100%;
+             top: calc(100% + 5px);  /* 버튼 바로 아래 5px 간격 */
              right: 0;
              background: #EBEBEB;  /* 변경된 배경 색상 */
              border: 1px solid #ddd;
@@ -469,6 +496,7 @@
              min-width: 80px;
              z-index: 1000;
              display: none;
+             overflow: hidden;
          }
 
          .more-menu.show {
@@ -482,10 +510,31 @@
              font-size: 14px;
              color: #dc3545;
              text-align: center;
+             font-weight: 500;
+         }
+
+         .more-menu::before {
+             content: '';
+             position: absolute;
+             top: -6px;
+             right: 12px;
+             width: 0;
+             height: 0;
+             border-left: 6px solid transparent;
+             border-right: 6px solid transparent;
+             border-bottom: 6px solid #EBEBEB;
          }
 
          .more-menu-item:hover {
              background-color: #f1f1f1;
+         }
+
+         .completed-actions {
+             display: flex;
+             align-items: center;
+             gap: 8px;
+             margin-top: 15px;
+             position: relative;  /* 상대 위치 설정 */
          }
 
          /* 빈 상태 */
@@ -502,7 +551,7 @@
          }
 
          .load-more-btn {
-             background: #3181E2;
+             background: #4561DB;
              color: white;
              border: none;
              padding: 12px 30px;
