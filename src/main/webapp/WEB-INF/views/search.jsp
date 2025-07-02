@@ -6,6 +6,7 @@
     <meta charset="utf-8">
     <title>이미지 마커와 커스텀 오버레이</title>
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/search.css">
+    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/bottom-sheet.css">
     <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=4bf15ccba3d2bdbeffb6776b0c82521d"></script>
 </head>
 <body>
@@ -20,48 +21,121 @@
             </form>
         </div>
     </div>
-    <script>
-        var mapContainer = document.getElementById('map'), // 지도를 표시할 div
-            mapOption = {
-                center: new kakao.maps.LatLng(37.55935630141197, 126.92263348592226), // 지도의 중심좌표
-                level: 4 // 지도의 확대 레벨
+
+    <!-- 바텀시트 -->
+        <div class="bottom-sheet" id="bottomSheet">
+            <div class="sheet-header" id="sheetHeader">
+                <div class="sheet-drag-handle"></div>
+            </div>
+            <div class="sheet-content">
+                <div class="storage-item">
+                    <div class="storage-image"></div>
+                    <div class="storage-info">
+                        <div class="storage-name">강남역 보관소</div>
+                        <div class="storage-address">주소주소주소주소주소주소</div>
+                    </div>
+                    <button class="storage-button">보관가능</button>
+                </div>
+                <div class="storage-item">
+                    <div class="storage-image"></div>
+                    <div class="storage-info">
+                        <div class="storage-name">강남역 보관소</div>
+                        <div class="storage-address">주소주소주소주소주소주소</div>
+                    </div>
+                    <button class="storage-button">보관가능</button>
+                </div>
+                <div class="storage-item disabled">
+                    <div class="storage-image"></div>
+                    <div class="storage-info">
+                        <div class="storage-name">강남역 보관소</div>
+                        <div class="storage-address">주소주소주소주소주소주소</div>
+                    </div>
+                    <button class="storage-button">보관대기</button>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            // 카카오 맵 초기화
+            var mapContainer = document.getElementById('map');
+            var mapOption = {
+                center: new kakao.maps.LatLng(37.55935630141197, 126.92263348592226),
+                level: 4
             };
 
-        var map = new kakao.maps.Map(mapContainer, mapOption); // 지도를 생성합니다
+            var map = new kakao.maps.Map(mapContainer, mapOption);
 
-        var position =  new kakao.maps.LatLng(37.55935630141197, 126.92263348592226);
+            var position = new kakao.maps.LatLng(37.55935630141197, 126.92263348592226);
 
-        var marker = new kakao.maps.Marker({
-          position: position,
-          clickable: true // 마커를 클릭했을 때 지도의 클릭 이벤트가 발생하지 않도록 설정합니다
-        });
+            var marker = new kakao.maps.Marker({
+                position: position,
+                clickable: true
+            });
+
+            marker.setMap(map);
+
+            var iwContent = '<div style="padding:5px;">Hello World!</div>';
+            var iwRemoveable = true;
+
+            var infowindow = new kakao.maps.InfoWindow({
+                content: iwContent,
+                removable: iwRemoveable
+            });
+
+            kakao.maps.event.addListener(marker, 'click', function() {
+                infowindow.open(map, marker);
+            });
 
 
-        var iwContent = '<div style="padding:5px;">Hello World! <br></div>', // 인포윈도우에 표출될 내용으로 HTML 문자열이나 document element가 가능합니다
-            iwPosition = new kakao.maps.LatLng(37.55935630141197, 126.92263348592226);
+document.addEventListener('DOMContentLoaded', function () {
+  const sheet = document.getElementById('bottomSheet');
+  const header = document.getElementById('sheetHeader');
 
-        var infowindow = new kakao.maps.InfoWindow({
-            position : iwPosition,
-            content : iwContent
-        });
+  let startY = 0;
+  let isDragging = false;
 
-        // 마커가 지도 위에 표시되도록 설정합니다
-        marker.setMap(map);
+  const mouseDownHandler = function (e) {
+    startY = e.clientY;
+    isDragging = true;
+    sheet.classList.add("dragging");
 
-        var iwContent = '<div style="padding:5px;">Hello World!</div>', // 인포윈도우에 표출될 내용으로 HTML 문자열이나 document element가 가능합니다
-            iwRemoveable = true;
+    document.addEventListener('mousemove', mouseMoveHandler);
+    document.addEventListener('mouseup', mouseUpHandler);
+  };
 
-        // 인포윈도우를 생성합니다
-        var infowindow = new kakao.maps.InfoWindow({
-            content : iwContent,
-            removable : iwRemoveable
-        });
+  const mouseMoveHandler = function (e) {
+    // 선택적으로 디버그 텍스트 업데이트
+    const debug = document.getElementById("debugOutput");
+    if (debug) {
+      debug.textContent = "현재 Y: " + e.clientY;
+    }
+  };
 
-        // 마커에 클릭이벤트를 등록합니다
-        kakao.maps.event.addListener(marker, 'click', function() {
-              // 마커 위에 인포윈도우를 표시합니다
-              infowindow.open(map, marker);
-        });
-    </script>
+  const mouseUpHandler = function (e) {
+    if (!isDragging) return;
+
+    const middleY = window.innerHeight / 2;
+    const currentY = e.clientY;
+
+    // 조건에 따라 translateY 조정
+    if (currentY > middleY) {
+      // 아래면 70% 보이기
+      sheet.style.transform = "translateX(-50%) translateY(70%)";
+    } else {
+      // 위면 30% 보이기
+      sheet.style.transform = "translateX(-50%) translateY(0%)";
+    }
+
+    isDragging = false;
+    sheet.classList.remove("dragging");
+
+    document.removeEventListener('mousemove', mouseMoveHandler);
+    document.removeEventListener('mouseup', mouseUpHandler);
+  };
+
+  header.addEventListener('mousedown', mouseDownHandler);
+});
+
+</script>
 </body>
 </html>
