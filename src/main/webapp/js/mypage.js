@@ -1,6 +1,16 @@
 // 페이지 로드 시 초기화
 document.addEventListener('DOMContentLoaded', function() {
     initializeMyPage();
+    setupModalEvents(); // 모달 이벤트 설정 추가
+
+    // 페이지 로드시 로그인 상태에 따른 UI 표시
+    if (sessionData.isLoggedIn) {
+        document.getElementById('loggedOutSection').style.display = 'none';
+        document.getElementById('loggedInSection').style.display = 'block';
+    } else {
+        document.getElementById('loggedOutSection').style.display = 'block';
+        document.getElementById('loggedInSection').style.display = 'none';
+    }
 });
 
 // 마이페이지 초기화
@@ -153,8 +163,9 @@ function goToSignup() {
 function goToMyInfo() {
     // 로그인 상태 재확인
     if (!isLoggedIn()) {
-        alert('로그인이 필요한 서비스입니다.');
-        goToLogin();
+        showInfoModal('로그인 필요', '로그인이 필요한 서비스입니다.', function() {
+            goToLogin();
+        });
         return;
     }
 
@@ -170,8 +181,9 @@ function goToMyInfo() {
 function goToReservations() {
     // 로그인 상태 재확인
     if (!isLoggedIn()) {
-        alert('로그인이 필요한 서비스입니다.');
-        goToLogin();
+        showInfoModal('로그인 필요', '로그인이 필요한 서비스입니다.', function() {
+            goToLogin();
+        });
         return;
     }
 
@@ -187,8 +199,9 @@ function goToReservations() {
 function goToReviews() {
     // 로그인 상태 재확인
     if (!isLoggedIn()) {
-        alert('로그인이 필요한 서비스입니다.');
-        goToLogin();
+        showInfoModal('로그인 필요', '로그인이 필요한 서비스입니다.', function() {
+            goToLogin();
+        });
         return;
     }
 
@@ -209,65 +222,227 @@ function isLoggedIn() {
            sessionData.memberId !== '';
 }
 
-// 로그아웃 (클라이언트 단에서 처리)
+// 개선된 로그아웃 함수
 function logout() {
-    if (!confirm('정말로 로그아웃하시겠습니까?')) {
-        return;
-    }
+    showConfirmModal('로그아웃', '정말로 로그아웃하시겠습니까?', function() {
+        showLoadingAnimation();
 
-    showLoadingAnimation();
+        // 1. 서버에 로그아웃 요청 (세션 무효화)
+        performServerLogout()
+            .then(() => {
+                // 2. 클라이언트 쿠키 삭제
+                clearAllCookies();
 
-    // 세션 데이터 초기화
-    if (typeof sessionData !== 'undefined') {
-        sessionData.isLoggedIn = false;
-        sessionData.memberId = null;
-        sessionData.nickname = null;
-        sessionData.email = null;
-    }
+                // 3. 세션 데이터 초기화
+                resetSessionData();
 
-    // 세션 스토리지 삭제 (혹시 사용중이라면)
-    if (typeof(Storage) !== "undefined") {
-        sessionStorage.clear();
-    }
-
-    // 쿠키에서 세션 관련 정보 삭제
-    deleteCookie('JSESSIONID');
-    deleteCookie('memberId');
-    deleteCookie('nickname');
-    deleteCookie('email');
-
-    // UI를 로그아웃 상태로 변경
-    setTimeout(() => {
-        hideLoadingAnimation();
-        showLoggedOutSection();
-
-        // 사용자에게 로그아웃 완료 알림
-        alert('로그아웃되었습니다.');
-
-        // 필요하다면 홈페이지로 리다이렉트
-        // const ctx = getContextPath();
-        // window.location.href = `${ctx}/page/home`;
-
-    }, 500);
+                // 4. UI 업데이트
+                setTimeout(() => {
+                    hideLoadingAnimation();
+                    showLoggedOutSection();
+                    console.log('로그아웃 완료');
+                }, 500);
+            })
+            .catch(error => {
+                console.error('서버 로그아웃 실패:', error);
+                // 서버 요청 실패해도 클라이언트 정리는 수행
+                clearAllCookies();
+                resetSessionData();
+                hideLoadingAnimation();
+                showLoggedOutSection();
+            });
+    });
 }
 
-// 쿠키 삭제 헬퍼 함수
-function deleteCookie(name) {
-    // 현재 도메인에서 삭제
-    document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-
-    // 컨텍스트 패스가 있다면 해당 경로에서도 삭제
+// 서버에 로그아웃 요청
+function performServerLogout() {
     const ctx = getContextPath();
-    if (ctx) {
-        document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=' + ctx + '/;';
+
+    return fetch(`${ctx}/logout`, {
+        method: 'POST',
+        credentials: 'include', // 쿠키 포함
+        headers: {
+            'Content-Type': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    }).then(response => {
+        if (!response.ok) {
+            throw new Error('Logout request failed');
+        }
+        return response;
+    });
+}
+
+// 개선된 쿠키 삭제 함수
+function clearAllCookies() {
+    // 현재 도메인 정보 가져오기
+    const currentDomain = window.location.hostname;
+    const currentPath = window.location.pathname;
+    const contextPath = getContextPath();
+
+    console.log('쿠키 삭제 시작...');
+    console.log('현재 도메인:', currentDomain);
+    console.log('현재 경로:', currentPath);
+    console.log('컨텍스트 경로:', contextPath);
+
+    // 삭제할 쿠키 목록
+    const cookiesToDelete = [
+        'JSESSIONID',
+        'memberId',
+        'nickname',
+        'email',
+        'loginMemberId',
+        'loginNickname',
+        'loginEmail',
+        'remember-me',
+        'SESSION'
+    ];
+
+    // 시도할 도메인 조합
+    const domains = [
+        '', // 도메인 설정 없음
+        currentDomain,
+        `.${currentDomain}`,
+        'localhost',
+        '.localhost'
+    ];
+
+    // 시도할 경로 조합
+    const paths = [
+        '/',
+        contextPath + '/',
+        contextPath,
+        currentPath,
+        ''
+    ];
+
+    // 모든 쿠키에 대해 모든 도메인/경로 조합으로 삭제 시도
+    cookiesToDelete.forEach(cookieName => {
+        domains.forEach(domain => {
+            paths.forEach(path => {
+                let deleteString = `${cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; max-age=0;`;
+
+                if (path) {
+                    deleteString += ` path=${path};`;
+                }
+
+                if (domain) {
+                    deleteString += ` domain=${domain};`;
+                }
+
+                // Secure 속성도 시도 (HTTPS인 경우)
+                if (window.location.protocol === 'https:') {
+                    deleteString += ' secure;';
+                }
+
+                document.cookie = deleteString;
+
+                // SameSite 속성 추가 시도
+                document.cookie = deleteString + ' samesite=lax;';
+                document.cookie = deleteString + ' samesite=strict;';
+                document.cookie = deleteString + ' samesite=none;';
+            });
+        });
+    });
+
+    // 기존 쿠키 파싱해서 모든 쿠키 삭제 시도
+    const allCookies = document.cookie.split(';');
+    allCookies.forEach(cookie => {
+        const eqPos = cookie.indexOf('=');
+        const name = eqPos > -1 ? cookie.substr(0, eqPos).trim() : cookie.trim();
+
+        if (name) {
+            domains.forEach(domain => {
+                paths.forEach(path => {
+                    let deleteString = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; max-age=0;`;
+
+                    if (path) {
+                        deleteString += ` path=${path};`;
+                    }
+
+                    if (domain) {
+                        deleteString += ` domain=${domain};`;
+                    }
+
+                    document.cookie = deleteString;
+                });
+            });
+        }
+    });
+
+    console.log('쿠키 삭제 완료');
+    console.log('남은 쿠키:', document.cookie);
+}
+
+// 세션 데이터 초기화
+function resetSessionData() {
+    if (typeof sessionData !== 'undefined') {
+        sessionData.memberId = '';
+        sessionData.nickname = '';
+        sessionData.email = '';
+        sessionData.isLoggedIn = false;
     }
 
-    // 루트 도메인에서도 삭제 (서브도메인 대응)
-    const domain = window.location.hostname;
-    if (domain.includes('.')) {
-        const rootDomain = '.' + domain.split('.').slice(-2).join('.');
-        document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=' + rootDomain + ';';
-    }
+    console.log('세션 데이터 초기화 완료');
+}
+
+// 로그아웃 상태 확인 (디버깅용)
+function checkLogoutStatus() {
+    console.log('=== 로그아웃 상태 확인 ===');
+    console.log('현재 쿠키:', document.cookie);
+    console.log('세션 데이터:', sessionData);
+    console.log('로그인 상태:', isLoggedIn());
+    console.log('========================');
+}
+
+// 강제 새로고침 로그아웃 (최후 수단)
+function forceLogout() {
+    clearAllCookies();
+    resetSessionData();
+
+    // 페이지 새로고침으로 서버에서 세션 상태 다시 확인
+    setTimeout(() => {
+        window.location.reload();
+    }, 100);
+}
+
+// 세션 관련 쿠키 삭제
+function clearSessionCookies() {
+    // 모든 쿠키 가져오기
+    const cookies = document.cookie.split(';');
+
+    // 각 쿠키에 대해 삭제 처리
+    cookies.forEach(cookie => {
+        const eqPos = cookie.indexOf('=');
+        const name = eqPos > -1 ? cookie.substr(0, eqPos).trim() : cookie.trim();
+
+        if (name) {
+            // 다양한 경로와 도메인에서 삭제 시도
+            const deletePaths = ['/', contextPath + '/', contextPath];
+            const domains = ['', `.${window.location.hostname}`, window.location.hostname];
+
+            deletePaths.forEach(path => {
+                domains.forEach(domain => {
+                    let deleteString = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=${path};`;
+                    if (domain) {
+                        deleteString += ` domain=${domain};`;
+                    }
+                    document.cookie = deleteString;
+                });
+            });
+        }
+    });
+
+    // 추가로 특정 쿠키들 강제 삭제
+    const specificCookies = ['JSESSIONID', 'memberId', 'nickname', 'email', 'loginMemberId', 'loginNickname', 'loginEmail'];
+    specificCookies.forEach(cookieName => {
+        document.cookie = `${cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; max-age=0;`;
+        document.cookie = `${cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=${contextPath}/; max-age=0;`;
+        document.cookie = `${cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=${contextPath}; max-age=0;`;
+    });
+
+    console.log('모든 쿠키 삭제 완료');
+    console.log('남은 쿠키:', document.cookie);
 }
 
 // 로딩 애니메이션 표시
@@ -330,4 +505,263 @@ function hideLoadingAnimation() {
 function refreshUserInfo() {
     checkLoginStatus();
     console.log('사용자 정보가 새로고침되었습니다.');
+}
+
+// 동적 모달 생성 및 표시 함수들
+function createModal(id, title, message, type = 'info') {
+    // 기존 모달이 있으면 제거
+    const existingModal = document.getElementById(id);
+    if (existingModal) {
+        existingModal.remove();
+    }
+
+    const modal = document.createElement('div');
+    modal.id = id;
+    modal.className = 'modal-overlay';
+    modal.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 10000;
+        backdrop-filter: blur(3px);
+    `;
+
+    const modalContent = document.createElement('div');
+    modalContent.className = 'modal';
+    modalContent.style.cssText = `
+        background: white;
+        border-radius: 12px;
+        padding: 0;
+        min-width: 300px;
+        max-width: 400px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        animation: modalSlideIn 0.3s ease-out;
+    `;
+
+    // 애니메이션 스타일 추가
+    if (!document.getElementById('modalStyles')) {
+        const style = document.createElement('style');
+        style.id = 'modalStyles';
+        style.textContent = `
+            @keyframes modalSlideIn {
+                from {
+                    opacity: 0;
+                    transform: translateY(-20px) scale(0.95);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0) scale(1);
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    }
+
+    // 아이콘 설정
+    let icon = '';
+    let iconColor = '#4CAF50'
+
+    modalContent.innerHTML = `
+        <div class="modal-content" style="padding: 24px; text-align: center;">
+            <div class="modal-icon" style="font-size: 48px; margin-bottom: 16px; color: ${iconColor};">${icon}</div>
+            <div class="modal-title" style="font-size: 20px; font-weight: 600; margin-bottom: 12px; color: #333;">${title}</div>
+            <div class="modal-message" style="font-size: 16px; color: #666; margin-bottom: 24px;">${message}</div>
+        </div>
+        <div class="modal-buttons" style="border-top: 1px solid #eee; display: flex;"></div>
+    `;
+
+    modal.appendChild(modalContent);
+    document.body.appendChild(modal);
+
+    return modal;
+}
+
+// 정보 모달 (확인 버튼만)
+function showInfoModal(title, message, callback = null) {
+    const modal = createModal('info-modal', title, message, 'info');
+    const buttonsContainer = modal.querySelector('.modal-buttons');
+
+    const confirmBtn = document.createElement('button');
+    confirmBtn.textContent = '확인';
+    confirmBtn.style.cssText = `
+        flex: 1;
+        padding: 16px;
+        border: none;
+        background: #4561DB;
+        color: white;
+        font-size: 16px;
+        cursor: pointer;
+        border-radius: 0 0 12px 12px;
+        transition: background-color 0.2s;
+    `;
+
+    confirmBtn.addEventListener('mouseover', () => {
+        confirmBtn.style.backgroundColor = '#3651CB';
+    });
+
+    confirmBtn.addEventListener('mouseout', () => {
+        confirmBtn.style.backgroundColor = '#4561DB';
+    });
+
+    confirmBtn.addEventListener('click', () => {
+        modal.remove();
+        if (callback) callback();
+    });
+
+    buttonsContainer.appendChild(confirmBtn);
+
+    // 오버레이 클릭시 모달 닫기
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            modal.remove();
+        }
+    });
+
+    // ESC 키로 모달 닫기
+    const escHandler = (e) => {
+        if (e.key === 'Escape') {
+            modal.remove();
+            document.removeEventListener('keydown', escHandler);
+        }
+    };
+    document.addEventListener('keydown', escHandler);
+}
+
+// 확인/취소 모달
+function showConfirmModal(title, message, confirmCallback = null, cancelCallback = null) {
+    const modal = createModal('confirm-modal', title, message, 'question');
+    const buttonsContainer = modal.querySelector('.modal-buttons');
+
+    const cancelBtn = document.createElement('button');
+    cancelBtn.textContent = '취소';
+    cancelBtn.style.cssText = `
+        flex: 1;
+        padding: 16px;
+        border: none;
+        background: #f5f5f5;
+        color: #666;
+        font-size: 16px;
+        cursor: pointer;
+        border-radius: 0 0 0 12px;
+        border-right: 1px solid #eee;
+        transition: background-color 0.2s;
+    `;
+
+    const confirmBtn = document.createElement('button');
+    confirmBtn.textContent = '확인';
+    confirmBtn.style.cssText = `
+        flex: 1;
+        padding: 16px;
+        border: none;
+        background: #4561DB;
+        color: white;
+        font-size: 16px;
+        cursor: pointer;
+        border-radius: 0 0 12px 0;
+        transition: background-color 0.2s;
+    `;
+
+    // 호버 효과
+    cancelBtn.addEventListener('mouseover', () => {
+        cancelBtn.style.backgroundColor = '#e5e5e5';
+    });
+
+    cancelBtn.addEventListener('mouseout', () => {
+        cancelBtn.style.backgroundColor = '#f5f5f5';
+    });
+
+    confirmBtn.addEventListener('mouseover', () => {
+        confirmBtn.style.backgroundColor = '#3651CB';
+    });
+
+    confirmBtn.addEventListener('mouseout', () => {
+        confirmBtn.style.backgroundColor = '#4561DB';
+    });
+
+    // 이벤트 리스너
+    cancelBtn.addEventListener('click', () => {
+        modal.remove();
+        if (cancelCallback) cancelCallback();
+    });
+
+    confirmBtn.addEventListener('click', () => {
+        modal.remove();
+        if (confirmCallback) confirmCallback();
+    });
+
+    buttonsContainer.appendChild(cancelBtn);
+    buttonsContainer.appendChild(confirmBtn);
+
+    // 오버레이 클릭시 모달 닫기
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            modal.remove();
+        }
+    });
+
+    // ESC 키로 모달 닫기
+    const escHandler = (e) => {
+        if (e.key === 'Escape') {
+            modal.remove();
+            document.removeEventListener('keydown', escHandler);
+        }
+    };
+    document.addEventListener('keydown', escHandler);
+}
+
+// 기존 모달 관련 함수들 (기존 success-modal 사용)
+function showSuccessModal() {
+    const modal = document.getElementById('success-modal');
+    if (modal) {
+        modal.classList.remove('hidden');
+        console.log('모달이 표시되었습니다.');
+    } else {
+        console.error('success-modal 요소를 찾을 수 없습니다.');
+    }
+}
+
+function hideSuccessModal() {
+    const modal = document.getElementById('success-modal');
+    if (modal) {
+        modal.classList.add('hidden');
+        console.log('모달이 숨겨졌습니다.');
+    }
+}
+
+function confirmLoginSuccess() {
+    hideSuccessModal();
+    // 필요시 추가 동작 구현
+    console.log('로그인 성공 확인됨');
+}
+
+// 테스트용 함수 - 모달 표시
+function testModal() {
+    console.log('테스트 모달 호출됨');
+    showSuccessModal();
+}
+
+// 모달 이벤트 설정
+function setupModalEvents() {
+    // 모달 오버레이 클릭시 모달 닫기
+    const modalOverlay = document.getElementById('success-modal');
+    if (modalOverlay) {
+        modalOverlay.addEventListener('click', function(e) {
+            if (e.target === modalOverlay) {
+                hideSuccessModal();
+            }
+        });
+    }
+
+    // ESC 키로 모달 닫기
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            hideSuccessModal();
+        }
+    });
 }
