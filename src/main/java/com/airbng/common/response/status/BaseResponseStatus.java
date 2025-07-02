@@ -30,6 +30,7 @@ public enum BaseResponseStatus implements ResponseStatus{
     DUPLICATE_PHONE(2005,HttpStatus.BAD_REQUEST.value(),"휴대폰 번호 중복 오류"),
     INVALID_EMAIL(2006, HttpStatus.BAD_REQUEST.value(),"이메일 형식을 지켜주세요"),
     INVALID_MEMBER(2007, HttpStatus.UNAUTHORIZED.value(), "유효하지 않은 멤버입니다."),
+    NOT_UPDATE_MEMBER(2008, HttpStatus.NO_CONTENT.value(), "멤버 정보가 변경되지 않았습니다."),
 
     /**
      * 3000 락커 관련 코드
@@ -38,6 +39,8 @@ public enum BaseResponseStatus implements ResponseStatus{
     NOT_FOUND_LOCKERDETAILS(3002,HttpStatus.BAD_REQUEST.value(), "락커를 찾을 수 없습니다."),
     MEMBER_ALREADY_HAS_LOCKER(3003, HttpStatus.BAD_REQUEST.value(), "한 멤버당 하나의 보관소만 등록할 수 있습니다."),
     LOCKER_KEEPER_MISMATCH(3004, HttpStatus.BAD_REQUEST.value(), "선택한 보관소의 보관자 정보가 일치하지 않습니다."),
+    LOCKER_NOT_AVAILABLE(3005, HttpStatus.LOCKED.value(), "비활성화된 보관소입니다."),
+
     /**
      * 4000 예약 관련 코드
      */
@@ -67,6 +70,7 @@ public enum BaseResponseStatus implements ResponseStatus{
     EMPTY_FILE(6002, HttpStatus.BAD_REQUEST.value(),"업로드할 이미지가 없습니다."),
     INVALID_EXTENSIONS(6003, HttpStatus.UNSUPPORTED_MEDIA_TYPE.value(),"허용되지 않는 파일 확장자입니다."),
     EXCEED_IMAGE_COUNT(6004, HttpStatus.PAYLOAD_TOO_LARGE.value(), "이미지 개수가 초과되었습니다. 최대 5개까지 업로드 가능합니다."),
+    EXCEED_FILE_SIZE(6005, HttpStatus.PAYLOAD_TOO_LARGE.value(), "이미지 크기가 초과되었습니다. 최대 10MB까지 업로드 가능합니다."),
 
     /**
      * 7000: 찜 관련 코드

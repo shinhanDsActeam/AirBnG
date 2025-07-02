@@ -5,6 +5,7 @@ import com.airbng.dto.MemberLoginRequest;
 import com.airbng.dto.MemberLoginResponse;
 import com.airbng.dto.MemberSignupRequest;
 import com.airbng.dto.*;
+import com.airbng.service.ImageService;
 import com.airbng.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,6 +15,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.validation.Valid;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -50,7 +52,7 @@ public class MemberController {
         return new BaseResponse<>("사용 가능한 닉네임");
     }
 
-    @GetMapping
+    @GetMapping("/my-page/{memberId}")
     public BaseResponse<MemberMyPageResponse> findUserById(
             @RequestParam @NotNull @Min(1) Long memberId
     ) {
@@ -62,21 +64,28 @@ public class MemberController {
         return new BaseResponse<>(response);
     }
 
+    @PostMapping("/my-page/update")
+    public BaseResponse<MemberMyPageResponse> updateUserById(
+            @Valid @RequestPart ("memberUpdateRequest") MemberUpdateRequest memberUpdateRequest,
+            @RequestPart(value = "profileImage", required = false) MultipartFile profileImage) {
+
+        log.info("회원 정보 수정 요청: {}", memberUpdateRequest);
+        log.info("프로필 이미지: {}", profileImage != null ? profileImage.getOriginalFilename() : "없음");
+
+        MemberMyPageResponse response = memberService.updateUserById(memberUpdateRequest, profileImage);
+        return new BaseResponse<>(response);
+    }
+
     @PostMapping("/login")
     public BaseResponse<MemberLoginResponse> login(@RequestBody MemberLoginRequest request,
                                                    HttpSession session,
                                                    HttpServletRequest httpRequest) {
-        log.info("Controller 도달");
-
         // Interceptor에서 참조 가능하게 세팅
         httpRequest.setAttribute("loginEmail", request.getEmail());
-        log.info("로그인 요청: email={}, password={}", request.getEmail(), request.getPassword());
-
         MemberLoginResponse response = memberService.login(request.getEmail(), request.getPassword());
-        log.info("로그인 결과: {}", response);
-
         session.setAttribute("memberId", response.getMemberId());
+        session.setAttribute(("nickname"), response.getNickname());
+
         return new BaseResponse<>(SUCCESS_LOGIN, response);
     }
-
 }

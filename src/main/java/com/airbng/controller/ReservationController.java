@@ -4,6 +4,7 @@ import com.airbng.common.response.BaseResponse;
 import com.airbng.domain.base.ReservationState;
 import com.airbng.dto.reservation.*;
 import com.airbng.service.ReservationService;
+import com.airbng.util.SessionUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import lombok.extern.slf4j.Slf4j;
@@ -38,9 +39,17 @@ public class ReservationController {
         return new BaseResponse<>(reservationService.updateReservationState(reservationId, memberId));
     }
 
+    // 예약 폼 받아오기
+    @GetMapping("/form")
+    public BaseResponse<ReservationFormResponse> getReservationForm(@RequestParam("lockerId") @Min(1) @NotNull Long lockerId) {
+        return new BaseResponse<>(reservationService.getReservationForm(lockerId));
+    }
+
     // 예약 등록
     @PostMapping
-    public BaseResponse<String> insertReservation(@RequestBody @Valid ReservationInsertRequest request) {
+    public BaseResponse<String> insertReservation(@RequestBody @Valid ReservationInsertRequest request,
+                                                  HttpSession session) {
+        request.setDropperId(SessionUtils.getLoginMemberId(session));
         return new BaseResponse<>(reservationService.insertReservation(request));
     }
 
