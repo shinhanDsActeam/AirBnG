@@ -16,12 +16,12 @@ html, body {
     justify-content: center;
 }
 
-/* 페이지 컨테이너: 모바일 사이즈 기준 반응형 */
+
 .page-container {
     position: relative;
     display: flex;
     flex-direction: column;
-    height: 100%; /* ✅ 전체 높이를 기준으로 사용 */
+    height: 100%;
     max-width: 412px;
     width: 100%;
     background-color: #ffffff;
@@ -49,8 +49,8 @@ html, body {
 
 .search-container {
     width: 332px;
-  min-height: 42px; /* 최소 높이 설정 */
-  max-height: 42px; /* 최대 높이 설정 */
+  min-height: 42px;
+  max-height: 42px;
   display: flex;
   align-items: center;
   background-color: #fff;
@@ -86,7 +86,7 @@ html, body {
     height: 16px;
 }
 
-/* 지도 */
+/* 지도 컨테이너 */
 #map {
     width: 100%;
     height: 100%;
