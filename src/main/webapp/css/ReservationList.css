@@ -1,14 +1,14 @@
-* {
-             box-sizing: border-box;
-         }
 
          body {
+
+         max-width: 412px;
+             margin: auto;
+             padding-bottom: 80px;
+
              font-family: 'Noto Sans KR', sans-serif;
              background-color: #ffffff;
              color: #333;
-             width: 412px;
-             margin: 0 auto;
-             min-height: 100vh;
+              overflow-x: hidden;  /* ✅ 가로 스크롤 방지 */
          }
 
          /* 헤더 */
@@ -193,7 +193,7 @@
              box-shadow: 0 2px 8px rgba(0,0,0,0.1);
              position: relative;
              transition: all 0.3s;
-             width: 372px;
+             max-width: 372px;
              height: auto;
              min-height: 355px;
          }

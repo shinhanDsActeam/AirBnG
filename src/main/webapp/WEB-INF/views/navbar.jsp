@@ -19,7 +19,7 @@
         <span class="nav-text">홈</span>
     </a>
 
-    <a href="calendar.jsp" class="nav-item" data-page="calendar">
+    <a href="${pageContext.request.contextPath}/page/reservation/list" class="nav-item" data-page="calendar">
         <img src="<c:url value='/images/calendar.svg'/>" alt="예약" class="nav-icon">
         <span class="nav-text">예약</span>
     </a>
