@@ -49,8 +49,9 @@ public class WebConfig implements WebMvcConfigurer {
                 .excludePathPatterns("/swagger-ui.html", "/swagger-resources/**", "/v2/api-docs");
 
         // Redis 기반 인터셉터 추가 등록
+        // TODO : 나중에 다시 구현
         registry.addInterceptor(redisRateLimitInterceptor)
-                .addPathPatterns("/members/qqqq/**") // Path 수정 가능, 예: "/lockers/**"
+                .addPathPatterns("/members/todo/**") // Path 수정 가능, 예: "/lockers/**"
                 .excludePathPatterns("/swagger-ui.html", "/swagger-resources/**", "/v2/api-docs");
 
         registry.addInterceptor(loginRateLimitInterceptor)
