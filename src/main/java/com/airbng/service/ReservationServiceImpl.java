@@ -220,9 +220,9 @@ public class ReservationServiceImpl implements ReservationService {
     @Override
     @Transactional
     public void deleteReservationById(Long reservationId){
-        Reservation reservation = reservationMapper.findReservationDetailById(reservationId);
+        ReservationState state = reservationMapper.findReservationStateById(reservationId);
 
-        if(reservation.getState().equals(ReservationState.CANCELLED)){
+        if(state.equals(ReservationState.CANCELLED)){
             throw new ReservationException(FAILED_DELETE_RESERVATION);
         }
 

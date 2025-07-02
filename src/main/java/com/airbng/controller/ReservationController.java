@@ -15,6 +15,8 @@ import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
+import static com.airbng.common.response.status.BaseResponseStatus.SUCCESS;
+
 @RestController
 @RequestMapping("/reservations")
 @Validated
@@ -78,6 +80,6 @@ public class ReservationController {
     @GetMapping("/delete")
     public BaseResponse<Void> deleteReservation(Long reservationId){
         reservationService.deleteReservationById(reservationId);
-        return new BaseResponse<>(null);
+        return new BaseResponse<>(SUCCESS);
     }
 }
