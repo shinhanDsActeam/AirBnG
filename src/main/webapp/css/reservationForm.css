@@ -9,16 +9,26 @@ body {
     margin: 0 auto;
 }
 
+form {
+    padding: 15px 20px;
+}
+
 .date-btn {
-    /*@apply w-10 h-10 rounded-lg border text-sm font-medium transition-colors;*/
     padding: 6px 12px;
-    /*margin: 0 2px;*/
     font-weight: 500;
-    border: none;
     background-color: white;
     color: black;
-    transition: background-color 0.2s;
+    transition: outline 0.05s;
+    box-sizing: border-box;
+    border: 1px transparent;
 }
+
+.date-btn:hover {
+    outline: 1px solid #4561DB;
+    border-radius: 6px;
+    z-index: 2;
+}
+
 .date-btn.selected {
     background-color: #4561DB;
     color: white;
@@ -29,7 +39,6 @@ body {
     /*@apply bg-blue-200 text-blue-800 border-blue-300;*/
     background-color: rgba(69, 97, 219, 0.2);
     color: #4561DB;
-    border-color: rgba(69, 97, 219, 0.2);
 }
 .date-btn:not(.selected):not(.in-range) {
     @apply bg-white text-gray-700 border-gray-300 hover:bg-gray-50;
@@ -46,26 +55,6 @@ body {
 }
 .quantity-btn {
     @apply w-8 h-8 border border-gray-300 rounded text-lg font-medium hover:bg-gray-50 transition-colors;
-}
-
-.custom-select option:checked {
-    background-color: #4561DB;
-    color: white;
-}
-
-.custom-select {
-    appearance: none;
-    background-color: white;
-    border: 1px solid #e5e7eb; /* 연한 회색 테두리 */
-    border-radius: 6px;
-    padding: 10px;
-    width: 100%;
-}
-
-.custom-select:focus {
-    outline: none;
-    border-color: #4561DB;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
 .jim-type-card {
@@ -141,5 +130,138 @@ body {
 }
 .submit-btn:hover{
     background-color: rgba(47, 70, 183);
+}
 
+/******************** 드랍다운 커스텀 **********************/
+.custom-dropdown {
+    position: relative;
+    width: 100%;
+}
+
+.dropdown-selected {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: white;
+    border: 2px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-size: 16px;
+    font-weight: 500;
+    color: #374151;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-height: 48px;
+}
+
+.dropdown-selected:hover {
+    border-color: #4561DB;
+    box-shadow: 0 0 0 3px rgba(69, 97, 219, 0.1);
+}
+
+.dropdown-selected.active {
+    border-color: #4561DB;
+    position: relative; /* 의사 요소 위치 기준점 */
+}
+
+.dropdown-selected.active::after {
+    content: '';
+    position: absolute;
+    bottom: -2px; /* 선택 영역 테두리에 맞춰서 */
+    height: 10px; /* 연결 간격과 동일한 높이 */
+    border-left: 2px solid #4561DB;
+    border-right: 2px solid #4561DB;
+    background-color: transparent; /* 투명 배경 */
+    z-index: 1001;
+}
+
+/* 좌우 연결선만 만드는 의사 요소 */
+#startTimeDropdown .dropdown-selected.active::after {
+    left: -1.8px;
+    right: -1.8px;
+}
+
+#endTimeDropdown .dropdown-selected.active::after {
+    left: -2px;
+    right: -1.8px;
+}
+
+
+.dropdown-arrow {
+    transition: transform 0.2s ease;
+    flex-shrink: 0;
+}
+
+.dropdown-selected.active .dropdown-arrow {
+    transform: rotate(180deg);
+}
+
+.dropdown-options {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background-color: white;
+    border: 2px solid #4561DB;
+    border-top: none;
+    border-radius: 0 0 8px 8px;
+    max-height: 200px;
+    overflow-y: auto;
+    display: none;
+    /*box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);*/
+    /*margin-top: -15px;*/
+    z-index: 1000;
+    /* 전체 드롭다운을 감싸는 박스 섀도우 */
+    /*box-shadow: 0 -6px 20px rgb(32, 79, 205),*/
+    /*0 4px 20px rgb(32, 79, 205);*/
+
+}
+
+.dropdown-options.show {
+    display: block;
+}
+
+.dropdown-option {
+    padding: 12px 16px;
+    font-size: 16px;
+    color: #374151;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    display: flex;
+    align-items: center;
+}
+
+.dropdown-option:hover {
+    background-color: #f3f4f6;
+}
+
+.dropdown-option.selected {
+    background-color: rgba(69, 97, 219, 0.1);
+    color: #4561DB;
+    font-weight: 600;
+}
+
+.dropdown-option.selected::before {
+    content: "✓";
+    margin-right: 8px;
+    font-weight: bold;
+}
+
+/* 스크롤바 스타일링 */
+.dropdown-options::-webkit-scrollbar {
+    width: 6px;
+}
+
+.dropdown-options::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+}
+
+.dropdown-options::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 3px;
+}
+
+.dropdown-options::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
 }

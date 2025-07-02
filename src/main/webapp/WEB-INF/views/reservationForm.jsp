@@ -22,7 +22,7 @@
     </div>
 
     <form id="reservationForm" method="post" action="/AirBnG/reservations">
-        <div class="p-4 space-y-6">
+        <div class="form space-y-6">
             <!-- 보관소 정보 -->
             <div class="bg-gray-50 p-4 rounded-lg">
                 <h2 id="lockerName" class="font-semibold text-gray-900 mb-1">
@@ -43,13 +43,31 @@
                 <div class="flex items-center space-x-4">
                     <div class="flex-1">
                         <label class="block text-sm text-gray-600 mb-1">시작 시간</label>
-                        <select id="startTimeSelect" class="custom-select" onchange="updateTimeOptions(); calculateTotal();">
-                        </select>
+                        <div class="custom-dropdown" id="startTimeDropdown">
+                            <div class="dropdown-selected" onclick="toggleDropdown('startTime')">
+                                <span id="startTimeDisplay">시간 선택</span>
+                                <svg class="dropdown-arrow" width="12" height="8" viewBox="0 0 12 8" fill="none">
+                                    <path d="M1 1.5L6 6.5L11 1.5" stroke="#6B7280" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </div>
+                            <div class="dropdown-options" id="startTimeOptions">
+                                <!-- 옵션들이 JavaScript로 동적 생성됩니다 -->
+                            </div>
+                        </div>
                     </div>
                     <div class="flex-1">
                         <label class="block text-sm text-gray-600 mb-1">종료 시간</label>
-                        <select id="endTimeSelect" class="custom-select" onchange="calculateTotal()">
-                        </select>
+                        <div class="custom-dropdown" id="endTimeDropdown">
+                            <div class="dropdown-selected" onclick="toggleDropdown('endTime')">
+                                <span id="endTimeDisplay">시간 선택</span>
+                                <svg class="dropdown-arrow" width="12" height="8" viewBox="0 0 12 8" fill="none">
+                                    <path d="M1 1.5L6 6.5L11 1.5" stroke="#6B7280" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </div>
+                            <div class="dropdown-options" id="endTimeOptions">
+                                <!-- 옵션들이 JavaScript로 동적 생성됩니다 -->
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

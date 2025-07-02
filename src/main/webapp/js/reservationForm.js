@@ -78,6 +78,20 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 
+// 드롭다운 외부 클릭 시 닫기
+document.addEventListener('click', function (event) {
+    // 드롭다운 요소들 가져오기
+    const dropdowns = document.querySelectorAll('.custom-dropdown');
+
+    dropdowns.forEach(dropdown => {
+        if (!dropdown.contains(event.target)) {
+            // 해당 드롭다운 외부를 클릭했다면 닫기
+            dropdown.querySelector('.dropdown-selected').classList.remove('active');
+            dropdown.querySelector('.dropdown-options').classList.remove('show');
+        }
+    });
+});
+
 const lockerId = 1; // TODO : 예시로 1번 보관소 ID를 사용 - 수정!
 
 function loadLockerData() {
@@ -122,7 +136,7 @@ function generateDateButtons() {
     const labelContainer = document.createElement('div');
     const btnContainer = document.createElement('div');
     labelContainer.className = 'flex justify-around w-full mb-2 text-center text-sm text-gray-500';
-    btnContainer.className = 'inline-flex overflow-hidden w-full rounded-md text-sm';
+    btnContainer.className = 'inline-flex overflow-hidden w-full rounded-md text-sm p-1 gap-0';
 
     const today = new Date();
     const days = ['일', '월', '화', '수', '목', '금', '토'];
@@ -212,16 +226,71 @@ function updateDateButtons() {
     });
 }
 
+
+// 드롭다운 토글 함수
+function toggleDropdown(type) {
+    const dropdown = document.getElementById(type + 'Dropdown');
+    const selected = dropdown.querySelector('.dropdown-selected');
+    const options = dropdown.querySelector('.dropdown-options');
+
+    // 다른 드롭다운 닫기
+    document.querySelectorAll('.custom-dropdown').forEach(dd => {
+        if (dd.id !== type + 'Dropdown') {
+            // this.classList.remove('active');
+            dd.querySelector('.dropdown-selected').classList.remove('active');
+            dd.querySelector('.dropdown-options').classList.remove('show');
+        }
+    });
+
+    // 현재 드롭다운 토글
+    // dropdown.classList.toggle('active');
+    selected.classList.toggle('active');
+    options.classList.toggle('show');
+}
+
+let selectedStartTime = '';
+let selectedEndTime = '';
+
+// 옵션 선택 함수
+function selectTimeOption(type, value) {
+    const display = document.getElementById(type + 'Display');
+    const dropdown = document.getElementById(type + 'Dropdown');
+
+    display.textContent = value;
+
+    if (type === 'startTime') {
+        selectedStartTime = value;
+    } else {
+        selectedEndTime = value;
+    }
+    updateTimeOptions();
+
+    // 드롭다운 닫기
+    dropdown.querySelector('.dropdown-selected').classList.remove('active');
+    dropdown.querySelector('.dropdown-options').classList.remove('show');
+
+    // 선택된 옵션 색상 표시 업데이트
+    const options = document.getElementById(type + 'Options');
+    options.querySelectorAll('.dropdown-option').forEach(option => {
+        if (option.dataset.value === value) {
+            option.classList.add('selected');
+        } else {
+            option.classList.remove('selected');
+        }
+    });
+
+    calculateTotal();
+}
+
 function updateTimeOptions() {
     updateStartTimeOptions();
     updateEndTimeOptions();
 }
 
 function updateStartTimeOptions() {
-    const startSelect = document.getElementById('startTimeSelect');
-    const currentStartTime = startSelect.value; // 현재 선택된 값 저장
+    const optionsContainer = document.getElementById('startTimeOptions');
 
-    startSelect.innerHTML = '';
+    optionsContainer.innerHTML = '';
 
     const isToday = selectedDateRange.startDate === 0;
     let startHour = 0;
@@ -252,12 +321,21 @@ function updateStartTimeOptions() {
     let currentHour = startHour;
     let currentMin = startMinute;
 
+
     while (true) {
         const timeStr = `${currentHour.toString().padStart(2, '0')}:${currentMin.toString().padStart(2, '0')}`;
-        const option = document.createElement('option');
-        option.value = timeStr;
+        // const option = document.createElement('option');
+        const option = document.createElement('div');
+        option.className = 'dropdown-option'
+        option.dataset.value = timeStr;
         option.textContent = timeStr;
-        startSelect.appendChild(option);
+        option.onclick = () => selectTimeOption('startTime', timeStr);
+
+        if(timeStr === selectedStartTime){
+            option.classList.add('selected');
+        }
+
+        optionsContainer.appendChild(option);
 
         // 다음 30분 단위로 증가
         currentMin += 30;
@@ -279,97 +357,69 @@ function updateStartTimeOptions() {
         }
     }
 
-    // 이전에 선택된 값이 새로운 옵션에 있으면 그대로 선택
-    if (currentStartTime) {
-        const optionExists = Array.from(startSelect.options).some(opt => opt.value === currentStartTime);
-        if (optionExists) {
-            startSelect.value = currentStartTime;
-        } else if (startSelect.options.length > 0) {
-            startSelect.selectedIndex = 0;
-        }
-    } else if (startSelect.options.length > 0) {
-        startSelect.selectedIndex = 0;
-    }
+    updateSelectedTime('startTime', optionsContainer);
 }
 
 function updateEndTimeOptions() {
-    const startSelect = document.getElementById('startTimeSelect');
-    const endSelect = document.getElementById('endTimeSelect');
-    const currentEndTime = endSelect.value;
-    const startTime = startSelect.value;
+    const optionsContainer = document.getElementById('endTimeOptions');
 
-    if (!startTime) return;
+    optionsContainer.innerHTML = ''; // 원래있던 옵션들 싹 비우기
 
-    endSelect.innerHTML = '';
-
-    const [startH, startM] = startTime.split(':').map(Number);
+    const [startH, startM] = selectedStartTime.split(':').map(Number);
     const isSameDate = selectedDateRange.startDate === selectedDateRange.endDate;
+    let currentHour = 0
+    let currentMin = 0;
 
     if (isSameDate) {
-        // 시작시간 + 30분부터 24:00까지
-        let currentHour = startH;
-        let currentMin = startM + 30;
+        currentHour = startH;
+        currentMin = startM + 30;
+    }
+
+    while (true) {
+        // 24:00 까지만 추가
+        if (currentHour >= 24 && currentMin > 0) break;
 
         if (currentMin >= 60) {
             currentHour += 1;
             currentMin = 0;
         }
 
-        while (true) {
-            // 24:00이 넘으면 종료
-            if (currentHour > 24 || (currentHour === 24 && currentMin > 0)) break;
+        let timeStr = `${currentHour.toString().padStart(2, '0')}:${currentMin.toString().padStart(2, '0')}`;
 
-            let timeStr;
-            if (currentHour === 24 && currentMin === 0) {
-                timeStr = "24:00"; // 종료시간이 24:00인 경우
-            } else {
-                timeStr = `${currentHour.toString().padStart(2, '0')}:${currentMin.toString().padStart(2, '0')}`;
-            }
+        const option = document.createElement('div');
+        option.className = 'dropdown-option'
+        option.dataset.value = timeStr;
+        option.textContent = timeStr;
+        option.onclick = () => selectTimeOption('endTime', timeStr);
 
-            const option = document.createElement('option');
-            option.value = timeStr;
-            option.textContent = timeStr;
-            endSelect.appendChild(option);
-
-            // 24:00까지 돌았으면 끝
-            if (timeStr === "24:00") break;
-
-            // 다음 30분 단위로 증가
-            currentMin += 30;
-            if (currentMin >= 60) {
-                currentHour += 1;
-                currentMin = 0;
-            }
+        // 현재 추가되는 값들 중에 이미 선택되어있는 애들이 있었다면?
+        if(timeStr === selectedEndTime){
+            option.classList.add('selected');
         }
-    } else {
-        // 다른 날은 00:00 ~ 24:00까지 1시간 단위
-        for (let h = 0; h <= 24; h++) {
-            const timeStr = `${h.toString().padStart(2, '0')}:00`;
-            const option = document.createElement('option');
-            option.value = timeStr;
-            option.textContent = timeStr;
-            endSelect.appendChild(option);
+
+        optionsContainer.appendChild(option);
+
+        // 24:00까지 돌았으면 끝
+        if (timeStr === "24:00") break;
+
+        // 다음 30분 단위로 증가
+        currentMin += 30;
+        if (currentMin >= 60) {
+            currentHour += 1;
+            currentMin = 0;
         }
     }
 
-    // 선택값 복원 또는 기본값 설정
-    if (currentEndTime) {
-        const optionExists = Array.from(endSelect.options).some(opt => opt.value === currentEndTime);
+    updateSelectedTime('endTime', optionsContainer);
+}
 
-        if (optionExists) {
-            endSelect.value = currentEndTime;
-        } else {
-            const [currentEndH, currentEndM] = currentEndTime.split(':').map(Number);
-            const currentEndTotalMin = currentEndH * 60 + currentEndM;
-            const startTotalMin = startH * 60 + startM;
-            if (currentEndTotalMin > startTotalMin) {
-                endSelect.value = currentEndTime;
-            } else {
-                endSelect.selectedIndex = 0;
-            }
-        }
-    } else if (endSelect.options.length > 0) {
-        endSelect.selectedIndex = 0;
+function updateSelectedTime(type, optionsContainer){
+    let selectedTime = (type === 'startTime') ? selectedStartTime : selectedEndTime;
+    // 기존에 선택된 값이 있어. 그런데 얘가 새로 만든 리스트에 없다면?
+    if(optionsContainer.children.length > 0 // TODO 나중에 오늘 날짜가 23:31 이후인 경우에 대한 예외처리 들어가면 빼도 됨.
+        && !optionsContainer.querySelector(`[data-value="${selectedTime}"]`)){
+        const firstOption = optionsContainer.children[0];
+        selectTimeOption(type, firstOption.dataset.value);
     }
 }
 
@@ -437,20 +487,14 @@ function updateJimTypeCardState(jimTypeId) {
 function calculateTotal() {
     if (!selectedDateRange.startDate && selectedDateRange.startDate !== 0) return;
 
-    const startTimeSelect = document.getElementById('startTimeSelect');
-    const endTimeSelect = document.getElementById('endTimeSelect');
-
-    if (!startTimeSelect.value || !endTimeSelect.value) return;
-
-    const startTime = startTimeSelect.value;
-    const endTime = endTimeSelect.value;
+    if (!selectedStartTime || !selectedEndTime) return;
 
 
     const startDate = dateArray[selectedDateRange.startDate];
     const endDate = dateArray[selectedDateRange.endDate];
 
-    const startDateTime = new Date(startDate + "T" + startTime);
-    const endDateTime = new Date(endDate + "T" + endTime);
+    const startDateTime = new Date(startDate + "T" + selectedStartTime);
+    const endDateTime = new Date(endDate + "T" + selectedEndTime);
     console.log(startDateTime, "~", endDateTime);
 
     const diffMs = endDateTime - startDateTime; // 밀리초 차이
