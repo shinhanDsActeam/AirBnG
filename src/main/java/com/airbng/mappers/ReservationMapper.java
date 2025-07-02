@@ -30,4 +30,5 @@ public interface ReservationMapper {
     );
     //예약  목록 개수
     Long findReservationByMemberId(@Param("memberId") Long memberId, @Param("role") String role);
+    void deleteReservationById(@Param("memberId") Long memberId);
 }

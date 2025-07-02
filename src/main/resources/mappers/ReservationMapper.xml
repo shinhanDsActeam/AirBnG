@@ -253,4 +253,9 @@
         WHERE locker_id = #{lockerId}
     </select>
 
+    <select id="deleteReservationById" parameterType="Long">
+        DELETE Reservation
+        WHERE reservation_id = #{reservationId}
+    </select>
+
 </mapper>
