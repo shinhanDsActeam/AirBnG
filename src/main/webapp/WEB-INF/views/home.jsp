@@ -1,158 +1,111 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-
 <!DOCTYPE html>
 <html lang="ko">
 <head>
+    <title>AirBnG 홈</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>홈 - AirBnG</title>
-    <!-- navigation.css를 여기서 한번만 로드 -->
-    <link rel="stylesheet" href="<c:url value='/css/navigation.css'/>" />
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            width: 100%;
-            height: 100vh;
-            margin: 0;
-            background-color: #f8f9fa;
-            overflow: hidden;
-            display: flex;
-            justify-content: center;
-        }
-
-        .page-container {
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh; /* 브라우저 높이에 맞게 유동 */
-            max-width: 412px;
-            width: 100%;
-            background-color: #ffffff;
-        }
-
-
-        .page-content {
-            flex: 1;
-            padding: 20px;
-            overflow-y: auto;
-            padding-bottom: 100px; /* 네비바 높이만큼 여유 공간 */
-        }
-
-        .welcome-section {
-            text-align: center;
-            padding: 40px 0;
-        }
-
-        .welcome-title {
-            font-size: 28px;
-            font-weight: 700;
-            color: #333;
-            margin-bottom: 10px;
-        }
-
-        .welcome-subtitle {
-            font-size: 16px;
-            color: #666;
-            margin-bottom: 30px;
-        }
-
-        .feature-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin-top: 30px;
-        }
-
-        .feature-card {
-            background: #f8f9fa;
-            padding: 20px;
-            border-radius: 12px;
-            text-align: center;
-            border: 1px solid #e9ecef;
-        }
-
-        .feature-card h3 {
-            font-size: 16px;
-            color: #333;
-            margin-bottom: 8px;
-        }
-
-        .feature-card p {
-            font-size: 14px;
-            color: #666;
-            line-height: 1.4;
-        }
-
-        .content-section {
-            margin: 30px 0;
-        }
-
-        .section-title {
-            font-size: 20px;
-            font-weight: 600;
-            color: #333;
-            margin-bottom: 15px;
-        }
-
-        .info-card {
-            background: white;
-            border: 1px solid #e9ecef;
-            border-radius: 8px;
-            padding: 15px;
-            margin-bottom: 10px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-        }
-
-        .info-card h4 {
-            font-size: 16px;
-            color: #333;
-            margin: 0 0 8px 0;
-        }
-
-        .info-card p {
-            font-size: 14px;
-            color: #666;
-            margin: 0;
-            line-height: 1.4;
-        }
-
-        /* 네비게이션 관련 스타일 제거 - navigation.css에서 처리 */
-
-        /* 스크롤바 스타일링 */
-        .page-content::-webkit-scrollbar {
-            width: 4px;
-        }
-
-        .page-content::-webkit-scrollbar-track {
-            background: #f1f1f1;
-        }
-
-        .page-content::-webkit-scrollbar-thumb {
-            background: #c1c1c1;
-            border-radius: 2px;
-        }
-
-        .page-content::-webkit-scrollbar-thumb:hover {
-            background: #a8a8a8;
-        }
-    </style>
+    <link href="https://cdn.jsdelivr.net/gh/webfontworld/bmjua/BMJUA.css" rel="stylesheet">
+    <link rel="stylesheet" href="<c:url value='/css/home.css' />" />
 </head>
-<body>
-    <div class="page-container">
-        <div class="page-content">
-            <div class="welcome-section">
-                <h1 class="welcome-title">환영합니다!</h1>
-                <p class="welcome-subtitle">AirBnG에서 특별한 여행을 시작하세요</p>
-            </div>
+<body class="airbng-home">
+
+<div class="top-section">
+    <div class="top-bar">
+        <div class="logo-group">
+            <img src="<c:url value='/images/logo_ic.svg' />" alt="로고" />
+            <span class="brand-text">에어비앤짐</span>
         </div>
+        <img src="<c:url value='/images/bell_ic.svg' />" alt="알림" />
+
+        <div class="bell-ring"></div>
     </div>
 
-    <!-- 네비게이션 바 include - page-container 밖에 위치 -->
-    <%@ include file="navbar.jsp" %>
+    <div class="greeting">
+        <c:choose>
+            <c:when test="${not empty sessionScope.nickname}">
+                반갑습니다<br><span class="nickname">${sessionScope.nickname}</span>님.
+            </c:when>
+            <c:otherwise>
+                Welcome, <span>AirBnG!</span>
+            </c:otherwise>
+        </c:choose>
+
+        <!-- outer 링 -->
+        <div class="greeting-ring"></div>
+
+        <!-- inner 링 추가 -->
+        <div class="greeting-ring-inner"></div>
+    </div>
+</div>
+
+<div class="info-card">
+    <div class="info-row-group">
+        <div class="info-row">
+            <label for="location">장소</label>
+            <input type="text" id="location" name="location" value="${locationName}" placeholder="예: 강남구" />
+        </div>
+
+        <div class="info-row">
+            <label for="date">날짜</label>
+
+            <div class="date-wrapper">
+                <div class="custom-date-display" id="dateDisplay">연도-월-일</div>
+                <input type="date" id="date" name="date" class="real-date" />
+            </div>
+        </div>
+
+        <div class="info-row">
+            <label for="time">시간</label>
+            <select id="time" name="time">
+                <option value="18:00~20:00">(18:00~20:00) 2시간</option>
+                <option value="20:00~22:00">(20:00~22:00) 2시간</option>
+                <option value="22:00~24:00">(22:00~24:00) 2시간</option>
+            </select>
+        </div>
+    </div>
+    <button class="find-button">보관소 찾기</button>
+</div>
+
+<!-- 어떤 짐을 보관하냐 -->
+<section class="category-section">
+    <h3>어떤 짐을 보관하시나요?</h3>
+    <div class="category-grid">
+        <div class="category-card">
+            <img src="<c:url value='/images/backpack_img.svg' />" alt="백팩" />
+            <p>백팩/가방<br><small>시간당 2,000원부터</small></p>
+        </div>
+        <div class="category-card">
+            <img src="<c:url value='/images/carrier_img.svg' />" alt="캐리어" />
+            <p>캐리어<br><small>시간당 3,000원부터</small></p>
+        </div>
+        <div class="category-card">
+            <img src="<c:url value='/images/box_img.svg' />" alt="박스" />
+            <p>박스/큰 짐<br><small>시간당 4,000원부터</small></p>
+        </div>
+        <div class="category-card">
+            <img src="<c:url value='/images/stroller_img.svg' />" alt="유모차" />
+            <p>유모차<br><small>시간당 5,000원부터</small></p>
+        </div>
+    </div>
+</section>
+
+<!-- 인기 보관 지역 -->
+<section class="popular-section">
+    <h3>인기 보관 지역</h3>
+    <div class="popular-list" id="popularList">
+        <!-- JS가 이 안에 동적으로 데이터를 채워 넣음 -->
+    </div>
+</section>
+
+<!-- 네비게이션 바 include - page-container 밖에 위치 -->
+<%@ include file="navbar.jsp" %>
+
+<script>
+    const contextPath = '${pageContext.request.contextPath}';
+</script>
+<script src="<c:url value='/js/home.js' />"></script>
+
 </body>
 </html>
