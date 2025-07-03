@@ -22,18 +22,28 @@ document.querySelector('.login-form').addEventListener('submit', function(e) {
         },
         body: JSON.stringify(requestData)
     })
-        .then(response => response.json())
-        .then(data => {
-            console.log('로그인 응답:', data); // 확인 로그 추가
+        .then(async response => {
+            const data = await response.json();
+            if (response.status === 429 || data.code === 8003) {
+                showWarningModal();
+                return;
+            }
+
             if (data.code === 2000) {
                 document.getElementById('success-modal').classList.remove('hidden');
+                document.addEventListener('keydown', function handleEnter(e) {
+                    if (e.key === 'Enter') {
+                        confirmLoginSuccess();
+                        document.removeEventListener('keydown', handleEnter);
+                    }
+                });
             } else {
-                showErrorModal(); // 실패 코드가 왔을 때
+                showErrorModal();
             }
         })
         .catch(err => {
             console.error('로그인 요청 실패:', err);
-            showErrorModal(); // 네트워크 오류 등
+            showErrorModal();
         });
 });
 
@@ -48,4 +58,20 @@ function closeErrorModal() {
 
 function showErrorModal() {
     document.getElementById('error-modal').classList.remove('hidden');
+}
+
+function showWarningModal() {
+    document.getElementById('warning-modal').classList.remove('hidden');
+
+    function handleWarningEnter(e) {
+        if (e.key === 'Enter') {
+            closeWarningModal();
+            document.removeEventListener('keydown', handleWarningEnter);
+        }
+    }
+    document.addEventListener('keydown', handleWarningEnter);
+}
+
+function closeWarningModal() {
+    document.getElementById('warning-modal').classList.add('hidden');
 }
