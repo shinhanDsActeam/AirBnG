@@ -82,7 +82,6 @@
             opacity: 0;
             animation: fillLogo 0.5s ease-in-out 2.5s forwards;
         }
-
         .text-logo {
             opacity: 0;
             animation: showText 0.5s ease-in-out 3s forwards;
