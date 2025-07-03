@@ -63,12 +63,14 @@ document.addEventListener('DOMContentLoaded', function () {
     const mouseUpHandler = function (e) {
         if (!isDragging) return;
 
-        const middleY = window.innerHeight / 2;
         const currentY = e.clientY;
+        const deltaY = currentY - startY;
 
-        if (currentY > middleY) {
+        if (deltaY > 20) {
+            // 조금이라도 내렸으면 바텀시트 내려감
             sheet.style.transform = "translateX(-50%) translateY(70%)";
         } else {
+            // 그렇지 않으면 올라감
             sheet.style.transform = "translateX(-50%) translateY(0%)";
         }
 

@@ -41,6 +41,10 @@
             <div class="sheet-header" id="sheetHeader">
                 <div class="sheet-drag-handle"></div>
             </div>
+            <div class="sheet-title">
+                <span>검색 결과&nbsp;</span>
+                <span class="sheet-count">${count}</span>
+            </div>
             <div class="sheet-content" id="lockerList">
                 <%-- 여기 안에는 JS가 검색 결과를 동적으로 삽입함 --%>
             </div>
