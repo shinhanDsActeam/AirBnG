@@ -83,22 +83,22 @@
         <button id="cancel-btn" class="btn btn-secondary">예약 취소</button>
     </div>
 
-    <!-- 확인 모달 -->
-    <div id="confirm-modal" class="modal-overlay hidden">
-        <div class="modal">
-            <div class="modal-content">
-                <div class="modal-icon" style="background: #f59e0b; font-size: 20px;">?</div>
-                <div class="modal-title">예약을 취소하시겠습니까?</div>
-                <div class="modal-message">
-                    취소하시면 환불 처리됩니다
-                </div>
-            </div>
-            <div class="modal-buttons">
-                <button class="modal-btn" onclick="closeConfirmModal()">아니요</button>
-                <button class="modal-btn" onclick="proceedCancel()">확인</button>
+<!-- 확인 모달 -->
+<div id="confirm-modal" class="modal-overlay hidden">
+    <div class="modal">
+        <div class="modal-content">
+            <div class="modal-icon confirm-bounce">?</div>
+            <div class="modal-title">예약을 취소하시겠습니까?</div>
+            <div class="modal-message">
+                취소하시면 환불 처리됩니다
             </div>
         </div>
+        <div class="modal-buttons">
+            <button class="modal-btn" onclick="closeConfirmModal()">아니요</button>
+            <button class="modal-btn" onclick="proceedCancel()">확인</button>
+        </div>
     </div>
+</div>
 
     <!-- 성공 모달 -->
     <div id="success-modal" class="modal-overlay hidden">
@@ -133,14 +133,19 @@
     </div>
 
     <div class="spacer"></div>
-    <script>
-        // 서버에서 전달받은 데이터를 JavaScript 변수로 설정
-        window.serverData = {
-            reservationId: ${param.reservationId != null ? param.reservationId : 1},
-            memberId: ${param.memberId != null ? param.memberId : 3},
-            contextPath: '${contextPath}'
-        };
-    </script>
+    <div class="spacer"></div>
+        <script>
+            // 서버에서 전달받은 데이터를 JavaScript 변수로 설정
+            window.serverData = {
+                reservationId: ${reservationId != null ? reservationId : (param.id != null ? param.id : 1)},
+                memberId: '${memberId != null ? memberId : sessionScope.memberId}',
+                contextPath: '${contextPath}'
+            };
+
+            console.log('Reservation ID:', window.serverData.reservationId);
+            console.log('Member ID:', window.serverData.memberId);
+        </script>
+        <script src="<c:url value='/js/reservationDetails.js'/>"></script>
     <script src="<c:url value='/js/reservationDetails.js'/>"></script>
 </body>
 </html>

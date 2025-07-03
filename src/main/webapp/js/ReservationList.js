@@ -208,7 +208,7 @@ function renderReservations(reservations) {
             card.innerHTML = `
                 <div class="reservation-header">
                     <div class="reservation-info-row">
-                        <a href="/AirBnG/reservations/${res.reservationId}" class="view-details">예약 상세 &gt;</a>
+                        <a href="/AirBnG/page/reservation?id=${res.reservationId}" class="view-details">예약 상세 &gt;</a>
                         ${getStatusText(res.state)}
                     </div>
                 </div>
@@ -249,45 +249,47 @@ function renderReservations(reservations) {
                     </div>
                 </div>
             `;
-            } else {
+        } else {
             // 기존 구조 (예약완료, 예약대기)
-                card.innerHTML = `
-                    <div class="reservation-header">
-                        <div class="reservation-date">${formatDate(res.dateOnly)}</div>
-                        <div class="reservation-info-row">
-                            <a href="/AirBnG/reservations/${res.reservationId}" class="view-details">예약 상세 &gt;</a>
-                            ${getStatusText(res.state)}
-                        </div>
+            card.innerHTML = `
+                <div class="reservation-header">
+                    <div class="reservation-date">${formatDate(res.dateOnly)}</div>
+                    <div class="reservation-info-row">
+                        <a href="/AirBnG/page/reservation?id=${res.reservationId}" class="view-details">예약 상세 &gt;</a>
+                        ${getStatusText(res.state)}
                     </div>
-                    <div class="reservation-item">
-                        ${imageHtml}
-                        <div class="item-info">
-                            <div class="item-title">${res.lockerName || '보관소 정보 없음'}</div>
-                            <div class="item-time">이용 시간: ${formatDuration(res.durationHours)}</div>
-                            <div class="item-types">짐 종류: ${jimTypes}</div>
-                        </div>
+                </div>
+                <div class="reservation-item">
+                    ${imageHtml}
+                    <div class="item-info">
+                        <div class="item-title">${res.lockerName || '보관소 정보 없음'}</div>
+                        <div class="item-time">이용 시간: ${formatDuration(res.durationHours)}</div>
+                        <div class="item-types">짐 종류: ${jimTypes}</div>
                     </div>
-                    <div class="item-date-row">
-                        <div class="item-date-col">
-                            <div class="label">시작 날짜</div>
-                            <div class="value">${formatDateTime(res.startTime)}</div>
-                        </div>
-                        <div class="item-date-col">
-                            <div class="label">찾는 날짜</div>
-                            <div class="value">${formatDateTime(res.endTime)}</div>
-                        </div>
+                </div>
+                <div class="item-date-row">
+                    <div class="item-date-col">
+                        <div class="label">시작 날짜</div>
+                        <div class="value">${formatDateTime(res.startTime)}</div>
                     </div>
-                    ${getActionButtons(res)}
-                `;
-            }
-            list.appendChild(card);
-        });
+                    <div class="item-date-col">
+                        <div class="label">찾는 날짜</div>
+                        <div class="value">${formatDateTime(res.endTime)}</div>
+                    </div>
+                </div>
+                ${getActionButtons(res)}
+            `;
+        }
+        list.appendChild(card);
+    });
 }
 
 // ▶ 버튼 렌더링
 function getActionButtons(reservation) {
     if (reservation.state === 'PENDING') {
-        return `<div class="action-buttons"><button class="btn btn-cancel" onclick="cancelReservation(${reservation.reservationId})">취소 요청</button></div>`;
+        return `<div class="action-buttons">
+            <button class="btn btn-cancel" onclick="goToReservationDetail(${reservation.reservationId})">취소 요청</button>
+        </div>`;
     }
 
     if (reservation.state === 'COMPLETED') {
@@ -304,11 +306,18 @@ function getActionButtons(reservation) {
     }
 
     if (reservation.state === 'CONFIRMED') {
-        return `<div class="action-buttons"><button class="btn btn-disabled">취소 불가</button></div>`;
+        return `<div class="action-buttons">
+            <button class="btn btn-cancel" onclick="goToReservationDetail(${reservation.reservationId})">취소 요청</button>
+        </div>`;
     }
 
     // 취소완료 상태는 버튼 없음
     return '';
+}
+
+// ▶ 예약 상세 페이지로 이동하는 함수 추가
+function goToReservationDetail(reservationId) {
+    window.location.href = `/AirBnG/page/reservation?id=${reservationId}`;
 }
 
 // ▶ 날짜 포맷
