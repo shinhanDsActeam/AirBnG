@@ -137,9 +137,9 @@
 <div id="success-modal" class="modal-overlay hidden">
   <div class="modal">
     <div class="modal-content">
-      <div class="modal-icon">✓</div>
+      <div class="modal-icon success-rotate">✓</div>
       <h3 class="modal-title">회원가입 완료!</h3>
-      <p>환영합니다! 로그인 페이지로 이동합니다.</p>
+<%--      <p>환영합니다! 로그인 페이지로 이동합니다.</p>--%>
     </div>
     <div class="modal-buttons">
       <button class="modal-btn" onclick="goToLogin()">확인</button>

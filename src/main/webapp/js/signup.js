@@ -267,6 +267,13 @@ async function handleSignup(event) {
 
         if (response.ok && result.code === 1000) {
             document.getElementById('success-modal').classList.remove('hidden');
+            // ✅ Enter 키 입력 시 로그인 페이지로 이동
+            document.addEventListener('keydown', function handleEnter(e) {
+                if (e.key === 'Enter') {
+                    goToLogin();
+                    document.removeEventListener('keydown', handleEnter); // 중복 방지
+                }
+            });
         } else {
             showError(result.message || '회원가입에 실패했습니다.');
         }
