@@ -26,15 +26,16 @@ body {
     gap: 16px;
     justify-content: center; /* 텍스트 가운데 정렬 */
     position: relative;
+    height: 56px;
 
-        height: 56px;
-
+        display: block; /* 인라인 문제 해결 */
 }
+
 
 .back-btn {
     position: absolute;
     left: 16px;
-    top: 50%;
+    top: 89px; /* 50%에서 60%로 변경하여 화살표를 아래로 이동 */
     transform: translateY(-50%);
     width: 24px;
     height: 24px;
@@ -52,9 +53,8 @@ body {
     font-weight: 600;
     line-height: 20px; /* 100% */
 
-
-        line-height: 1
-        white-space: nowrap;
+    line-height: 1
+    white-space: nowrap;
 }
 
 .content {
