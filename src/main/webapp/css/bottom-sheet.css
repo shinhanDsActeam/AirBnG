@@ -59,7 +59,7 @@ html, body {
     background: white;
     border-top-left-radius: 20px;
     border-top-right-radius: 20px;
-    height: 24px;
+    height: 18px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -84,6 +84,27 @@ html, body {
     background: #bbb;
 }
 
+.sheet-title {
+    width: 100%;
+    height: 50px;
+    display: flex;
+    justify-content: left;
+    align-items: center;
+    margin-left: 40px;
+    font-size: 15px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 15px;
+}
+
+.sheet-count {
+    font-size: 15px;
+    font-style: normal;
+    ont-weight: 600;
+    line-height: 15px;
+    color: #777;
+}
+
 .sheet-content {
     flex: 1;
     overflow-y: auto;
@@ -91,13 +112,13 @@ html, body {
 
 .storage-item {
     display: flex;
-    width: 412px;
+    width: 100%;
     padding: 15px 40px;
+    box-sizing: border-box;
     justify-content: center;
     align-items: center;
     gap: 9px;
     cursor: pointer;
-    background: rgba(69, 97, 219, 0.15);
 }
 
 .storage-item.selected {
@@ -125,6 +146,7 @@ html, body {
 
 .storage-info {
     flex-grow: 1;
+    width: calc(100% - 245px);
 }
 
 .storage-name {
