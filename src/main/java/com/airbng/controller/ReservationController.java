@@ -78,7 +78,7 @@ public class ReservationController {
         return new BaseResponse<>(response); // 이렇게 객체로 감싼 채로 반환
     }
 
-    @GetMapping("/delete")
+    @PostMapping("/delete")
     public BaseResponse<Void> deleteReservation(Long reservationId){
         reservationService.deleteReservationById(reservationId);
         return new BaseResponse<>(SUCCESS);

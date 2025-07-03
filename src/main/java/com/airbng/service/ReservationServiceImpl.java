@@ -252,7 +252,7 @@ public class ReservationServiceImpl implements ReservationService{
     public void deleteReservationById(Long reservationId){
         ReservationState state = reservationMapper.findReservationStateById(reservationId);
 
-        if(state.equals(ReservationState.CANCELLED)){
+        if(state.equals(ReservationState.PENDING)||state.equals(ReservationState.CONFIRMED)){
             throw new ReservationException(FAILED_DELETE_RESERVATION);
         }
 
