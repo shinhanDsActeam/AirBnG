@@ -152,26 +152,23 @@ body {
 
 .reserve-btn {
     position: fixed;
-    bottom: 20px;
+    bottom: 70px;
     left: 50%;
     transform: translateX(-50%);
-
     display: flex;
-    width: 372px;
-    padding: 18px 140px;
     justify-content: center;
     align-items: center;
     gap: 10px;
-
-    background: #4561DB;
-    color: white;
+    width: 372px;
+    padding: 18px 140px;
     border: none;
     border-radius: 10px;
+    background: #4561DB;
+    color: white;
     font-size: 16px;
     font-weight: 600;
     cursor: pointer;
 }
-
 
 .reserve-btn:hover {
     background-color: #3367d6;

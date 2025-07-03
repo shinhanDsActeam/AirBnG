@@ -1,9 +1,9 @@
 window.addEventListener("DOMContentLoaded", function () {
+    // 🔹 슬라이드 관련 로직
     let currentSlide = 0;
     const track = document.getElementById('carouselTrack');
     const totalSlides = track?.children.length || 0;
 
-    // HTML onclick 에서 접근 가능하도록 전역 등록
     window.moveSlide = function (direction) {
         if (!track || totalSlides === 0) return;
 
@@ -17,4 +17,16 @@ window.addEventListener("DOMContentLoaded", function () {
 
         track.style.transform = `translateX(-${currentSlide * 100}%)`;
     };
+
+    // 🔹 보관소 선택 버튼 클릭 시 이동
+    const reserveBtn = document.getElementById("reserveBtn");
+    reserveBtn?.addEventListener("click", function () {
+        const contextPath = reserveBtn.dataset.contextPath || '';
+        const lockerId = reserveBtn.dataset.lockerId;
+        const memberId = reserveBtn.dataset.memberId;
+
+        const targetUrl = `${contextPath}/page/reservation?lockerId=${encodeURIComponent(lockerId)}&memberId=${encodeURIComponent(memberId)}`;
+        console.log("이동할 URL:", targetUrl);
+        window.location.href = targetUrl;
+    });
 });

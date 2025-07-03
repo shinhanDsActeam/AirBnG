@@ -4,6 +4,7 @@
 
 <c:set var="phone" value="${lockerDetail.keeperPhone}" />
 <c:set var="formattedPhone" value="${fn:substring(phone, 0, 3)}-${fn:substring(phone, 3, 7)}-${fn:substring(phone, 7, 11)}" />
+<c:set var="loginMemberId" value="${sessionScope.memberId}" />
 
 <%
     String contextPath = request.getContextPath();
@@ -83,13 +84,18 @@
         </div>
     </div>
 
-    <!-- ✅ contextPath 반영해서 URL 안전하게 처리 -->
-    <form action="${pageContext.request.contextPath}/reserve" method="get">
-        <input type="hidden" name="lockerId" value="${lockerDetail.lockerId}">
-        <button class="reserve-btn" id="reserveBtn" type="submit">
-            보관소 선택
-        </button>
-    </form>
-</div>
+    <!-- contextPath 반영해서 JS에서 URL 구성 -->
+    <button class="reserve-btn" id="reserveBtn" type="button" data-locker-id="${lockerDetail.lockerId}" data-member-id="${loginMemberId}">
+      보관소 선택
+    </button>
+
+    </div>
+
+    <script>
+                const memberId = '${loginMemberId}';
+                console.log('로그인한 회원 ID:', memberId);
+    </script>
+
+    <script src="${pageContext.request.contextPath}/js/lockerDetails.js"></script>
 </body>
 </html>
