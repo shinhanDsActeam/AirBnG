@@ -55,6 +55,7 @@ public enum BaseResponseStatus implements ResponseStatus{
     NOT_DROPPER_OF_RESERVATION(4007,HttpStatus.BAD_REQUEST.value(), "해당 예약의 짐을 맡긴 사람이 아닙니다."),
     NOT_KEEPER_OF_RESERVATION(4008,HttpStatus.BAD_REQUEST.value(), "해당 예약의 담당자가 아닙니다."),
     ALREADY_CANCELLED_RESERVATION(4009, HttpStatus.BAD_REQUEST.value(), "이미 취소된 예약입니다."),
+    FAILED_DELETE_RESERVATION(4010, HttpStatus.BAD_REQUEST.value(), "예약 삭제 실패"),
 
 
     /**

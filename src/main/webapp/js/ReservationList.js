@@ -152,14 +152,6 @@ function cancelReservation(id) {
         .catch(handleError);
 }
 
-function deleteReservation(id) {
-    if (!confirm('정말 이 예약 기록을 삭제하시겠습니까?')) return;
-    fetch(`/AirBnG/reservations/${id}/members/${memberId}/delete`, { method: 'DELETE' })
-        .then(res => res.json())
-        .then(handleActionResponse)
-        .catch(handleError);
-}
-
 function reBooking(lockerId) {
     window.location.href = `/AirBnG/lockers/${lockerId}/reservation`;
 }
@@ -383,3 +375,115 @@ function fetchReservations(isFirst = false) {
             if (isFirst) document.getElementById('loading').style.display = 'none';
         });
 }
+
+// 모달 관련 변수
+let currentReservationId = null;
+
+// 삭제 확인 모달 열기
+function showConfirmModal(reservationId) {
+    currentReservationId = reservationId;
+    document.getElementById('confirm-modal').classList.remove('hidden');
+    document.body.classList.add('modal-open');
+}
+
+// 삭제 확인 모달 닫기
+function closeConfirmModal() {
+    document.getElementById('confirm-modal').classList.add('hidden');
+    document.body.classList.remove('modal-open');
+    currentReservationId = null;
+}
+
+// 삭제 실행
+function proceedDelete() {
+    if (!currentReservationId) return;
+
+    closeConfirmModal();
+
+    // 실제 삭제 API 호출
+    deleteReservation(currentReservationId);
+}
+
+// 성공 모달 열기
+function showSuccessModal(refundAmount) {
+    document.getElementById('refund-amount').textContent = refundAmount + '원';
+    document.getElementById('success-modal').classList.remove('hidden');
+    document.body.classList.add('modal-open');
+}
+
+// 성공 모달 확인 버튼
+function confirmDelete() {
+    document.getElementById('success-modal').classList.add('hidden');
+    document.body.classList.remove('modal-open');
+
+    // 현재 탭 새로고침
+    const activeTab = document.querySelector('.tab.active');
+    if (activeTab) {
+        const states = activeTab.getAttribute('data-states').split(',');
+        changeTab(states, activeTab);
+    }
+}
+
+// 실패 모달 열기
+function showErrorModal() {
+    document.getElementById('error-modal').classList.remove('hidden');
+    document.body.classList.add('modal-open');
+}
+
+// 실패 모달 닫기
+function closeErrorModal() {
+    document.getElementById('error-modal').classList.add('hidden');
+    document.body.classList.remove('modal-open');
+}
+
+function deleteReservation(reservationId) {
+    // confirm 제거하고 바로 API 호출
+    fetch(`/AirBnG/reservations/delete?reservationId=${reservationId}`, { method: 'POST' })
+        .then(res => res.json())
+        .then(data => {
+            if (data.code === 1000) {
+                showSuccessModal(data.refundAmount || 0);
+                // 목록 새로고침
+                nextCursorId = null;
+                hasNextPage = true;
+                clearReservationList();
+                fetchReservations(true);
+            } else {
+                showErrorModal();
+            }
+        })
+        .catch(error => {
+            console.error('삭제 오류:', error);
+            showErrorModal();
+        });
+}
+
+function showCancelModal(reservationId) {
+    // 취소 확인 모달 표시 (기존 confirm-modal 재사용 가능)
+    currentReservationId = reservationId;
+    document.getElementById('confirm-modal').classList.remove('hidden');
+    document.body.classList.add('modal-open');
+}
+
+// 모달 외부 클릭 시 닫기
+document.addEventListener('click', function(e) {
+    if (e.target.classList.contains('modal-overlay')) {
+        if (e.target.id === 'confirm-modal') {
+            closeConfirmModal();
+        } else if (e.target.id === 'error-modal') {
+            closeErrorModal();
+        }
+        // 성공 모달은 외부 클릭으로 닫지 않음
+    }
+});
+
+// ESC 키로 모달 닫기
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        if (!document.getElementById('confirm-modal').classList.contains('hidden')) {
+            closeConfirmModal();
+        } else if (!document.getElementById('error-modal').classList.contains('hidden')) {
+            closeErrorModal();
+        }
+        // 성공 모달은 ESC로 닫지 않음
+    }
+});
