@@ -6,6 +6,7 @@
             max-width: 412px;
             margin: auto;
             padding-bottom: 80px;  /* ✅ 가로 스크롤 방지 */
+            overflow-x: hidden;
 
  }
 
@@ -25,6 +26,7 @@
      border-bottom: 1px solid #eee;
      top: 0;
      position: sticky;
+     position: -webkit-sticky;
      z-index: 100;
  }
 
