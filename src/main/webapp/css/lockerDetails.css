@@ -81,7 +81,6 @@ body {
 }
 
 .price-info {
-    background-color: #f8f9fa;
     padding: 16px;
     border-radius: 8px;
     margin-bottom: 20px;
@@ -156,17 +155,23 @@ body {
     bottom: 20px;
     left: 50%;
     transform: translateX(-50%);
-    width: calc(100% - 40px);
-    max-width: 360px;
-    background-color: #4285f4;
+
+    display: flex;
+    width: 372px;
+    padding: 18px 140px;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+
+    background: #4561DB;
     color: white;
     border: none;
-    padding: 16px;
-    border-radius: 8px;
+    border-radius: 10px;
     font-size: 16px;
     font-weight: 600;
     cursor: pointer;
 }
+
 
 .reserve-btn:hover {
     background-color: #3367d6;
