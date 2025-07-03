@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 
 @Controller
-@RequestMapping("/page/lockerSearchDetails")
+@RequestMapping("/page")
 public class LockerPageController {
 
     private final LockerService lockerService;
@@ -20,7 +20,7 @@ public class LockerPageController {
         this.lockerService = lockerService;
     }
 
-    @GetMapping
+    @GetMapping("/lockerSearchDetails")
     public String showMapPage(@RequestParam String address,
                               @RequestParam String reservationDate,
                               Model model) {
