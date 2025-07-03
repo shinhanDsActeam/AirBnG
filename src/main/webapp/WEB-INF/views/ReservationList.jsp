@@ -10,6 +10,7 @@
     <title>예약 내역</title>
     <link rel="stylesheet" href="<c:url value='/css/ReservationList.css'/>">
 </head>
+<body class="page-container">
  <!-- 헤더 -->
     <div class="header">
         <div class="header-content">

@@ -45,6 +45,9 @@ function changeTab(newStates, tabElem) {
     nextCursorId = null;
     hasNextPage = true;
 
+     // 화면 맨 위로 스크롤
+     window.scrollTo({ top: 0, behavior: 'smooth' });
+
     // UI 갱신
     document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
     tabElem.classList.add('active');
