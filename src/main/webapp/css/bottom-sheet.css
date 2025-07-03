@@ -174,7 +174,8 @@ html, body {
     border: none;
     font-size: 13px;
     cursor: pointer;
-    width: 71px;
+    width: auto 71px;
+    height: auto 33px;
     display: flex;
     justify-content: center;
     align-items: center;
