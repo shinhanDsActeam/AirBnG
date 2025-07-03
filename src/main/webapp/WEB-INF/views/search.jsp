@@ -7,7 +7,7 @@
 <head>
     <meta charset="utf-8">
     <title>AirBnG | ${address}&nbsp;검색 결과</title>
-
+    <link rel="icon" type="image/svg+xml" href="${pageContext.request.contextPath}/images/favicon.svg" />
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/search.css">
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/bottom-sheet.css">
 

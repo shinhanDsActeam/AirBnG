@@ -7,6 +7,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>로그인 - AirBnG</title>
+  <link rel="icon" type="image/svg+xml" href="${pageContext.request.contextPath}/images/favicon.svg" />
   <link rel="stylesheet" href="<c:url value='/css/login.css' />" />
 </head>
 <body>
