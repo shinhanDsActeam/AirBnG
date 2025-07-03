@@ -52,28 +52,25 @@ document.addEventListener('DOMContentLoaded', function () {
         };
 
         console.log('예약 데이터:', requestData);
-
         // 실제 서버 요청
-        // fetch('/AirBnG/reservations', {
-        //     method: 'POST',
-        //     headers: {
-        //         'Content-Type': 'application/json',
-        //     },
-        //     body: JSON.stringify(requestData)
-        // })
-        //     .then(response => response.json())
-        //     .then(data => {
-        //         if (data.code === 1000) {
-        //             alert('예약이 완료되었습니다!');
-        //             // 성공 페이지로 이동 또는 다른 처리
-        //         } else {
-        //             alert('예약 실패: ' + data.message);
-        //         }
-        //     })
-        //     .catch(error => {
-        //         console.error('예약 요청 실패:', error);
-        //         alert('서버 오류가 발생했습니다.');
-        //     });
+        fetch('/AirBnG/reservations', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(requestData)
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.code === 4000) {
+                    // 성공 페이지로 이동 또는 다른 처리
+                } else {
+                }
+            })
+            .catch(error => {
+                console.error('예약 요청 실패:', error);
+                });
+            });
     });
 });
 
@@ -91,14 +88,7 @@ document.addEventListener('click', function (event) {
     });
 });
 
-// const lockerId = 1; // TODO : 예시로 1번 보관소 ID를 사용 - 수정!
-
 function loadLockerData() {
-    if (!lockerId) {
-        console.log("lockerId가 존재하지 않습니다.");
-        return;
-    }
-
     fetch("/AirBnG/reservations/form?lockerId=" + lockerId)
         .then(res => res.json())
         .then(data => {
@@ -504,7 +494,6 @@ function calculateTotal() {
 
     const startDateTime = new Date(startDate + "T" + selectedStartTime);
     const endDateTime = new Date(endDate + "T" + selectedEndTime);
-    console.log(startDateTime, "~", endDateTime);
 
     const diffMs = endDateTime - startDateTime; // 밀리초 차이
     const totalHours = diffMs / (1000 * 60 * 60); // 밀리초 → 시간으로 변환
