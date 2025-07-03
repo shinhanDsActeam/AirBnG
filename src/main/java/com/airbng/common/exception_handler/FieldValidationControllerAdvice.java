@@ -8,10 +8,11 @@ import com.airbng.common.response.FieldValidationError;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
@@ -28,7 +29,7 @@ import static com.airbng.common.response.status.BaseResponseStatus.INVALID_PARAM
 
 
 @Slf4j
-@RestControllerAdvice(annotations = RestController.class)
+@RestControllerAdvice(annotations = Controller.class)
 public class FieldValidationControllerAdvice {
 
     /**
@@ -72,6 +73,23 @@ public class FieldValidationControllerAdvice {
                 .status(INVALID_PARAMETER.getHttpStatus())
                 .body(new BaseErrorResponse(INVALID_PARAMETER, build));
     }
+
+    // RequestParameter가 누락된 경우 예외
+    @ExceptionHandler(MissingServletRequestParameterException.class)
+    public ResponseEntity<BaseErrorResponse> handleMissingServletRequestParameterException(MissingServletRequestParameterException ex) {
+        log.info("[FieldValidationControllerAdvice] MissingServletRequestParameterException");
+
+        FieldValidationError build = FieldValidationError.builder()
+                .fieldName(ex.getParameterName())
+                .rejectValue("")
+                .message(ex.getMessage())
+                .build();
+
+        return ResponseEntity
+                .status(INVALID_PARAMETER.getHttpStatus())
+                .body(new BaseErrorResponse(INVALID_PARAMETER, build));
+    }
+
 
     /**
      * @Validated 에서 발생하는 예외

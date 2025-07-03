@@ -2,20 +2,24 @@ package com.airbng.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpSession;
+import javax.validation.constraints.Min;
 
 @Controller
 @RequestMapping("/page/reservations")
+@Validated
 public class ReservationPageController {
 
     @GetMapping("/list")
     public String reservationListPage() {
         return "ReservationList";
     }
+
     @GetMapping("")
     public String reservationDetails(@RequestParam("id") Long reservationId,
                                      HttpSession session,
@@ -28,9 +32,8 @@ public class ReservationPageController {
     }
 
     @GetMapping("/form")
-    public String getForm(@RequestParam("lockerId") Long lockerId,
+    public String getForm(@RequestParam("lockerId") @Min(1) Long lockerId,
                           Model model) {
-        System.out.println("Locker ID: " + lockerId);
         model.addAttribute("lockerId", lockerId);
         return "reservationForm";
     }
