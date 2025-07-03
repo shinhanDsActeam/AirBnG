@@ -86,6 +86,20 @@ async function checkEmailDuplicate() {
     }
 }
 
+document.getElementById('phone').addEventListener('input', function (e) {
+    let value = e.target.value.replace(/\D/g, ''); // 숫자만 추출
+
+    if (value.length < 4) {
+        e.target.value = value;
+    } else if (value.length < 8) {
+        e.target.value = `${value.slice(0, 3)}-${value.slice(3)}`;
+    } else if (value.length <= 11) {
+        e.target.value = `${value.slice(0, 3)}-${value.slice(3, 7)}-${value.slice(7)}`;
+    } else {
+        e.target.value = `${value.slice(0, 3)}-${value.slice(3, 7)}-${value.slice(7, 11)}`;
+    }
+});
+
 async function checkNicknameDuplicate() {
     const nickname = document.getElementById('nickname').value.trim();
     const nicknameButton = document.getElementById('nickname-check-btn');
@@ -197,7 +211,8 @@ async function handleSignup(event) {
 
     const email = document.getElementById('email').value.trim();
     const name = document.getElementById('name').value.trim();
-    const phone = document.getElementById('phone').value.trim();
+    const phoneRaw = document.getElementById('phone').value.trim();
+    const phone = phoneRaw.replace(/-/g, ''); //숫자만 추출
     const nickname = document.getElementById('nickname').value.trim();
     const password = document.getElementById('password').value;
     const passwordConfirm = document.getElementById('password-confirm').value;
