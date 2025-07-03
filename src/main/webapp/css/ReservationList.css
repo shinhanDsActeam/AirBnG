@@ -106,10 +106,9 @@
 
  /* 필터 섹션 */
  .filter-section {
-     height: 48px;
      padding: 15px 20px;
      display: flex;
-     margin-top: 30px;
+     margin-top: 40px;
      top: 118px;
      z-index: 98;
      justify-content: flex-end;
@@ -134,7 +133,6 @@
  }
 
  .period-dropdown .dropdown-btn {
-     height: 28px;
      border-radius: 5px;s
      border-width: 0.5px;
      border-style: solid;
@@ -144,7 +142,7 @@
      padding-bottom: 5px;
      padding-left: 13px;
      gap: 3px;
-     font-size: 13px;
+     font-size: 15px;
      display: flex;
      align-items: center;
      justify-content: space-between;
@@ -195,7 +193,7 @@
  /* 예약 리스트 */
  .reservation-list {
      padding: 15px;
-     margin-top: 15px;
+     margin-top: 0px;
  }
 
  .reservation-card {
@@ -208,7 +206,7 @@
      transition: all 0.3s;
      max-width: 372px;
      height: auto;
-     min-height: 355px;
+     min-height: 300px;
  }
 
  /* 이용완료/취소완료 상태의 카드 높이 조정 */
@@ -587,26 +585,6 @@
      text-align: center;
      padding: 60px 20px;
      color: #666;
- }
-
- /* 더보기 버튼 */
- .load-more {
-     text-align: center;
-     padding: 20px;
- }
-
- .load-more-btn {
-     background: #4561DB;
-     color: white;
-     border: none;
-     padding: 12px 30px;
-     border-radius: 25px;
-     cursor: pointer;
-     font-size: 14px;
- }
-
- .load-more-btn:hover {
-     background: #2768c7;
  }
 
  /* 로딩 */

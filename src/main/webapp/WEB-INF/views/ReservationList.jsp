@@ -56,11 +56,6 @@
         <p>예약 내역이 없습니다.</p>
     </div>
 
-    <!-- 더보기 버튼 -->
-    <div class="load-more" id="load-more" style="display:none;">
-        <button class="load-more-btn" id="load-more-btn">더보기</button>
-    </div>
-
     <!-- 로딩 상태 -->
     <div class="loading" id="loading" style="display:none;">
         <p>로딩 중...</p>

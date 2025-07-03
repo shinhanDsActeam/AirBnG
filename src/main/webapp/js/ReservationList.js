@@ -359,7 +359,6 @@ function fetchReservations(isFirst = false) {
                 if (filtered.length > 0) renderReservations(filtered);
                 nextCursorId = data.result.nextCursorId;
                 hasNextPage = data.result.hasNextPage;
-                document.getElementById('load-more').style.display = hasNextPage ? 'block' : 'none';
             }
         })
         .catch(err => {
