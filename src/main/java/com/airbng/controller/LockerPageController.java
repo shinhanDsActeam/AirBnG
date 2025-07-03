@@ -21,13 +21,15 @@ public class LockerPageController {
         this.lockerService = lockerService;
     }
 
-    @GetMapping ("/locker/Detail")
+    @GetMapping ("/lockerDetails")
     public String showMapPage(@RequestParam Long lockerId,
                               Model model) {
 
         LockerDetailResponse request = LockerDetailResponse.builder()
                 .lockerId(lockerId)
                 .build();
+
+//        LockerDetailResponse response = lockerService.findUserById(lockerId);
 
         // 서비스 호출
         LockerDetailResponse response = lockerService.findUserById(request.getLockerId());
