@@ -129,7 +129,7 @@ function loadLockerData() {
                 });
             }
             else {
-                ModalUtils.showError("보관소 정보를 불러올 수 없습니다.", () => {
+                ModalUtils.showError("보관소 정보를 불러올 수 없습니다.", "정보 없음", () => {
                     // history.back();
                     // TODO : redirect 경로 변경 필요
                     window.location.href = `${contextPath}/page/home`;
