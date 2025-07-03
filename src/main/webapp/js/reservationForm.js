@@ -91,16 +91,14 @@ document.addEventListener('click', function (event) {
     });
 });
 
-const lockerId = 1; // TODO : 예시로 1번 보관소 ID를 사용 - 수정!
+// const lockerId = 1; // TODO : 예시로 1번 보관소 ID를 사용 - 수정!
 
 function loadLockerData() {
-
     if (!lockerId) {
         console.log("lockerId가 존재하지 않습니다.");
         return;
     }
 
-    console.log("lockerId: " + lockerId);
     fetch("/AirBnG/reservations/form?lockerId=" + lockerId)
         .then(res => res.json())
         .then(data => {

@@ -28,7 +28,10 @@ public class ReservationPageController {
     }
 
     @GetMapping("/form")
-    public String getForm() {
+    public String getForm(@RequestParam("lockerId") Long lockerId,
+                          Model model) {
+        System.out.println("Locker ID: " + lockerId);
+        model.addAttribute("lockerId", lockerId);
         return "reservationForm";
     }
 }

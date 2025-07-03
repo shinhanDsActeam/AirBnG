@@ -11,7 +11,9 @@
     <link rel="stylesheet" href="../../css/reservationForm.css"/>
 </head>
 <body class="bg-gray-100">
-<script src="../../js/reservationForm.js"></script>
+<%-- 전역변수 --%>
+<script> const lockerId = ${lockerId};</script>
+<script src="../../js/reservationForm.js"> </script>
 <div class="max-w-md mx-auto bg-white min-h-screen">
     <!-- Header -->
     <div class="sticky top-0 z-50 flex items-center p-4 border-b border-gray-200 bg-white" id="header">
