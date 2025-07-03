@@ -247,6 +247,19 @@ public class ReservationServiceImpl implements ReservationService{
         return CREATED_RESERVATION;
     }
 
+    @Override
+    @Transactional
+    public void deleteReservationById(Long reservationId){
+        ReservationState state = reservationMapper.findReservationStateById(reservationId);
+
+        if(state.equals(ReservationState.CANCELLED)){
+            throw new ReservationException(FAILED_DELETE_RESERVATION);
+        }
+
+        reservationMapper.deleteReservationJimtypeByReservationId(reservationId);
+        reservationMapper.deleteReservationById(reservationId);
+    }
+
     private static void validateStartTimeAndEndTime(final String startTime, final String endTime) {
         if (LocalDateTimeUtils.isStartTimeAfterEndTime(startTime, endTime)
                 || LocalDateTimeUtils.isStartTimeEqualEndTime(startTime, endTime)) {
