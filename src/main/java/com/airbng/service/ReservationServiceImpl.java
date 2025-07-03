@@ -232,7 +232,7 @@ public class ReservationServiceImpl implements ReservationService{
         validateLocker(request.getLockerId());
         validateJimTypes(request.getLockerId(), request.getJimTypeCounts());
 
-        Long keeperId = lockerMapper.getLockerKepperId(request.getLockerId());
+        Long keeperId = lockerMapper.getLockerKeeperId(request.getLockerId());
         request.setKeeperId(keeperId);
         validateMember(request.getDropperId(), keeperId);
 

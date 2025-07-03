@@ -60,5 +60,5 @@ public interface LockerMapper {
 
     List<LockerJimTypeResult> getLockerJimTypeById(@Param("lockerId") Long lockerId);
 
-    Long getLockerKepperId(@Param("lockerId") Long lockerId);
+    Long getLockerKeeperId(@Param("lockerId") Long lockerId);
 }
