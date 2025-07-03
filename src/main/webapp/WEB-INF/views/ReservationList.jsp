@@ -84,7 +84,7 @@
         <div class="modal success-modal">
             <div class="modal-content">
                 <div class="modal-icon success-rotate">✓</div>
-                <div class="modal-title">예약을 삭제했어요!</div>
+                <div class="modal-title">예약 내역을 삭제했어요!</div>
                 <div class="modal-message">
                     <span id="refund-amount">10,000원</span>의 수수료가 발생했어요!
                 </div>
