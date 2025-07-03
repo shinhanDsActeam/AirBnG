@@ -9,12 +9,18 @@
     <title>예약하기</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="../../css/reservationForm.css"/>
+    <link rel="stylesheet" href="../../css/common/modal.css"/>
 </head>
 <body class="bg-gray-100">
-<%-- 전역변수 --%>
-<script> const lockerId = ${lockerId};</script>
+<script src="../../js/common/modal.js"></script>
 <script src="../../js/reservationForm.js"> </script>
 <div class="max-w-md mx-auto bg-white min-h-screen">
+    <%-- 전역변수 --%>
+    <script>
+        const lockerId = ${lockerId};
+        const contextPath = '${pageContext.request.contextPath}';
+    </script>
+
     <!-- Header -->
     <div class="sticky top-0 z-50 flex items-center p-4 border-b border-gray-200 bg-white" id="header">
         <svg class="w-6 h-6 text-gray-600 cursor-pointer" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -104,6 +110,9 @@
         <!-- Hidden inputs -->
         <input type="hidden" name="lockerId" id="lockerId" value="" />
     </form>
+
+    <%@ include file="common/modal.jsp" %>
+
 </div>
 
 </body>

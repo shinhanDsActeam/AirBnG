@@ -41,8 +41,8 @@ document.addEventListener('DOMContentLoaded', function () {
         // 서버로 보낼 데이터 구성
         const requestData = {
             lockerId: parseInt(document.getElementById('lockerId').value),
-            startTime: `${startDateStr} ${startTimeSelect.value}:00`,
-            endTime: `${endDateStr} ${endTimeSelect.value}:00`,
+            startTime: `${startDateStr} ${selectedStartTime}:00`,
+            endTime: `${endDateStr} ${selectedEndTime}:00`,
             jimTypeCounts: Object.entries(jimTypeCounts)
                 .filter(([_, count]) => count > 0)
                 .map(([jimTypeId, count]) => ({
@@ -63,12 +63,26 @@ document.addEventListener('DOMContentLoaded', function () {
             .then(response => response.json())
             .then(data => {
                 if (data.code === 4000) {
+                    ModalUtils.showSuccess("예약이 완료되었습니다!", "", () => {
+                        // TODO : redirect 경로 변경 필요
+                        // history.back();
+                        window.location.href = `${contextPath}/page/home`;
+                    });
                     // 성공 페이지로 이동 또는 다른 처리
                 } else {
+                    ModalUtils.showError("예약에 실패하였습니다.", "", () => {
+                        // TODO : redirect 경로 변경 필요
+                        // history.back();
+                        window.location.href = `${contextPath}/page/home`;
+                    });
                 }
             })
             .catch(error => {
                 console.error('예약 요청 실패:', error);
+                ModalUtils.showError("네트워크 오류가 발생하였습니다.", "", () => {
+                    // TODO : redirect 경로 변경 필요
+                    // history.back();
+                    window.location.href = `${contextPath}/page/home`;
                 });
             });
     });
@@ -101,8 +115,25 @@ function loadLockerData() {
                 currentJimTypes = result.lockerJimTypes;
                 generateJimTypes(result.lockerJimTypes);
                 calculateTotal();
-            } else {
-                alert("보관소 정보를 불러오지 못했습니다.");
+            }else if (data.code === 3005) { // 비활성화된 보관소
+                ModalUtils.showWarning("보관소가 비활성화 되었습니다.", "이용 불가",() => {
+                    // TODO : redirect 경로 변경 필요
+                    // history.back();
+                    window.location.href = `${contextPath}/page/home`;
+                });
+            }else if (data.code === 1007) { // uri 오류
+                ModalUtils.showError("서버 연결에 실패했습니다. 다시 시도해주세요.", "서버 오류",() => {
+                    // TODO : redirect 경로 변경 필요
+                    // history.back();
+                    window.location.href = `${contextPath}/page/home`;
+                });
+            }
+            else {
+                ModalUtils.showError("보관소 정보를 불러올 수 없습니다.", () => {
+                    // history.back();
+                    // TODO : redirect 경로 변경 필요
+                    window.location.href = `${contextPath}/page/home`;
+                });
             }
         })
         .catch(err => {
