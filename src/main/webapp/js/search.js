@@ -131,7 +131,9 @@ document.addEventListener("DOMContentLoaded", function () {
             // 클릭 시 선택 스타일과 텍스트 전환
             container.addEventListener("click", function (e) {
                 const clickedItem = e.target.closest(".storage-item");
-                if (!clickedItem || clickedItem.classList.contains("disabled")) return;
+                if (!clickedItem) return;
+
+                if (clickedItem.classList.contains("selected")) return;
 
                 // 기존 선택된 항목 초기화
                 document.querySelectorAll(".storage-item").forEach(item => {
@@ -147,14 +149,14 @@ document.addEventListener("DOMContentLoaded", function () {
                 clickedButton.textContent = "상세보기";
 
                 // 상세보기 버튼 클릭 시 페이지 이동
-                clickedButton.addEventListener('click', function (e) {
-                        e.stopPropagation(); // 부모 클릭 이벤트 방지
-                        const lockerId = clickedButton.dataset.id;
+                clickedButton.onclick = function (e) {
 
-                        const url = `${contextPath}/page/lockerDetails?lockerId=${encodeURIComponent(lockerId)}`;
+                    if (clickedButton.textContent !== "상세보기") return;
 
-                        window.location.href = url;
-                });
+                    const lockerId = clickedButton.dataset.id;
+                    const url = `${contextPath}/page/lockerDetails?lockerId=${encodeURIComponent(lockerId)}`;
+                    window.location.href = url;
+                };
             });
 
         })

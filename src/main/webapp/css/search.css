@@ -37,16 +37,15 @@ html, body {
   display: flex;
   align-items: center;
   padding: 0 16px;
+  pointer-events: auto;
 }
-
-
 
 .back-icon {
   width: 7%;
   height: 7%;
-  cursor: pointer;
   flex-shrink: 0;
   margin-right: 10px;
+  cursor: pointer;
 }
 
 .search-container {
