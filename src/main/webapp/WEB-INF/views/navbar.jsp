@@ -4,7 +4,7 @@
 <link rel="stylesheet" href="<c:url value='/css/navigation.css'/>" />
 <!-- navbar.jsp는 네비게이션 바만 포함 -->
 <nav class="bottom-nav">
-    <a href="shopping-cart.jsp" class="nav-item" data-page="shopping-cart">
+    <a href="${pageContext.request.contextPath}/page/lockers" class="nav-item" data-page="shopping-cart">
         <img src="<c:url value='/images/shopping-cart.svg'/>" alt="보관소" class="nav-icon">
         <span class="nav-text">보관소</span>
     </a>
