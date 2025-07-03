@@ -28,6 +28,7 @@ public interface MemberMapper {
 
     boolean isExistMember(Long memberId);
 
+    Member findMemberByEmail(@Param("email") String email);
 
     int updateUserById(MemberUpdateRequest memberUpdateRequest);
 }

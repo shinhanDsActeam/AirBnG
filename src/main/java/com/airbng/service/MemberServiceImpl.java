@@ -74,15 +74,17 @@ public class MemberServiceImpl implements MemberService {
             throw new MemberException(INVALID_EMAIL);
         }
 
-        try {
-            Member member = memberMapper.findByEmailAndPassword(email, password);
-
-            log.info("Member id found: {}", member.getMemberId());
-
-            return MemberLoginResponse.from(member);
-        } catch (NullPointerException e) {
+        Member member = memberMapper.findMemberByEmail(email);
+        if (member == null) {
             throw new MemberException(INVALID_MEMBER);
         }
+
+        // 비밀번호 비교
+        if (!passwordEncoder.matches(password, member.getPassword())) {
+            throw new MemberException(INVALID_MEMBER);
+        }
+        log.info("Member id found: {}", member.getMemberId());
+        return MemberLoginResponse.from(member);
     }
 
     public void nicknameCheck(String nickname) {
