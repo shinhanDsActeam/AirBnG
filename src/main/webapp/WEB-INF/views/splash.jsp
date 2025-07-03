@@ -14,7 +14,7 @@
         <div class="splash-content">
             <div class="logo-section">
                 <div class="logo-container">
-                    <img src="<c:url value='/images/logo_ic.svg' />" alt="에어비앤집 로고" />
+                    <img src="<c:url value='/images/logo_name_ic.svg' />" alt="에어비앤집 로고" />
                 </div>
             </div>
         </div>
