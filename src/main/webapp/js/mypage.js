@@ -222,55 +222,126 @@ function isLoggedIn() {
            sessionData.memberId !== '';
 }
 
-// 개선된 로그아웃 함수
+// 개선된 로그아웃 함수 (서버 API 사용)
 function logout() {
     showConfirmModal('로그아웃', '정말로 로그아웃하시겠습니까?', function() {
         showLoadingAnimation();
 
-        // 1. 서버에 로그아웃 요청 (세션 무효화)
-        performServerLogout()
-            .then(() => {
-                // 2. 클라이언트 쿠키 삭제
+        // 서버 로그아웃 API 호출
+        fetch('/AirBnG/members/logout', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            credentials: 'include' // 세션 쿠키 포함
+        })
+        .then(response => {
+            console.log('서버 응답 상태:', response.status);
+            return response.json();
+        })
+        .then(data => {
+            console.log('서버 응답 데이터:', data);
+
+            // BaseResponse 구조에 맞게 수정
+            // code가 2000인 경우 성공으로 판단 (HTTP 200 OK와 유사한 성공 코드)
+            if (data.code === 2000) {
+                // 서버 로그아웃 성공
+                console.log('서버 로그아웃 성공:', data.message);
+
+                // 클라이언트 쿠키 삭제
                 clearAllCookies();
 
-                // 3. 세션 데이터 초기화
+                // 세션 데이터 초기화
                 resetSessionData();
 
-                // 4. UI 업데이트
+                // UI 업데이트
                 setTimeout(() => {
                     hideLoadingAnimation();
                     showLoggedOutSection();
                     console.log('로그아웃 완료');
                 }, 500);
-            })
-            .catch(error => {
-                console.error('서버 로그아웃 실패:', error);
-                // 서버 요청 실패해도 클라이언트 정리는 수행
-                clearAllCookies();
-                resetSessionData();
+
+            } else {
+                // 서버 응답은 받았지만 로그아웃 실패
+                console.error('로그아웃 실패:', data.message);
                 hideLoadingAnimation();
-                showLoggedOutSection();
-            });
+                showErrorModal('로그아웃 실패', data.message || '로그아웃 중 오류가 발생했습니다.');
+            }
+        })
+        .catch(error => {
+            console.error('로그아웃 API 요청 실패:', error);
+
+            // 네트워크 오류 등으로 서버 요청이 실패해도 클라이언트 정리는 수행
+            clearAllCookies();
+            resetSessionData();
+            hideLoadingAnimation();
+            showLoggedOutSection();
+
+            // 사용자에게 알림 (선택사항)
+            showErrorModal('알림', '서버와의 통신에 문제가 있었지만 로그아웃이 완료되었습니다.');
+        });
     });
 }
 
-// 서버에 로그아웃 요청
-function performServerLogout() {
-    const ctx = getContextPath();
-
-    return fetch(`${ctx}/logout`, {
-        method: 'POST',
-        credentials: 'include', // 쿠키 포함
-        headers: {
-            'Content-Type': 'application/json',
-            'X-Requested-With': 'XMLHttpRequest'
-        }
-    }).then(response => {
-        if (!response.ok) {
-            throw new Error('Logout request failed');
-        }
-        return response;
+// 쿠키 삭제 함수
+function clearAllCookies() {
+    document.cookie.split(";").forEach(function(c) {
+        document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
     });
+}
+
+// 세션 데이터 초기화 함수
+function resetSessionData() {
+    // 로컬 스토리지 초기화 (필요한 경우)
+    // localStorage.removeItem('userInfo');
+
+    // 세션 스토리지 초기화 (필요한 경우)
+    // sessionStorage.clear();
+
+    // 기타 클라이언트 상태 초기화
+    // window.currentUser = null;
+}
+
+function showLoggedOutSection() {
+    console.log('로그아웃 상태 UI 업데이트 시작');
+
+    const loggedOutSection = document.getElementById('loggedOutSection');
+    const loggedInSection = document.getElementById('loggedInSection');
+
+    // 메인 섹션 업데이트
+    if (loggedOutSection) {
+        loggedOutSection.style.display = 'block';
+        console.log('로그아웃 섹션 표시');
+    } else {
+        console.error('loggedOutSection 요소를 찾을 수 없습니다.');
+    }
+
+    if (loggedInSection) {
+        loggedInSection.style.display = 'none';
+        console.log('로그인 섹션 숨김');
+    } else {
+        console.error('loggedInSection 요소를 찾을 수 없습니다.');
+    }
+
+    // 추가: 클래스 기반 UI 업데이트
+    document.querySelectorAll('.logged-in-only').forEach(el => {
+        el.style.display = 'none';
+        console.log('로그인 전용 요소 숨김:', el);
+    });
+
+    document.querySelectorAll('.logged-out-only').forEach(el => {
+        el.style.display = 'block';
+        console.log('로그아웃 전용 요소 표시:', el);
+    });
+
+    // 사용자 정보 초기화
+    const usernameElement = document.querySelector('.username');
+    if (usernameElement) {
+        usernameElement.textContent = '';
+        console.log('사용자명 초기화');
+    }
+
+    console.log('로그아웃 상태 UI 업데이트 완료');
 }
 
 // 개선된 쿠키 삭제 함수
@@ -746,6 +817,108 @@ function testModal() {
     showSuccessModal();
 }
 
+// 모달 이벤트 설정
+function setupModalEvents() {
+    // 모달 오버레이 클릭시 모달 닫기
+    const modalOverlay = document.getElementById('success-modal');
+    if (modalOverlay) {
+        modalOverlay.addEventListener('click', function(e) {
+            if (e.target === modalOverlay) {
+                hideSuccessModal();
+            }
+        });
+    }
+
+    // ESC 키로 모달 닫기
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            hideSuccessModal();
+        }
+    });
+}
+
+// 기존 모달 관련 함수들 (기존 success-modal 사용)
+function showSuccessModal() {
+    const modal = document.getElementById('success-modal');
+    if (modal) {
+        modal.classList.remove('hidden');
+        console.log('모달이 표시되었습니다.');
+    } else {
+        console.error('success-modal 요소를 찾을 수 없습니다.');
+    }
+}
+
+function hideSuccessModal() {
+    const modal = document.getElementById('success-modal');
+    if (modal) {
+        modal.classList.add('hidden');
+        console.log('모달이 숨겨졌습니다.');
+    }
+}
+
+function confirmLoginSuccess() {
+    hideSuccessModal();
+    // 필요시 추가 동작 구현
+    console.log('로그인 성공 확인됨');
+}
+
+// 에러 모달 (확인 버튼만, 빨간색 아이콘)
+function showErrorModal(title, message, callback = null) {
+    const modal = createModal('error-modal', title, message, 'error');
+    const buttonsContainer = modal.querySelector('.modal-buttons');
+
+    // 에러 아이콘으로 변경
+    const modalIcon = modal.querySelector('.modal-icon');
+    if (modalIcon) {
+        modalIcon.style.color = '#f44336';
+        modalIcon.textContent = '⚠️';
+    }
+
+    const confirmBtn = document.createElement('button');
+    confirmBtn.textContent = '확인';
+    confirmBtn.style.cssText = `
+        flex: 1;
+        padding: 16px;
+        border: none;
+        background: #f44336;
+        color: white;
+        font-size: 16px;
+        cursor: pointer;
+        border-radius: 0 0 12px 12px;
+        transition: background-color 0.2s;
+    `;
+
+    confirmBtn.addEventListener('mouseover', () => {
+        confirmBtn.style.backgroundColor = '#d32f2f';
+    });
+
+    confirmBtn.addEventListener('mouseout', () => {
+        confirmBtn.style.backgroundColor = '#f44336';
+    });
+
+    confirmBtn.addEventListener('click', () => {
+        modal.remove();
+        if (callback) callback();
+    });
+
+    buttonsContainer.appendChild(confirmBtn);
+
+    // 오버레이 클릭시 모달 닫기
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            modal.remove();
+        }
+    });
+
+    // ESC 키로 모달 닫기
+    const escHandler = (e) => {
+        if (e.key === 'Escape') {
+            modal.remove();
+            document.removeEventListener('keydown', escHandler);
+        }
+    };
+    document.addEventListener('keydown', escHandler);
+}
 // 모달 이벤트 설정
 function setupModalEvents() {
     // 모달 오버레이 클릭시 모달 닫기

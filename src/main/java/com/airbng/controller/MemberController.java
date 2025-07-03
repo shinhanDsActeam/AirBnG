@@ -22,6 +22,7 @@ import javax.validation.constraints.NotNull;
 import javax.servlet.http.HttpSession;
 
 import static com.airbng.common.response.status.BaseResponseStatus.SUCCESS_LOGIN;
+import static com.airbng.common.response.status.BaseResponseStatus.SUCCESS_LOGOUT;
 
 @RestController
 @RequestMapping("/members")
@@ -87,5 +88,13 @@ public class MemberController {
         session.setAttribute(("nickname"), response.getNickname());
 
         return new BaseResponse<>(SUCCESS_LOGIN, response);
+    }
+
+    @PostMapping("/logout")
+    public BaseResponse<String> logout(HttpSession session) {
+        // 세션 무효화
+        session.invalidate();
+
+        return new BaseResponse<>(SUCCESS_LOGOUT);
     }
 }

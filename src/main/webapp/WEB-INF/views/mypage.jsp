@@ -59,15 +59,6 @@
                         </div>
                         <div class="menu-arrow lock-icon"></div>
                     </div>
-
-                    <div class="menu-item disabled">
-                        <div class="menu-icon review-icon"></div>
-                        <div class="menu-content">
-                            <h3>작성한 후기</h3>
-                            <p>로그인이 필요한 서비스입니다</p>
-                        </div>
-                        <div class="menu-arrow lock-icon"></div>
-                    </div>
                 </div>
             </div>
 
@@ -93,7 +84,7 @@
                     </div>
                 </div>
 
-                <!-- 로그인 후 전체 메뉴 -->
+                <!-- 로그인 후 전체 메뉴 (후기 메뉴 제거) -->
                 <div class="menu-section">
                     <div class="menu-item active" onclick="goToMyInfo()">
                         <div class="menu-icon user-icon"></div>
@@ -109,15 +100,6 @@
                         <div class="menu-content">
                             <h3>예약 내역 보기</h3>
                             <p>나의 예약 현황을 확인하세요</p>
-                        </div>
-                        <div class="menu-arrow right-arrow"></div>
-                    </div>
-
-                    <div class="menu-item active" onclick="goToReviews()">
-                        <div class="menu-icon review-icon"></div>
-                        <div class="menu-content">
-                            <h3>작성한 후기 보기</h3>
-                            <p>내가 작성한 후기를 관리하세요</p>
                         </div>
                         <div class="menu-arrow right-arrow"></div>
                     </div>
