@@ -70,7 +70,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     });
                     // 성공 페이지로 이동 또는 다른 처리
                 } else {
-                    ModalUtils.showError("예약에 실패하였습니다.", "", () => {
+                    ModalUtils.showError(data.message, "예약 실패", () => {
                         // TODO : redirect 경로 변경 필요
                         // history.back();
                         window.location.href = `${contextPath}/page/home`;
