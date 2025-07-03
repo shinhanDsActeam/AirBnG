@@ -5,6 +5,7 @@ import com.airbng.common.exception.LockerException;
 import com.airbng.common.exception.MemberException;
 import com.airbng.common.exception.ReservationException;
 import com.airbng.common.response.status.BaseResponseStatus;
+import com.airbng.domain.base.ReservationState;
 import com.airbng.domain.Reservation;
 import com.airbng.domain.base.Available;
 import com.airbng.domain.base.ChargeType;
@@ -23,6 +24,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
@@ -32,37 +35,65 @@ import static com.airbng.common.response.status.BaseResponseStatus.*;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class ReservationServiceImpl implements ReservationService {
+public class ReservationServiceImpl implements ReservationService{
 
     private final ReservationMapper reservationMapper;
     private final JimTypeMapper jimTypeMapper;
     private final MemberMapper memberMapper;
     private final LockerMapper lockerMapper;
-    private static final Long LIMIT = 10L; // 페이지당 최대 예약 개수
+    private static final Long LIMIT= 10L; // 페이지당 최대 예약 개수
 
     //예약 조회 + 페이징 처리
 
     @Override
-    public ReservationPaging findAllReservationById(Long memberId, String role, ReservationState state, Long nextCursorId, String period) {
+    public ReservationPaging findAllReservationById(Long memberId, String role, Object state, Long nextCursorId, String period) {
         log.info("Finding reservation by memberId: {}, role: {}, state: {}, nextCursorId: {}, LIMIT:{},  PERIOD: {}",
                 memberId, role, state, nextCursorId, LIMIT, period);
 
         // 초기 커서 ID 설정
-        if (nextCursorId == null) {
-            nextCursorId = -1L;
+        if(nextCursorId == null) {
+            nextCursorId = (reservationMapper.findAllReservationByMemberId())+1L; // 커서 ID 초기화
+        }
+        log.info("!!! nextCursorId: {}", nextCursorId);
+
+        List<ReservationState> stateList = null;
+
+        if (state == null) {
+            stateList = null;
+        } else if (state instanceof List<?>) {
+            stateList = (List<ReservationState>) state;
+        } else {
+            // 단일값이면 리스트로 감싸기
+            stateList = Collections.singletonList((ReservationState) state);
         }
 
-        String stateStr = (state != null) ? state.toString() : null;
+        // isHistoryTab 여부 판단
+        boolean isHistoryTab = stateList != null &&
+                (stateList.contains(ReservationState.COMPLETED) || stateList.contains(ReservationState.CANCELLED));
 
         List<ReservationSearchResponse> reservations = reservationMapper.findAllReservationById(
-                memberId, role, stateStr, nextCursorId, LIMIT + 1, period //다음 페이지 유무 확인
+                memberId, role, stateList, nextCursorId, LIMIT + 1, period, isHistoryTab //다음 페이지 유무 확인
         );
 
 
         // 예외 처리: 예약이 없을 경우
         if (reservations == null || reservations.isEmpty()) {
+            // 만약 isHistoryTab이 true라면, 예약이 없더라도 빈 페이지를 반환
+            if (isHistoryTab) {
+                return ReservationPaging.builder()
+                        .reservations(Collections.emptyList())
+                        .nextCursorId(-1L) // 더 이상 페이지가 없음을 나타냄
+                        .hasNextPage(false)
+                        .period(period)
+                        .totalCount(0L)
+                        .build();
+            }
+            // 일반 예약 조회에서 예약이 없으면 예외 발생
             throw new ReservationException(NOT_FOUND_RESERVATION);
         }
+//        if (reservations == null || reservations.isEmpty()) {
+//            throw new ReservationException(NOT_FOUND_RESERVATION);
+//        }
 
         //hasNextPage 값 설정 : 다음 페이지 유무
         boolean hasNextPage = reservations.size() > LIMIT;
@@ -99,7 +130,7 @@ public class ReservationServiceImpl implements ReservationService {
     @Transactional
     public ReservationCancelResponse updateReservationState(Long reservationId, Long memberId) {
 
-        /** 락 만듦 */
+        /** 락 만듬 */
         ReentrantLock lock = reservationLocks.get(reservationId, key -> new ReentrantLock());
         try {
             /** 락 걸기 */
@@ -147,8 +178,7 @@ public class ReservationServiceImpl implements ReservationService {
             if (reservation == null) throw new ReservationException(NOT_FOUND_RESERVATION);
 
             //짐을 맡아주는 사람인지 확인
-            if (!reservation.getKeeper().getMemberId().equals(memberId))
-                throw new ReservationException(NOT_KEEPER_OF_RESERVATION);
+            if (!reservation.getKeeper().getMemberId().equals(memberId)) throw new ReservationException(NOT_KEEPER_OF_RESERVATION);
 
             //취소, 완료상태는 상태변경 불가
             reservation.getState().isAvailableUpdate(reservation.getState());
