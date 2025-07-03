@@ -9,6 +9,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.Collections;
+import java.util.List;
+
 
 @Controller
 @RequestMapping("/page")
@@ -42,5 +45,27 @@ public class LockerPageController {
         model.addAttribute("count", response.getCount());
 
         return "search";
+    }
+
+    @GetMapping("/lockerSearch")
+    public String showFilterMapPage(@RequestParam Long jimTypeId,
+                                    Model model) {
+
+        List<Long> jimTypeIdList = (jimTypeId == null) ? null : Collections.singletonList(jimTypeId);
+
+        LockerSearchRequest request = LockerSearchRequest.builder()
+                .jimTypeId(jimTypeIdList)
+                .build();
+
+        // 서비스 호출
+        LockerSearchResponse response = lockerService.findAllLockerBySearch(request);
+
+        System.out.println("Locker Type: " + jimTypeId);
+
+        // JSP에 전달
+        //model.addAttribute("address", address);
+        model.addAttribute("lockerType", jimTypeId);
+
+        return "searchFilter";
     }
 }

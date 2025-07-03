@@ -78,8 +78,14 @@ html, body {
   height: 100%;
   border: none;
   outline: none;
-  font-size: 1rem;
-  background: transparent;
+
+  color: #999;
+  text-align: center;
+  font-family: Pretendard;
+  font-size: 15px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 15px; /* 100% */
 }
 
 .search-button {

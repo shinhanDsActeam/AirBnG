@@ -1,0 +1,423 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    background-color: #f8f9fa;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+}
+
+
+.page-container {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    max-width: 412px;
+    width: 100%;
+    background-color: #ffffff;
+}
+
+
+/* 기존 CSS는 그대로 유지하고 아래 스타일들을 추가하세요 */
+
+/* 헤더 스타일 */
+.header {
+    display: flex;
+    align-items: center;
+    padding: 16px 20px;
+    background-color: #ffffff;
+    border-bottom: 1px solid #e0e0e0;
+    position: relative;
+}
+
+.back-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    margin-right: 12px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s;
+}
+
+.back-button:hover {
+    background-color: #f5f5f5;
+}
+
+.header-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #333;
+}
+
+/* 검색 필터 컨테이너 */
+.search-filter-container {
+margin : 20px auto;
+    padding: 20px 20px 0px 20px;
+        width: fixed 372px;
+        height: fixed 168px;
+        flex-shrink: 0;
+        border-radius: 10px;
+        border: 2px solid #4561DB;
+        background: #FFF;
+
+}
+
+.search-input-wrapper {
+    position: relative;
+}
+
+.search-icon {
+    width: 17px;
+    height: 17px;
+    position: absolute;
+        left: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #888;
+}
+
+.search-input {
+    width: 100%;
+        padding: 12px 12px 16px 40px;
+        border: none;
+        border-radius: 12px;
+        font-size: 15px;
+        cursor: pointer;
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: #007bff;
+}
+
+.filter-row {
+    display: inline-flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.filter-item {
+    display: flex;
+        align-items: center;
+        padding: 15px;
+        cursor: pointer;
+        color: #333;
+        font-size: 16px;
+        font-style: normal;
+        font-weight: 500;
+        line-height: 16px;
+}
+
+.filter-icon {
+    margin-right: 8px;
+    color: #666;
+    width: 24px;
+    height: 24px;
+}
+
+/* 검색 순위 */
+.search-ranking {
+    padding: 20px;
+    background-color: #ffffff;
+    flex: 1;
+    overflow-y: auto;
+}
+
+.ranking-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 16px;
+}
+
+.ranking-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.ranking-item {
+    display: flex;
+    align-items: center;
+    padding: 16px;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.ranking-item:hover {
+    background-color: #f8f9fa;
+}
+
+.ranking-number {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background-color: #007bff;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 600;
+    margin-right: 16px;
+}
+
+.ranking-location {
+    font-size: 14px;
+    color: #333;
+    font-weight: 500;
+}
+
+/* 모달 스타일 */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: none;
+    align-items: flex-end;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.modal.active {
+    display: flex;
+}
+
+.modal-content {
+    position: relative;
+    background-color: white;
+    width: 100%;
+    max-width: 412px;
+    border-radius: 20px 20px 0 0;
+    overflow: hidden;
+    animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(100%);
+    }
+    to {
+        transform: translateY(0);
+    }
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.modal-header h3 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #333;
+}
+
+.close-button {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #666;
+    padding: 4px;
+}
+
+.modal-body {
+    padding: 20px;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+/* 위치 검색 스타일 */
+.location-search-input {
+    margin-bottom: 16px;
+}
+
+.location-search-input input {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 14px;
+}
+
+.location-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.location-option {
+    padding: 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.location-option:hover {
+    background-color: #f8f9fa;
+}
+
+.location-option.selected {
+    background-color: #007bff;
+    color: white;
+}
+
+/* 날짜 선택 스타일 */
+.date-input {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 14px;
+    margin-bottom: 16px;
+}
+
+/* 시간 선택 스타일 */
+.time-selector {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+.time-group {
+    flex: 1;
+}
+
+.time-group label {
+    display: block;
+    font-size: 14px;
+    font-weight: 500;
+    color: #333;
+    margin-bottom: 8px;
+}
+
+.time-group select {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 14px;
+    background-color: white;
+}
+
+/* 확인 버튼 */
+.confirm-button {
+    width: 100%;
+    padding: 12px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.confirm-button:hover {
+    background-color: #0056b3;
+}
+
+/* 검색 결과 */
+.search-results {
+    padding: 20px;
+    background-color: #ffffff;
+    flex: 1;
+    overflow-y: auto;
+}
+
+.search-results h3 {
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 16px;
+}
+
+.results-container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+/* 반응형 */
+@media (max-width: 480px) {
+    .filter-row {
+        flex-direction: column;
+    }
+
+    .filter-item {
+        justify-content: center;
+    }
+
+    .time-selector {
+        flex-direction: column;
+    }
+}
+
+/* 드롭다운 스타일 */
+.custom-dropdown {
+  position: relative;
+  width: 120px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  cursor: pointer;
+  background-color: white;
+}
+
+.custom-dropdown .selected {
+  padding: 10px;
+}
+
+.custom-dropdown .dropdown-options {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  max-height: 150px;
+  overflow-y: auto;
+  border: 1px solid #ccc;
+  border-top: none;
+  display: none;
+  background-color: white;
+  z-index: 1000;
+}
+
+.custom-dropdown .dropdown-options li {
+  padding: 10px;
+  cursor: pointer;
+}
+
+.custom-dropdown .dropdown-options li:hover {
+  background-color: #f0f0f0;
+}
+
+.custom-dropdown.open .dropdown-options {
+  display: block;
+}
+
+.filter-divider {
+    border: none;
+    border-top: 1px solid #e0e0e0;
+}
