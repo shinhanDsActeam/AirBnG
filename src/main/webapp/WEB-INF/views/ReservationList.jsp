@@ -56,6 +56,8 @@
         <p>예약 내역이 없습니다.</p>
     </div>
 
+
+
     <!-- 로딩 상태 -->
     <div class="loading" id="loading" style="display:none;">
         <p>로딩 중...</p>

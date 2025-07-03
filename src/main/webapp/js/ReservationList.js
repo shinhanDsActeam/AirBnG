@@ -14,8 +14,19 @@ console.log(`Blodspot SVG URL: ${blodspotSvgUrl}`);
 // 초기화
 document.addEventListener('DOMContentLoaded', () => {
     initTabs();
-    initMoreButton();
     fetchReservations(true);
+
+    window.addEventListener('scroll', () => {
+        if (loading || !hasNextPage) return;
+
+        const scrollTop = window.scrollY;
+        const viewportHeight = window.innerHeight;
+        const fullHeight = document.body.offsetHeight;
+
+        if (scrollTop + viewportHeight >= fullHeight - 100) {
+            fetchReservations(false);  // 다음 커서 로드
+        }
+    });
 });
 
 // ▶ 탭 이벤트 초기화
@@ -28,14 +39,6 @@ function initTabs() {
     });
 }
 
-// ▶ 더보기 버튼 이벤트
-function initMoreButton() {
-    const loadMoreBtn = document.getElementById('load-more-btn');
-    if (loadMoreBtn) {
-        loadMoreBtn.addEventListener('click', () => fetchReservations(false));
-    }
-}
-
 // ▶ 탭 변경 처리
 function changeTab(newStates, tabElem) {
     if (loading) return;
@@ -46,7 +49,7 @@ function changeTab(newStates, tabElem) {
     hasNextPage = true;
 
      // 화면 맨 위로 스크롤
-     window.scrollTo({ top: 0, behavior: 'smooth' });
+     window.scrollTo({ top: 0, behavior: 'smooth' });  // 👈 이 줄 추가!
 
     // UI 갱신
     document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
@@ -126,7 +129,6 @@ function getApiUrl() {
 function clearReservationList() {
     document.getElementById('reservation-list').innerHTML = '';
     document.getElementById('empty-state').style.display = 'none';
-    document.getElementById('load-more').style.display = 'none';
 }
 
 // ▶ 상태 텍스트
@@ -359,6 +361,8 @@ function fetchReservations(isFirst = false) {
                 if (filtered.length > 0) renderReservations(filtered);
                 nextCursorId = data.result.nextCursorId;
                 hasNextPage = data.result.hasNextPage;
+//                document.getElementById('load-more').style.display = hasNextPage ? 'block' : 'none';
+//                document.getElementById('load-more').style.display = 'none';
             }
         })
         .catch(err => {
