@@ -6,13 +6,13 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>이미지 마커와 커스텀 오버레이</title>
+    <title>에어비앤지 검색 결과</title>
 
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/search.css">
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/bottom-sheet.css">
 
     <!-- Kakao Maps -->
-    <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=앱_키_입력"&autoload=false"></script>
+    <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=앱_키_입력&autoload=false"></script>
 
     <!-- JS에서 contextPath 사용 -->
     <script>
