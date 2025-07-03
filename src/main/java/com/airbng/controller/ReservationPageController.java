@@ -9,8 +9,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import javax.servlet.http.HttpSession;
 
 @Controller
-@RequestMapping("/page/reservation")
+@RequestMapping("/page/reservations")
 public class ReservationPageController {
+
     @GetMapping("/list")
     public String reservationListPage() {
         return "ReservationList";
@@ -23,7 +24,6 @@ public class ReservationPageController {
 
         model.addAttribute("reservationId", reservationId);
         model.addAttribute("memberId", memberId);
-
         return "reservationDetails";
     }
 
