@@ -51,7 +51,6 @@
                                 </svg>
                             </div>
                             <div class="dropdown-options" id="startTimeOptions">
-                                <!-- 옵션들이 JavaScript로 동적 생성됩니다 -->
                             </div>
                         </div>
                     </div>
@@ -65,7 +64,6 @@
                                 </svg>
                             </div>
                             <div class="dropdown-options" id="endTimeOptions">
-                                <!-- 옵션들이 JavaScript로 동적 생성됩니다 -->
                             </div>
                         </div>
                     </div>

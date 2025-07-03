@@ -123,6 +123,11 @@ function loadLockerData() {
         });
 }
 
+
+/***************************************************************************************/
+/*                                    날짜 관련 함수                                   */
+/***************************************************************************************/
+
 function formatDateTimeForServer(date) {
     const yyyy = date.getFullYear();
     const mm = String(date.getMonth() + 1).padStart(2, '0');
@@ -226,6 +231,12 @@ function updateDateButtons() {
 }
 
 
+/***************************************************************************************/
+/*                                 시간 옵션 관련 함수                                 */
+/***************************************************************************************/
+let selectedStartTime = '';
+let selectedEndTime = '';
+
 // 드롭다운 토글 함수
 function toggleDropdown(type) {
     const dropdown = document.getElementById(type + 'Dropdown');
@@ -235,20 +246,23 @@ function toggleDropdown(type) {
     // 다른 드롭다운 닫기
     document.querySelectorAll('.custom-dropdown').forEach(dd => {
         if (dd.id !== type + 'Dropdown') {
-            // this.classList.remove('active');
             dd.querySelector('.dropdown-selected').classList.remove('active');
             dd.querySelector('.dropdown-options').classList.remove('show');
         }
     });
 
     // 현재 드롭다운 토글
-    // dropdown.classList.toggle('active');
     selected.classList.toggle('active');
     options.classList.toggle('show');
-}
 
-let selectedStartTime = '';
-let selectedEndTime = '';
+    // 선택된 옵션이 보이도록 스크롤 이동
+    if (options.classList.contains('show')) {
+        const selectedOption = options.querySelector('.dropdown-option.selected');
+        if (selectedOption) {
+            selectedOption.scrollIntoView({ block: 'start', behavior: 'auto' });
+        }
+    }
+}
 
 // 옵션 선택 함수
 function selectTimeOption(type, value) {
@@ -292,49 +306,38 @@ function updateStartTimeOptions() {
     optionsContainer.innerHTML = '';
 
     const isToday = selectedDateRange.startDate === 0;
-    let startHour = 0;
-    let startMinute = 0;
+    let startH = 0;
+    let startM = 0;
 
     if (isToday) {
         const now = new Date();
-        const currentHour = now.getHours();
-        const currentMinute = now.getMinutes();
+        const hour = now.getHours();
+        const min = now.getMinutes();
 
         // 현재 시간에서 가장 가까운 30분 단위로 올림
-        if (currentMinute <= 30) {
-            startHour = currentHour;
-            startMinute = 30;
+        if (min <= 30) {
+            startH = hour;
+            startM = 30;
         } else {
-            startHour = currentHour + 1;
-            startMinute = 0;
+            startH = hour + 1;
+            startM = 0;
         }
 
         // 24시를 넘어가면 다음날 00:00부터
-        if (startHour >= 24) {
-            startHour = 0;
-            startMinute = 0;
+        if (startH >= 24) {
+            startH = 0;
+            startM = 0;
         }
     }
 
     // 시작 시간 옵션 생성 (30분 단위)
-    let currentHour = startHour;
-    let currentMin = startMinute;
+    let currentHour = startH;
+    let currentMin = startM;
 
 
     while (true) {
         const timeStr = `${currentHour.toString().padStart(2, '0')}:${currentMin.toString().padStart(2, '0')}`;
-        // const option = document.createElement('option');
-        const option = document.createElement('div');
-        option.className = 'dropdown-option'
-        option.dataset.value = timeStr;
-        option.textContent = timeStr;
-        option.onclick = () => selectTimeOption('startTime', timeStr);
-
-        if(timeStr === selectedStartTime){
-            option.classList.add('selected');
-        }
-
-        optionsContainer.appendChild(option);
+        createOption('startTime', optionsContainer, timeStr);
 
         // 다음 30분 단위로 증가
         currentMin += 30;
@@ -351,7 +354,7 @@ function updateStartTimeOptions() {
         }
 
         // 오늘이 아닌 경우 한 바퀴 돌면 종료
-        if (!isToday && currentHour === startHour && currentMin === startMinute) {
+        if (!isToday && currentHour === startH && currentMin === startM) {
             break;
         }
     }
@@ -383,21 +386,8 @@ function updateEndTimeOptions() {
             currentMin = 0;
         }
 
-        let timeStr = `${currentHour.toString().padStart(2, '0')}:${currentMin.toString().padStart(2, '0')}`;
-
-        const option = document.createElement('div');
-        option.className = 'dropdown-option'
-        option.dataset.value = timeStr;
-        option.textContent = timeStr;
-        option.onclick = () => selectTimeOption('endTime', timeStr);
-
-        // 현재 추가되는 값들 중에 이미 선택되어있는 애들이 있었다면?
-        if(timeStr === selectedEndTime){
-            option.classList.add('selected');
-        }
-
-        optionsContainer.appendChild(option);
-
+        const timeStr = `${currentHour.toString().padStart(2, '0')}:${currentMin.toString().padStart(2, '0')}`;
+        createOption('endTime', optionsContainer, timeStr);
         // 24:00까지 돌았으면 끝
         if (timeStr === "24:00") break;
 
@@ -412,6 +402,22 @@ function updateEndTimeOptions() {
     updateSelectedTime('endTime', optionsContainer);
 }
 
+function createOption(type, optionsContainer, timeStr){
+    const option = document.createElement('div');
+    option.className = 'dropdown-option'
+    option.dataset.value = timeStr;
+    option.textContent = timeStr;
+    option.onclick = () => selectTimeOption(type, timeStr);
+
+    // 타입에 따라 올바른 선택된 시간과 비교
+    const selectedTime = (type === 'startTime') ? selectedStartTime : selectedEndTime;
+    if(timeStr === selectedTime){
+        option.classList.add('selected');
+    }
+
+    optionsContainer.appendChild(option);
+}
+
 function updateSelectedTime(type, optionsContainer){
     let selectedTime = (type === 'startTime') ? selectedStartTime : selectedEndTime;
     // 기존에 선택된 값이 있어. 그런데 얘가 새로 만든 리스트에 없다면?
@@ -421,6 +427,11 @@ function updateSelectedTime(type, optionsContainer){
         selectTimeOption(type, firstOption.dataset.value);
     }
 }
+
+
+/***************************************************************************************/
+/*                                     짐 관련 함수                                    */
+/***************************************************************************************/
 
 function generateJimTypes(jimTypes) {
     const container = document.getElementById('jimTypes');
