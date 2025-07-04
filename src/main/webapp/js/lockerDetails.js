@@ -28,9 +28,7 @@ window.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
-        const targetUrl = `${contextPath}/page/reservation?lockerId=${encodeURIComponent(lockerId)}&memberId=${encodeURIComponent(memberId)}`;
-        console.log("이동할 URL:", targetUrl);
-        window.location.href = targetUrl;
+        window.location.href = `${contextPath}/page/reservations/form?lockerId=${lockerId}`;
     });
 });
 
