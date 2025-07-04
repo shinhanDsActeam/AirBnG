@@ -29,4 +29,5 @@ public interface ReservationService {
 
     //예약 상새
     ReservationDetailResponse findReservationDetail(Long reservationId, Long memberId);
+    void deleteReservationById(Long reservationId);
 }

@@ -303,4 +303,20 @@
         WHERE locker_id = #{lockerId}
     </select>
 
+    <delete id="deleteReservationJimtypeByReservationId" parameterType="long">
+        DELETE FROM reservationjimtype
+        WHERE reservation_id = #{reservationId}
+    </delete>
+
+    <delete id="deleteReservationById" parameterType="Long">
+        DELETE FROM Reservation
+        WHERE reservation_id = #{reservationId}
+    </delete>
+
+    <select id="findReservationStateById" parameterType="long" resultType="com.airbng.domain.base.ReservationState">
+        SELECT state
+        FROM reservation
+        WHERE reservation_id = #{reservationId}
+    </select>
+
 </mapper>

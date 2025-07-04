@@ -1,5 +1,6 @@
 package com.airbng.dto.locker;
 
+import com.airbng.dto.jimType.JimTypeResult;
 import lombok.*;
 
 import java.util.List;
@@ -17,6 +18,8 @@ public class LockerDetailResponse {
     private String addressDetail;
     private Long keeperId;
     private String keeperName;
+    private String keeperPhone;
+    private List<JimTypeResult> jimTypeResults; // 짐 타입 목록; // 종류
     private List<String> images; // 이미지 리스트
 
 }

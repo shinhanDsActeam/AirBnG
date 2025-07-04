@@ -5,7 +5,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>에어비앤짐 로고 애니메이션</title>
+    <title>에어비앤짐</title>
+    <link rel="icon" type="image/svg+xml" href="${pageContext.request.contextPath}/images/favicon.svg" />
     <style>
         * {
             margin: 0;

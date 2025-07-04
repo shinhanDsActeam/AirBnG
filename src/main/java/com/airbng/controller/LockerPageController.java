@@ -1,5 +1,6 @@
 package com.airbng.controller;
 
+import com.airbng.dto.locker.LockerDetailResponse;
 import com.airbng.dto.locker.LockerSearchRequest;
 import com.airbng.dto.locker.LockerSearchResponse;
 import com.airbng.service.LockerService;
@@ -18,6 +19,28 @@ public class LockerPageController {
 
     public LockerPageController(LockerService lockerService) {
         this.lockerService = lockerService;
+    }
+
+    @GetMapping ("/lockerDetails")
+    public String showMapPage(@RequestParam Long lockerId,
+                              Model model) {
+
+        LockerDetailResponse request = LockerDetailResponse.builder()
+                .lockerId(lockerId)
+                .build();
+
+//        LockerDetailResponse response = lockerService.findUserById(lockerId);
+
+        // 서비스 호출
+        LockerDetailResponse response = lockerService.findUserById(request.getLockerId());
+
+        System.out.println("lockerId: " + lockerId);
+
+        // JSP에 전달
+        model.addAttribute("lockerId", lockerId);
+        model.addAttribute("lockerDetail", response);
+
+        return "lockerDetails"; // lockerDetails.jsp로 이동
     }
 
     @GetMapping("/lockerSearchDetails")

@@ -9,7 +9,7 @@
         <span class="nav-text">보관소</span>
     </a>
 
-    <a href="messages.jsp" class="nav-item" data-page="messages">
+    <a href="${pageContext.request.contextPath}/page/chatList" class="nav-item" data-page="messages">
         <img src="<c:url value='/images/messages.svg'/>" alt="채팅" class="nav-icon">
         <span class="nav-text">채팅</span>
     </a>

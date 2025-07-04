@@ -33,4 +33,8 @@ public interface ReservationMapper {
     Long findReservationByMemberId(@Param("memberId") Long memberId, @Param("role") String role);
 
     Long findAllReservationByMemberId();
+
+    void deleteReservationById(@Param("reservationId")Long reservationId);
+    void deleteReservationJimtypeByReservationId(@Param("reservationId")Long reservationId);
+    ReservationState findReservationStateById(Long reservationId);
 }

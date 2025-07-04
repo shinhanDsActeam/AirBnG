@@ -8,6 +8,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>예약 내역</title>
+    <link rel="icon" type="image/svg+xml" href="${pageContext.request.contextPath}/images/favicon.svg" />
     <link rel="stylesheet" href="<c:url value='/css/ReservationList.css'/>">
 </head>
 <body class="page-container">
@@ -56,11 +57,60 @@
         <p>예약 내역이 없습니다.</p>
     </div>
 
-
-
     <!-- 로딩 상태 -->
     <div class="loading" id="loading" style="display:none;">
         <p>로딩 중...</p>
+    </div>
+
+    <!-- 삭제 확인 모달 -->
+    <div id="confirm-modal" class="modal-overlay hidden">
+        <div class="modal confirm-modal">
+            <div class="modal-content">
+                <div class="modal-icon confirm-bounce">?</div>
+                <div class="modal-title">예약을 삭제하시겠어요?</div>
+                <div class="modal-message">
+                    삭제하면 되돌릴 수 없어요.<br>
+                    정말 삭제하시겠어요?
+                </div>
+            </div>
+            <div class="modal-buttons two-buttons">
+                <button class="modal-btn cancel" onclick="closeConfirmModal()">취소</button>
+                <button class="modal-btn confirm" onclick="proceedDelete()">삭제</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 삭제 성공 모달 -->
+    <div id="success-modal" class="modal-overlay hidden">
+        <div class="modal success-modal">
+            <div class="modal-content">
+                <div class="modal-icon success-rotate">✓</div>
+                <div class="modal-title">예약 내역을 삭제했어요!</div>
+                <div class="modal-message">
+                    <span id="refund-amount">10,000원</span>의 수수료가 발생했어요!
+                </div>
+            </div>
+            <div class="modal-buttons">
+                <button class="modal-btn" onclick="confirmDelete()" style="width: 100%; border-right: none;">확인</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 삭제 실패 모달 -->
+    <div id="error-modal" class="modal-overlay hidden">
+        <div class="modal error-modal">
+            <div class="modal-content">
+                <div class="modal-icon error-shake">✗</div>
+                <div class="modal-title">예약 삭제 실패</div>
+                <div class="modal-message">
+                    삭제 중 오류가 발생했습니다.<br>
+                    잠시 후 다시 시도해주세요.
+                </div>
+            </div>
+            <div class="modal-buttons">
+                <button class="modal-btn" onclick="closeErrorModal()" style="width: 100%; border-right: none;">확인</button>
+            </div>
+        </div>
     </div>
 
     <div id="svg-paths"
