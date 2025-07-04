@@ -1,6 +1,20 @@
 let selectedFiles = [];
 
+function loadKakaoMapScript(callback) {
+    const script = document.createElement('script');
+    script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${window.KAKAO_APP_KEY}&autoload=false&libraries=services`;
+    script.async = true;
+    script.onload = () => kakao.maps.load(callback);
+    document.head.appendChild(script);
+}
+
 document.addEventListener('DOMContentLoaded', () => {
+  loadKakaoMapScript(() => {
+    initLockerRegister();  // ← 아래 함수 안에 기존 로직 다 넣음
+  });
+});
+
+function initLockerRegister() {
     let currentStep = 1;
     const totalSteps = 4;
 
@@ -280,15 +294,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // lockerRegister.js
-    function loadKakaoMapScript() {
-      const script = document.createElement('script');
-      script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${window.KAKAO_APP_KEY}&libraries=services`;
-      script.async = true;
-      document.head.appendChild(script);
-    }
-
-    loadKakaoMapScript();
     window.goBack = goBack;
 
     // 초기화
@@ -298,7 +303,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // 운영 시간 옵션 초기화
     renderDropdownOptions('startTime', '08:00');
     renderDropdownOptions('endTime', '21:00');
-});
+}
 
 // 등록 버튼 클릭 시 실제 fetch 전송
 document.querySelector('.submit-btn').addEventListener('click', async () => {
