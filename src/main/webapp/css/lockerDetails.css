@@ -19,7 +19,7 @@ body {
 }
 
 .header {
-    padding: 80px 160px 16px 160px; /* 상단 80px, 좌우 160px */
+    padding: 30px 160px 16px 160px; /* 상단 80px, 좌우 160px */
     background-color: white;
     display: flex;
     align-items: center;
@@ -27,15 +27,13 @@ body {
     justify-content: center; /* 텍스트 가운데 정렬 */
     position: relative;
     height: 56px;
-
-        display: block; /* 인라인 문제 해결 */
+    display: block; /* 인라인 문제 해결 */
 }
-
 
 .back-btn {
     position: absolute;
     left: 16px;
-    top: 89px; /* 50%에서 60%로 변경하여 화살표를 아래로 이동 */
+    top: 38px; /* 50%에서 60%로 변경하여 화살표를 아래로 이동 */
     transform: translateY(-50%);
     width: 24px;
     height: 24px;
@@ -52,8 +50,7 @@ body {
     font-style: normal;
     font-weight: 600;
     line-height: 20px; /* 100% */
-
-    line-height: 1
+    line-height: 1;
     white-space: nowrap;
 }
 
@@ -61,7 +58,7 @@ body {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    padding: 50px 20px;
+    padding: 50px 24px 20px 24px; /* 좌우 패딩 동일하게 */
     background: #FFF;
 }
 
@@ -72,18 +69,26 @@ body {
     color: #333;
 }
 
+.image-gallery {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 16px;
+    width: 100%;
+}
+
 .locker-image {
     width: 80px;
     height: 80px;
     border-radius: 8px;
     object-fit: cover;
-    margin-bottom: 16px;
 }
 
 .price-info {
     padding: 16px;
     border-radius: 8px;
     margin-bottom: 20px;
+    width: 100%;
 }
 
 .price-title {
@@ -93,6 +98,7 @@ body {
     font-style: normal;
     font-weight: 500;
     line-height: 20px; /* 100% */
+    margin-bottom: 8px;
 }
 
 .price-detail {
@@ -107,13 +113,17 @@ body {
 
 .info-section {
     display: flex;
+    min-height: 188px;
     height: 188px;
+    width: 372px;
     padding: 21px 18px;
     flex-direction: column;
     justify-content: center;
     gap: 10px;
-    align-self: stretch;
     background: rgba(69, 97, 219, 0.10);
+    overflow: hidden;
+    margin: 0 auto; /* 가운데 정렬 */
+    box-sizing: border-box; /* 추가: 패딩을 포함한 크기 계산 */
 }
 
 .info-item {
@@ -130,7 +140,6 @@ body {
     font-style: normal;
     font-weight: 600;
     line-height: 17px; /* 100% */
-
     margin-right: 10px; /* 옆으로 간격 줌 */
     min-width: 0px; /* 라벨 길이 정렬 용도 (원하면 조절 가능) */
     white-space: nowrap; /* 줄바꿈 방지 */
@@ -143,16 +152,15 @@ body {
     font-style: normal;
     font-weight: 400;
     line-height: 17px;
-
     text-indent: -10px; /* 라벨 폭 + 간격만큼 음수 들여쓰기 */
     padding-left: 10px; /* 들여쓰기 */
     word-break: break-word;
-     flex: 1; /* 남은 공간 모두 차지 */
+    flex: 1; /* 남은 공간 모두 차지 */
 }
 
 .reserve-btn {
     position: fixed;
-    bottom: 70px;
+    bottom: 30px;
     left: 50%;
     transform: translateX(-50%);
     display: flex;
@@ -168,10 +176,21 @@ body {
     font-size: 16px;
     font-weight: 600;
     cursor: pointer;
+    transition: background-color 0.3s ease;
 }
 
 .reserve-btn:hover {
     background-color: #3367d6;
+}
+
+.reserve-btn.disabled {
+    background-color: #cccccc;
+    color: #666666;
+    cursor: not-allowed;
+}
+
+.reserve-btn.disabled:hover {
+    background-color: #cccccc;
 }
 
 .loading {
@@ -185,9 +204,10 @@ body {
     text-align: center;
     padding: 40px;
     color: #ff5722;
+    font-size: 16px;
 }
 
-/*이미지 css*/
+/* 캐러셀 관련 CSS (미래 사용을 위해 보존) */
 .carousel-container {
     position: relative;
     overflow: hidden;
