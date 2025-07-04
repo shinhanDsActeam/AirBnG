@@ -15,17 +15,15 @@
     max-width: var(--body-width);
     height: var(--header-height);
     background-color: #fff;
-    border-bottom: 1px solid #e0e0e0;
     display: grid;
     grid-template-columns: auto 1fr auto;
     align-items: center;
-    padding: 0 16px;
+    padding: 10px 16px 0 16px;
     z-index: 1000;
+    box-sizing: border-box;
 }
 
 .back-icon {
-    width: var(--icon-size);
-    height: var(--icon-size);
     cursor: pointer;
     justify-self: start;
     transition: opacity 0.2s ease;
@@ -44,10 +42,18 @@
     font-style: normal;
     line-height: 20px;
     justify-self: center;
+    flex-grow: 1;
 }
 
-/* 뒤로가기 버튼 없는 경우, 해당 클래스가 빈 부분 차지 */
+/* 뒤로가기 버튼이 없는 경우, 빈 공간을 차지 */
+.back-spacer{
+    justify-self: start;
+}
+
+.back-icon,
+.back-spacer,
 .header-spacer {
     width: var(--icon-size);
-    height:var(--icon-size);
+    height: var(--icon-size);
+    flex-shrink: 0; /* 사이즈 줄어들지 않게 */
 }
