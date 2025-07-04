@@ -7,6 +7,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>예약하기</title>
+    <link rel="icon" type="image/svg+xml" href="${pageContext.request.contextPath}/images/favicon.svg" />
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="<c:url value='/css/reservation/reservationForm.css' />"/>
     <link rel="stylesheet" href="<c:url value='/css/common/modal.css' />"/>
