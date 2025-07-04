@@ -14,6 +14,7 @@
         <result property="keeperId" column="keeper_id" />
         <result property="keeperName" column="name" />
         <result property="keeperPhone" column="phone" />
+        <result property="isAvailable" column="is_available" />
         <!-- 중첩 짐타입 매핑 -->
         <collection property="jimTypeResults" ofType="com.airbng.dto.jimType.LockerJimTypeResult">
             <id     column="jimtype_id"    property="jimTypeId" />
@@ -30,6 +31,7 @@
             l.address,
             l.address_english,
             l.address_detail,
+            l.is_available,
             m.member_id AS keeper_id,
             m.name,
             m.phone,

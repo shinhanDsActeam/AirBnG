@@ -1,5 +1,6 @@
 package com.airbng.dto.locker;
 
+import com.airbng.domain.base.Available;
 import com.airbng.dto.jimType.JimTypeResult;
 import com.airbng.dto.jimType.LockerJimTypeResult;
 import lombok.*;
@@ -17,6 +18,7 @@ public class LockerDetailResponse {
     private String address;
     private String addressEnglish;
     private String addressDetail;
+    private Available isAvailable;
     private Long keeperId;
     private String keeperName;
     private String keeperPhone;
