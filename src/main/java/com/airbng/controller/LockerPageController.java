@@ -21,6 +21,21 @@ public class LockerPageController {
         this.lockerService = lockerService;
     }
 
+    @GetMapping("/lockers")
+    public String lockerPage() {
+        return "locker";
+    }
+
+    @GetMapping("/lockers/register")
+    public String lockerRegisterPage() {
+        return "lockerRegister";
+    }
+
+    @GetMapping("/lockers/manage")
+    public String lockerManagePage() {
+        return "lockerManage";
+    }
+
     @GetMapping ("/lockerDetails")
     public String showMapPage(@RequestParam Long lockerId,
                               Model model) {

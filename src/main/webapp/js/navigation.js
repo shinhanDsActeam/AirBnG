@@ -8,8 +8,8 @@ function setActiveNavigation() {
     let currentPage;
 
     // 현재 페이지 결정 로직 개선
-    if (path.includes('shopping-cart.jsp')) {
-        currentPage = 'shopping-cart';
+    if (path.includes('/page/lockers') || path.endsWith('/') || path.includes('lockers')) {
+        currentPage = 'lockers';
     } else if (path.includes('messages.jsp')) {
         currentPage = 'messages';
     } else if (path.includes('calendar.jsp')) {

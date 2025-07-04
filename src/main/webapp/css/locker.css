@@ -1,0 +1,200 @@
+.airbng-locker {
+    background: #f8f9fa;
+    font-family: 'BMJUA', sans-serif;
+    display: flex;
+    justify-content: center;
+    height: 100%;
+    margin: auto;
+    padding-bottom: 80px;
+    overflow-x: hidden; /* 스크롤 제거 */
+}
+
+.airbng-locker .container {
+    position: relative;
+    min-height: 100vh;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    width: 412px;
+    background: white;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    overflow-x: hidden;
+}
+
+/* 헤더 */
+.airbng-locker .header {
+    padding: 20px 20px 20px;
+    border-bottom: 1px solid #f0f0f0;
+    background: white;
+    z-index: 100;
+}
+
+.airbng-locker .header-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.airbng-locker .logo-text {
+    font-size: 20px;
+    font-weight: 700;
+    color: #333;
+}
+
+/* 메인 컨텐츠 */
+.airbng-locker .main-content {
+    max-width: 412px;
+    width: 100%;
+    margin: 0 auto;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 200px 20px 0;
+    box-sizing: border-box;
+}
+
+/* 메뉴 카드 */
+.airbng-locker .menu-section {
+    width: 100%;
+    max-width: 380px;
+    border: 1px solid #f0f0f0;
+    border-radius: 16px;
+    overflow: hidden;
+    background: #fff;
+    animation: fadeInUp 0.6s ease-out;
+    margin: 0 auto;
+}
+
+.airbng-locker .menu-item {
+    display: flex;
+    align-items: center;
+    padding: 24px;
+    border-bottom: 1px solid #f8f9fa;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.airbng-locker .menu-item:last-child {
+    border-bottom: none;
+}
+
+.airbng-locker .menu-item:hover {
+    background-color: #f8f9ff;
+    transform: translateX(2px);
+}
+
+.airbng-locker .menu-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.airbng-locker .menu-content h3 {
+    font-size: 18px;
+    font-weight: 800;
+    margin-bottom: 6px;
+    color: #222;
+}
+
+.airbng-locker .menu-content p {
+    font-size: 14px;
+    color: #666;
+}
+
+/* 오른쪽 화살표 */
+.airbng-locker .menu-arrow {
+    color: #4561DB;
+    width: 24px;
+    height: 24px;
+    position: relative;
+}
+
+.airbng-locker .right-arrow::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 8px;
+    height: 8px;
+    border-top: 2.5px solid currentColor;
+    border-right: 2.5px solid currentColor;
+    transform: translate(-50%, -50%) rotate(45deg);
+}
+
+/* 로그인 안 된 경우 */
+.airbng-locker .welcome-section {
+    text-align: center;
+    margin-bottom: 30px;
+    padding: 40px 20px;
+    background: #f8f9ff;
+    border-radius: 20px;
+    border: 1px solid #e8ebff;
+    animation: fadeInUp 0.6s ease-out;
+}
+
+.airbng-locker .welcome-title {
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 12px;
+    color: #333;
+}
+
+.airbng-locker .welcome-subtitle {
+    font-size: 15px;
+    color: #666;
+    margin-bottom: 24px;
+}
+
+.airbng-locker .auth-buttons {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+}
+
+.airbng-locker .login-btn,
+.signup-btn {
+    flex: 1;
+    max-width: 140px;
+    padding: 14px 0;
+    font-size: 15px;
+    font-weight: 600;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.airbng-locker .login-btn {
+    background: transparent;
+    color: #4561DB;
+    border: 2px solid #4561DB;
+}
+
+.airbng-locker .signup-btn {
+    background: transparent;
+    color: #4561DB;
+    border: 2px solid #4561DB;
+}
+
+.airbng-locker .login-btn:hover {
+    background: #3651cb;
+}
+
+.airbng-locker .signup-btn:hover {
+    background: #4561DB;
+    color: white;
+}
+
+/* 애니메이션 */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
