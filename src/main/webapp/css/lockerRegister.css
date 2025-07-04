@@ -1,0 +1,521 @@
+airbng-register {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    overflow: hidden;
+}
+
+/* 전체 등록 컨테이너 */
+.register-container {
+    width: 100%;
+    max-width: 412px;
+    margin: 0 auto;
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+/* 단계 헤더 (타이틀과 뒤로가기 버튼) */
+.step-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 0 auto;
+    padding: 16px 0 12px;
+    max-width: 412px;
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.step-header .back-button {
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+}
+
+.header-center {
+    flex: 1;
+    text-align: center;
+}
+
+.step-header .step-title {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.step-indicator {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 24px;
+    width: 100%;
+}
+
+.step-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.step-icon {
+    width: 30px;
+    height: 30px;
+    flex-shrink: 0;
+}
+
+.step-line {
+    width: 67px;
+    background-size: cover;
+    background-repeat: no-repeat;
+    margin: 0 4px;
+}
+
+#lockerRegisterForm {
+    margin-top: 20px;  /* 너무 좁으면 여기에 살짝 더 추가 */
+}
+
+/* 단계별 공통 form-group */
+.form-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    color: #333;
+    font-family: 'Pretendard', sans-serif;
+    font-size: 20px;
+    font-weight: 600;
+    line-height: 20px;
+    margin-bottom: 20px;
+}
+
+.form-group input[type="text"] {
+    height: 30px;
+    border: 1px solid #D5D5D5;
+    border-radius: 10px;
+    display: flex;
+    padding: 17px 23px;
+    align-items: center;
+    gap: 10px;
+    align-self: stretch;
+    background-color: #FFF;
+    font-size: 17px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 17px;
+}
+
+/* 업로드 박스 스타일 */
+.image-upload-area {
+    display: flex;
+    gap: 8px;
+    flex-wrap: nowrap;
+    align-items: center;
+    overflow-x: auto;
+    overflow-y: hidden;
+}
+
+.image-upload-box {
+    flex-shrink: 0;
+}
+
+.image-upload-box img {
+    width: 100px;
+    height: 100px;
+    border: 1px solid #D5D5D5;
+    border-radius: 5px;
+    background: #FFF;
+    cursor: pointer;
+}
+
+input[type="file"]#image {
+    display: none;
+}
+
+.preview-list {
+    display: flex;
+    gap: 8px;
+}
+
+.preview-item {
+    position: relative;
+    width: 70px;
+    height: 70px;
+    flex-shrink: 0;
+    border-radius: 6px;
+    overflow: hidden;
+    border: 1px solid #ddd;
+}
+
+.preview-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.preview-item button {
+    position: absolute;
+    top: 1px;
+    right: 1px;
+    background-color: #ff4d4f;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 18px;
+    height: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 4px rgba(0, 0, 0, 0.2);
+}
+
+/* 버튼 공통 */
+.next-btn,
+.submit-btn {
+    width: 100%;
+    padding: 14px 0;
+    font-size: 16px;
+    font-weight: bold;
+    background-color: #3b57ef;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    margin-top: 20px;
+}
+
+.next-btn:disabled,
+.submit-btn:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+.step {
+    display: none;
+    min-height: 500px;
+    position: relative;
+    padding-bottom: 100px;
+}
+
+.step.active {
+    display: block;
+}
+
+.step .next-btn,
+.step .submit-btn {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+}
+
+/* 주소 검색 아이콘 포함된 영역 스타일 */
+.input-with-icon {
+    display: flex;
+    align-items: center;
+    padding: 17px 23px;
+    height: 66px;
+    border: 1px solid #D5D5D5;
+    border-radius: 10px;
+    background-color: #fff;
+    gap: 8px;
+    cursor: pointer;
+    box-sizing: border-box;
+}
+
+.input-with-icon .location-icon {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    margin-bottom: 2px;
+    cursor: pointer;
+}
+
+.input-with-icon input.address-field {
+    border: none !important;
+    outline: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    padding: 0;
+    margin: 0;
+    font-size: 17px;
+    font-weight: 500;
+    color: #333;
+    height: 100%;
+    width: 100%;
+    cursor: pointer;
+}
+
+#detailAddress {
+    margin-top: 10px;
+}
+
+.time-select-group {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.time-select-box {
+    position: relative;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.custom-select-wrapper {
+    position: relative;
+    border: 1px solid #D5D5D5;
+    border-radius: 10px;
+    padding: 14px 20px;
+    background-color: #fff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    flex-direction: row;
+    min-height: 66px;
+}
+
+.select-top {
+    display: flex;
+    flex-direction: column;
+}
+
+.time-label {
+    font-size: 13px;
+    color: #666;
+    font-weight: 500;
+    margin-bottom: 4px;
+}
+
+.custom-select-wrapper select {
+    border: none;
+    outline: none;
+    font-size: 17px;
+    font-weight: 500;
+    color: #333;
+    background: transparent;
+    width: 100%;
+    cursor: pointer;
+    appearance: none;
+    overflow-y: auto;
+    height: 24px;
+}
+
+.custom-select-wrapper.open select {
+    height: auto;
+}
+
+.selected-time {
+    font-size: 17px;
+    font-weight: 500;
+    color: #333;
+}
+
+.select-arrow-icon {
+    width: 20px;
+    height: 24px;
+    pointer-events: none;
+}
+
+.custom-select-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    margin-top: 0; /* 딱 붙게 */
+    width: 100%; /* time-select-box 기준 */
+    max-height: 205px;
+    overflow-y: auto;
+    border: 1px solid #D5D5D5;
+    border-radius: 10px;
+    background-color: white;
+    z-index: 10;
+    display: none;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    list-style: none;
+    padding-left: 0;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE 10+ */
+}
+
+.custom-select-dropdown::-webkit-scrollbar {
+    display: none; /* Chrome, Safari */
+}
+
+.custom-select-dropdown.show {
+    display: block;
+}
+
+.custom-select-dropdown li {
+    display: flex;
+    justify-content: center; /* 중앙 정렬로 변경 */
+    align-items: center;
+    gap: 15px; /* 시, :, 분 간 간격 */
+    padding: 6px 12px;
+    font-size: 16px;
+    font-family: 'Pretendard', sans-serif;
+    cursor: pointer;
+    border-bottom: 1px solid #eee;
+}
+
+.custom-select-dropdown li:last-child {
+    border-bottom: none;
+}
+
+/* 시, :, 분 각각 span에 폭 지정 */
+.custom-select-dropdown li span {
+    width: 28px;
+    text-align: center;
+    display: inline-block;
+}
+
+/* 선택된 시간 강조 */
+.custom-select-dropdown li:hover {
+    color: #4561DB;
+    background: rgba(69, 97, 219, 0.20);
+    border-top: 1.5px solid #4561DB;
+    border-bottom: 1.5px solid #4561DB;
+}
+
+/* 선택된 li 안의 span 강조 효과 */
+.custom-select-dropdown li:hover span {
+    color: #4561DB;
+    font-weight: 600;
+}
+
+/* 조건 한 줄 (기본 상태) */
+.condition-row {
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    border: 1.5px solid #E5E5E5;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    background: #FFF;
+    height: 66px;
+    box-sizing: border-box;
+}
+
+/* 선택된 상태만 배경 강조 */
+.condition-row.selected {
+    border: 1.5px solid #4561DB;
+    background: rgba(69, 97, 219, 0.10);
+}
+
+/* 조건 한 줄 (기본 상태) */
+.condition-row {
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    border: 1.5px solid #E5E5E5;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    background: #FFF;
+    height: 66px;
+    box-sizing: border-box;
+    transition: all 0.2s ease;
+}
+
+/* 선택된 상태 스타일 */
+.condition-row.selected {
+    background: rgba(69, 97, 219, 0.10);
+    border: 1.5px solid #4561DB;
+}
+
+/* 항목 이름 */
+.condition-row span {
+    font-size: 16px;
+    font-weight: 500;
+    color: #333;
+    min-width: 100px;
+    flex-shrink: 0;
+    margin-right: 108px;
+}
+
+/* 가격 표시 wrapper */
+.input-wrapper {
+    width: 88px;
+    height: 37px;
+    border: 1px solid #E5E5E5;
+    border-radius: 6px;
+    background-color: #FFF;
+    margin-right: 10px;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+/* 강조된 wrapper */
+.condition-row.selected {
+    background: rgba(69, 97, 219, 0.10);
+    border: 1.5px solid #4561DB;
+}
+
+.condition-row.selected .input-wrapper {
+    border: 1px solid #4561DB;
+}
+
+.condition-row.selected .price-display {
+    color: #4561DB;
+}
+
+.condition-row.selected .check-btn img {
+    opacity: 1;
+}
+
+/* 가격 숫자 */
+.price-display {
+    font-family: 'Pretendard', sans-serif;
+    font-size: 17px;
+    color: #E5E5E5;
+    text-align: center;
+    line-height: 1;
+    transition: all 0.2s ease;
+}
+
+/* 강조된 가격 숫자 */
+.condition-row.selected .price-display {
+    color: #4561DB;
+}
+
+/* 체크 버튼 */
+.condition-row .check-btn {
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    width: 22px;
+    height: 22px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+/* 체크 아이콘 */
+.condition-row .check-btn img {
+    width: 22px;
+    height: 22px;
+    opacity: 0.6;
+    transition: all 0.2s ease;
+}
+
+/* 선택 시 아이콘 강조 */
+.condition-row.selected .check-btn img {
+    opacity: 1;
+}
