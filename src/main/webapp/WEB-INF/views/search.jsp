@@ -12,7 +12,7 @@
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/bottom-sheet.css">
 
     <!-- Kakao Maps -->
-    <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=74ba4fb5dea8cc0dc45e15267da3733e&autoload=false"></script>
+    <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=f3a12e6a3faad91c83bf4e365fca3d15&autoload=false"></script>
 
     <!-- JS에서 contextPath 사용 -->
     <script>
@@ -42,9 +42,35 @@
                 <div class="sheet-drag-handle"></div>
             </div>
             <div class="sheet-title">
-                <span>검색 결과&nbsp;</span>
-                <span class="sheet-count">${count}</span>
+                <div class="sheet-left">
+                    <span>검색 결과&nbsp;</span>
+                    <span class="sheet-count">${count}</span>
+                </div>
+                <c:if test="${not empty jimTypeId}">
+                    <div class="sheet-subtitle" onclick="dropdown()">
+                        <span id="selectedBagType">
+                            <c:choose>
+                                <c:when test="${jimTypeId == 1}">백팩/가방</c:when>
+                                <c:when test="${jimTypeId == 2}">캐리어</c:when>
+                                <c:when test="${jimTypeId == 3}">박스/큰 짐</c:when>
+                                <c:when test="${jimTypeId == 4}">유모차</c:when>
+                                <c:otherwise>알 수 없음</c:otherwise>
+                            </c:choose>
+                        </span>
+                        <img class="dropdown-down" src="${pageContext.request.contextPath}/images/arrow-down.svg" alt="드롭다운">
+                    </div>
+
+                    <ul id="bag-dropdown" class="dropdown-menu hidden">
+                        <li onclick="selectBagType(0)">모든 짐</li>
+                        <li onclick="selectBagType(1)">백팩/가방</li>
+                        <li onclick="selectBagType(2)">캐리어</li>
+                        <li onclick="selectBagType(3)">박스/큰 짐</li>
+                        <li onclick="selectBagType(4)">유모차</li>
+                    </ul>
+                </c:if>
             </div>
+
+
             <div class="sheet-content" id="lockerList">
                 <%-- 여기 안에는 JS가 검색 결과를 동적으로 삽입함 --%>
             </div>
