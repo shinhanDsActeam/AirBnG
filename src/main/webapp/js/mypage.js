@@ -173,7 +173,7 @@ function goToMyInfo() {
     showLoadingAnimation();
 
     setTimeout(() => {
-        window.location.href = `${ctx}/page/myinfo`;
+        window.location.href = `${ctx}/page/myInfo`;
     }, 300);
 }
 
