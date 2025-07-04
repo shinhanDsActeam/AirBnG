@@ -267,6 +267,13 @@
         ), 1, 0)
     </select>
 
+    <!-- 넘어온 keeperId가 실제 locker의 주인인지 확인 -->
+    <select id="getLockerKeeperId" resultType="Long">
+        SELECT member_id
+        FROM Locker
+        WHERE locker_id = #{lockerId}
+    </select>
+
     <!-- locker 활성화/비활성화 처리 -->
     <update id="updateLockerIsAvailable">
         UPDATE Locker

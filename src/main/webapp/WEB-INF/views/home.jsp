@@ -9,9 +9,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/gh/webfontworld/bmjua/BMJUA.css" rel="stylesheet">
     <link rel="stylesheet" href="<c:url value='/css/home.css' />" />
+    <link rel="stylesheet" href="<c:url value='/css/common/modal.css' />" />
 </head>
 <body class="airbng-home">
-
+<script src="<c:url value='/js/common/modal.js' />"></script>
+<%@ include file="common/modal.jsp" %>
 <div class="top-section">
     <div class="top-bar">
         <div class="logo-group">
