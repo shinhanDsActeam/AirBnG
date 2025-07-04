@@ -12,13 +12,10 @@
     <link rel="stylesheet" href="<c:url value='/css/reservation/reservationList.css'/>">
 </head>
 <body class="page-container">
- <!-- 헤더 -->
-    <div class="header">
-        <div class="header-content">
-            <button class="back-btn" onclick="history.back()">←</button>
-            <h1 class="header-title">예약 내역</h1>
-        </div>
-    </div>
+    <!-- 헤더 -->
+    <c:set var="headerTitle" value="예약 내역"/>
+    <c:set var="showBackButton" value="false"/>
+    <%@ include file="../common/header.jsp" %>
 
     <!-- 탭 메뉴 -->
     <div class="tab-container">

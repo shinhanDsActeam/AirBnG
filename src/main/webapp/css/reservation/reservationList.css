@@ -18,41 +18,10 @@ body {
     background-color: #ffffff;
 }
 
-/* 헤더 */
-.header {
-    background: white;
-    padding: 15px 20px;
-    border-bottom: 1px solid #eee;
-    top: 0;
-    position: sticky;
-    position: -webkit-sticky;
-    z-index: 100;
-}
-
-.header-content {
-    display: flex;
-    align-items: center;
-}
-
-.back-btn {
-    background: none;
-    border: none;
-    font-size: 24px;
-    cursor: pointer;
-    margin-right: 15px;
-    color: #333;
-}
-
-.header-title {
-    font-size: 18px;
-    font-weight: 600;
-}
-
 /* 탭 메뉴 */
 .tab-container {
-    position: sticky;
     position: fixed;
-    top: 60px; /* 헤더 바로 아래 */
+    top: var(--header-height); /* 헤더 바로 아래 */
     left: 0;
     right: 0;
     max-width: 412px;
@@ -60,7 +29,7 @@ body {
     background: white;
     z-index: 100;
     border-bottom: 1px solid #eee;
-
+    padding-top: 10px; /* 탭과 헤더 사이의 간격 */
 }
 
 .tab-section {
@@ -109,7 +78,7 @@ body {
 .filter-section {
     padding: 15px 20px;
     display: flex;
-    margin-top: 40px;
+    margin-top: calc(var(--header-height) + 60px); /* 헤더 높이 + 탭 높이 */
     top: 118px;
     z-index: 98;
     justify-content: flex-end;
