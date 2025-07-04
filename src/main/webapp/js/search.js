@@ -1,4 +1,18 @@
-kakao.maps.load(function () {
+function loadKakaoScript(callback) {
+    const existingScript = document.querySelector("script[src*='dapi.kakao.com']");
+
+    if (!existingScript) {
+        const script = document.createElement("script");
+        script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${window.KAKAO_APP_KEY}&autoload=false&libraries=services`;
+        script.async = true;
+        script.onload = () => kakao.maps.load(callback);
+        document.head.appendChild(script);
+    } else {
+        kakao.maps.load(callback);
+    }
+}
+
+function initMapAndResults() {
     var mapContainer = document.getElementById('map');
     var mapOption = {
         center: new kakao.maps.LatLng(37.55935630141197, 126.92263348592226),
@@ -27,17 +41,22 @@ kakao.maps.load(function () {
     kakao.maps.event.addListener(marker, 'click', function() {
         infowindow.open(map, marker);
     });
-});
 
-document.addEventListener('DOMContentLoaded', function () {
+    setupSearchBar();
+    setupBottomSheet();
+    loadLockerList();
+}
+
+function setupSearchBar() {
     const urlParams = new URLSearchParams(window.location.search);
     const address = urlParams.get('address');
     if (address) {
-        const input = document.getElementById('searchInput'); // input의 id가 searchInput일 경우
+        const input = document.getElementById('searchInput');
         if (input) input.value = decodeURIComponent(address);
     }
+}
 
-    // 바텀 시트 드래그 기능
+function setupBottomSheet() {
     const sheet = document.getElementById('bottomSheet');
     const header = document.getElementById('sheetHeader');
 
@@ -67,10 +86,8 @@ document.addEventListener('DOMContentLoaded', function () {
         const deltaY = currentY - startY;
 
         if (deltaY > 20) {
-            // 조금이라도 내렸으면 바텀시트 내려감
             sheet.style.transform = "translateX(-50%) translateY(70%)";
         } else {
-            // 그렇지 않으면 올라감
             sheet.style.transform = "translateX(-50%) translateY(0%)";
         }
 
@@ -82,10 +99,9 @@ document.addEventListener('DOMContentLoaded', function () {
     };
 
     header.addEventListener('mousedown', mouseDownHandler);
-});
+}
 
-// 보관소 리스트 불러오기 (기존 코드 하단에 추가)
-document.addEventListener("DOMContentLoaded", function () {
+function loadLockerList() {
     const urlParams = new URLSearchParams(window.location.search);
     const address = urlParams.get("address");
 
@@ -128,12 +144,10 @@ document.addEventListener("DOMContentLoaded", function () {
                 container.appendChild(div);
             });
 
-            // 클릭 시 선택 스타일과 텍스트 전환
             container.addEventListener("click", function (e) {
                 const clickedItem = e.target.closest(".storage-item");
                 if (!clickedItem || clickedItem.classList.contains("disabled")) return;
 
-                // 기존 선택된 항목 초기화
                 document.querySelectorAll(".storage-item").forEach(item => {
                     item.classList.remove("selected");
                     const btn = item.querySelector(".storage-button");
@@ -141,19 +155,15 @@ document.addEventListener("DOMContentLoaded", function () {
                     btn.textContent = isAvailable ? "보관가능" : "보관대기";
                 });
 
-                // 클릭된 항목 스타일 변경
                 clickedItem.classList.add("selected");
                 const clickedButton = clickedItem.querySelector(".storage-button");
                 clickedButton.textContent = "상세보기";
 
-                // 상세보기 버튼 클릭 시 페이지 이동
                 clickedButton.addEventListener('click', function (e) {
-                        e.stopPropagation(); // 부모 클릭 이벤트 방지
-                        const lockerId = clickedButton.dataset.id;
-
-                        const url = `${contextPath}/page/lockerDetails?lockerId=${encodeURIComponent(lockerId)}`;
-
-                        window.location.href = url;
+                    e.stopPropagation();
+                    const lockerId = clickedButton.dataset.id;
+                    const url = `${contextPath}/page/lockerDetails?lockerId=${encodeURIComponent(lockerId)}`;
+                    window.location.href = url;
                 });
             });
 
@@ -161,6 +171,7 @@ document.addEventListener("DOMContentLoaded", function () {
         .catch(error => {
             console.error("보관소 정보를 불러오는 데 실패했습니다:", error);
         });
+}
 
-});
-
+// 진입점
+loadKakaoScript(initMapAndResults);
