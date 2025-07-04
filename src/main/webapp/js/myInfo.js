@@ -64,6 +64,9 @@ async function loadUserProfile() {
             // 전화번호 포맷팅 이벤트 추가
             setupPhoneNumberFormatting();
 
+            // 닉네임 실시간 검증 이벤트 추가
+            setupNicknameValidation();
+
         } else {
             showError(result.message || '사용자 정보를 불러오는데 실패했습니다.');
         }
@@ -105,6 +108,30 @@ function setupPhoneNumberFormatting() {
             e.target.value = `${value.slice(0, 3)}-${value.slice(3, 7)}-${value.slice(7)}`;
         } else {
             e.target.value = `${value.slice(0, 3)}-${value.slice(3, 7)}-${value.slice(7, 11)}`;
+        }
+    });
+}
+
+// 닉네임 실시간 검증 설정
+function setupNicknameValidation() {
+    const nicknameInput = document.getElementById('nickname');
+
+    nicknameInput.addEventListener('input', function(e) {
+        const currentNickname = e.target.value.trim();
+
+        // 닉네임이 원래 값과 동일한지 확인
+        if (currentNickname === originalNickname) {
+            // 원래 닉네임과 같으면 자동으로 검증 완료 상태로 설정
+            showValidationMessage('nickname', '현재 사용 중인 닉네임입니다.', 'success');
+            const nicknameButton = document.getElementById('nickname-check-btn');
+            if (nicknameButton) {
+                nicknameButton.classList.add('success');
+                nicknameButton.textContent = '확인완료';
+            }
+            nicknameChecked = true;
+        } else {
+            // 닉네임이 변경되었으면 검증 상태 리셋
+            resetNicknameValidation();
         }
     });
 }
@@ -206,6 +233,12 @@ async function checkNicknameDuplicate() {
     }
 }
 
+// 닉네임 변경 여부 확인 함수
+function isNicknameChanged() {
+    const currentNickname = document.getElementById('nickname').value.trim();
+    return currentNickname !== originalNickname;
+}
+
 // 검증 메시지 출력 함수
 function showValidationMessage(fieldId, message, status) {
     const input = document.getElementById(fieldId);
@@ -241,16 +274,32 @@ async function handleProfileUpdate(event) {
 
     const nickname = document.getElementById('nickname').value.trim();
     const phone = document.getElementById('phone').value.replace(/\D/g, '');
+    const email = document.getElementById('email').value.trim();
+    const name = document.getElementById('name').value.trim();
 
-    if (!nicknameChecked) {
+    // 닉네임이 변경되었고 중복 확인이 안된 경우만 체크
+    if (isNicknameChanged() && !nicknameChecked) {
         alert('닉네임 중복 확인을 해주세요.');
         return;
     }
 
-    const formData = new FormData();
-    formData.append('nickname', nickname);
-    formData.append('phone', phone);
+    // MemberUpdateRequest 객체 생성
+    const memberUpdateRequest = {
+        memberId: parseInt(sessionData.memberId),
+        email: email,
+        name: name,
+        phone: phone,
+        nickname: nickname
+    };
 
+    const formData = new FormData();
+
+    // JSON 데이터를 Blob으로 변환하여 추가
+    formData.append('memberUpdateRequest', new Blob([JSON.stringify(memberUpdateRequest)], {
+        type: 'application/json'
+    }));
+
+    // 프로필 이미지가 있으면 추가
     if (selectedProfileImage) {
         formData.append('profileImage', selectedProfileImage);
     }
@@ -260,8 +309,8 @@ async function handleProfileUpdate(event) {
     saveBtn.textContent = '저장 중...';
 
     try {
-        const response = await fetch(`${contextPath}/members/my-page/${sessionData.memberId}`, {
-            method: 'PATCH',
+        const response = await fetch(`${contextPath}/members/my-page/update`, {
+            method: 'POST',
             body: formData
         });
 

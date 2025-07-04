@@ -117,16 +117,40 @@ public class MemberServiceImpl implements MemberService {
     public MemberMyPageResponse updateUserById(MemberUpdateRequest request, MultipartFile profileImage) {
         MemberMyPageResponse existing = memberMapper.findUserById(request.getMemberId());
 
-        if (existing == null) throw new MemberException(NOT_FOUND_MEMBER);
-        if (memberMapper.findByEmail(request.getEmail()))               throw new MemberException(DUPLICATE_EMAIL);
-        if (memberMapper.findByNickname(request.getNickname()))         throw new MemberException(DUPLICATE_NICKNAME);
-        if (memberMapper.findByPhone(request.getPhone()))               throw new MemberException(DUPLICATE_PHONE);
-        if (request.getEmail() == null || request.getEmail().isEmpty()) request.setEmail(existing.getEmail());
+        // 기존 값이 null이면 현재 값으로 설정
+        if (request.getEmail() == null || request.getEmail().isEmpty()) {
+            request.setEmail(existing.getEmail());
+        }
+        if (request.getName() == null || request.getName().isEmpty()) {
+            request.setName(existing.getName());
+        }
+        if (request.getPhone() == null || request.getPhone().isEmpty()) {
+            request.setPhone(existing.getPhone());
+        }
+        if (request.getNickname() == null || request.getNickname().isEmpty()) {
+            request.setNickname(existing.getNickname());
+        }
 
-        if (!emailValidator.isValidEmail(request.getEmail()))           throw new MemberException(INVALID_EMAIL);
-        if (request.getName() == null) request.setName(existing.getName());
-        if (request.getPhone() == null) request.setPhone(existing.getPhone());
-        if (request.getNickname() == null) request.setNickname(existing.getNickname());
+        // 이메일 검증 및 중복 체크 (기존 이메일과 다른 경우에만)
+        if (!emailValidator.isValidEmail(request.getEmail())) {
+            throw new MemberException(INVALID_EMAIL);
+        }
+        if (!request.getEmail().equals(existing.getEmail()) &&
+                memberMapper.findByEmail(request.getEmail())) {
+            throw new MemberException(DUPLICATE_EMAIL);
+        }
+
+        // 닉네임 중복 체크 (기존 닉네임과 다른 경우에만)
+        if (!request.getNickname().equals(existing.getNickname()) &&
+                memberMapper.findByNickname(request.getNickname())) {
+            throw new MemberException(DUPLICATE_NICKNAME);
+        }
+
+        // 전화번호 중복 체크 (기존 전화번호와 다른 경우에만)
+        if (!request.getPhone().equals(existing.getPhone()) &&
+                memberMapper.findByPhone(request.getPhone())) {
+            throw new MemberException(DUPLICATE_PHONE);
+        }
 
         Image image = (profileImage != null && !profileImage.isEmpty())
                 ? imageService.uploadProfileImage(profileImage)
