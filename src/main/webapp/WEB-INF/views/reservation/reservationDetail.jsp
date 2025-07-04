@@ -8,7 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>예약 상세</title>
     <link rel="icon" type="image/svg+xml" href="${pageContext.request.contextPath}/images/favicon.svg" />
-    <link rel="stylesheet" href="<c:url value='/css/reservationDetails.css' />" />
+    <link rel="stylesheet" href="<c:url value='/css/reservation/reservationDetail.css' />" />
 </head>
 <body>
     <div class="header">
@@ -146,7 +146,6 @@
             console.log('Reservation ID:', window.serverData.reservationId);
             console.log('Member ID:', window.serverData.memberId);
         </script>
-        <script src="<c:url value='/js/reservationDetails.js'/>"></script>
-    <script src="<c:url value='/js/reservationDetails.js'/>"></script>
+    <script src="<c:url value='/js/reservation/reservationDetail.js'/>"></script>
 </body>
 </html>

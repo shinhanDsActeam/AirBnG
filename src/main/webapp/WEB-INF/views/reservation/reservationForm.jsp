@@ -8,12 +8,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>예약하기</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="../../css/reservationForm.css"/>
-    <link rel="stylesheet" href="../../css/common/modal.css"/>
+    <link rel="stylesheet" href="<c:url value='/css/reservation/reservationForm.css' />"/>
+    <link rel="stylesheet" href="<c:url value='/css/common/modal.css' />"/>
 </head>
 <body class="bg-gray-100">
-<script src="../../js/common/modal.js"></script>
-<script src="../../js/reservationForm.js"> </script>
+<script src="<c:url value='/js/common/modal.js' />"></script>
+<script src="<c:url value='/js/reservation/reservationForm.js' />"></script>
 <div class="max-w-md mx-auto bg-white min-h-screen">
     <%-- 전역변수 --%>
     <script>
@@ -111,7 +111,7 @@
         <input type="hidden" name="lockerId" id="lockerId" value="" />
     </form>
 
-    <%@ include file="common/modal.jsp" %>
+    <%@ include file="../common/modal.jsp" %>
 
 </div>
 
