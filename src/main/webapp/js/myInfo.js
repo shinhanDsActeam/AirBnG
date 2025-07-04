@@ -6,7 +6,7 @@ let originalNickname = '';
 document.addEventListener('DOMContentLoaded', function() {
     // 로그인 여부 확인
     if (!sessionData.isLoggedIn || !sessionData.memberId) {
-        alert('로그인이 필요합니다.');
+        ModalUtils.showWarning('로그인이 필요합니다.');
         window.location.href = `${contextPath}/page/login`;
         return;
     }
@@ -142,13 +142,13 @@ function handleProfileImageChange(event) {
     if (file) {
         // 파일 크기 체크 (5MB 제한)
         if (file.size > 10 * 1024 * 1024) {
-            alert('파일 크기는 10MB 이하여야 합니다.');
+            ModalUtils.showWarning('파일 크기는 10MB 이하여야 합니다.');
             return;
         }
 
         // 이미지 파일 체크
         if (!file.type.startsWith('image/')) {
-            alert('이미지 파일만 업로드 가능합니다.');
+            ModalUtils.showWarning('이미지 파일만 업로드 가능합니다.');
             return;
         }
 
@@ -279,7 +279,7 @@ async function handleProfileUpdate(event) {
 
     // 닉네임이 변경되었고 중복 확인이 안된 경우만 체크
     if (isNicknameChanged() && !nicknameChecked) {
-        alert('닉네임 중복 확인을 해주세요.');
+        ModalUtils.showWarning('닉네임 중복 확인을 해주세요.');
         return;
     }
 
