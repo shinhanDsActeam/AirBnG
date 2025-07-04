@@ -18,16 +18,9 @@ body {
     padding-bottom: 60px; /* navbar 공간 확보 */
 }
 
-.chat-header {
-    padding: 24px 20px 16px;
-    font-size: 24px;
-    font-weight: bold;
-    color: #333;
-}
-
 .chat-list {
+    padding: var(--header-height) 0 0 0; /* 헤더 높이 */
     list-style: none;
-    padding: 0;
 }
 
 .chat-item {
