@@ -55,7 +55,7 @@ public class MemberController {
 
     @GetMapping("/my-page/{memberId}")
     public BaseResponse<MemberMyPageResponse> findUserById(
-            @RequestParam @NotNull @Min(1) Long memberId
+            @PathVariable("memberId") @NotNull @Min(1) Long memberId
     ) {
         MemberMyPageRequest request = MemberMyPageRequest.builder()
                 .memberId(memberId)
