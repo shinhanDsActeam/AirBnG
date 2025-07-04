@@ -217,6 +217,7 @@ body {
 
 .menu-item.logout:hover {
     background: #fef5f5;
+    transform: translateX(3px);
 }
 
 .menu-icon {
