@@ -5,17 +5,18 @@
 }
 
 body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    background-color: #f9fafb;
+    font-family: 'Pretendard', sans-serif;
+    background-color: #f5f5f5;
     color: #111827;
     max-width: 412px;
     margin: 0 auto;
+    padding-bottom: 80px;
 }
 
 .header {
     background: white;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    padding: 12px 16px;
+    padding: 15px 20px;
+    border-bottom: 1px solid #eee;
     display: flex;
     align-items: center;
     max-width: 412px;
@@ -26,63 +27,65 @@ body {
 .back-btn {
     background: none;
     border: none;
-    font-size: 18px;
+    font-size: 24px;
     cursor: pointer;
-    color: #6b7280;
+    margin-right: 10px;
+    margin-left:6px;
+    color: #333;
 }
 
 .header h1 {
-    margin-left: 16px;
     font-size: 18px;
     font-weight: 600;
+    margin:12px;
 }
 
 .container {
-    padding: 16px;
+    padding: 15px;
     max-width: 412px;
     margin: 0 auto;
 }
 
 .card {
     background: white;
-    border-radius: 8px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    margin-bottom: 16px;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    margin-bottom: 15px;
     overflow: hidden;
 }
 
 .card-content {
-    padding: 16px;
+    padding: 24px;
 }
 
 .reservation-status {
     display: inline-block;
     padding: 4px 12px;
     border-radius: 20px;
-    font-size: 12px;
-    font-weight: 500;
-    margin-bottom: 12px;
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 15px;
 }
 
 .status-confirmed {
     background: #dcfce7;
-    color: #166534;
+    color: #28a745;
 }
 
 .status-cancelled {
     background: #fee2e2;
-    color: #dc2626;
+    color: #dc3545;
 }
 
 .status-completed {
     background: #dbeafe;
-    color: #1d4ed8;
+    color: #6c757d;
 }
 
 .reservation-info {
-    border-bottom: 1px solid #e5e7eb;
-    padding-bottom: 16px;
-    margin-bottom: 16px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 15px;
+    margin-bottom: 15px;
 }
 
 .date-time {
@@ -94,24 +97,25 @@ body {
 .date-main {
     font-weight: 600;
     font-size: 16px;
+    color: #333;
 }
 
 .time-range {
-    font-size: 14px;
-    color: #6b7280;
+    font-size: 13px;
+    color: #666;
 }
 
 .section-title {
     font-size: 16px;
     font-weight: 600;
-    margin-bottom: 12px;
+    margin-bottom: 15px;
 }
 
 .user-info {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 12px 0;
+    padding: 15px 0;
 }
 
 .user-details {
@@ -122,12 +126,12 @@ body {
 .user-avatar {
     width: 40px;
     height: 40px;
-    background: #f3f4f6;
+    background: #f8f9fa;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-right: 12px;
+    margin-right: 15px;
     font-size: 18px;
     color: #6b7280;
 }
@@ -138,13 +142,14 @@ body {
 }
 
 .user-name {
-    font-weight: 500;
-    font-size: 14px;
+    font-weight: 600;
+    font-size: 15px;
+    color: #333;
 }
 
 .user-role {
-    font-size: 12px;
-    color: #6b7280;
+    font-size: 13px;
+    color: #666;
     margin-top: 2px;
 }
 
@@ -157,7 +162,7 @@ body {
     justify-content: space-between;
     align-items: center;
     padding: 8px 0;
-    border-bottom: 1px solid #f3f4f6;
+    border-bottom: 1px solid #f8f9fa;
 }
 
 .jim-item:last-child {
@@ -166,15 +171,17 @@ body {
 
 .jim-name {
     font-weight: 500;
-    font-size: 14px;
+    font-size: 15px;
+    color: #333;
 }
 
 .jim-count {
-    background: #f3f4f6;
+    background: #f8f9fa;
     padding: 4px 8px;
     border-radius: 12px;
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 500;
+    color: #666;
 }
 
 .loading {
@@ -185,8 +192,8 @@ body {
 }
 
 .spinner {
-    border: 2px solid #f3f4f6;
-    border-top: 2px solid #3181E2;
+    border: 2px solid #f8f9fa;
+    border-top: 2px solid #4561DB;
     border-radius: 50%;
     width: 20px;
     height: 20px;
@@ -202,8 +209,8 @@ body {
 .error {
     background: #fee2e2;
     color: #dc2626;
-    padding: 16px;
-    border-radius: 8px;
+    padding: 15px;
+    border-radius: 10px;
     text-align: center;
 }
 
@@ -215,33 +222,22 @@ body {
     max-width: 412px;
     width: 100%;
     background: white;
-    border-top: 1px solid #e5e7eb;
-    padding: 16px;
+    border-top: 1px solid #eee;
+    padding: 15px;
     display: flex;
-    gap: 12px;
+    gap: 8px;
     box-sizing: border-box;
 }
 
 .btn {
     flex: 1;
-    padding: 12px;
+    padding: 8px 20px;
     border-radius: 8px;
     font-weight: 500;
     border: none;
     cursor: pointer;
-    transition: opacity 0.2s;
-}
-
-.btn-secondary {
-    background: #f3f4f6;
-    color: #374151;
-}
-
-.btn-secondary:disabled {
-    background: #e5e7eb;
-    color: #9ca3af;
-    cursor: not-allowed;
-    opacity: 0.6;
+    transition: all 0.2s;
+    font-size: 14px;
 }
 
 .spacer {
@@ -259,27 +255,28 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 1000;
+    z-index: 9999;
     padding: 20px;
 }
 
 .modal {
     background: white;
-    border-radius: 16px;
+    border-radius: 12px;
     padding: 0;
     max-width: 320px;
-    width: 100%;
+    width: 90%;
     text-align: center;
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    overflow: hidden;
 }
 
 .modal-content {
-    padding: 40px 24px 24px;
+    padding: 40px 20px 20px;
 }
 
 .modal-icon {
-    width: 64px;
-    height: 64px;
+    width: 60px;
+    height: 60px;
     background: #4561DB;
     border-radius: 50%;
     display: flex;
@@ -293,40 +290,43 @@ body {
 .modal-title {
     font-size: 18px;
     font-weight: 600;
-    color: #111827;
-    margin-bottom: 8px;
+    color: #333;
+    margin-bottom: 10px;
 }
 
 .modal-message {
     font-size: 14px;
-    color: #6b7280;
+    color: #666;
     line-height: 1.5;
-    margin-bottom: 24px;
+    margin-bottom: 20px;
 }
 
 .modal-buttons {
     display: flex;
-    border-top: 1px solid #e5e7eb;
+    border-top: 1px solid #eee;
 }
 
 .modal-btn {
     flex: 1;
-    padding: 16px;
+    padding: 15px;
     border: none;
     background: none;
     cursor: pointer;
     font-size: 16px;
     font-weight: 500;
+    color: #4561DB;
+    transition: background-color 0.2s;
 }
 
-.modal-btn:first-child {
-    border-right: 1px solid #e5e7eb;
-    color: #6b7280;
+.modal-btn:hover {
+    background: #f8f9fa;
 }
+
 .modal-icon.success-rotate {
     animation: successGlowSpin 0.8s ease-in-out;
     transform-style: preserve-3d;
 }
+
 /* 글라스모피즘 3D 아이콘 + 글로우 효과 */
 .modal-icon.success-rotate {
     animation: successGlassSpin 1s ease-out;
@@ -432,6 +432,7 @@ body {
         0 2px 0 rgba(69, 97, 219, 0.3),
         0 -2px 0 rgba(69, 97, 219, 0.3);
 }
+
 /* 확인 모달 아이콘 글라스모피즘 3D 효과 - 통통튀는 버전 */
 .modal-icon.confirm-bounce {
     animation: confirmBounceIn 0.8s ease-out;
@@ -528,22 +529,6 @@ body {
         -2px 0 0 rgba(245, 158, 11, 0.3),
         0 2px 0 rgba(245, 158, 11, 0.3),
         0 -2px 0 rgba(245, 158, 11, 0.3);
-}
-.modal-btn:last-child {
-    color: #4561DB;
-}
-
-.modal-btn:hover {
-    background: #f9fafb;
-}
-
-.modal-btn:last-child:hover {
-    border-bottom-left-radius: 16px;
-    border-bottom-right-radius: 16px;
-}
-
-.modal-btn:first-child:hover {
-    border-bottom-left-radius: 16px;
 }
 
 .hidden {

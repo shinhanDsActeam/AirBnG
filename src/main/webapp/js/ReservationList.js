@@ -200,7 +200,7 @@ function renderReservations(reservations) {
             card.innerHTML = `
                 <div class="reservation-header">
                     <div class="reservation-info-row">
-                        <a href="/AirBnG/page/reservation?id=${res.reservationId}" class="view-details">예약 상세 &gt;</a>
+                        <a href="/AirBnG/page/reservations?id=${res.reservationId}" class="view-details">예약 상세 &gt;</a>
                         ${getStatusText(res.state)}
                     </div>
                 </div>
@@ -247,7 +247,7 @@ function renderReservations(reservations) {
                 <div class="reservation-header">
                     <div class="reservation-date">${formatDate(res.dateOnly)}</div>
                     <div class="reservation-info-row">
-                        <a href="/AirBnG/page/reservation?id=${res.reservationId}" class="view-details">예약 상세 &gt;</a>
+                        <a href="/AirBnG/page/reservations?id=${res.reservationId}" class="view-details">예약 상세 &gt;</a>
                         ${getStatusText(res.state)}
                     </div>
                 </div>
@@ -309,7 +309,7 @@ function getActionButtons(reservation) {
 
 // ▶ 예약 상세 페이지로 이동하는 함수 추가
 function goToReservationDetail(reservationId) {
-    window.location.href = `/AirBnG/page/reservation?id=${reservationId}`;
+    window.location.href = `/AirBnG/page/reservations?id=${reservationId}`;
 }
 
 // ▶ 날짜 포맷

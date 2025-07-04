@@ -32,7 +32,7 @@ public class LockerController {
 
 
     @GetMapping("/{lockerId}")
-    public BaseResponse<LockerDetailResponse> findUserById(@PathVariable Long lockerId) {
+    public BaseResponse<LockerDetailResponse> findLockerById(@PathVariable Long lockerId) {
 
         return new BaseResponse<>(lockerService.findUserById(lockerId));
     }

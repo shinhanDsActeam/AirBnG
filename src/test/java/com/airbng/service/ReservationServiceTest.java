@@ -19,7 +19,6 @@ import com.airbng.dto.reservation.ReservationFormResponse;
 import com.airbng.dto.reservation.ReservationInsertRequest;
 import com.airbng.mappers.JimTypeMapper;
 import com.airbng.mappers.LockerMapper;
-import com.airbng.mappers.MemberMapper;
 import com.airbng.mappers.ReservationMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -164,7 +163,7 @@ class ReservationServiceTest {
 
             // when
             when(lockerMapper.isExistLocker(서울역_보관소.getLockerId())).thenReturn(true);
-            when(lockerMapper.getLockerKepperId(서울역_보관소.getLockerId())).thenReturn(보관왕.getMemberId());
+            when(lockerMapper.getLockerKeeperId(서울역_보관소.getLockerId())).thenReturn(보관왕.getMemberId());
             when(jimTypeMapper.validateLockerJimTypes(서울역_보관소.getLockerId(), List.of(백팩.getJimTypeId(), 캐리어.getJimTypeId()), 2)).thenReturn(true);
             Long insertedId = 1L; // stubbing
             when(request.getId()).thenReturn(insertedId); // 예약 삽입 성공 시 id set 됨
@@ -238,7 +237,7 @@ class ReservationServiceTest {
                 // given
                 ReservationInsertRequest request = perfectRequest;
                 // dropper와 keeper를 동일하게 설정
-                when(lockerMapper.getLockerKepperId(서울역_보관소.getLockerId())).thenReturn(맡김왕.getMemberId());
+                when(lockerMapper.getLockerKeeperId(서울역_보관소.getLockerId())).thenReturn(맡김왕.getMemberId());
 
                 // when
                 when(lockerMapper.isExistLocker(request.getLockerId())).thenReturn(true);

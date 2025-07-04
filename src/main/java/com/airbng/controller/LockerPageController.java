@@ -48,21 +48,8 @@ public class LockerPageController {
                               @RequestParam String reservationDate,
                               Model model) {
 
-        LockerSearchRequest request = LockerSearchRequest.builder()
-                .address(address)
-                .build();
-
-        // 서비스 호출
-        LockerSearchResponse response = lockerService.findAllLockerBySearch(request);
-
-        System.out.println("Address: " + address);
-        System.out.println("Reservation Date: " + reservationDate);
-
-        // JSP에 전달
         model.addAttribute("address", address);
         model.addAttribute("reservationDate", reservationDate);
-        model.addAttribute("lockers", response.getLockers());
-        model.addAttribute("count", response.getCount());
 
         return "search";
     }
