@@ -25,11 +25,10 @@ public class ReservationAlarmSseController {
     ) {
 
         // 세션에서 로그인한 사용자 정보 가져오기
-        MemberLoginResponse userDetails = (MemberLoginResponse) session.getAttribute("memberId");
-        if (userDetails == null) {
+        Long memberId = (Long) session.getAttribute("memberId");
+        if (memberId == null) {
             throw new IllegalStateException("로그인 정보가 없습니다.");
         }
-        Long memberId = userDetails.getMemberId();
 
         // lastEventId를 로그 또는 서비스로 넘겨서 놓친 알림 재전송할 수 있음
         return reservationAlarmSseService.connect(memberId, lastEventId);
