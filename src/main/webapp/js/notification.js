@@ -1,4 +1,3 @@
-// 로그인 여부 확인 후에만 SSE 연결
 class NotificationSSE {
     constructor() {
         this.eventSource = null;
@@ -16,7 +15,9 @@ class NotificationSSE {
     }
 
     init() {
-        this.autoConnect();
+        this.loadFromStorage();         // 저장된 알림 불러오기
+        this.renderNotifications();     // 초기 렌더링
+        this.autoConnect();             // SSE 연결
     }
 
     autoConnect() {
@@ -94,18 +95,41 @@ class NotificationSSE {
     }
 
     handleNotification(alarmData) {
-        this.notifications.unshift({
+        const newNotification = {
             ...alarmData,
-            receivedAt: new Date().toLocaleString(),
+            receivedAt: this.formatDateTime(new Date()),
             id: Date.now() + Math.random()
-        });
+        };
+
+        this.notifications.unshift(newNotification);
 
         if (this.notifications.length > 50) {
             this.notifications = this.notifications.slice(0, 50);
         }
 
+        this.saveToStorage(); // 알림 저장
         this.renderNotifications();
         this.showBrowserNotification(alarmData);
+    }
+
+    // 시간 포맷 함수 수정 (12시간 형식 + 오전/오후)
+    formatDateTime(date) {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+
+        let hours = date.getHours();
+        const minutes = String(date.getMinutes()).padStart(2, '0');
+
+        // 오전/오후 구분
+        const ampm = hours >= 12 ? '오후' : '오전';
+
+        // 12시간 형식으로 변환
+        hours = hours % 12;
+        hours = hours ? hours : 12; // 0시는 12시로 표시
+        const displayHours = String(hours).padStart(2, '0');
+
+        return `${year}-${month}-${day} ${ampm} ${displayHours}:${minutes}`;
     }
 
     showEmptyState() {
@@ -123,45 +147,48 @@ class NotificationSSE {
         }
     }
 
-    renderNotifications() {
-        const container = document.getElementById('notifications');
-        if (!container) return;
+   renderNotifications() {
+       const container = document.getElementById('notifications');
+       if (!container) return;
 
-        if (this.notifications.length === 0) {
-            this.showEmptyState();
-            return;
-        }
+       if (this.notifications.length === 0) {
+           this.showEmptyState();
+           return;
+       }
 
-        container.innerHTML = this.notifications.map(notification => {
-            const typeClass = this.getTypeClass(notification.type);
-            const typeLabel = this.getTypeLabel(notification.type);
+       container.innerHTML = this.notifications.map(notification => {
+           return `
+               <div class="notification-item">
+                   <div class="notification-content">
+                       <div class="notification-header">
+                           <span class="notification-type">${this.getTypeLabel(notification.type)}</span>
+                           <div class="notification-actions">
+                               <span class="notification-time">${notification.receivedAt}</span>
+                               <button class="clear-btn" onclick="notificationSSE.removeNotification('${notification.id}')">×</button>
+                           </div>
+                       </div>
+                       <div class="notification-message">${notification.message}</div>
+                       <div class="notification-details">
+                           예약번호: ${notification.reservationId} |
+                           사용자: ${notification.nickName}
+                       </div>
+                   </div>
+               </div>
+           `;
+       }).join('');
 
-            return `
-                <div class="notification-item ${typeClass}">
-                    <button class="clear-btn" onclick="notificationSSE.removeNotification('${notification.id}')" title="알림 삭제">×</button>
-                    <div class="notification-header">
-                        <span class="notification-type type-${typeClass}">${typeLabel}</span>
-                        <span class="notification-time">${notification.receivedAt}</span>
-                    </div>
-                    <div class="notification-message">${notification.message}</div>
-                    <div class="notification-details">
-                        예약번호: ${notification.reservationId} |
-                        사용자: ${notification.nickName} (${notification.role})
-                    </div>
-                </div>
-            `;
-        }).join('');
-
-        this.updateClearAllButton();
-    }
+       this.updateClearAllButton();
+   }
 
     removeNotification(id) {
         this.notifications = this.notifications.filter(n => n.id != id);
+        this.saveToStorage(); // 삭제 후 저장
         this.renderNotifications();
     }
 
     clearAllNotifications() {
         this.notifications = [];
+        this.saveToStorage(); // 모두 삭제 후 저장
         this.renderNotifications();
     }
 
@@ -196,8 +223,39 @@ class NotificationSSE {
             setTimeout(() => notification.close(), 5000);
         }
     }
+
+    // 저장 / 불러오기 기능 추가
+    saveToStorage() {
+        if (!this.memberId) return;
+        localStorage.setItem(`alarmHistory_${this.memberId}`, JSON.stringify(this.notifications));
+    }
+
+    loadFromStorage() {
+        if (!this.memberId) return;
+        const saved = localStorage.getItem(`alarmHistory_${this.memberId}`);
+        if (saved) {
+            try {
+                this.notifications = JSON.parse(saved);
+                // 기존 저장된 알림의 시간 형식도 업데이트
+                this.notifications = this.notifications.map(notification => {
+                    if (notification.receivedAt && notification.receivedAt.includes('.')) {
+                        // 기존 초 단위 시간을 분 단위로 변환
+                        const date = new Date(notification.receivedAt.replace(/\./g, '-').replace(' ', 'T'));
+                        if (!isNaN(date.getTime())) {
+                            notification.receivedAt = this.formatDateTime(date);
+                        }
+                    }
+                    return notification;
+                });
+            } catch (e) {
+                console.error("저장된 알림 불러오기 실패:", e);
+                this.notifications = [];
+            }
+        }
+    }
 }
 
+// DOM 로딩 후 실행
 document.addEventListener('DOMContentLoaded', () => {
     if ('Notification' in window && Notification.permission === 'default') {
         Notification.requestPermission();
@@ -206,12 +264,14 @@ document.addEventListener('DOMContentLoaded', () => {
     window.notificationSSE = new NotificationSSE();
 });
 
+// 브라우저 종료 시 SSE 닫기
 window.addEventListener('beforeunload', () => {
     if (window.notificationSSE) {
         window.notificationSSE.disconnect();
     }
 });
 
+// 탭 재활성화 시 자동 재연결
 document.addEventListener('visibilitychange', () => {
     if (!document.hidden && window.notificationSSE && !window.notificationSSE.isConnected) {
         window.notificationSSE.connect();

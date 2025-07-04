@@ -98,4 +98,23 @@ document.addEventListener('DOMContentLoaded', function () {
         .catch(function (error) {
             console.error("인기 보관소 가져오기 실패:", error);
         });
+
+        //SSE 알림 표시 로직
+        const memberId = document.body.dataset.memberId;
+        if (memberId) {
+            const eventSource = new EventSource(`${contextPath}/alarms/reservations/alarms`);
+            eventSource.onmessage = (event) => {
+                const data = JSON.parse(event.data);
+                console.log("알림 수신:", data);
+
+                const alarmIndicator = document.getElementById('alarmIndicator');
+                if (alarmIndicator) {
+                    alarmIndicator.style.display = 'block';
+                }
+            };
+            eventSource.onerror = (error) => {
+                console.error('SSE 오류:', error);
+            };
+        }
+
 });

@@ -121,22 +121,26 @@ body {
     z-index: 2;
 }
 
+.bell-ring {
+    pointer-events: none !important;
+}
+
 .airbng-home .bell-ring {
-  position: absolute;
-  top: -80px;
-  right: -60px;
-  width: 176px;
-  height: 176px;
-  background: #ffffff;
-  opacity: 0.08;
-  border-radius: 50%;
+    position: absolute;
+    top: -80px;
+    right: -60px;
+    width: 176px;
+    height: 176px;
+    background: #ffffff;
+    opacity: 0.08;
+    border-radius: 50%;
 
-  /* 마스크로 가운데 뚫기 */
-  -webkit-mask-image: radial-gradient(circle, transparent 74px, black 76px);
-  mask-image: radial-gradient(circle, transparent 74px, black 76px);
+    /* 마스크로 가운데 뚫기 */
+    -webkit-mask-image: radial-gradient(circle, transparent 74px, black 76px);
+    mask-image: radial-gradient(circle, transparent 74px, black 76px);
 
-  pointer-events: none;
-  z-index: 0;
+    pointer-events: none;
+    z-index: 0;
 }
 
 .airbng-home .greeting {
@@ -464,4 +468,23 @@ body {
     font-size: 13px;
     color: #777;
     line-height: 16px;
+}
+
+/* 벨 아이콘 wrapper */
+.airbng-home .bell-wrapper {
+    position: relative;
+    display: inline-block;
+}
+
+/* 빨간 알림 점 */
+.airbng-home .alarm-indicator {
+    position: absolute;
+    top: -3px;
+    right: -3px;
+    width: 8px;
+    height: 8px;
+    background-color: red;
+    border-radius: 50%;
+    z-index: 10;
+    display: none; /* 기본은 숨김 */
 }

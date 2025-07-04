@@ -1,184 +1,243 @@
+/* 전체 바디, 최대폭 412px 고정, 중앙 정렬 */
 body {
-            font-family: 'Arial', sans-serif;
-            margin: 0;
-            padding: 20px;
-            background-color: #f5f5f5;
-        }
+    font-family: 'Pretendard', sans-serif;
+    margin: 0 auto;
+    max-width: 412px;
+    background-color: #f5f5f5;
+    box-sizing: border-box;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
 
-        .notification-container {
-            max-width: 800px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            padding: 20px;
-        }
+/* wrapper는 화면 세로에 꽉 차게 */
+.notification-wrapper {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    background-color: #f5f5f5;
+}
 
-        .notification-item {
-            background: #f8f9fa;
-            border: 1px solid #dee2e6;
-            border-radius: 8px;
-            padding: 15px;
-            margin-bottom: 10px;
-            position: relative;
-            animation: slideIn 0.3s ease-out;
-        }
+/* 통합된 알림 컨테이너 */
+.notification-container {
+    background: white;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    overflow: hidden;
+}
 
-        .notification-item.expired {
-            border-left: 4px solid #dc3545;
-        }
+/* 상단 바: ← 알림만 */
+.notification-header-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 24px 16px 16px 16px;
+    border-bottom: 1px solid #f0f0f0;
+    position: relative;
+}
 
-        .notification-item.reminder {
-            border-left: 4px solid #ffc107;
-        }
+/* 뒤로가기 버튼 */
+.back-button {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #333;
+    width: 36px;
+    text-align: left;
+    padding: 0;
+    line-height: 1;
+}
 
-        .notification-item.state-change {
-            border-left: 4px solid #28a745;
-        }
+/* 타이틀은 가운데 정렬 */
+.notification-title {
+    font-size: 18px;
+    font-weight: bold;
+    margin: 0;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+}
 
-        .notification-item.cancel-notice {
-            border-left: 4px solid #6c757d;
-        }
+/* 모든 알림 지우기 버튼 섹션 */
+.clear-all-section {
+    display: flex;
+    justify-content: flex-end;
+    padding: 12px 16px;
+}
 
-        .notification-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-        }
+/* 모든 알림 지우기 버튼 */
+.clear-all-btn {
+    background: #6c757d;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+}
 
-        .notification-type {
-            font-weight: bold;
-            padding: 4px 8px;
-            border-radius: 12px;
-            font-size: 12px;
-        }
+.clear-all-btn:hover:not(:disabled) {
+    background: #5a6268;
+}
 
-        .type-expired { background-color: #f8d7da; color: #721c24; }
-        .type-reminder { background-color: #fff3cd; color: #856404; }
-        .type-state-change { background-color: #d1ecf1; color: #0c5460; }
-        .type-cancel-notice { background-color: #e2e3e5; color: #383d41; }
+.clear-all-btn:disabled {
+    background: #e9ecef;
+    color: #6c757d;
+    cursor: not-allowed;
+}
 
-        .notification-time {
-            font-size: 12px;
-            color: #6c757d;
-        }
+/* 알림 목록 */
+.notification-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 16px;
+    flex-grow: 1;
+    overflow-y: auto;
+}
 
-        .notification-message {
-            font-size: 14px;
-            color: #495057;
-            margin-bottom: 8px;
-        }
+/* 개별 알림 */
+.notification-item {
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid #ddd;
+    border-radius: 0;
+    padding: 10px 0;
+    display: flex;
+    gap: 12px;
+    animation: slideIn 0.3s ease-out;
+    position: relative;
+}
 
-        .notification-details {
-            font-size: 12px;
-            color: #6c757d;
-        }
+/* 알림 내용 */
+.notification-content {
+    flex: 1;
+}
 
-        .clear-btn {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            background: none;
-            border: none;
-            font-size: 18px;
-            cursor: pointer;
-            color: #6c757d;
-            padding: 5px;
-            border-radius: 50%;
-            width: 30px;
-            height: 30px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
+.notification-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
 
-        .clear-btn:hover {
-            background-color: #f8f9fa;
-            color: #495057;
-        }
+.notification-type {
+    font-weight: bold;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    background-color: #4561DB !important;
+    color: white !important;
+}
 
-        @keyframes slideIn {
-            from {
-                transform: translateX(100%);
-                opacity: 0;
-            }
-            to {
-                transform: translateX(0);
-                opacity: 1;
-            }
-        }
+/* 시간과 X 버튼을 나란히 배치 */
+.notification-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
 
-        .empty-message {
-            text-align: center;
-            color: #6c757d;
-            font-style: italic;
-            padding: 40px;
-        }
+.notification-time {
+    font-size: 12px;
+    color: #6c757d;
+}
 
-        .loading-indicator {
-            text-align: center;
-            padding: 20px;
-            color: #6c757d;
-            font-size: 14px;
-        }
+/* 알림 삭제 버튼 */
+.clear-btn {
+    background: none;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+    color: #6c757d;
+    padding: 2px 5px;
+    line-height: 1;
+}
 
-        .loading-indicator:before {
-            content: "⏳";
-            margin-right: 8px;
-        }
+.clear-btn:hover {
+    background-color: #f8f9fa;
+    color: #495057;
+    border-radius: 3px;
+}
 
-        /* 연결 상태 표시를 위한 작은 인디케이터 */
-        .connection-indicator {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background-color: #dc3545;
-            z-index: 1000;
-            transition: background-color 0.3s ease;
-        }
+.notification-message {
+    font-size: 14px;
+    color: #495057;
+    margin-bottom: 8px;
+}
 
-        .connection-indicator.connected {
-            background-color: #28a745;
-        }
+.notification-details {
+    font-size: 12px;
+    color: #6c757d;
+}
 
-        .connection-indicator:hover:after {
-            content: attr(data-status);
-            position: absolute;
-            top: 20px;
-            right: 0;
-            background: rgba(0,0,0,0.8);
-            color: white;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 12px;
-            white-space: nowrap;
-            z-index: 1001;
-        }
+/* 알림 유형 색상 */
+.notification-item.expired { border-left: 4px solid #dc3545; }
+.notification-item.reminder { border-left: 4px solid #ffc107; }
+.notification-item.state-change { border-left: 4px solid #28a745; }
+.notification-item.cancel-notice { border-left: 4px solid #6c757d; }
 
-        .clear-all-btn {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background: #6c757d;
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 14px;
-            transition: background-color 0.3s ease;
-        }
+/* 빈 상태 메시지 */
+.loading-indicator {
+    text-align: center;
+    padding: 20px;
+    color: #6c757d;
+    font-size: 14px;
+}
 
-        .clear-all-btn:hover {
-            background: #5a6268;
-        }
+.loading-indicator:before {
+    content: "⏳";
+    margin-right: 8px;
+}
 
-        .clear-all-btn:disabled {
-            background: #e9ecef;
-            color: #6c757d;
-            cursor: not-allowed;
-        }
+/* 연결 상태 표시 */
+.connection-indicator {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background-color: #dc3545;
+    z-index: 1000;
+    transition: background-color 0.3s ease;
+}
+
+.connection-indicator.connected {
+    background-color: #28a745;
+}
+
+.connection-indicator:hover:after {
+    content: attr(data-status);
+    position: absolute;
+    top: 20px;
+    right: 0;
+    background: rgba(0,0,0,0.8);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    white-space: nowrap;
+    z-index: 1001;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+/* 로그인하지 않은 경우의 메시지 */
+.notification-empty-message {
+    text-align: center;
+    padding: 40px 20px;
+    color: #6c757d;
+    font-size: 16px;
+}
