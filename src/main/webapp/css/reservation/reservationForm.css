@@ -4,6 +4,42 @@ body {
     padding: 0;
 }
 
+.header {
+    padding: 30px 160px 16px 160px; /* 상단 80px, 좌우 160px */
+    background-color: white;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    justify-content: center; /* 텍스트 가운데 정렬 */
+    position: relative;
+    height: 56px;
+    display: block; /* 인라인 문제 해결 */
+}
+
+.back-btn {
+    position: absolute;
+    left: 16px;
+    top: 38px; /* 50%에서 60%로 변경하여 화살표를 아래로 이동 */
+    transform: translateY(-50%);
+    width: 24px;
+    height: 24px;
+    border: none;
+    background: none;
+    cursor: pointer;
+}
+
+.header-title {
+    color: #333;
+    text-align: center;
+    font-family: Pretendard;
+    font-size: 20px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 20px; /* 100% */
+    line-height: 1;
+    white-space: nowrap;
+}
+
 .main-wrapper {
     width: 412px;
     margin: 0 auto;
