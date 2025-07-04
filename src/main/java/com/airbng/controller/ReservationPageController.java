@@ -29,7 +29,7 @@ public class ReservationPageController {
     }
 
     @GetMapping("/form")
-    public String getForm(@RequestParam(value = "lockerId",defaultValue = "0") Long lockerId,
+    public String getForm(@RequestParam(value = "lockerId", defaultValue = "0") Long lockerId,
                           Model model) {
         model.addAttribute("lockerId", lockerId);
         return "reservationForm";
