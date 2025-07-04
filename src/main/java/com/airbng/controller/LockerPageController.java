@@ -3,33 +3,40 @@ package com.airbng.controller;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import com.airbng.dto.locker.LockerDetailResponse;
+import com.airbng.service.LockerService;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestParam;
 
-
-@Controller
+@Component
 @RequestMapping("/page")
 public class LockerPageController {
 
-    @GetMapping("/lockers")
-    public String lockerPage() {
-        return "locker";
     private final LockerService lockerService;
 
     public LockerPageController(LockerService lockerService) {
         this.lockerService = lockerService;
     }
 
+    @GetMapping("/lockers")
+    public String lockerPage() {
+        return "locker";
+    }
+
     @GetMapping("/lockers/register")
     public String lockerRegisterPage() {
         return "lockerRegister";
     }
-    @GetMapping ("/lockerDetails")
-    public String showMapPage(@RequestParam Long lockerId,
-                              Model model) {
 
     @GetMapping("/lockers/manage")
     public String lockerManagePage() {
         return "lockerManage";
+    }
+
+    @GetMapping ("/lockerDetails")
+    public String showMapPage(@RequestParam Long lockerId,
+                              Model model) {
+
         LockerDetailResponse request = LockerDetailResponse.builder()
                 .lockerId(lockerId)
                 .build();
