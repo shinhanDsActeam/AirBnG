@@ -17,6 +17,7 @@ import com.airbng.dto.jimType.JimTypeCountResult;
 import com.airbng.dto.jimType.LockerJimTypeResult;
 import com.airbng.dto.reservation.ReservationFormResponse;
 import com.airbng.dto.reservation.ReservationInsertRequest;
+import com.airbng.dto.reservation.ReservationInsertResponse;
 import com.airbng.mappers.JimTypeMapper;
 import com.airbng.mappers.LockerMapper;
 import com.airbng.mappers.ReservationMapper;
@@ -171,10 +172,10 @@ class ReservationServiceTest {
             when(jimTypeMapper.insertReservationJimTypes(insertedId, jimTypeCounts))
                     .thenReturn(jimTypeCounts.size());
 
-            BaseResponseStatus status = reservationService.insertReservation(request);
+            ReservationInsertResponse response = reservationService.insertReservation(request);
 
             // then
-            assertEquals(CREATED_RESERVATION, status);
+            assertEquals(insertedId, response.getReservationId());
         }
 
         @Nested

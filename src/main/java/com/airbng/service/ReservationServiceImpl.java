@@ -225,11 +225,12 @@ public class ReservationServiceImpl implements ReservationService{
     // 예약 등록
     @Override
     @Transactional // 짐타입 등록 실패한 경우 예약 등록까지 롤백
-    public BaseResponseStatus insertReservation(final ReservationInsertRequest request) {
+    public ReservationInsertResponse insertReservation(final ReservationInsertRequest request) {
         log.info("insertReservation({})", request);
 
         validateStartTimeAndEndTime(request.getStartTime(), request.getEndTime());
         validateLocker(request.getLockerId());
+        validateIsAvailable(request.getLockerId());
         validateJimTypes(request.getLockerId(), request.getJimTypeCounts());
 
         Long keeperId = lockerMapper.getLockerKeeperId(request.getLockerId());
@@ -244,7 +245,7 @@ public class ReservationServiceImpl implements ReservationService{
             throw new ReservationException(INVALID_JIMTYPE_COUNT);
         }
 
-        return CREATED_RESERVATION;
+        return new ReservationInsertResponse(request.getId());
     }
 
     @Override
