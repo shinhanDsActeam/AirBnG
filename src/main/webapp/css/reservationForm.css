@@ -266,42 +266,72 @@ form {
     background: #a8a8a8;
 }
 
-
+/********************************* 짐 타입 박스 하이라이팅 효과 ***********************************/
 /* 하이라이팅 */
 #jimSection{
     position: relative;
 }
 
-/* 짐 타입 박스 하이라이팅 효과 */
 .jim-item-highlight {
-    border: 2px solid #d64d5c !important;
-    box-shadow: 0 0 0 3px rgba(214, 77, 92, 0.2) !important;
-    background-color: rgba(214, 77, 92, 0.05) !important;
-    animation: shake 0.5s ease-in-out, pulse 2s ease-in-out infinite;
+    border: 1px solid #dc3545 !important;
+    box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.2) !important;
+    background-color: rgba(220, 53, 69, 0.05) !important;
+    animation:
+            strongShake 0.5s ease-out,
+            fadeOutI 1s ease-in-out 2s forwards;
     transform-origin: center;
+    animation-fill-mode: forwards;
+}
+
+@keyframes strongShake {
+    0%, 100% { transform: translateX(0); }
+    10% { transform: translateX(-4px); }
+    20% { transform: translateX(4px); }
+    30% { transform: translateX(-4px); }
+    40% { transform: translateX(4px); }
+    50% { transform: translateX(-3px); }
+    60% { transform: translateX(3px); }
+    70% { transform: translateX(-2px); }
+    80% { transform: translateX(2px); }
+    90% { transform: translateX(-1px); }
+}
+
+@keyframes fadeOutI {
+    0% {
+        border-color: #dc3545;
+        box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.2);
+        background-color: rgba(220, 53, 69, 0.05);
+    }
+    100% {
+        border-color: #ddd;
+        box-shadow: 0 0 0 3px transparent;
+        background-color: white;
+    }
 }
 
 .jim-title-highlight {
     color: #d64d5c !important;
-    animation: blink 1s ease-in-out 3;
+    animation:
+            titleBlink 0.8s ease-in-out 3,
+            fadeOutT 1s ease-in-out 4.5s forwards;
 }
 
-@keyframes shake {
-    0%, 100% { transform: translateX(0); }
-    25% { transform: translateX(-5px); }
-    75% { transform: translateX(5px); }
-}
-
-@keyframes blink {
+@keyframes titleBlink {
     0%, 100% { opacity: 1; }
-    50% { opacity: 0.3; }
+    50% { opacity: 0.4; }
 }
 
-@keyframes pulse {
-    0%, 100% {
-        box-shadow: 0 0 0 3px rgba(214, 77, 92, 0.2);
+@keyframes fadeOutT {
+    0% {
+        opacity: 1;
+        transform: scale(1);
     }
-    50% {
-        box-shadow: 0 0 0 6px rgba(214, 77, 92, 0.4);
+    70% {
+        opacity: 0.7;
+        transform: scale(1.01);
+    }
+    100% {
+        opacity: 0;
+        transform: scale(1);
     }
 }
