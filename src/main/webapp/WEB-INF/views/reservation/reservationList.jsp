@@ -1,6 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<c:set var="loginMemberId" value="${sessionScope.memberId}" />
+<c:set var="loginMemberId" value="${sessionScope.memberId}"/>
 
 <!DOCTYPE html>
 <html lang="ko">
@@ -8,7 +8,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>예약 내역</title>
-    <link rel="icon" type="image/svg+xml" href="${pageContext.request.contextPath}/images/favicon.svg" />
+    <link rel="icon" type="image/svg+xml" href="${pageContext.request.contextPath}/images/favicon.svg"/>
     <link rel="stylesheet" href="<c:url value='/css/reservation/reservationList.css'/>">
 </head>
 <body class="page-container">
@@ -122,10 +122,10 @@
     <%@ include file="../navbar.jsp" %>
 
     <script>
-            const memberId = '${loginMemberId}';
-            console.log('로그인한 회원 ID:', memberId);
-            const contextPath = '${pageContext.request.contextPath}';
-     </script>
+        const memberId = '${loginMemberId}';
+        console.log('로그인한 회원 ID:', memberId);
+        const contextPath = '${pageContext.request.contextPath}';
+    </script>
     <script src="<c:url value='/js/reservation/reservationList.js'/>"></script>
 
 </body>
