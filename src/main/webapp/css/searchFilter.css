@@ -68,7 +68,7 @@ html, body {
 
 /* 검색 필터 컨테이너 */
 .search-filter-container {
-margin : 20px auto;
+    margin : 20px auto;
     padding: 8px 20px 4px 20px;
         width: fixed 372px;
         height: fixed 168px;
@@ -76,10 +76,11 @@ margin : 20px auto;
         border-radius: 10px;
         border: 2px solid #4561DB;
         background: #FFF;
+        overflow: visible;
 
 }
 
-.search-input-wrapper {
+.searchFilter-input-wrapper {
     display: flex;
         align-items: center;
         border-radius: 12px;
@@ -88,14 +89,14 @@ margin : 20px auto;
     gap: 15px;
 }
 
-.search-icon {
+.searchFilter-icon {
     width: 17px;
     height: 17px;
         left: 12px;
         color: #888;
 }
 
-.search-input {
+.searchFilter-input {
     width: 100%;
         padding: 0px;
         border: none;
@@ -120,6 +121,7 @@ margin : 20px auto;
         font-style: normal;
         font-weight: 500;
         line-height: 16px;
+        min-width: 120px;
 }
 
 .filter-icon {
@@ -179,6 +181,60 @@ margin : 20px auto;
     line-height: 17px; /* 100% */
 }
 
+/* 드롭다운 */
+/* 부모는 상대 위치 */
+.dropdown-wrapper {
+    position: relative;
+    display: inline-block;
+}
+
+.bag-filter {
+    min-width: 140px; /* 짐 타입 텍스트를 고려한 충분한 너비 */
+    white-space: nowrap; /* 텍스트 줄바꿈 방지 */
+}
+
+/* 드롭다운은 부모 기준 아래에 위치 */
+.dropdown {
+    position: absolute;
+    top: calc(100% + 2px);
+    left: 0;
+    background-color: white;
+    border: 1px solid #ccc;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    width: 140px;
+    z-index: 1000;
+    overflow: hidden;
+}
+
+.dropdown-option {
+    padding: 12px 16px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    font-size: 14px;
+    white-space: nowrap;
+}
+
+.dropdown-option:hover {
+    background-color: #f0f0f0;
+}
+
+.hidden {
+    display: none;
+}
+
+/* 드롭다운이 열릴 때 선택된 항목의 스타일 조정 */
+.bag-filter:has(+ .dropdown:not(.hidden)) {
+    border-radius: 12px 12px 0 0;
+}
+
+/* 만약 :has() 선택자를 지원하지 않는 브라우저를 고려한다면 JavaScript로 클래스 추가 */
+.bag-filter.dropdown-open {
+    border-radius: 12px 12px 0 0;
+    border-bottom: 1px solid #ccc;
+}
+
+
 /* 모달 스타일 */
 .modal {
     position: fixed;
@@ -191,6 +247,34 @@ margin : 20px auto;
     align-items: flex-end;
     justify-content: center;
     z-index: 1000;
+}
+
+.searchFilter-button-container {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center; /* 버튼 가운데 정렬 */
+}
+
+.searchFilter-button {
+    width: 100%;
+    max-width: 360px;
+    padding: 14px 0;
+    background-color: #4561DB;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.searchFilter-button:hover {
+    background-color: #3249b5;
+}
+
+.searchFilter-button:active {
+    background-color: #293c99;
 }
 
 .modal.active {

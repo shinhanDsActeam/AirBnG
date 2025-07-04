@@ -21,18 +21,16 @@
     <div class="page-container">
         <header class="header">
                     <button class="back-button" onclick="history.back()">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M19 12H5M12 19l-7-7 7-7"/>
-                        </svg>
+                        <img class="search-back-icon" src="${pageContext.request.contextPath}/images/arrow-left.svg" alt="뒤로가기" onclick="history.back()">
                     </button>
                     <h1 class="header-title">검색</h1>
                 </header>
 
                 <!-- 검색 필터 박스 -->
                 <div class="search-filter-container">
-                    <div class="search-input-wrapper">
-                        <img class="search-icon" src="${pageContext.request.contextPath}/images/Group 2.svg" alt="검색">
-                        <input type="text" class="search-input" placeholder="내 근처 짐 맡길 곳 검색하기" onclick="openLocationSearch()">
+                    <div class="searchFilter-input-wrapper">
+                        <img class="searchFilter-icon" src="${pageContext.request.contextPath}/images/Group 2.svg" alt="검색">
+                        <input type="text" class="searchFilter-input" placeholder="내 근처 짐 맡길 곳 검색하기">
                     </div>
                     <hr class="filter-divider">
                     <div class="filter-row">
@@ -43,12 +41,20 @@
                                 <line x1="3" y1="10" x2="21" y2="10"/>
                             <span id="selected-date">2025.06.29 (일)</span>
                         </div>
-                        <div class="filter-item bag-filter" onclick="openBagTypePicker()">
-                            <img class="filter-icon" src="${pageContext.request.contextPath}/images/bag-2.svg" alt="짐">
-                                    <path d="M6 6h12v12H6z" stroke-width="2"/>
-                                    <path d="M9 6V4a3 3 0 0 1 6 0v2" stroke-width="2"/>
-                                <span id="selected-bag">백팩/가방</span>
+                        <div class="dropdown-wrapper">
+                            <div class="filter-item bag-filter" onclick="toggleBagDropdown()">
+                                <img class="filter-icon" src="${pageContext.request.contextPath}/images/bag-2.svg" alt="짐">
+                                <span id="selected-bag">${jimTypeId}</span>
                             </div>
+
+                            <!-- 드롭다운 목록 -->
+                            <div id="bag-dropdown" class="dropdown hidden">
+                                <div class="dropdown-option" onclick="selectBagType('백팩/가방')">백팩/가방</div>
+                                <div class="dropdown-option" onclick="selectBagType('캐리어')">캐리어</div>
+                                <div class="dropdown-option" onclick="selectBagType('박스/큰 짐')">박스/큰 짐</div>
+                                <div class="dropdown-option" onclick="selectBagType('유아용품')">유아용품</div>
+                            </div>
+                        </div>
                     </div>
                     <hr class="filter-divider">
                         <div class="filter-item time-filter" onclick="openTimePicker()">
@@ -57,6 +63,11 @@
                                 <polyline points="12,6 12,12 16,14"/>
                             <span id="selected-time">18:00 - 20:00 (2시간)</span>
                         </div>
+                </div>
+
+                <!-- 검색 버튼 -->
+                <div class="searchFilter-button-container">
+                    <button class="searchFilter-button" onclick="performSearch()">검색</button>
                 </div>
 
                 <!-- 검색 순위 -->
@@ -81,6 +92,8 @@
                         </div>
                     </div>
                 </div>
+
+
 
                 <!-- 날짜 선택 모달 -->
                 <div class="modal" id="dateModal">
@@ -161,14 +174,20 @@
                 <div class="search-results" id="searchResults" style="display: none;">
                     <h3>검색 결과</h3>
                     <div class="results-container">
-                        <!-- 검색 결과가 여기에 동적으로 추가됩니다 -->
-                    </div>
+                            <c:forEach var="locker" items="${results}">
+                                <div class="locker-item">
+                                    <p>${locker.name}</p>
+                                    <p>짐 타입: ${locker.jimTypeName}</p>
+                                    <p>주소: ${locker.address}</p>
+                                </div>
+                            </c:forEach>
+                        </div>
                 </div>
 
                 <!-- 숨겨진 폼 (검색 실행용) -->
                 <form id="searchForm" method="get" action="${pageContext.request.contextPath}/lockerSearch" style="display: none;">
-                    <input type="hidden" name="jimTypeId" value="${lockerType}">
-                    <input type="hidden" name="location" id="searchLocation">
+                    <input type="hidden" name="jimTypeId" id="searchJimType">
+                    <input type="hidden" name="address" id="searchAddress">
                     <input type="hidden" name="date" id="searchDate">
                     <input type="hidden" name="startTime" id="searchStartTime">
                     <input type="hidden" name="endTime" id="searchEndTime">
