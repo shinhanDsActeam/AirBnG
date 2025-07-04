@@ -1,0 +1,189 @@
+/* bottom-sheet.css */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    background-color: #f8f9fa;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+}
+
+
+.page-container {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    max-width: 412px;
+    width: 100%;
+    background-color: #ffffff;
+}
+
+.bottom-sheet {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 100%;
+    max-width: 412px;
+    height: 60%;
+    background: #FFF;
+    border-radius: 40px 40px 0px 0px;
+    box-shadow: 0px -1px 10px 0px rgba(0, 0, 0, 0.15);
+    transform: translateX(-50%) translateY(70%);
+    transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    display: flex;
+    flex-direction: column;
+    z-index: 100;
+    touch-action: none;
+    user-select: none;
+}
+
+.bottom-sheet.dragging {
+    transition: none;
+}
+
+.sheet-header {
+    padding: 15px 0;
+    text-align: center;
+    cursor: grab;
+    user-select: none;
+    background: white;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    height: 18px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.sheet-header:active {
+    cursor: grabbing;
+}
+
+.sheet-drag-handle {
+    width: 69px;
+    height: 4px;
+    flex-shrink: 0;
+    background: #DDD;
+    border-radius: 12px;
+    margin: 8px auto;
+    transition: background-color 0.2s;
+}
+
+.sheet-header:hover .sheet-drag-handle {
+    background: #bbb;
+}
+
+.sheet-title {
+    width: 100%;
+    height: 50px;
+    display: flex;
+    justify-content: left;
+    align-items: center;
+    margin-left: 40px;
+    font-size: 15px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 15px;
+}
+
+.sheet-count {
+    font-size: 15px;
+    font-style: normal;
+    ont-weight: 600;
+    line-height: 15px;
+    color: #777;
+}
+
+.sheet-content {
+    flex: 1;
+    overflow-y: auto;
+}
+
+.storage-item {
+    display: flex;
+    width: 100%;
+    padding: 15px 40px;
+    box-sizing: border-box;
+    justify-content: center;
+    align-items: center;
+    gap: 9px;
+    cursor: pointer;
+}
+
+.storage-item.selected {
+    background-color: rgba(69, 97, 219, 0.15);
+}
+
+
+.storage-item.selected .storage-button {
+    background-color: #4561DB;
+    color: white;
+}
+
+.storage-item.disabled {
+    opacity: 0.3;
+}
+
+.storage-image {
+    width: 70px;
+    height: 70px;
+    border-radius: 5px;
+    margin-right: 15px;
+    background: url(<path-to-image>) lightgray 50% / cover no-repeat;
+}
+
+
+.storage-info {
+    flex-grow: 1;
+    width: calc(100% - 245px);
+}
+
+.storage-name {
+    align-self: stretch;
+    font-size: 17px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 17px;
+}
+
+.storage-address {
+    align-self: stretch;
+    color: #777;
+    font-size: 15px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 15px; /* 100% */
+}
+
+.storage-button {
+    background: #4561DB;
+    color: white;
+    padding: 10px 13px;
+    border-radius: 20px;
+    border: none;
+    font-size: 13px;
+    cursor: pointer;
+    width: auto 71px;
+    height: auto 33px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+}
+
+.disabled .storage-button {
+    background: #ccc;
+    cursor: not-allowed;
+}

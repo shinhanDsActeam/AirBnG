@@ -1,0 +1,97 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    background-color: #f8f9fa;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+}
+
+
+.page-container {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    max-width: 412px;
+    width: 100%;
+    background-color: #ffffff;
+}
+
+.top-bar {
+  position: absolute;
+  top: 4%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+}
+
+
+
+.back-icon {
+  width: 7%;
+  height: 7%;
+  cursor: pointer;
+  flex-shrink: 0;
+  margin-right: 10px;
+}
+
+.search-container {
+    width: 332px;
+  min-height: 42px;
+  max-height: 42px;
+  display: flex;
+  align-items: center;
+  background-color: #fff;
+  border-radius: 50px;
+  padding: 13px 26px 13px 26px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.search-form {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.search-input {
+  flex: 1;
+  height: 100%;
+  border: none;
+  outline: none;
+  font-size: 1rem;
+  background: transparent;
+}
+
+.search-button {
+    align-items: center;
+    justify-content: center;
+    background-color: white;
+    border: none;
+    color: white;
+    margin-right: 10px;
+    cursor: pointer;
+    width: 16px;
+    height: 16px;
+}
+
+/* 지도 컨테이너 */
+#map {
+    width: 100%;
+    height: 100%;
+}
+
+

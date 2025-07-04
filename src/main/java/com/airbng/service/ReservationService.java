@@ -5,11 +5,13 @@ import com.airbng.dto.reservation.*;
 import com.airbng.domain.base.ReservationState;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public interface ReservationService {
 
     // 예약 조회 + 페이징 처리
-    ReservationPaging findAllReservationById(Long memberId, String role, ReservationState state, Long nextCursorId, String period);
+    ReservationPaging findAllReservationById(Long memberId, String role, Object state, Long nextCursorId, String period);
 
     /**
      * 예약 취소 기능
@@ -27,4 +29,5 @@ public interface ReservationService {
 
     //예약 상새
     ReservationDetailResponse findReservationDetail(Long reservationId, Long memberId);
+    void deleteReservationById(Long reservationId);
 }

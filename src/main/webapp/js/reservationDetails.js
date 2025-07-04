@@ -71,10 +71,10 @@ function updateCancelButton(state) {
     const cancelBtn = document.getElementById('cancel-btn');
     if (state === 'CANCELLED' || state === 'COMPLETED') {
         cancelBtn.disabled = true;
-        cancelBtn.textContent = state === 'CANCELLED' ? '취소 완료' : '보관 완료';
+        cancelBtn.textContent = state === 'CANCELLED' ? '취소완료' : '이용완료';
     } else {
         cancelBtn.disabled = false;
-        cancelBtn.textContent = '예약 취소';
+        cancelBtn.textContent = '취소완료';
     }
 }
 
@@ -86,10 +86,10 @@ function showError(message) {
 
 function getStateText(state) {
     switch(state) {
-        case 'CONFIRMED': return '예약 확정';
-        case 'CANCELLED': return '예약 취소';
-        case 'COMPLETED': return '보관 완료';
-        case 'PENDING': return '대기 상태';
+        case 'CONFIRMED': return '예약완료';
+        case 'CANCELLED': return '취소완료';
+        case 'COMPLETED': return '이용완료';
+        case 'PENDING': return '예약대기';
         default: return state;
     }
 }

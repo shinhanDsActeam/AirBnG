@@ -9,7 +9,7 @@
         <span class="nav-text">보관소</span>
     </a>
 
-    <a href="messages.jsp" class="nav-item" data-page="messages">
+    <a href="${pageContext.request.contextPath}/page/chatList" class="nav-item" data-page="messages">
         <img src="<c:url value='/images/messages.svg'/>" alt="채팅" class="nav-icon">
         <span class="nav-text">채팅</span>
     </a>
@@ -19,7 +19,7 @@
         <span class="nav-text">홈</span>
     </a>
 
-    <a href="calendar.jsp" class="nav-item" data-page="calendar">
+    <a href="${pageContext.request.contextPath}/page/reservations/list" class="nav-item" data-page="calendar">
         <img src="<c:url value='/images/calendar.svg'/>" alt="예약" class="nav-icon">
         <span class="nav-text">예약</span>
     </a>

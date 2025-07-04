@@ -22,16 +22,27 @@ document.querySelector('.login-form').addEventListener('submit', function(e) {
         },
         body: JSON.stringify(requestData)
     })
-        .then(response => response.json())
-        .then(data => {
+        .then(async response => {
+            const data = await response.json();
+            if (response.status === 429 || data.code === 8003) {
+                showWarningModal();
+                return;
+            }
+
             if (data.code === 2000) {
                 document.getElementById('success-modal').classList.remove('hidden');
+                document.addEventListener('keydown', function handleEnter(e) {
+                    if (e.key === 'Enter') {
+                        confirmLoginSuccess();
+                        document.removeEventListener('keydown', handleEnter);
+                    }
+                });
             } else {
                 showErrorModal();
             }
         })
         .catch(err => {
-            console.error(err);
+            console.error('로그인 요청 실패:', err);
             showErrorModal();
         });
 });
@@ -47,4 +58,20 @@ function closeErrorModal() {
 
 function showErrorModal() {
     document.getElementById('error-modal').classList.remove('hidden');
+}
+
+function showWarningModal() {
+    document.getElementById('warning-modal').classList.remove('hidden');
+
+    function handleWarningEnter(e) {
+        if (e.key === 'Enter') {
+            closeWarningModal();
+            document.removeEventListener('keydown', handleWarningEnter);
+        }
+    }
+    document.addEventListener('keydown', handleWarningEnter);
+}
+
+function closeWarningModal() {
+    document.getElementById('warning-modal').classList.add('hidden');
 }

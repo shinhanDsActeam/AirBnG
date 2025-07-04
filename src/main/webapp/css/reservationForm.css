@@ -1,0 +1,307 @@
+body {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+.main-wrapper {
+    width: 412px;
+    margin: 0 auto;
+}
+
+form {
+    padding: 15px 20px;
+}
+
+.date-btn {
+    padding: 6px 12px;
+    font-weight: 500;
+    background-color: white;
+    color: black;
+    transition: outline 0.05s;
+    box-sizing: border-box;
+    border: 1px transparent;
+}
+
+.date-btn:hover {
+    outline: 1px solid #4561DB;
+    border-radius: 6px;
+    z-index: 2;
+}
+
+.date-btn.selected {
+    background-color: #4561DB;
+    color: white;
+    border-color: #4561DB;
+    border-radius: 10%;
+}
+.date-btn.in-range {
+    /*@apply bg-blue-200 text-blue-800 border-blue-300;*/
+    background-color: rgba(69, 97, 219, 0.2);
+    color: #4561DB;
+}
+.date-btn:not(.selected):not(.in-range) {
+    @apply bg-white text-gray-700 border-gray-300 hover:bg-gray-50;
+}
+.custom-select {
+    @apply appearance-none bg-white border border-gray-300 rounded-lg px-3 py-2 pr-8 text-gray-700 focus:outline-none focus:border-blue-500;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+    background-position: right 0.5rem center;
+    background-repeat: no-repeat;
+    background-size: 1.5em 1.5em;
+}
+.quantity-input {
+    @apply w-16 px-2 py-1 border border-gray-300 rounded text-center;
+}
+.quantity-btn {
+    @apply w-8 h-8 border border-gray-300 rounded text-lg font-medium hover:bg-gray-50 transition-colors;
+}
+
+.jim-type-card {
+    /*@apply border rounded-lg p-4 transition-colors;*/
+    border: 1px solid #e5e7eb;
+    padding: 20px;
+    border-radius: 6px;
+}
+
+.jim-type-card.selected {
+    border: 1px solid #4561DB;
+    transition: background-color 0.2s;
+    background-color: rgba(59, 130, 246, 0.1);
+}
+
+.jim-type-card:not(.selected) {
+    @apply border-gray-300;
+}
+
+.quantity-btn {
+    @apply w-8 h-8 border rounded text-lg font-medium transition-colors;
+    /*border: 1px solid #e5e7eb;*/
+    /*background-color: white;*/
+    padding: 4px 8px;
+}
+
+.quantity-btn:hover {
+    background-color: #f3f4f6;
+    border-radius: 10%;
+}
+.quantity-input {
+    width: 40px;
+    height: 36px;
+    padding: 0;
+    text-align: center;
+    line-height: 36px;
+    font-weight: 500;
+    font-size: 16px;
+    color: rgba(55, 65, 81, 0.5);
+    background-color: rgba(255, 255, 255, 1);
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+
+    /* 숫자 input 기본 화살표 제거 */
+    -moz-appearance: textfield;
+}
+.quantity-input::-webkit-outer-spin-button,
+.quantity-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.jim-type-card.selected .quantity-btn {
+    border-color: #4561DB;
+    color: #4561DB;
+}
+
+.jim-type-card.selected .quantity-btn:hover {
+    background-color: rgba(69, 97, 219, 0.1);
+    border-radius: 10%;
+}
+
+.jim-type-card.selected .quantity-input {
+    border-color: #4561DB;
+    color: #4561DB;
+    font-weight: 600;
+}
+
+
+.submit-btn{
+    background-color: rgba(69, 97, 219);
+
+}
+.submit-btn:hover{
+    background-color: rgba(47, 70, 183);
+}
+
+/******************** 드랍다운 커스텀 **********************/
+.custom-dropdown {
+    position: relative;
+    width: 100%;
+}
+
+.dropdown-selected {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: white;
+    border: 2px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-size: 16px;
+    font-weight: 500;
+    color: #374151;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-height: 48px;
+}
+
+.dropdown-selected:hover {
+    border-color: #4561DB;
+    box-shadow: 0 0 0 3px rgba(69, 97, 219, 0.1);
+}
+
+.dropdown-selected.active {
+    border-color: #4561DB;
+    position: relative; /* 의사 요소 위치 기준점 */
+}
+
+.dropdown-selected.active::after {
+    content: '';
+    position: absolute;
+    bottom: -2px; /* 선택 영역 테두리에 맞춰서 */
+    height: 10px; /* 연결 간격과 동일한 높이 */
+    border-left: 2px solid #4561DB;
+    border-right: 2px solid #4561DB;
+    background-color: transparent; /* 투명 배경 */
+    z-index: 1001;
+}
+
+/* 좌우 연결선만 만드는 의사 요소 */
+#startTimeDropdown .dropdown-selected.active::after {
+    left: -1.8px;
+    right: -1.8px;
+}
+
+#endTimeDropdown .dropdown-selected.active::after {
+    left: -2px;
+    right: -1.8px;
+}
+
+
+.dropdown-arrow {
+    transition: transform 0.2s ease;
+    flex-shrink: 0;
+}
+
+.dropdown-selected.active .dropdown-arrow {
+    transform: rotate(180deg);
+}
+
+.dropdown-options {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background-color: white;
+    border: 2px solid #4561DB;
+    border-top: none;
+    border-radius: 0 0 8px 8px;
+    max-height: 200px;
+    overflow-y: auto;
+    display: none;
+    /*box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);*/
+    /*margin-top: -15px;*/
+    z-index: 1000;
+    /* 전체 드롭다운을 감싸는 박스 섀도우 */
+    /*box-shadow: 0 -6px 20px rgb(32, 79, 205),*/
+    /*0 4px 20px rgb(32, 79, 205);*/
+
+}
+
+.dropdown-options.show {
+    display: block;
+}
+
+.dropdown-option {
+    padding: 12px 16px;
+    font-size: 16px;
+    color: #374151;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    display: flex;
+    align-items: center;
+}
+
+.dropdown-option:hover {
+    background-color: #f3f4f6;
+}
+
+.dropdown-option.selected {
+    background-color: rgba(69, 97, 219, 0.1);
+    color: #4561DB;
+    font-weight: 600;
+}
+
+.dropdown-option.selected::before {
+    content: "✓";
+    margin-right: 8px;
+    font-weight: bold;
+}
+
+/* 스크롤바 스타일링 */
+.dropdown-options::-webkit-scrollbar {
+    width: 6px;
+}
+
+.dropdown-options::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+}
+
+.dropdown-options::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 3px;
+}
+
+.dropdown-options::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
+
+
+/* 하이라이팅 */
+#jimSection{
+    position: relative;
+}
+
+/* 짐 타입 박스 하이라이팅 효과 */
+.jim-item-highlight {
+    border: 2px solid #d64d5c !important;
+    box-shadow: 0 0 0 3px rgba(214, 77, 92, 0.2) !important;
+    background-color: rgba(214, 77, 92, 0.05) !important;
+    animation: shake 0.5s ease-in-out, pulse 2s ease-in-out infinite;
+    transform-origin: center;
+}
+
+.jim-title-highlight {
+    color: #d64d5c !important;
+    animation: blink 1s ease-in-out 3;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+}
+
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+}
+
+@keyframes pulse {
+    0%, 100% {
+        box-shadow: 0 0 0 3px rgba(214, 77, 92, 0.2);
+    }
+    50% {
+        box-shadow: 0 0 0 6px rgba(214, 77, 92, 0.4);
+    }
+}

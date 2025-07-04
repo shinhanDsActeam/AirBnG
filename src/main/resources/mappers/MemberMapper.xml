@@ -93,4 +93,10 @@
             WHERE member_id = #{memberId}
         ), 1, 0)
     </select>
+
+    <select id="findMemberByEmail" parameterType="String" resultMap="memberResultMap">
+        SELECT member_id, email, password, nickname
+        FROM Member
+        WHERE email = #{email}
+    </select>
 </mapper>
