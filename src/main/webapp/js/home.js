@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const reservationDate = document.getElementById('date').value;
 
         if (!address || !reservationDate) {
-            alert('장소와 날짜를 모두 입력해주세요!');
+            ModalUtils.showWarning('장소와 날짜를 모두 입력해주세요!', '검색 실패');
             return;
         }
 

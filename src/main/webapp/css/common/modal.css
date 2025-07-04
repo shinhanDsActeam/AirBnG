@@ -1,0 +1,263 @@
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    padding: 20px;
+}
+
+.modal {
+    background: #fff;
+    border-radius: 12px;
+    width: 100%;
+    max-width: 350px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+    animation: fadeIn 0.3s ease;
+}
+
+.modal-content {
+    padding: 24px 20px;
+    text-align: center;
+}
+
+.modal-icon {
+    width: 60px;
+    height: 60px;
+    background: #10b981;
+    color: #fff;
+    border-radius: 50%;
+    margin: 0 auto 16px;
+    font-size: 30px;
+    line-height: 60px;
+    font-weight: bold;
+}
+
+.modal-title {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+
+.modal-buttons {
+    border-top: 1px solid #e5e7eb;
+    display: flex;
+}
+
+.modal-btn {
+    flex: 1;
+    padding: 14px 0;
+    font-size: 16px;
+    border: none;
+    background: #4561DB;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.modal-btn:hover {
+    background-color: rgba(47, 70, 183);
+}
+
+
+.hidden {
+    display: none;
+}
+
+.modal-icon.success-rotate {
+    animation: successGlassSpin 1s ease-out;
+    transform-style: preserve-3d;
+    background: linear-gradient(135deg,
+    rgba(69, 97, 219, 0.4) 0%,
+    rgba(59, 130, 246, 0.3) 30%,
+    rgba(139, 92, 246, 0.4) 70%,
+    rgba(69, 97, 219, 0.5) 100%);
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(69, 97, 219, 0.6);
+    box-shadow:
+            0 8px 32px rgba(69, 97, 219, 0.3),
+            inset 0 2px 4px rgba(255, 255, 255, 0.4),
+            inset 0 -2px 4px rgba(69, 97, 219, 0.3);
+    position: relative;
+    overflow: hidden;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    margin: 0 auto 16px;
+    font-size: 28px;
+    line-height: 60px;
+    font-weight: 900;
+    color: rgba(255, 255, 255, 0.95);
+    text-shadow:
+            0 0 12px rgba(69, 97, 219, 0.8),
+            0 0 24px rgba(59, 130, 246, 0.6),
+            0 2px 4px rgba(69, 97, 219, 0.4),
+            2px 0 0 rgba(69, 97, 219, 0.3),
+            -2px 0 0 rgba(69, 97, 219, 0.3),
+            0 2px 0 rgba(69, 97, 219, 0.3),
+            0 -2px 0 rgba(69, 97, 219, 0.3);
+}
+
+.modal-icon.success-rotate::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: linear-gradient(45deg,
+    rgba(69, 97, 219, 0.4),
+    rgba(139, 92, 246, 0.4),
+    rgba(59, 130, 246, 0.4));
+    border-radius: 50%;
+    z-index: -1;
+    filter: blur(8px);
+    opacity: 0;
+    animation: glowPulse 1s ease-out 0.2s;
+}
+
+@keyframes successGlassSpin {
+    0% {
+        transform: rotateY(0deg) scale(0.4);
+        opacity: 0;
+        filter: blur(4px);
+        box-shadow:
+                0 0 0 rgba(69, 97, 219, 0),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1),
+                inset 0 -1px 0 rgba(69, 97, 219, 0.1);
+    }
+    30% {
+        transform: rotateY(108deg) scale(1.1);
+        opacity: 0.8;
+        filter: blur(1px);
+    }
+    60% {
+        transform: rotateY(216deg) scale(0.95);
+        opacity: 1;
+        filter: blur(0px);
+        box-shadow:
+                0 12px 40px rgba(69, 97, 219, 0.4),
+                inset 0 2px 4px rgba(255, 255, 255, 0.6),
+                inset 0 -2px 4px rgba(69, 97, 219, 0.4);
+    }
+    85% {
+        transform: rotateY(340deg) scale(1.05);
+        opacity: 1;
+    }
+    100% {
+        transform: rotateY(360deg) scale(1);
+        opacity: 1;
+        filter: blur(0px);
+        box-shadow:
+                0 8px 32px rgba(69, 97, 219, 0.3),
+                inset 0 2px 4px rgba(255, 255, 255, 0.4),
+                inset 0 -2px 4px rgba(69, 97, 219, 0.3);
+    }
+}
+
+@keyframes glowPulse {
+    0% {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+    50% {
+        opacity: 0.6;
+        transform: scale(1.2);
+    }
+    100% {
+        opacity: 0;
+        transform: scale(1.4);
+    }
+}
+
+.modal-icon.error-shake {
+    animation: shake 0.6s ease-out;
+    background: linear-gradient(135deg,
+    rgba(255, 99, 71, 0.4) 0%,
+    rgba(255, 71, 87, 0.5) 40%,
+    rgba(220, 53, 69, 0.6) 100%);
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(255, 71, 87, 0.5);
+    box-shadow:
+            0 8px 32px rgba(220, 53, 69, 0.2),
+            inset 0 2px 4px rgba(255, 255, 255, 0.4),
+            inset 0 -2px 4px rgba(220, 53, 69, 0.2);
+    color: white;
+    font-weight: bold;
+    font-size: 32px;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    margin: 0 auto 16px;
+    line-height: 60px;
+    position: relative;
+    text-shadow:
+            0 0 8px rgba(255, 71, 87, 0.6),
+            0 0 12px rgba(255, 71, 87, 0.5);
+}
+
+@keyframes shake {
+    0% { transform: translateX(0); }
+    20% { transform: translateX(-10px); }
+    40% { transform: translateX(10px); }
+    60% { transform: translateX(-6px); }
+    80% { transform: translateX(6px); }
+    100% { transform: translateX(0); }
+}
+
+.modal-text {
+    font-size: 14px;
+    color: #666;
+    margin-top: 4px;
+}
+.modal-icon.warning-pulse {
+    background: linear-gradient(135deg, #ffe066, #ffc107, #ffca28);
+    border: 2px solid #ffb300;
+    box-shadow: 0 8px 32px rgba(255, 193, 7, 0.3);
+    color: #fff;
+    font-weight: bold;
+    font-size: 32px;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    margin: 0 auto 16px;
+    line-height: 60px;
+    animation: pulse 1s ease infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.1); opacity: 0.7; }
+    100% { transform: scale(1); opacity: 1; }
+}
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+/* 반응형 디자인 */
+@media (max-width: 412px) {
+    .login-container {
+        padding: 20px 16px;
+    }
+}
+
+.modal-icon.info{
+    background: linear-gradient(135deg, #ffe066, #ffc107, #ffca28);
+    border: 2px solid #ffb300;
+    box-shadow: 0 8px 32px rgba(255, 193, 7, 0.3);
+    color: #fff;
+    font-weight: bold;
+    font-size: 32px;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    margin: 0 auto 16px;
+    line-height: 60px;
+    animation: pulse 1s ease infinite;
+}

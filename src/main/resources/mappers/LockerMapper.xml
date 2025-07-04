@@ -13,20 +13,36 @@
         <result property="addressDetail" column="address_detail" />
         <result property="keeperId" column="keeper_id" />
         <result property="keeperName" column="name" />
+        <result property="keeperPhone" column="phone" />
+        <result property="isAvailable" column="is_available" />
+        <!-- 중첩 짐타입 매핑 -->
+        <collection property="jimTypeResults" ofType="com.airbng.dto.jimType.LockerJimTypeResult">
+            <id     column="jimtype_id"    property="jimTypeId" />
+            <result column="type_name"     property="typeName" />
+            <result column="price_per_hour"     property="pricePerHour" />
+        </collection>
     </resultMap>
 
 
-    <select id="findUserById" parameterType="Long" resultMap="LockerDetails">
+    <select id="findLockerById" parameterType="Long" resultMap="LockerDetails">
         SELECT
             l.locker_id,
             l.locker_name,
             l.address,
             l.address_english,
             l.address_detail,
+            l.is_available,
             m.member_id AS keeper_id,
-            m.name
+            m.name,
+            m.phone,
+            jt.jimtype_id,
+            jt.type_name,
+            jt.price_per_hour
         FROM Locker l
             LEFT JOIN Member m ON l.member_id = m.member_id
+            LEFT JOIN LockerJimType ljt ON l.locker_id = ljt.locker_id
+            LEFT JOIN JimType jt ON ljt.jimtype_id = jt.jimtype_id
+
         WHERE l.locker_id = #{lockerId}
     </select>
 
@@ -253,6 +269,13 @@
             FROM Locker
             WHERE locker_id = #{lockerId} AND member_id = #{keeperId}
         ), 1, 0)
+    </select>
+
+    <!-- 넘어온 keeperId가 실제 locker의 주인인지 확인 -->
+    <select id="getLockerKeeperId" resultType="Long">
+        SELECT member_id
+        FROM Locker
+        WHERE locker_id = #{lockerId}
     </select>
 
     <!-- locker 활성화/비활성화 처리 -->
