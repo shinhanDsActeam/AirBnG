@@ -42,7 +42,7 @@ public class LockerPageController {
 
         return "lockerDetails"; // lockerDetails.jsp로 이동
     }
-}
+
     @GetMapping("/lockerSearchDetails")
     public String showMapPage(@RequestParam String address,
                               @RequestParam String reservationDate,
