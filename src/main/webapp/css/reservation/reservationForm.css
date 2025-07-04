@@ -4,45 +4,50 @@ body {
     padding: 0;
 }
 
-.header {
-    padding: 30px 160px 16px 160px; /* 상단 80px, 좌우 160px */
-    background-color: white;
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    justify-content: center; /* 텍스트 가운데 정렬 */
-    position: relative;
-    height: 56px;
-    display: block; /* 인라인 문제 해결 */
+/* 상수화 */
+:root {
+    --header-height: 60px;
 }
 
-.back-btn {
-    position: absolute;
-    left: 16px;
-    top: 38px; /* 50%에서 60%로 변경하여 화살표를 아래로 이동 */
-    transform: translateY(-50%);
+.header {
+    position: fixed;
+    top: 0;
+    left: 50%; transform: translateX(-50%);
+    width: 100%;
+    max-width: 412px;
+    height: var(--header-height);
+    background-color: #fff;
+    display: flex;
+    align-items: center;
+    z-index: 1000;
+    margin: 0 auto;
+    padding: 10px 16px 0 16px;
+}
+
+.back-icon {
     width: 24px;
     height: 24px;
-    border: none;
-    background: none;
     cursor: pointer;
+    margin-right: 10px;
+    flex-shrink: 0;
 }
 
 .header-title {
+    font-weight: 600;
     color: #333;
+    flex: 1;
     text-align: center;
-    font-family: Pretendard;
+    margin-right: 40px; /* 중앙 정렬을 위한 여백 */
+    font-family: Pretendard, serif;
     font-size: 20px;
     font-style: normal;
-    font-weight: 600;
-    line-height: 20px; /* 100% */
-    line-height: 1;
-    white-space: nowrap;
+    line-height: 20px;
 }
 
 .main-wrapper {
     width: 412px;
     margin: 0 auto;
+    padding-top: var(--header-height);
 }
 
 form {

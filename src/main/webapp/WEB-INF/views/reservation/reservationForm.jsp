@@ -23,11 +23,7 @@
     </script>
 
     <div class="header">
-        <button class="back-btn" onclick="history.back()">
-            <svg class="w-6 h-6 text-gray-600 cursor-pointer" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M19 12H5M12 19l-7-7 7-7"/>
-            </svg>
-        </button>
+        <img class="back-icon" src="/AirBnG/images/arrow-left.svg" alt="뒤로가기" onclick="history.back()">
         <div class="header-title">예약하기</div>
     </div>
 
