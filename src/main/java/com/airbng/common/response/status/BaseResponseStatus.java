@@ -31,6 +31,7 @@ public enum BaseResponseStatus implements ResponseStatus{
     INVALID_EMAIL(2006, HttpStatus.BAD_REQUEST.value(),"이메일 형식을 지켜주세요"),
     INVALID_MEMBER(2007, HttpStatus.UNAUTHORIZED.value(), "유효하지 않은 멤버입니다."),
     NOT_UPDATE_MEMBER(2008, HttpStatus.NO_CONTENT.value(), "멤버 정보가 변경되지 않았습니다."),
+    SUCCESS_LOGOUT(2000, HttpStatus.OK.value(), "로그아웃에 성공하였습니다."),
 
     /**
      * 3000 락커 관련 코드
@@ -54,6 +55,7 @@ public enum BaseResponseStatus implements ResponseStatus{
     NOT_DROPPER_OF_RESERVATION(4007,HttpStatus.BAD_REQUEST.value(), "해당 예약의 짐을 맡긴 사람이 아닙니다."),
     NOT_KEEPER_OF_RESERVATION(4008,HttpStatus.BAD_REQUEST.value(), "해당 예약의 담당자가 아닙니다."),
     ALREADY_CANCELLED_RESERVATION(4009, HttpStatus.BAD_REQUEST.value(), "이미 취소된 예약입니다."),
+    FAILED_DELETE_RESERVATION(4010, HttpStatus.BAD_REQUEST.value(), "예약 삭제 실패"),
 
 
     /**

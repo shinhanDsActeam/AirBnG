@@ -7,6 +7,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>로그인 - AirBnG</title>
+  <link rel="icon" type="image/svg+xml" href="${pageContext.request.contextPath}/images/favicon.svg" />
   <link rel="stylesheet" href="<c:url value='/css/login.css' />" />
 </head>
 <body>
@@ -14,7 +15,7 @@
 <div id="success-modal" class="modal-overlay hidden">
   <div class="modal">
     <div class="modal-content">
-      <div class="modal-icon">✓</div>
+      <div class="modal-icon success-rotate">✓</div>
       <div class="modal-title">로그인 성공</div>
     </div>
     <div class="modal-buttons">
@@ -23,14 +24,29 @@
   </div>
 </div>
 
+<!-- 실패 모달 -->
 <div id="error-modal" class="modal-overlay hidden">
   <div class="modal">
     <div class="modal-content">
-      <div class="modal-icon" style="background: #dc2626;">✗</div>
+      <div class="modal-icon error-shake">!</div>
       <div class="modal-title">로그인 실패</div>
+      <div class="modal-text">이메일 또는 비밀번호가 올바르지 않습니다.</div>
     </div>
     <div class="modal-buttons">
-      <button class="modal-btn" onclick="closeErrorModal()" style="width: 100%; border-right: none;">확인</button>
+      <button type="button" class="modal-btn" onclick="closeErrorModal()">확인</button>
+    </div>
+  </div>
+</div>
+<!-- 경고 모달 -->
+<div id="warning-modal" class="modal-overlay hidden">
+  <div class="modal">
+    <div class="modal-content">
+      <div class="modal-icon warning-pulse">!</div>
+      <div class="modal-title">요청이 너무 많습니다</div>
+      <div class="modal-text">잠시 후 다시 시도해주세요.</div>
+    </div>
+    <div class="modal-buttons">
+      <button class="modal-btn" onclick="closeWarningModal()">확인</button>
     </div>
   </div>
 </div>
@@ -86,7 +102,7 @@
     <div class="signup-section">
       <p class="signup-text">
         아직 계정이 없으신가요?
-        <a href="${pageContext.request.contextPath}/page/home" class="signup-link">회원가입</a>
+        <a href="${pageContext.request.contextPath}/page/signup" class="signup-link">회원가입</a>
       </p>
     </div>
   </div>

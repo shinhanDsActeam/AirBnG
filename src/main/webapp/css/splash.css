@@ -57,6 +57,11 @@ body {
     position: relative;
 }
 
+.logo-container img {
+    width: 100px; /* 원하는 크기로 조정 */
+    height: auto;
+}
+
 @keyframes fadeInUp {
     from {
         opacity: 0;
