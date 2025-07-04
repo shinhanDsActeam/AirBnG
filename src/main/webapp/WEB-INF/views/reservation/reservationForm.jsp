@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="<c:url value='/css/reservation/reservationForm.css' />"/>
     <link rel="stylesheet" href="<c:url value='/css/common/modal.css' />"/>
 </head>
-<body class="bg-gray-100">
+<body class="bg-gray-100 mx-auto">
 <script src="<c:url value='/js/common/modal.js' />"></script>
 <script src="<c:url value='/js/reservation/reservationForm.js' />"></script>
 <div class="max-w-md mx-auto bg-white min-h-screen">
