@@ -79,7 +79,7 @@
     <button class="reserve-btn" id="reserveBtn" type="button" style="display: none;"
             data-context-path="<%=contextPath%>"
             data-member-id="${loginMemberId}">
-        보관소 선택
+        예약하러 가기
     </button>
 </div>
 

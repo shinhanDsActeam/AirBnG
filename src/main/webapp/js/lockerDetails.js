@@ -177,7 +177,7 @@ function setupReserveButton(lockerId, isAvailable) {
         } else {
             reserveBtn.disabled = false;
             reserveBtn.classList.remove('disabled');
-            reserveBtn.textContent = '보관소 선택';
+            reserveBtn.textContent = '예약하러 가기';
         }
     }
 }
