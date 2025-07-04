@@ -1,0 +1,82 @@
+
+body {
+    height: 100vh;
+    background-color: #f8f9fa;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    display: flex;
+    justify-content: center;
+}
+
+.page-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    max-width: 412px;
+    width: 100%;
+    background-color: #ffffff;
+    position: relative;
+    padding-bottom: 60px; /* navbar 공간 확보 */
+}
+
+.chat-header {
+    padding: 24px 20px 16px;
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+}
+
+.chat-list {
+    list-style: none;
+    padding: 0;
+}
+
+.chat-item {
+    display: flex;
+    padding: 16px 20px;
+    border-bottom: 1px solid #f0f0f0;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.chat-item:hover {
+    background-color: #f6f8ff;
+}
+
+.chat-profile {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 12px;
+}
+
+.chat-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.chat-top {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 4px;
+}
+
+.chat-name {
+    font-weight: 600;
+    color: #111;
+}
+
+.chat-time {
+    font-size: 12px;
+    color: #999;
+}
+
+.chat-message {
+    font-size: 14px;
+    color: #555;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}

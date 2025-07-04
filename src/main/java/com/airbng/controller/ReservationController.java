@@ -4,6 +4,7 @@ import com.airbng.common.response.BaseResponse;
 import com.airbng.domain.base.ReservationState;
 import com.airbng.dto.reservation.*;
 import com.airbng.service.ReservationService;
+import com.airbng.util.SessionUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import lombok.extern.slf4j.Slf4j;
@@ -13,6 +14,9 @@ import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import java.util.List;
+
+import static com.airbng.common.response.status.BaseResponseStatus.SUCCESS;
 
 @RestController
 @RequestMapping("/reservations")
@@ -37,9 +41,17 @@ public class ReservationController {
         return new BaseResponse<>(reservationService.updateReservationState(reservationId, memberId));
     }
 
+    // 예약 폼 받아오기
+    @GetMapping("/form")
+    public BaseResponse<ReservationFormResponse> getReservationForm(@RequestParam("lockerId") @Min(1) @NotNull Long lockerId) {
+        return new BaseResponse<>(reservationService.getReservationForm(lockerId));
+    }
+
     // 예약 등록
     @PostMapping
-    public BaseResponse<String> insertReservation(@RequestBody @Valid ReservationInsertRequest request) {
+    public BaseResponse<String> insertReservation(@RequestBody @Valid ReservationInsertRequest request,
+                                                  HttpSession session) {
+        request.setDropperId(SessionUtils.getLoginMemberId(session));
         return new BaseResponse<>(reservationService.insertReservation(request));
     }
 
@@ -55,13 +67,20 @@ public class ReservationController {
     public BaseResponse<ReservationPaging> findAllReservationById(
             @RequestParam(value = "isDropper") @NotNull Boolean isDropper,
             @RequestParam(value = "memberId") @Min(1) @NotNull Long memberId,
-            @RequestParam(required = false) ReservationState state,
-            @RequestParam(value = "nextCursorId", required = false) Long nextCursorId
+            @RequestParam(required = false) List<ReservationState> state,
+            @RequestParam(value = "nextCursorId", required = false) Long nextCursorId,
+            @RequestParam(value = "period", required = false, defaultValue = "ALL") String period // 예: "1W", "3M", "6M", "1Y", "2Y"
     ) {
 
         String role = isDropper ? "DROPPER" : "KEEPER";
-        ReservationPaging response = reservationService.findAllReservationById(memberId, role, state, nextCursorId );
+        ReservationPaging response = reservationService.findAllReservationById(memberId, role, state, nextCursorId, period );
 
         return new BaseResponse<>(response); // 이렇게 객체로 감싼 채로 반환
+    }
+
+    @PostMapping("/delete")
+    public BaseResponse<Void> deleteReservation(Long reservationId){
+        reservationService.deleteReservationById(reservationId);
+        return new BaseResponse<>(SUCCESS);
     }
 }

@@ -1,0 +1,122 @@
+/* 기존 CSS에 추가 */
+
+/* 기본 아이콘 색상 (회색) */
+.nav-icon {
+    width: 24px;
+    height: 24px;
+    margin-bottom: 4px;
+    transition: filter 0.2s ease;
+    /* 회색 (#D5D5D5)에 해당하는 filter */
+    filter: invert(84%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(100%) contrast(100%);
+}
+
+/* 활성 상태 아이콘 색상 (#4561DB) */
+.nav-item.active .nav-icon {
+    /* 파란색 (#4561DB)에 해당하는 filter */
+    filter: invert(36%) sepia(94%) saturate(3547%) hue-rotate(228deg) brightness(87%) contrast(86%);
+}
+
+/* 호버 상태에서도 색상 변경 원한다면 */
+.nav-item:hover .nav-icon {
+    filter: invert(36%) sepia(94%) saturate(3547%) hue-rotate(228deg) brightness(87%) contrast(86%);
+}
+
+/* 나머지 CSS는 그대로 유지 */
+
+.container {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.main-content {
+    max-width: 412px;
+    margin: 0 auto;
+    flex: 1;
+    padding: 20px;
+    padding-bottom: 100px;
+}
+
+.bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    height: 80px;
+    background-color: #ffffff;
+    border-top: 1px solid #f0f0f0;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    z-index: 1000;
+    box-shadow: 0 -1px 4px rgba(0, 0, 0, 0.05);
+}
+
+.nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    color: #D5D5D5;
+    transition: all 0.2s ease;
+    padding: 8px 12px;
+    border-radius: 8px;
+    min-width: 60px;
+    height: 60px;
+}
+
+.nav-item:hover {
+    background-color: #f8f9fa;
+}
+
+.nav-text {
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 1.2;
+    text-align: center;
+}
+
+.nav-item.active {
+    color: #4561DB;
+}
+
+.nav-item.active .nav-text {
+    font-weight: 600;
+}
+
+@media (max-width: 412px) {
+    .nav-item {
+        min-width: 50px;
+        padding: 6px 8px;
+        height: 56px;
+    }
+
+    .nav-icon {
+        width: 22px;
+        height: 22px;
+    }
+
+    .nav-text {
+        font-size: 11px;
+    }
+
+    .bottom-nav {
+        height: 70px;
+    }
+
+    .main-content {
+        padding-bottom: 90px;
+    }
+}
+
+@media (min-width: 413px) {
+    .bottom-nav {
+        max-width: 412px;
+        left: 50%;
+        transform: translateX(-50%);
+        border-radius: 0;
+    }
+}

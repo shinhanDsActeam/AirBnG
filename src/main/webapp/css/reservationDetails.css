@@ -1,0 +1,551 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background-color: #f9fafb;
+    color: #111827;
+    max-width: 412px;
+    margin: 0 auto;
+}
+
+.header {
+    background: white;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    max-width: 412px;
+    margin: 0 auto;
+    position: relative;
+}
+
+.back-btn {
+    background: none;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+    color: #6b7280;
+}
+
+.header h1 {
+    margin-left: 16px;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.container {
+    padding: 16px;
+    max-width: 412px;
+    margin: 0 auto;
+}
+
+.card {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    margin-bottom: 16px;
+    overflow: hidden;
+}
+
+.card-content {
+    padding: 16px;
+}
+
+.reservation-status {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+    margin-bottom: 12px;
+}
+
+.status-confirmed {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.status-cancelled {
+    background: #fee2e2;
+    color: #dc2626;
+}
+
+.status-completed {
+    background: #dbeafe;
+    color: #1d4ed8;
+}
+
+.reservation-info {
+    border-bottom: 1px solid #e5e7eb;
+    padding-bottom: 16px;
+    margin-bottom: 16px;
+}
+
+.date-time {
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.date-main {
+    font-weight: 600;
+    font-size: 16px;
+}
+
+.time-range {
+    font-size: 14px;
+    color: #6b7280;
+}
+
+.section-title {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 12px;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 0;
+}
+
+.user-details {
+    display: flex;
+    align-items: center;
+}
+
+.user-avatar {
+    width: 40px;
+    height: 40px;
+    background: #f3f4f6;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 12px;
+    font-size: 18px;
+    color: #6b7280;
+}
+
+.user-text {
+    display: flex;
+    flex-direction: column;
+}
+
+.user-name {
+    font-weight: 500;
+    font-size: 14px;
+}
+
+.user-role {
+    font-size: 12px;
+    color: #6b7280;
+    margin-top: 2px;
+}
+
+.jim-list {
+    space-y: 8px;
+}
+
+.jim-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid #f3f4f6;
+}
+
+.jim-item:last-child {
+    border-bottom: none;
+}
+
+.jim-name {
+    font-weight: 500;
+    font-size: 14px;
+}
+
+.jim-count {
+    background: #f3f4f6;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 200px;
+}
+
+.spinner {
+    border: 2px solid #f3f4f6;
+    border-top: 2px solid #3181E2;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    animation: spin 1s linear infinite;
+    margin-right: 8px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.error {
+    background: #fee2e2;
+    color: #dc2626;
+    padding: 16px;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.bottom-buttons {
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    max-width: 412px;
+    width: 100%;
+    background: white;
+    border-top: 1px solid #e5e7eb;
+    padding: 16px;
+    display: flex;
+    gap: 12px;
+    box-sizing: border-box;
+}
+
+.btn {
+    flex: 1;
+    padding: 12px;
+    border-radius: 8px;
+    font-weight: 500;
+    border: none;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+.btn-secondary {
+    background: #f3f4f6;
+    color: #374151;
+}
+
+.btn-secondary:disabled {
+    background: #e5e7eb;
+    color: #9ca3af;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.spacer {
+    height: 80px;
+}
+
+/* 모달 스타일 */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 20px;
+}
+
+.modal {
+    background: white;
+    border-radius: 16px;
+    padding: 0;
+    max-width: 320px;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+}
+
+.modal-content {
+    padding: 40px 24px 24px;
+}
+
+.modal-icon {
+    width: 64px;
+    height: 64px;
+    background: #4561DB;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+    color: white;
+    font-size: 24px;
+}
+
+.modal-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #111827;
+    margin-bottom: 8px;
+}
+
+.modal-message {
+    font-size: 14px;
+    color: #6b7280;
+    line-height: 1.5;
+    margin-bottom: 24px;
+}
+
+.modal-buttons {
+    display: flex;
+    border-top: 1px solid #e5e7eb;
+}
+
+.modal-btn {
+    flex: 1;
+    padding: 16px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.modal-btn:first-child {
+    border-right: 1px solid #e5e7eb;
+    color: #6b7280;
+}
+.modal-icon.success-rotate {
+    animation: successGlowSpin 0.8s ease-in-out;
+    transform-style: preserve-3d;
+}
+/* 글라스모피즘 3D 아이콘 + 글로우 효과 */
+.modal-icon.success-rotate {
+    animation: successGlassSpin 1s ease-out;
+    transform-style: preserve-3d;
+    background: linear-gradient(135deg,
+        rgba(69, 97, 219, 0.4) 0%,
+        rgba(59, 130, 246, 0.3) 30%,
+        rgba(139, 92, 246, 0.4) 70%,
+        rgba(69, 97, 219, 0.5) 100%);
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(69, 97, 219, 0.6);
+    box-shadow:
+        0 8px 32px rgba(69, 97, 219, 0.3),
+        inset 0 2px 4px rgba(255, 255, 255, 0.4),
+        inset 0 -2px 4px rgba(69, 97, 219, 0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+.modal-icon.success-rotate::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: linear-gradient(45deg,
+        rgba(69, 97, 219, 0.4),
+        rgba(139, 92, 246, 0.4),
+        rgba(59, 130, 246, 0.4));
+    border-radius: 50%;
+    z-index: -1;
+    filter: blur(8px);
+    opacity: 0;
+    animation: glowPulse 1s ease-out 0.2s;
+}
+
+@keyframes successGlassSpin {
+    0% {
+        transform: rotateY(0deg) scale(0.4);
+        opacity: 0;
+        filter: blur(4px);
+        box-shadow:
+            0 0 0 rgba(69, 97, 219, 0),
+            inset 0 1px 0 rgba(255, 255, 255, 0.1),
+            inset 0 -1px 0 rgba(69, 97, 219, 0.1);
+    }
+    30% {
+        transform: rotateY(108deg) scale(1.1);
+        opacity: 0.8;
+        filter: blur(1px);
+    }
+    60% {
+        transform: rotateY(216deg) scale(0.95);
+        opacity: 1;
+        filter: blur(0px);
+        box-shadow:
+            0 12px 40px rgba(69, 97, 219, 0.4),
+            inset 0 2px 4px rgba(255, 255, 255, 0.6),
+            inset 0 -2px 4px rgba(69, 97, 219, 0.4);
+    }
+    85% {
+        transform: rotateY(340deg) scale(1.05);
+        opacity: 1;
+    }
+    100% {
+        transform: rotateY(360deg) scale(1);
+        opacity: 1;
+        filter: blur(0px);
+        box-shadow:
+            0 8px 32px rgba(69, 97, 219, 0.3),
+            inset 0 2px 4px rgba(255, 255, 255, 0.4),
+            inset 0 -2px 4px rgba(69, 97, 219, 0.3);
+    }
+}
+
+@keyframes glowPulse {
+    0% {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+    50% {
+        opacity: 0.6;
+        transform: scale(1.2);
+    }
+    100% {
+        opacity: 0;
+        transform: scale(1.4);
+    }
+}
+
+/* 체크마크 자체는 두껍고 푸른색으로 */
+.modal-icon.success-rotate {
+    color: rgba(255, 255, 255, 0.95);
+    font-weight: 900;
+    font-size: 28px;
+    text-shadow:
+        0 0 12px rgba(69, 97, 219, 0.8),
+        0 0 24px rgba(59, 130, 246, 0.6),
+        0 2px 4px rgba(69, 97, 219, 0.4),
+        2px 0 0 rgba(69, 97, 219, 0.3),
+        -2px 0 0 rgba(69, 97, 219, 0.3),
+        0 2px 0 rgba(69, 97, 219, 0.3),
+        0 -2px 0 rgba(69, 97, 219, 0.3);
+}
+/* 확인 모달 아이콘 글라스모피즘 3D 효과 - 통통튀는 버전 */
+.modal-icon.confirm-bounce {
+    animation: confirmBounceIn 0.8s ease-out;
+    transform-style: preserve-3d;
+    background: linear-gradient(135deg,
+        rgba(245, 158, 11, 0.4) 0%,
+        rgba(251, 191, 36, 0.3) 30%,
+        rgba(245, 158, 11, 0.4) 70%,
+        rgba(217, 119, 6, 0.5) 100%);
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(245, 158, 11, 0.6);
+    box-shadow:
+        0 8px 32px rgba(245, 158, 11, 0.3),
+        inset 0 2px 4px rgba(255, 255, 255, 0.4),
+        inset 0 -2px 4px rgba(245, 158, 11, 0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+.modal-icon.confirm-bounce::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: linear-gradient(45deg,
+        rgba(245, 158, 11, 0.4),
+        rgba(251, 191, 36, 0.4),
+        rgba(217, 119, 6, 0.4));
+    border-radius: 50%;
+    z-index: -1;
+    filter: blur(8px);
+    opacity: 0;
+    animation: confirmGlowPulse 0.8s ease-out 0.1s;
+}
+
+@keyframes confirmBounceIn {
+    0% {
+        transform: scale(0.3) translateY(20px);
+        opacity: 0;
+        filter: blur(4px);
+    }
+    20% {
+        transform: scale(1.2) translateY(-10px);
+        opacity: 0.8;
+        filter: blur(1px);
+    }
+    40% {
+        transform: scale(0.9) translateY(5px);
+        opacity: 1;
+        filter: blur(0px);
+    }
+    60% {
+        transform: scale(1.1) translateY(-3px);
+        opacity: 1;
+    }
+    80% {
+        transform: scale(0.95) translateY(2px);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(1) translateY(0px);
+        opacity: 1;
+        filter: blur(0px);
+    }
+}
+
+@keyframes confirmGlowPulse {
+    0% {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+    50% {
+        opacity: 0.6;
+        transform: scale(1.2);
+    }
+    100% {
+        opacity: 0;
+        transform: scale(1.4);
+    }
+}
+
+/* 물음표 아이콘 스타일 - 통통튀는 버전 */
+.modal-icon.confirm-bounce {
+    color: rgba(255, 255, 255, 0.95);
+    font-weight: 900;
+    font-size: 32px;
+    text-shadow:
+        0 0 12px rgba(245, 158, 11, 0.8),
+        0 0 24px rgba(251, 191, 36, 0.6),
+        0 2px 4px rgba(245, 158, 11, 0.4),
+        2px 0 0 rgba(245, 158, 11, 0.3),
+        -2px 0 0 rgba(245, 158, 11, 0.3),
+        0 2px 0 rgba(245, 158, 11, 0.3),
+        0 -2px 0 rgba(245, 158, 11, 0.3);
+}
+.modal-btn:last-child {
+    color: #4561DB;
+}
+
+.modal-btn:hover {
+    background: #f9fafb;
+}
+
+.modal-btn:last-child:hover {
+    border-bottom-left-radius: 16px;
+    border-bottom-right-radius: 16px;
+}
+
+.modal-btn:first-child:hover {
+    border-bottom-left-radius: 16px;
+}
+
+.hidden {
+    display: none;
+}

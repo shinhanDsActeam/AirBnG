@@ -4,10 +4,8 @@ import com.airbng.common.exception.MemberException;
 import com.airbng.domain.Member;
 import com.airbng.domain.base.BaseStatus;
 import com.airbng.domain.image.Image;
-import com.airbng.dto.MemberMyPageRequest;
-import com.airbng.dto.MemberMyPageResponse;
-import com.airbng.dto.MemberLoginResponse;
-import com.airbng.dto.MemberSignupRequest;
+import com.airbng.dto.*;
+import com.airbng.mappers.ImageMapper;
 import com.airbng.mappers.MemberMapper;
 import com.airbng.validator.EmailValidator;
 import com.airbng.validator.PasswordValidator;
@@ -27,6 +25,7 @@ import static com.airbng.common.response.status.BaseResponseStatus.*;
 public class MemberServiceImpl implements MemberService {
 
     private final MemberMapper memberMapper;
+    private final ImageMapper imageMapper;
     private final ImageService imageService;
     private final BCryptPasswordEncoder passwordEncoder;
     private final EmailValidator emailValidator;
@@ -70,9 +69,28 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
+    public MemberLoginResponse login(String email, String password) {
+        if (!emailValidator.isValidEmail(email)) {
+            throw new MemberException(INVALID_EMAIL);
+        }
+
+        Member member = memberMapper.findMemberByEmail(email);
+        if (member == null) {
+            throw new MemberException(INVALID_MEMBER);
+        }
+
+        // 비밀번호 비교
+        if (!passwordEncoder.matches(password, member.getPassword())) {
+            throw new MemberException(INVALID_MEMBER);
+        }
+        log.info("Member id found: {}", member.getMemberId());
+        return MemberLoginResponse.from(member);
+    }
+
     public void nicknameCheck(String nickname) {
         if (memberMapper.findByNickname(nickname))          throw new MemberException(DUPLICATE_NICKNAME);
     }
+
 
     @Override
     public MemberMyPageResponse findUserById(Long memberId) {
@@ -91,24 +109,35 @@ public class MemberServiceImpl implements MemberService {
                 .profileImageId(response.getProfileImageId())
                 .url(response.getUrl())
                 .build();
+
     }
 
+    @Transactional
     @Override
-    public MemberLoginResponse login(String email, String password) {
-        if (!emailValidator.isValidEmail(email)) {
-            throw new MemberException(INVALID_EMAIL);
-        }
+    public MemberMyPageResponse updateUserById(MemberUpdateRequest request, MultipartFile profileImage) {
+        MemberMyPageResponse existing = memberMapper.findUserById(request.getMemberId());
 
-        try {
-            Member member = memberMapper.findByEmailAndPassword(email, password);
+        if (existing == null) throw new MemberException(NOT_FOUND_MEMBER);
+        if (memberMapper.findByEmail(request.getEmail()))               throw new MemberException(DUPLICATE_EMAIL);
+        if (memberMapper.findByNickname(request.getNickname()))         throw new MemberException(DUPLICATE_NICKNAME);
+        if (memberMapper.findByPhone(request.getPhone()))               throw new MemberException(DUPLICATE_PHONE);
+        if (request.getEmail() == null || request.getEmail().isEmpty()) request.setEmail(existing.getEmail());
 
-            log.info("Member id found: {}", member.getMemberId());
+        if (!emailValidator.isValidEmail(request.getEmail()))           throw new MemberException(INVALID_EMAIL);
+        if (request.getName() == null) request.setName(existing.getName());
+        if (request.getPhone() == null) request.setPhone(existing.getPhone());
+        if (request.getNickname() == null) request.setNickname(existing.getNickname());
 
-            return MemberLoginResponse.from(member);
-        } catch (NullPointerException e) {
-            throw new MemberException(INVALID_MEMBER);
-        }
+        Image image = (profileImage != null && !profileImage.isEmpty())
+                ? imageService.uploadProfileImage(profileImage)
+                : imageService.updateDefaultProfileImage(profileImage, request.getMemberId());
+
+        request.setProfileImageId(image.getImageId());
+
+        int updateCount = memberMapper.updateUserById(request);
+
+        if (updateCount == 0) throw new MemberException(NOT_UPDATE_MEMBER);
+
+        return memberMapper.findUserById(request.getMemberId());
     }
-
-
 }
