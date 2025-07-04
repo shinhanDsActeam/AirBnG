@@ -7,7 +7,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>예약하기</title>
-    <link rel="icon" type="image/svg+xml" href="${pageContext.request.contextPath}/images/favicon.svg" />
+    <link rel="icon" type="image/svg+xml" href="${pageContext.request.contextPath}/images/favicon.svg"/>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="<c:url value='/css/reservation/reservationForm.css' />"/>
     <link rel="stylesheet" href="<c:url value='/css/common/modal.css' />"/>
@@ -55,7 +55,8 @@
                                 <div class="dropdown-selected" onclick="toggleDropdown('startTime')">
                                     <span id="startTimeDisplay">시간 선택</span>
                                     <svg class="dropdown-arrow" width="12" height="8" viewBox="0 0 12 8" fill="none">
-                                        <path d="M1 1.5L6 6.5L11 1.5" stroke="#6B7280" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                        <path d="M1 1.5L6 6.5L11 1.5" stroke="#6B7280" stroke-width="1.5"
+                                              stroke-linecap="round" stroke-linejoin="round"/>
                                     </svg>
                                 </div>
                                 <div class="dropdown-options" id="startTimeOptions">
@@ -68,7 +69,8 @@
                                 <div class="dropdown-selected" onclick="toggleDropdown('endTime')">
                                     <span id="endTimeDisplay">시간 선택</span>
                                     <svg class="dropdown-arrow" width="12" height="8" viewBox="0 0 12 8" fill="none">
-                                        <path d="M1 1.5L6 6.5L11 1.5" stroke="#6B7280" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                        <path d="M1 1.5L6 6.5L11 1.5" stroke="#6B7280" stroke-width="1.5"
+                                              stroke-linecap="round" stroke-linejoin="round"/>
                                     </svg>
                                 </div>
                                 <div class="dropdown-options" id="endTimeOptions">
@@ -79,7 +81,7 @@
                 </div>
 
                 <!-- 짐 종류 -->
-                <div id = "jimSection">
+                <div id="jimSection">
                     <h3 class="font-medium text-gray-900 mb-3">짐 종류</h3>
                     <div class="space-y-3" id="jimTypes">
                     </div>
@@ -103,7 +105,7 @@
             </div>
 
             <!-- Hidden inputs -->
-            <input type="hidden" name="lockerId" id="lockerId" value="" />
+            <input type="hidden" name="lockerId" id="lockerId" value=""/>
         </form>
 
         <div class="main-wrapper fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4 z-50">
