@@ -124,6 +124,7 @@
     <script>
             const memberId = '${loginMemberId}';
             console.log('로그인한 회원 ID:', memberId);
+            const contextPath = '${pageContext.request.contextPath}';
      </script>
     <script src="<c:url value='/js/ReservationList.js'/>"></script>
 
