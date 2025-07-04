@@ -22,13 +22,15 @@
         const contextPath = '${pageContext.request.contextPath}';
     </script>
 
-    <!-- Header -->
-    <div class="sticky top-0 z-50 flex items-center p-4 border-b border-gray-200 bg-white" id="header">
-        <svg class="w-6 h-6 text-gray-600 cursor-pointer" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
-        </svg>
-        <h1 class="ml-4 text-lg font-medium">예약하기</h1>
+    <div class="header">
+        <button class="back-btn" onclick="history.back()">
+            <svg class="w-6 h-6 text-gray-600 cursor-pointer" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M19 12H5M12 19l-7-7 7-7"/>
+            </svg>
+        </button>
+        <div class="header-title">예약하기</div>
     </div>
+
 
     <form id="reservationForm" method="post" action="/AirBnG/reservations">
         <div class="form space-y-6">
