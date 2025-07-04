@@ -15,14 +15,15 @@
         <result property="keeperName" column="name" />
         <result property="keeperPhone" column="phone" />
         <!-- 중첩 짐타입 매핑 -->
-        <collection property="jimTypeResults" ofType="com.airbng.dto.jimType.JimTypeResult">
+        <collection property="jimTypeResults" ofType="com.airbng.dto.jimType.LockerJimTypeResult">
             <id     column="jimtype_id"    property="jimTypeId" />
             <result column="type_name"     property="typeName" />
+            <result column="price_per_hour"     property="pricePerHour" />
         </collection>
     </resultMap>
 
 
-    <select id="findUserById" parameterType="Long" resultMap="LockerDetails">
+    <select id="findLockerById" parameterType="Long" resultMap="LockerDetails">
         SELECT
             l.locker_id,
             l.locker_name,
@@ -32,8 +33,9 @@
             m.member_id AS keeper_id,
             m.name,
             m.phone,
-            jt.type_name
-
+            jt.jimtype_id,
+            jt.type_name,
+            jt.price_per_hour
         FROM Locker l
             LEFT JOIN Member m ON l.member_id = m.member_id
             LEFT JOIN LockerJimType ljt ON l.locker_id = ljt.locker_id
