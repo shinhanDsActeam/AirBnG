@@ -7,16 +7,19 @@ import com.airbng.dto.locker.LockerDetailResponse;
 import com.airbng.service.LockerService;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestParam;
+import com.airbng.dto.locker.LockerDetailResponse;
+import com.airbng.dto.locker.LockerSearchRequest;
+import com.airbng.dto.locker.LockerSearchResponse;
+import com.airbng.service.LockerService;
+import org.springframework.ui.Model;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Component
 @RequestMapping("/page")
 public class LockerPageController {
-
-    private final LockerService lockerService;
-
-    public LockerPageController(LockerService lockerService) {
-        this.lockerService = lockerService;
-    }
 
     @GetMapping("/lockers")
     public String lockerPage() {
