@@ -22,10 +22,11 @@
         const contextPath = '${pageContext.request.contextPath}';
     </script>
 
-    <div class="header">
-        <img class="back-icon" src="/AirBnG/images/arrow-left.svg" alt="뒤로가기" onclick="history.back()">
-        <div class="header-title">예약하기</div>
-    </div>
+    <%-- 헤더 설정 --%>
+    <c:set var="headerTitle" value="예약하기"/>
+    <c:set var="showBackButton" value="true"/>  <%-- 뒤로가기 있는 버전 --%>
+    <%@ include file="../common/header.jsp" %>
+
 
     <div class="main-wrapper">
 

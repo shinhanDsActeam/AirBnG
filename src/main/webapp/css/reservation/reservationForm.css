@@ -4,50 +4,51 @@ body {
     padding: 0;
 }
 
-/* 상수화 */
-:root {
-    --header-height: 60px;
-}
+/*!* 상수화 *!*/
+/*:root {*/
+/*    --header-height: 60px;*/
+/*}*/
 
-.header {
-    position: fixed;
-    top: 0;
-    left: 50%; transform: translateX(-50%);
-    width: 100%;
-    max-width: 412px;
-    height: var(--header-height);
-    background-color: #fff;
-    display: flex;
-    align-items: center;
-    z-index: 1000;
-    margin: 0 auto;
-    padding: 10px 16px 0 16px;
-}
+/*.header {*/
+/*    position: fixed;*/
+/*    top: 0;*/
+/*    left: 50%; transform: translateX(-50%);*/
+/*    width: 100%;*/
+/*    max-width: 412px;*/
+/*    height: var(--header-height);*/
+/*    background-color: #fff;*/
+/*    display: flex;*/
+/*    align-items: center;*/
+/*    z-index: 1000;*/
+/*    margin: 0 auto;*/
+/*    padding: 10px 16px 0 16px;*/
+/*}*/
 
-.back-icon {
-    width: 24px;
-    height: 24px;
-    cursor: pointer;
-    margin-right: 10px;
-    flex-shrink: 0;
-}
+/*.back-icon {*/
+/*    width: 24px;*/
+/*    height: 24px;*/
+/*    cursor: pointer;*/
+/*    margin-right: 10px;*/
+/*    flex-shrink: 0;*/
+/*}*/
 
-.header-title {
-    font-weight: 600;
-    color: #333;
-    flex: 1;
-    text-align: center;
-    margin-right: 40px; /* 중앙 정렬을 위한 여백 */
-    font-family: Pretendard, serif;
-    font-size: 20px;
-    font-style: normal;
-    line-height: 20px;
-}
+/*.header-title {*/
+/*    font-weight: 600;*/
+/*    color: #333;*/
+/*    flex: 1;*/
+/*    text-align: center;*/
+/*    margin-right: 40px; !* 중앙 정렬을 위한 여백 *!*/
+/*    font-family: Pretendard, serif;*/
+/*    font-size: 20px;*/
+/*    font-style: normal;*/
+/*    line-height: 20px;*/
+/*}*/
 
 .main-wrapper {
     width: 412px;
     margin: 0 auto;
     padding-top: var(--header-height);
+    /*padding-top: 60px;*/
 }
 
 form {
