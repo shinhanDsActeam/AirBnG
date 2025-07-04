@@ -18,40 +18,13 @@ body {
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
     position: relative;
     padding-bottom: 80px; /* 네비바 공간 확보 */
+    padding-top: var(--header-height); /* 헤더 높이 */
 }
 
 /* 헤더 */
-.header {
-    background: white;
-    padding: 20px 20px 0;
-    border-bottom: 1px solid #f0f0f0;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-}
-
-.header-content {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-bottom: 20px;
-}
-
-.logo {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
 .logo-icon {
     width: 32px;
     height: 32px;
-}
-
-.logo-text {
-    color: #333333;
-    font-size: 20px;
-    font-weight: 700;
 }
 
 /* 메인 컨텐츠 */
