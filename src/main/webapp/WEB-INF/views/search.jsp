@@ -11,14 +11,6 @@
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/search.css">
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/bottom-sheet.css">
 
-    <!-- Kakao Maps -->
-    <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=앱_키_입력&autoload=false"></script>
-
-    <!-- JS에서 contextPath 사용 -->
-    <script>
-        const contextPath = '${pageContext.request.contextPath}';
-    </script>
-    <script type="text/javascript" src="${pageContext.request.contextPath}/js/search.js"></script>
 </head>
 
 <body>
@@ -50,5 +42,12 @@
             </div>
         </div>
     </div>
+
+    <script type="text/javascript" src="${pageContext.request.contextPath}/js/config/kakao.config.js"></script>
+    <!-- JS에서 contextPath 사용 -->
+    <script>
+        const contextPath = '${pageContext.request.contextPath}';
+    </script>
+    <script type="text/javascript" src="${pageContext.request.contextPath}/js/search.js"></script>
 </body>
 </html>
