@@ -66,14 +66,19 @@ document.addEventListener('DOMContentLoaded', function () {
                     ModalUtils.showSuccess("예약이 완료되었습니다!", "", () => {
                         // TODO : redirect 경로 변경 필요
                         // history.back();
-                        window.location.href = `${contextPath}/page/home`;
+                        let reservationId = data.result.reservationId || 0;
+                        window.location.href = `${contextPath}/page/reservations?id=${reservationId}`;
                     });
                     // 성공 페이지로 이동 또는 다른 처리
-                } else {
+                } else if(data.code === 3005){
+                    ModalUtils.showWarning("보관소가 비활성화 되었습니다.", "이용 불가",() => {
+                        history.back();
+                    });
+                }
+                else {
                     ModalUtils.showError(data.message, "예약 실패", () => {
-                        // TODO : redirect 경로 변경 필요
-                        // history.back();
-                        window.location.href = `${contextPath}/page/home`;
+                        history.back();
+                        // window.location.href = `${contextPath}/page/home`;
                     });
                 }
             })
