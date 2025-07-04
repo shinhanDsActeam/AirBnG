@@ -5,6 +5,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
@@ -16,6 +18,8 @@ import java.util.List;
 
 @Configuration
 @EnableWebMvc
+@EnableAsync                // 비동기 메서드 실행 지원
+@EnableScheduling           // 스케줄러 활성화
 @ComponentScan(basePackages = "com.airbng")
 @EnableTransactionManagement
 @RequiredArgsConstructor

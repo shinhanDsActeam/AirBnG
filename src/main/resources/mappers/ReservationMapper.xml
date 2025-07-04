@@ -6,9 +6,9 @@
 <mapper namespace="com.airbng.mappers.ReservationMapper">
     <insert id="insertReservation" parameterType="com.airbng.dto.reservation.ReservationInsertRequest">
         INSERT INTO Reservation(
-            dropper_id, keeper_id, start_time, end_time, state
+        dropper_id, keeper_id, start_time, end_time, state
         )VALUES(
-            #{dropperId}, #{keeperId}, #{startTime}, #{endTime}, 'PENDING'
+        #{dropperId}, #{keeperId}, #{startTime}, #{endTime}, 'PENDING'
         )
         <selectKey keyProperty="id" resultType="Long" order="AFTER" >
             SELECT LAST_INSERT_ID()
@@ -235,18 +235,18 @@
 
     <select id="findReservationWithDropperById" parameterType="Long" resultMap="ReservationWithDropperMap">
         SELECT
-            r.reservation_id,
-            r.state,
-            r.start_time,
-            r.end_time,
+        r.reservation_id,
+        r.state,
+        r.start_time,
+        r.end_time,
 
-            d.member_id AS dropper_id,
-            d.email AS dropper_email,
-            d.name AS dropper_name,
-            d.phone AS dropper_phone,
-            d.nickname AS dropper_nickname,
-            d.password AS dropper_password,
-            d.status AS dropper_status
+        d.member_id AS dropper_id,
+        d.email AS dropper_email,
+        d.name AS dropper_name,
+        d.phone AS dropper_phone,
+        d.nickname AS dropper_nickname,
+        d.password AS dropper_password,
+        d.status AS dropper_status
 
         FROM reservation r
         JOIN member d ON r.dropper_id = d.member_id
@@ -259,6 +259,155 @@
         SET state = #{state}
         WHERE reservation_id = #{reservationId}
     </update>
+
+
+    <!--알림-->
+    <resultMap id="ReservationAlarm" type="com.airbng.dto.reservation.ReservationResponse">
+        <result property="reservationId" column="reservation_id"/>
+        <result property="startTime" column="start_time"/>
+        <result property="endTime" column="end_time"/>
+        <result property="state" column="state"/>
+
+        <association property="dropper" javaType="com.airbng.domain.Member">
+            <result property="memberId" column="dropper_id"/>
+            <result property="nickname" column="dropper_nickname"/>
+        </association>
+
+        <association property="keeper" javaType="com.airbng.domain.Member">
+            <result property="memberId" column="keeper_id"/>
+            <result property="nickname" column="keeper_nickname"/>
+        </association>
+    </resultMap>
+
+    <!-- end_time 24시간 지난 상태 CONFIRMED 예약 조회 -->
+    <select id="findExpiredConfirmedReservations" parameterType="java.time.LocalDateTime" resultMap="ReservationAlarm">
+        SELECT
+            r.reservation_id,
+            r.state,
+            r.start_time,
+            r.end_time,
+
+            d.member_id AS dropper_id,
+            d.email AS dropper_email,
+            d.name AS dropper_name,
+            d.phone AS dropper_phone,
+            d.nickname AS dropper_nickname,
+            d.password AS dropper_password,
+            d.status AS dropper_status,
+
+            k.member_id AS keeper_id,
+            k.email AS keeper_email,
+            k.name AS keeper_name,
+            k.phone AS keeper_phone,
+            k.nickname AS keeper_nickname,
+            k.password AS keeper_password,
+            k.status AS keeper_status
+
+        FROM reservation r
+        JOIN member d ON r.dropper_id = d.member_id
+        JOIN member k ON r.keeper_id = k.member_id
+
+        WHERE r.state = 'CONFIRMED'
+        AND r.end_time &lt; #{deadline}
+    </select>
+
+    <!-- 30분 이내 end_time 도래 예정인 예약 (CONFIRMED) -->
+    <select id="findConfirmedNearEndTime" parameterType="java.time.LocalDateTime" resultMap="ReservationAlarm">
+        SELECT
+            r.reservation_id,
+            r.state,
+            r.start_time,
+            r.end_time,
+
+            d.member_id AS dropper_id,
+            d.email AS dropper_email,
+            d.name AS dropper_name,
+            d.phone AS dropper_phone,
+            d.nickname AS dropper_nickname,
+            d.password AS dropper_password,
+            d.status AS dropper_status,
+
+            k.member_id AS keeper_id,
+            k.email AS keeper_email,
+            k.name AS keeper_name,
+            k.phone AS keeper_phone,
+            k.nickname AS keeper_nickname,
+            k.password AS keeper_password,
+            k.status AS keeper_status
+
+        FROM reservation r
+        JOIN member d ON r.dropper_id = d.member_id
+        JOIN member k ON r.keeper_id = k.member_id
+
+        WHERE r.state = 'CONFIRMED'
+        AND TIMESTAMPDIFF(MINUTE, #{now}, r.end_time) BETWEEN 0 AND 30
+    </select>
+
+    <!-- CONFIRMED 상태로 바뀐 예약 -->
+    <select id="findStateChangedToConfirmed" resultMap="ReservationAlarm">
+        SELECT
+            r.reservation_id,
+            r.state,
+            r.start_time,
+            r.end_time,
+
+            d.member_id AS dropper_id,
+            d.email AS dropper_email,
+            d.name AS dropper_name,
+            d.phone AS dropper_phone,
+            d.nickname AS dropper_nickname,
+            d.password AS dropper_password,
+            d.status AS dropper_status,
+
+            k.member_id AS keeper_id,
+            k.email AS keeper_email,
+            k.name AS keeper_name,
+            k.phone AS keeper_phone,
+            k.nickname AS keeper_nickname,
+            k.password AS keeper_password,
+            k.status AS keeper_status
+
+        FROM reservation r
+        JOIN member d ON r.dropper_id = d.member_id
+        JOIN member k ON r.keeper_id = k.member_id
+
+        WHERE r.state = 'CONFIRMED'
+        AND r.updated_at >= DATE_SUB(NOW(), INTERVAL 1 MINUTE)
+        AND r.updated_at != r.created_at
+    </select>
+
+    <!-- CANCELLED 상태로 바뀐 예약 -->
+    <select id="findStateChangedToCancelled" resultMap="ReservationAlarm">
+        SELECT
+            r.reservation_id,
+            r.state,
+            r.start_time,
+            r.end_time,
+
+            d.member_id AS dropper_id,
+            d.email AS dropper_email,
+            d.name AS dropper_name,
+            d.phone AS dropper_phone,
+            d.nickname AS dropper_nickname,
+            d.password AS dropper_password,
+            d.status AS dropper_status,
+
+            k.member_id AS keeper_id,
+            k.email AS keeper_email,
+            k.name AS keeper_name,
+            k.phone AS keeper_phone,
+            k.nickname AS keeper_nickname,
+            k.password AS keeper_password,
+            k.status AS keeper_status
+
+        FROM reservation r
+        JOIN member d ON r.dropper_id = d.member_id
+        JOIN member k ON r.keeper_id = k.member_id
+
+        WHERE r.state = 'CANCELLED'
+        AND r.updated_at >= DATE_SUB(NOW(), INTERVAL 1 MINUTE)
+        AND r.updated_at != r.created_at
+    </select>
 
     <resultMap id="ReservationWithKeeperMap" type="com.airbng.domain.Reservation">
         <result property="reservationId" column="reservation_id"/>
