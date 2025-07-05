@@ -42,14 +42,9 @@
             </c:when>
 
             <c:otherwise>
-                <div class="welcome-section">
-                    <h2 class="welcome-title">보관소 서비스 이용 안내</h2>
-                    <p class="welcome-subtitle">로그인 후 보관소 등록/관리 기능을 사용할 수 있습니다.</p>
-                    <div class="auth-buttons">
-                        <button class="login-btn" onclick="goToLogin()">로그인</button>
-                        <button class="signup-btn" onclick="goToSignup()">회원가입</button>
-                    </div>
-                </div>
+                <c:set var="welcomeTitle" value="보관소 서비스 이용 안내"/>
+                <c:set var="welcomeSubtitle" value="로그인 후 보관소 등록/관리 기능을 사용할 수 있습니다."/>
+                <%@ include file="/WEB-INF/views/common/welcom.jsp" %>
             </c:otherwise>
         </c:choose>
     </main>
