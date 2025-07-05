@@ -1,3 +1,10 @@
+// 페이지 로드시 로그인 쿨다운 상태 확인
+document.addEventListener('DOMContentLoaded', () => {
+    if (sessionStorage.getItem('loginCooldownUntil')) {
+        updateCountdown();
+    }
+});
+
 // login.js
 document.querySelector('.login-form').addEventListener('submit', function(e) {
     e.preventDefault();
@@ -25,6 +32,7 @@ document.querySelector('.login-form').addEventListener('submit', function(e) {
         .then(async response => {
             const data = await response.json();
             if (response.status === 429 || data.code === 8003) {
+                startCooldown(30); // 30초동안 로그인 시도 제한
                 showWarningModal();
                 return;
             }
@@ -46,6 +54,50 @@ document.querySelector('.login-form').addEventListener('submit', function(e) {
             showErrorModal();
         });
 });
+
+const loginButton = document.querySelector('.login-button');
+
+function startCooldown(seconds) {
+    const endTime = Date.now() + seconds * 1000;
+    sessionStorage.setItem('loginCooldownUntil', endTime);
+
+    updateCountdown();
+}
+
+function updateCountdown() {
+    const originalText = '로그인';
+
+    function applyCountdown() {
+        const endTime = parseInt(sessionStorage.getItem('loginCooldownUntil'), 10);
+        const now = Date.now();
+        const remaining = Math.max(0, Math.floor((endTime - now) / 1000));
+
+        if (remaining > 0) {
+            loginButton.disabled = true;
+            loginButton.textContent = `${remaining}초 후 시도해주세요`;
+            loginButton.classList.add('disabled');
+            return true;
+        } else {
+            loginButton.disabled = false;
+            loginButton.textContent = originalText;
+            loginButton.classList.remove('disabled');
+            sessionStorage.removeItem('loginCooldownUntil');
+            return false;
+        }
+    }
+
+    // 최초 한 번 즉시 실행
+    const shouldContinue = applyCountdown();
+
+    if (shouldContinue) {
+        const interval = setInterval(() => {
+            const stillCounting = applyCountdown();
+            if (!stillCounting) {
+                clearInterval(interval);
+            }
+        }, 1000);
+    }
+}
 
 function confirmLoginSuccess() {
     document.getElementById('success-modal').classList.add('hidden');
