@@ -11,7 +11,7 @@ window.addEventListener("DOMContentLoaded", function () {
     // 보관소 데이터 로드
     loadLockerDetails(lockerId);
 
-    // 🔹 보관소 선택 버튼 클릭 이벤트
+    // 보관소 선택 버튼 클릭 이벤트
     const reserveBtn = document.getElementById("reserveBtn");
     reserveBtn?.addEventListener("click", function () {
         // 버튼이 비활성화 상태면 동작하지 않음
@@ -19,9 +19,7 @@ window.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
-        const contextPath = reserveBtn.dataset.contextPath || '';
         const lockerId = reserveBtn.dataset.lockerId;
-        const memberId = reserveBtn.dataset.memberId;
 
         if (!lockerId || !memberId) {
             alert('로그인이 필요합니다.');

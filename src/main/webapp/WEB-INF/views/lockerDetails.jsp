@@ -18,14 +18,10 @@
 </head>
 <body>
 <div class="container">
-    <div class="header">
-        <button class="back-btn" onclick="history.back()">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M19 12H5M12 19l-7-7 7-7"/>
-            </svg>
-        </button>
-        <div class="header-title">보관소 상세</div>
-    </div>
+    <!-- 헤더 -->
+    <c:set var="headerTitle" value="보관소 상세"/>
+    <c:set var="showBackButton" value="true"/>
+    <%@ include file="common/header.jsp" %>
 
     <div class="content">
         <div id="lockerContent">

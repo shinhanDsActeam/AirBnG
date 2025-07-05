@@ -1,0 +1,59 @@
+/* 상수화 */
+:root {
+    --header-height: 60px;
+    --icon-size: 24px;
+    --body-width: 412px;
+}
+
+/* 헤더 컴포넌트 스타일 */
+.common-header {
+    position: fixed;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: var(--body-width);
+    height: var(--header-height);
+    background-color: #fff;
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    padding: 10px 16px 0 16px;
+    z-index: 1000;
+    box-sizing: border-box;
+}
+
+.back-icon {
+    cursor: pointer;
+    justify-self: start;
+    transition: opacity 0.2s ease;
+}
+
+.back-icon:hover {
+    opacity: 0.7;
+}
+
+.header-title {
+    font-weight: 600;
+    color: #333;
+    text-align: center;
+    font-family: Pretendard, serif;
+    font-size: 20px;
+    font-style: normal;
+    line-height: 20px;
+    justify-self: center;
+    flex-grow: 1;
+}
+
+/* 뒤로가기 버튼이 없는 경우, 빈 공간을 차지 */
+.back-spacer{
+    justify-self: start;
+}
+
+.back-icon,
+.back-spacer,
+.header-spacer {
+    width: var(--icon-size);
+    height: var(--icon-size);
+    flex-shrink: 0; /* 사이즈 줄어들지 않게 */
+}

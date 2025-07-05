@@ -14,24 +14,24 @@ public class ReservationPageController {
 
     @GetMapping("/list")
     public String reservationListPage() {
-        return "ReservationList";
+        return "reservation/reservationList";
     }
 
     @GetMapping("")
-    public String reservationDetails(@RequestParam("id") Long reservationId,
-                                     HttpSession session,
-                                     Model model) {
+    public String reservationDetail(@RequestParam("id") Long reservationId,
+                                    HttpSession session,
+                                    Model model) {
         Long memberId = (Long) session.getAttribute("memberId");
 
         model.addAttribute("reservationId", reservationId);
         model.addAttribute("memberId", memberId);
-        return "reservationDetails";
+        return "reservation/reservationDetail";
     }
 
     @GetMapping("/form")
-    public String getForm(@RequestParam(value = "lockerId",defaultValue = "0") Long lockerId,
+    public String getForm(@RequestParam(value = "lockerId", defaultValue = "0") Long lockerId,
                           Model model) {
         model.addAttribute("lockerId", lockerId);
-        return "reservationForm";
+        return "reservation/reservationForm";
     }
 }

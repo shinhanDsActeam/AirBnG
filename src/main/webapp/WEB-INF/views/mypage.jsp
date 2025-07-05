@@ -18,13 +18,10 @@
       data-member-id="${sessionScope.memberId}">
     <div class="container">
         <!-- 헤더 -->
-        <header class="header">
-            <div class="header-content">
-                <div class="logo">
-                    <span class="logo-text">마이페이지</span>
-                </div>
-            </div>
-        </header>
+        <c:set var="headerTitle" value="마이페이지"/>
+        <c:set var="showBackButton" value="false"/>
+        <%@ include file="common/header.jsp" %>
+
 
         <!-- 메인 컨텐츠 -->
         <main class="main-content">
