@@ -1,4 +1,4 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+ <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!DOCTYPE html>
 <html lang="ko">
@@ -111,6 +111,7 @@
 <script>
     const contextPath = '${pageContext.request.contextPath}';
 </script>
+<script src="${pageContext.request.contextPath}/js/sse.js"></script>
 <script src="<c:url value='/js/home.js' />"></script>
 <script src="${pageContext.request.contextPath}/js/notification.js"></script>
 

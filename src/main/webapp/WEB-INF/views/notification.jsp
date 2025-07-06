@@ -52,6 +52,7 @@
         <script>
             const memberId = "${loginMember}";
         </script>
+        <script src="${pageContext.request.contextPath}/js/sse.js"></script>
         <script src="<c:url value='/js/notification.js'/>"></script>
     </c:otherwise>
 </c:choose>
