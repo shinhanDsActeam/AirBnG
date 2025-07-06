@@ -200,10 +200,10 @@ class NotificationManager {
 }
 
 // 전역 알림 매니저 인스턴스
-let notificationManager = null;
+let notificationSSE = null;
 
 // DOM 로딩 완료 시 초기화
 document.addEventListener('DOMContentLoaded', () => {
-    notificationManager = new NotificationManager();
-    notificationManager.init();
+    notificationSSE  = new NotificationManager();
+    notificationSSE .init();
 });

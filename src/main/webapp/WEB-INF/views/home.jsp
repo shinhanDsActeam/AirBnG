@@ -20,7 +20,7 @@
         </div>
         <div class="bell-wrapper">
             <c:if test="${sessionScope.hasUnreadAlarm eq true}">
-                <img src="<c:url value='/images/dot.svg' />" alt="새 알림 표시" class="dot-indicator" id="dotIndicator" />
+                <img src="<c:url value='/images/dot.svg' />" alt="새 알림 표시" class="dot-indicator show" id="dotIndicator" />
             </c:if>
             <a href="${pageContext.request.contextPath}/page/notification" class="notification-link">
                 <img src="<c:url value='/images/bell_ic.svg' />" alt="알림" class="notification-icon" />
