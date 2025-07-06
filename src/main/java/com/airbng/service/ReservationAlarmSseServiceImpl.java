@@ -18,6 +18,9 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ReservationAlarmSseServiceImpl implements ReservationAlarmSseService {
 
     private static final Long TIMEOUT = 60L * 1000 * 60; // 60분
+
+    // 알림 읽은 여부
+    private final ReservationAlarmCacheService reservationAlarmCacheService;
     // 클라이언트와의 SSE 연결을 관리하기 위한 맵
     private final Map<Long, SseEmitter> emitterMap = new ConcurrentHashMap<>();
 
@@ -59,10 +62,18 @@ public class ReservationAlarmSseServiceImpl implements ReservationAlarmSseServic
     @Override
     public void sendMessage(Long memberId, Object data) {
         SseEmitter emitter = emitterMap.get(memberId);
+
+
+
         if (emitter != null) {
             try {
                 log.info("🔔 알림 전송 시도: memberId={}, data={}", memberId, data);
+
                 emitter.send(SseEmitter.event().name("alarm").data(data));
+
+                // 새 알림 오면 안 읽은 상태로 표시
+                reservationAlarmCacheService.markUnread(memberId);
+
             } catch (IOException e) {
                 log.warn("SSE 메시지 전송 실패: memberId={}, error={}", memberId, e.getMessage());
                 emitterMap.remove(memberId);
@@ -77,4 +88,19 @@ public class ReservationAlarmSseServiceImpl implements ReservationAlarmSseServic
     public boolean hasConnected(Long memberId) {
         return emitterMap.containsKey(memberId);
     }
+
+    // 알림 읽음 처리
+    @Override
+    public void markAllAsRead(Long memberId) {
+        reservationAlarmCacheService.markAllAsRead(memberId);
+        log.info("" +
+                "3알림 읽음 처리됨 (Redis): memberId={}", memberId);
+    }
+
+    // 안읽은 알림 여부
+    @Override
+    public boolean hasUnreadAlarm(Long memberId) {
+        return reservationAlarmCacheService.hasUnreadAlarm(memberId);
+    }
+
 }
