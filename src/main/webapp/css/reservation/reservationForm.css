@@ -1,54 +1,18 @@
-body {
-    width: 412px;
+* {
     margin: 0;
     padding: 0;
+    box-sizing: border-box;
 }
 
-/*!* 상수화 *!*/
-/*:root {*/
-/*    --header-height: 60px;*/
-/*}*/
-
-/*.header {*/
-/*    position: fixed;*/
-/*    top: 0;*/
-/*    left: 50%; transform: translateX(-50%);*/
-/*    width: 100%;*/
-/*    max-width: 412px;*/
-/*    height: var(--header-height);*/
-/*    background-color: #fff;*/
-/*    display: flex;*/
-/*    align-items: center;*/
-/*    z-index: 1000;*/
-/*    margin: 0 auto;*/
-/*    padding: 10px 16px 0 16px;*/
-/*}*/
-
-/*.back-icon {*/
-/*    width: 24px;*/
-/*    height: 24px;*/
-/*    cursor: pointer;*/
-/*    margin-right: 10px;*/
-/*    flex-shrink: 0;*/
-/*}*/
-
-/*.header-title {*/
-/*    font-weight: 600;*/
-/*    color: #333;*/
-/*    flex: 1;*/
-/*    text-align: center;*/
-/*    margin-right: 40px; !* 중앙 정렬을 위한 여백 *!*/
-/*    font-family: Pretendard, serif;*/
-/*    font-size: 20px;*/
-/*    font-style: normal;*/
-/*    line-height: 20px;*/
-/*}*/
+body {
+    max-width: 412px;
+    font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', sans-serif;
+}
 
 .main-wrapper {
-    width: 412px;
+    max-width: 412px;
     margin: 0 auto;
     padding-top: var(--header-height);
-    /*padding-top: 60px;*/
 }
 
 form {
@@ -165,12 +129,34 @@ form {
     font-weight: 600;
 }
 
-
-.submit-btn{
-    background-color: rgba(69, 97, 219);
-
+.bottom-buttons {
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    max-width: 412px;
+    width: 100%;
+    background: white;
+    border-top: 1px solid #eee;
+    padding: 15px;
+    display: flex;
+    gap: 8px;
+    box-sizing: border-box;
 }
-.submit-btn:hover{
+
+.submit-btn {
+    flex: 1;
+    padding: 15px 20px;
+    border-radius: 8px;
+    font-weight: 500;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: rgba(69, 97, 219);
+    color: white;
+}
+
+.submit-btn:hover {
     background-color: rgba(47, 70, 183);
 }
 
@@ -376,4 +362,8 @@ form {
         opacity: 0;
         transform: scale(1);
     }
+}
+
+.spacer {
+    height: 80px;
 }

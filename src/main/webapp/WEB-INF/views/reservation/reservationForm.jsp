@@ -25,7 +25,6 @@
     <c:set var="showBackButton" value="true"/>  <%-- 뒤로가기 있는 버전 --%>
     <%@ include file="../common/header.jsp" %>
 
-
     <div class="main-wrapper">
 
         <form id="reservationForm" method="post" action="/AirBnG/reservations">
@@ -107,13 +106,17 @@
             <input type="hidden" name="lockerId" id="lockerId" value=""/>
         </form>
 
-        <div class="main-wrapper fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4 z-50">
-            <button type="submit" form="reservationForm"
-                    class="submit-btn w-full text-white py-4 rounded-lg font-medium text-lg transition-colors">
-                예약하기
-            </button>
-        </div>
     </div>
+
+    <div class="bottom-buttons">
+        <button type="submit" form="reservationForm"
+                class="submit-btn">
+            예약하기
+        </button>
+    </div>
+
+    <div class="spacer"></div>
+    <div class="spacer"></div>
 
     <%@ include file="../common/modal.jsp" %>
 

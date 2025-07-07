@@ -75,14 +75,17 @@
         </div>
     </div>
 
-    <!-- 보관소 선택 버튼 -->
-    <button class="reserve-btn" id="reserveBtn" type="button" style="display: none;"
-            data-context-path="<%=contextPath%>"
-            data-member-id="${loginMemberId}">
-        예약하러 가기
-    </button>
+    <div class="bottom-buttons">
+        <!-- 보관소 선택 버튼 -->
+        <button class="reserve-btn" id="reserveBtn" type="button" style="display: none;"
+                data-context-path="<%=contextPath%>"
+                data-member-id="${loginMemberId}">
+            예약하러 가기
+        </button>
+    </div>
 </div>
-
+<div class="spacer"></div>
+<div class="spacer"></div>
 <script>
     // URL에서 lockerId 추출
     const urlParams = new URLSearchParams(window.location.search);
