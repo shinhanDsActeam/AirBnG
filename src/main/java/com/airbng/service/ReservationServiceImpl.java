@@ -64,9 +64,11 @@ public class ReservationServiceImpl implements ReservationService{
             stateList = Collections.singletonList((ReservationState) state);
         }
 
-        if(nextCursorId == null) {
-            nextCursorId = (reservationMapper.findMaxReservationIdByMemberId(memberId,role,stateList))+1L; // 커서 ID 초기화
+        if (nextCursorId == null) {
+            Long maxId = reservationMapper.findMaxReservationIdByMemberId(memberId, role, stateList);
+            nextCursorId = (maxId != null) ? maxId + 1L : -1L;
         }
+
         log.info("!!! nextCursorId: {}", nextCursorId);
 
         // isHistoryTab 여부 판단
