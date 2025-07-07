@@ -97,6 +97,8 @@
         <result property="endTime" column="end_time" />
         <result property="dateOnly" column="date_only" />
         <result property="lockerName" column="locker_name" />
+        <result property="address" column="address"/>
+        <result property="addressDetail" column="address_detail"/>
         <result property="lockerImage" column="locker_image" />
         <result property="durationHours" column="duration_hours" />
         <!-- 중첩 짐타입 매핑 -->
@@ -117,6 +119,8 @@
             DATE_FORMAT(r.end_time, '%m.%d %H:%i') AS end_time,
             DATE_FORMAT(r.start_time, '%Y-%m-%d') AS date_only,
             l.locker_name,
+            l.address,
+            l.address_detail,
             i.url AS locker_image,
             TIMESTAMPDIFF(MINUTE, r.start_time, r.end_time) / 60.0 AS duration_hours,
             jt.jimtype_id,

@@ -178,6 +178,12 @@ function renderReservations(reservations) {
     const list = document.getElementById('reservation-list');
 
     reservations.forEach(res => {
+        //sessionStorage에 이미지, 주소, 상세주소 저장
+        sessionStorage.setItem(`reservationData_${res.reservationId}`, JSON.stringify({
+            lockerImage : res.lockerImage,
+            address : res.address,
+            addressDetail : res.addressDetail
+        }));
         const card = document.createElement('div');
         card.className = 'reservation-card';
         if (res.state === 'CANCELLED') card.classList.add('cancelled');
@@ -355,6 +361,7 @@ function fetchReservations(isFirst = false) {
             if (data.code !== 1000) throw new Error(data.message || 'API 오류');
 
             const reservations = data.result.reservations || [];
+            console.log(reservations);
             if (isFirst && reservations.length === 0) {
                 document.getElementById('empty-state').style.display = 'block';
             } else {
