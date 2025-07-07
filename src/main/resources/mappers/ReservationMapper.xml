@@ -211,7 +211,7 @@
 
     <!-- 예약 전체 건수 조회 -->
     <select id="findAllReservationByMemberId">
-        SELECT COUNT(*)
+        SELECT MAX(r.reservation_id)
         FROM Reservation r
     </select>
 
