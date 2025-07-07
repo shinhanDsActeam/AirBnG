@@ -12,10 +12,11 @@ async function fetchReservationDetail() {
         if (data.code === 1000) {
             displayReservationData(data.result);
         } else {
-            showError(data.message);
+            ModalUtils.showError(data.message);
+            // showError(data.message);
         }
     } catch (err) {
-        showError('네트워크 오류가 발생했습니다.');
+        ModalUtils.showError('네트워크 오류가 발생했습니다.');
     }
 }
 
@@ -78,12 +79,6 @@ function updateCancelButton(state) {
     }
 }
 
-function showError(message) {
-    document.getElementById('loading').style.display = 'none';
-    document.getElementById('error').style.display = 'block';
-    document.getElementById('error-message').textContent = message;
-}
-
 function getStateText(state) {
     switch(state) {
         case 'CONFIRMED': return '예약완료';
@@ -115,43 +110,20 @@ async function cancelReservation() {
         const data = await response.json();
 
         if (data.code === 1000) {
-            // 성공 시 모달 표시
-            document.getElementById('refund-amount').textContent = data.result.charge.toLocaleString() + '원';
-            document.getElementById('success-modal').classList.remove('hidden');
+            ModalUtils.showSuccess(data.result.charge.toLocaleString() + '원의 수수료가 발생했어요!', '예약을 취소했어요!',
+                fetchReservationDetail);
         } else {
-            // 실패 시 에러 모달 표시
-            document.getElementById('error-modal-message').textContent = data.message;
-            document.getElementById('error-modal').classList.remove('hidden');
+            ModalUtils.showError(data.message, '예약 취소 실패');
         }
     } catch (err) {
-        document.getElementById('error-modal-message').textContent = '네트워크 오류가 발생했습니다.';
-        document.getElementById('error-modal').classList.remove('hidden');
+        ModalUtils.showError('네트워크 오류가 발생했습니다.', '예약 취소 실패');
     }
-}
-
-function closeConfirmModal() {
-    document.getElementById('confirm-modal').classList.add('hidden');
-}
-
-function proceedCancel() {
-    document.getElementById('confirm-modal').classList.add('hidden');
-    cancelReservation();
-}
-
-function confirmCancel() {
-    document.getElementById('success-modal').classList.add('hidden');
-    // 페이지 새로고침하여 업데이트된 상태 표시
-    fetchReservationDetail();
-}
-
-function closeErrorModal() {
-    document.getElementById('error-modal').classList.add('hidden');
 }
 
 // 취소 버튼 클릭 이벤트
 document.getElementById('cancel-btn').addEventListener('click', function() {
     if (currentReservationState !== 'CANCELLED' && currentReservationState !== 'COMPLETED') {
-        document.getElementById('confirm-modal').classList.remove('hidden');
+        ModalUtils.showConfirm('취소하시면 환불 처리됩니다.', '예약을 취소하시겠습니까?', cancelReservation);
     }
 });
 
