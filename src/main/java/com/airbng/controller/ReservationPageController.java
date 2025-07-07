@@ -37,9 +37,9 @@ public class ReservationPageController {
 
     @GetMapping("confirm")
     public String reservationConfirm(@RequestParam("reservationId") Long reservationId,
-                                     @RequestParam("memberId") Long memberId,
+                                     HttpSession session,
                                      Model model) {
-        //이때 memberId는 dropper 기준으로 요청
+        Long memberId = (Long) session.getAttribute("memberId");
         model.addAttribute("reservationId", reservationId);
         model.addAttribute("memberId", memberId);
         return "reservation/reservationConfirm";

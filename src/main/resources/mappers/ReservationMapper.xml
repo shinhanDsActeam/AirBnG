@@ -44,6 +44,7 @@
         <collection property="reservationJimTypes" ofType="com.airbng.domain.jimtype.ReservationJimType">
             <result property="jimType.jimTypeId" column="jimtype_id"/>
             <result property="jimType.typeName" column="type_name"/>
+            <result property="jimType.pricePerHour" column="price_per_hour"/>
             <result property="count" column="count"/>
         </collection>
     </resultMap>
@@ -73,6 +74,7 @@
 
             rjt.jimtype_id AS jimtype_id,
             jt.type_name AS type_name,
+            jt.price_per_hour AS price_per_hour,
             rjt.count AS count
 
         FROM reservation r

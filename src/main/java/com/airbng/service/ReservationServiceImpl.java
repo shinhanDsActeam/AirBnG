@@ -205,8 +205,9 @@ public class ReservationServiceImpl implements ReservationService{
     public ReservationDetailResponse findReservationDetail(Long reservationId, Long memberId) {
         Reservation reservation = reservationMapper.findReservationDetailById(reservationId);
         if (reservation == null) throw new ReservationException(NOT_FOUND_RESERVATION); // 보관소 있나요
-        if (!reservation.getDropper().getMemberId().equals(memberId))
-            throw new ReservationException(NOT_DROPPER_OF_RESERVATION); // 있는 보관소가 내거 맞나요
+        //keeper 기준으로도 예약 승인 거절 시에 필요하므로 주석처리
+//        if (!reservation.getDropper().getMemberId().equals(memberId))
+//            throw new ReservationException(NOT_DROPPER_OF_RESERVATION); // 있는 보관소가 내거 맞나요
 
         return ReservationDetailResponse.from(reservation);
     }

@@ -33,7 +33,7 @@ function loadReservationData() {
             if (data.code === 1000) {
                 reservationData = data.result;
                 displayReservationData(reservationData);
-
+                console.log(reservationData);
                 // 로딩 상태 숨기고 컨테이너 표시
                 loadingState.classList.add('hidden');
                 reservationContainer.classList.remove('hidden');
