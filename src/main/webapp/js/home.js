@@ -54,7 +54,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 // 캐리어 클릭 시 소형/대형 선택 모달 표시
                 ModalUtils.createCustomModal({
                     id: 'carrier-size-modal',
-                    type: 'confirm',
+                    type: 'confirm-modal',
                     title: '캐리어 크기 선택',
                     message: '소형 또는 대형을 선택하세요.',
                     confirmText: '대형', // 오른쪽
