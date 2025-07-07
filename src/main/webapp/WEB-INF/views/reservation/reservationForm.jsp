@@ -31,10 +31,15 @@
             <div class="form space-y-6 pb-24">
                 <!-- 보관소 정보 -->
                 <div class="bg-gray-50 p-4 rounded-lg">
-                    <h2 id="lockerName" class="font-semibold text-gray-900 mb-1">
-                    </h2>
-                    <p id="lockerAddress" class="text-sm text-gray-600">
-                    </p>
+                    <div class="flex items-center gap-4">
+                        <svg class="w-12 h-12 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"></path>
+                        </svg>
+                        <div class="flex-1">
+                            <h2 id="lockerName" class="font-semibold text-gray-900 mb-1"></h2>
+                            <p id="lockerAddress" class="text-sm text-gray-600"></p>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- 보관 날짜 -->
