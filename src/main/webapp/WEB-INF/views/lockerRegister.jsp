@@ -1,5 +1,8 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<c:if test="${empty currentStep}">
+    <c:set var="currentStep" value="1" />
+</c:if>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -27,15 +30,16 @@
             <c:forEach begin="1" end="4" var="step">
                 <c:choose>
                     <c:when test="${step eq currentStep}">
-                        <img src="<c:url value='/images/${step}_full_ic.svg'/>" class="step-icon" alt="step${step}" />
+                        <c:set var="stepImg" value="/images/${step}_full_ic.svg" />
                     </c:when>
                     <c:when test="${step lt currentStep}">
-                        <img src="<c:url value='/images/check_ic.svg'/>" class="step-icon" alt="step${step}" />
+                        <c:set var="stepImg" value="/images/check_ic.svg" />
                     </c:when>
                     <c:otherwise>
-                        <img src="<c:url value='/images/${step}_blank_ic.svg'/>" class="step-icon" alt="step${step}" />
+                        <c:set var="stepImg" value="/images/${step}_blank_ic.svg" />
                     </c:otherwise>
                 </c:choose>
+                <img src="<c:url value='${stepImg}' />" class="step-icon" alt="step${step}" />
 
                 <c:if test="${step lt 4}">
                     <img src="<c:url value='/images/check_line.svg'/>" class="step-line" alt="line" />
