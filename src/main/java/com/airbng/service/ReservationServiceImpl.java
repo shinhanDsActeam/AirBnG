@@ -51,10 +51,7 @@ public class ReservationServiceImpl implements ReservationService{
                 memberId, role, state, nextCursorId, LIMIT, period);
 
         // 초기 커서 ID 설정
-        if(nextCursorId == null) {
-            nextCursorId = (reservationMapper.findAllReservationByMemberId())+1L; // 커서 ID 초기화
-        }
-        log.info("!!! nextCursorId: {}", nextCursorId);
+
 
         List<ReservationState> stateList = null;
 
@@ -66,6 +63,13 @@ public class ReservationServiceImpl implements ReservationService{
             // 단일값이면 리스트로 감싸기
             stateList = Collections.singletonList((ReservationState) state);
         }
+
+        if (nextCursorId == null) {
+            Long maxId = reservationMapper.findMaxReservationIdByMemberId(memberId, role, stateList);
+            nextCursorId = (maxId != null) ? maxId + 1L : -1L;
+        }
+
+        log.info("!!! nextCursorId: {}", nextCursorId);
 
         // isHistoryTab 여부 판단
         boolean isHistoryTab = stateList != null &&
@@ -118,7 +122,7 @@ public class ReservationServiceImpl implements ReservationService{
                 .nextCursorId(nextCursorId)
                 .hasNextPage(hasNextPage)
                 .period(period)
-                .totalCount(reservationMapper.findReservationByMemberId(memberId, role))
+                .totalCount(reservationMapper.findReservationByMemberId(memberId, role,stateList))
                 .build();
         return paging;
     }

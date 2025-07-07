@@ -33,7 +33,9 @@ public interface ReservationMapper {
     );
   
     //예약  목록 개수
-    Long findReservationByMemberId(@Param("memberId") Long memberId, @Param("role") String role);
+    Long findReservationByMemberId(@Param("memberId") Long memberId,
+                                   @Param("role") String role,
+                                   @Param("state") List<ReservationState> state);
 
     // 24시간이 지난 CONFIRMED 예약 조회 (EXPIRED 알림용)
     List<ReservationResponse> findExpiredConfirmedReservations(@Param("deadline") LocalDateTime deadline);
@@ -47,7 +49,9 @@ public interface ReservationMapper {
     // CANCELLED로 변경된 예약 (CANCEL_NOTICE 알림용)
     List<ReservationResponse> findStateChangedToCancelled();
 
-    Long findAllReservationByMemberId();
+    Long findMaxReservationIdByMemberId(@Param("memberId") Long memberId,
+                                        @Param("role") String role,
+                                        @Param("state") List<ReservationState> stateList);
 
     void deleteReservationById(@Param("reservationId")Long reservationId);
     void deleteReservationJimtypeByReservationId(@Param("reservationId")Long reservationId);
