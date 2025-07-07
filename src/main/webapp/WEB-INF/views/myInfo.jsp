@@ -12,7 +12,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>내 정보 수정 - AirBnG</title>
   <link rel="stylesheet" href="<c:url value='/css/myInfo.css' />" />
-  <link rel="stylesheet" href="<c:url value='/css/common/modal.css' />" />
 </head>
 <body>
 <div class="page-container">
@@ -144,7 +143,6 @@
   console.log('==================');
 </script>
 <script src="<c:url value='/js/myInfo.js' />"></script>
-<script src="<c:url value='/js/common/modal.js' />"></script>
 <%@ include file="/WEB-INF/views/common/modal.jsp" %>
 </body>
 </html>

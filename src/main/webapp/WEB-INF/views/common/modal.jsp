@@ -1,4 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<link rel="stylesheet" href="<c:url value='/css/common/modal.css' />"/>
+<script src="<c:url value='/js/common/modal.js' />"></script>
 
 <%-- 기본 확인 모달 --%>
 <div id="confirm-modal" class="modal-overlay hidden">
