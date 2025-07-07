@@ -11,13 +11,14 @@ body {
     max-width: 412px;
     margin: 0 auto;
     padding-bottom: 80px;
-    padding-top: var(--header-height); /* 헤더 높이 */
 }
 
 .container {
     padding: 15px;
     max-width: 412px;
     margin: 0 auto;
+    margin-top: calc(var(--header-height) + 15px);
+/* 헤더 높이 */
 }
 
 .card {
