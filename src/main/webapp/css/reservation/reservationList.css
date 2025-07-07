@@ -72,21 +72,15 @@ body {
     color: #4561DB;
     border-bottom-color: #4561DB;
     font-weight: 600;
-    background-color: #f0f2ff
+    /*background-color: #f0f2ff*/
 }
 
 /* 호버 효과 */
 .tab:hover {
     color: #4561DB;
-    background-color: #f8f9ff; /* 연한 파란색 배경 */
+    /*background-color: #f8f9ff; !* 연한 파란색 배경 *!*/
     transform: translateY(-2px); /* 살짝 위로 올라가는 효과 */
-    box-shadow: 0 4px 8px rgba(69, 97, 219, 0.1); /* 은은한 그림자 */
-}
-
-/* 활성 탭은 호버 효과를 조금 다르게 */
-.tab.active:hover {
-    background-color: #f0f2ff; /* 활성 탭은 조금 더 진한 배경 */
-    transform: translateY(-1px); /* 활성 탭은 덜 올라가게 */
+    /*box-shadow: 0 4px 8px rgba(69, 97, 219, 0.1); !* 은은한 그림자 *!*/
 }
 
 /* 필터 섹션 */
