@@ -39,20 +39,71 @@ document.addEventListener('DOMContentLoaded', function () {
             window.location.href = targetUrl;
         } catch (error) {
             console.error("페이지 이동 실패:", error);
-            alert("검색 조건 처리 중 오류가 발생했습니다.");
+            ModalUtils.showError("검색 조건 처리 중 오류가 발생했습니다.", "이동 실패");
         }
     });
-
-    console.log("카테고리 카드들 로딩됨:", document.querySelectorAll('.category-card'));
 
     const categoryCards = document.querySelectorAll('.category-card');
     categoryCards.forEach(function (card, index) {
         card.addEventListener('click', function () {
-            const jimTypeId = index + 1; // 1~4
+            // index 기준: 0=백팩, 1=캐리어, 2=박스, 3=유모차
+            if (index === 1) {
+                // 캐리어 클릭 시 뒤로가기 히스토리 추가
+                history.pushState({ modal: 'carrier' }, '', '#carrier');
 
-            // reservation.jsp로 이동 (짐 타입 ID 전달)
-            window.location.href = `${contextPath}/page/lockerSearch?jimTypeId=${jimTypeId}`;
+                // 캐리어 클릭 시 소형/대형 선택 모달 표시
+                ModalUtils.createCustomModal({
+                    id: 'carrier-size-modal',
+                    type: 'confirm-modal',
+                    title: '캐리어 크기 선택',
+                    message: '소형 또는 대형을 선택하세요.',
+                    confirmText: '대형', // 오른쪽
+                    cancelText: '소형',  // 왼쪽
+                    showCancel: true,
+                    onConfirm: () => {
+                        ModalUtils.hideModal('carrier-size-modal');
+                        setTimeout(() => {
+                            window.location.href = `${contextPath}/page/lockerSearch?jimTypeId=3`; // 대형
+                        }, 100);
+                    },
+                    onCancel: () => {
+                        ModalUtils.hideModal('carrier-size-modal');
+                        setTimeout(() => {
+                            window.location.href = `${contextPath}/page/lockerSearch?jimTypeId=2`; // 소형
+                        }, 100);
+                    }
+                });
+            } else {
+                const jimTypeIdMap = {
+                    0: 1,  // 백팩
+                    2: 4,  // 박스
+                    3: 5   // 유모차
+                };
+                const jimTypeId = jimTypeIdMap[index];
+                if (jimTypeId) {
+                    window.location.href = `${contextPath}/page/lockerSearch?jimTypeId=${jimTypeId}`;
+                }
+            }
         });
+    });
+
+    // popstate 외에: 모달 바깥 클릭 시도 -> 뒤로가기
+    document.addEventListener('click', function (e) {
+        const modal = document.getElementById('carrier-size-modal');
+        if (modal && !modal.classList.contains('hidden')) {
+            const isOutside = e.target.classList.contains('modal-overlay');
+            if (isOutside) {
+                history.back(); // 뒤로가기
+            }
+        }
+    });
+
+    // 뒤로가기 누르면 캐리어 모달 닫기
+    window.addEventListener('popstate', function (event) {
+        if (ModalUtils.currentModal === 'carrier-size-modal') {
+            ModalUtils.hideModal('carrier-size-modal');
+            history.replaceState(null, '', location.pathname); // URL #carrier 제거
+        }
     });
 
     fetch(`${contextPath}/lockers/popular`)
@@ -63,8 +114,6 @@ document.addEventListener('DOMContentLoaded', function () {
             return response.json();
         })
         .then(function (data) {
-            console.log("인기 보관소 데이터:", data);
-
             if (data.code === 1000 && data.result && data.result.lockers) {
                 const list = data.result.lockers;
                 const container = document.getElementById('popularList');
