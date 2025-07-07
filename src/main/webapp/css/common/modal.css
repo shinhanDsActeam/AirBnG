@@ -65,6 +65,18 @@
     background-color: rgba(47, 70, 183);
 }
 
+/* 캐리어 선택 모달 전용 버튼 영역 */
+.modal-buttons.two-buttons {
+    display: flex;
+    align-items: stretch;
+    justify-content: center;
+}
+
+/* 버튼 구분선 */
+.modal-divider {
+    width: 1px;
+    background-color: #e5e7eb;
+}
 
 .hidden {
     display: none;
