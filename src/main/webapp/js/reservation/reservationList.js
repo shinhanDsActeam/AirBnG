@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const viewportHeight = window.innerHeight;
         const fullHeight = document.body.offsetHeight;
 
-        if (scrollTop + viewportHeight >= fullHeight - 100) {
+        if (scrollTop + viewportHeight >= fullHeight - 200) {
             fetchReservations(false);  // 다음 커서 로드
         }
     });
@@ -121,7 +121,8 @@ function getApiUrl() {
     const cursorParam = (nextCursorId !== null && nextCursorId !== -1) ? `&nextCursorId=${nextCursorId}` : '';
 
     const apiUrl = baseUrl + statesParam + periodParam + cursorParam;
-    console.log(`API URL: ${apiUrl}`);
+    console.log('📍 [getApiUrl] nextCursorId:', nextCursorId);
+    console.log('📍 [getApiUrl] API URL:', apiUrl);
     return apiUrl;
 }
 
@@ -352,20 +353,24 @@ function fetchReservations(isFirst = false) {
     fetch(getApiUrl())
         .then(res => res.ok ? res.json() : Promise.reject(`HTTP ${res.status}`))
         .then(data => {
-            if (data.code !== 1000) throw new Error(data.message || 'API 오류');
-
             const reservations = data.result.reservations || [];
+
+            console.log('📍 [fetchReservations] 받은 예약 수:', reservations.length);
+            console.log('📍 [fetchReservations] nextCursorId:', data.result.nextCursorId);
+            console.log('📍 [fetchReservations] hasNextPage:', data.result.hasNextPage);
+
+            // ✅ 커서 먼저 갱신
+            nextCursorId = data.result.nextCursorId;
+            hasNextPage = data.result.hasNextPage;
+
             if (isFirst && reservations.length === 0) {
                 document.getElementById('empty-state').style.display = 'block';
             } else {
                 const filtered = reservations.filter(r => currentStates.includes(r.state));
                 if (filtered.length > 0) renderReservations(filtered);
-                nextCursorId = data.result.nextCursorId;
-                hasNextPage = data.result.hasNextPage;
-//                document.getElementById('load-more').style.display = hasNextPage ? 'block' : 'none';
-//                document.getElementById('load-more').style.display = 'none';
             }
         })
+
         .catch(err => {
             console.error('Fetch 오류:', err);
             if (isFirst) document.getElementById('empty-state').style.display = 'block';
