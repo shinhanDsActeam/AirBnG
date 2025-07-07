@@ -74,7 +74,7 @@ function updateCancelButton(state) {
         cancelBtn.textContent = state === 'CANCELLED' ? '취소완료' : '이용완료';
     } else {
         cancelBtn.disabled = false;
-        cancelBtn.textContent = '취소완료';
+        cancelBtn.textContent = '예약취소';
     }
 }
 
