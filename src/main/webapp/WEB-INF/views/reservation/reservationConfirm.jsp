@@ -43,11 +43,11 @@
           <div class="space-y-2">
             <div class="flex items-center">
               <span class="text-gray-600 w-16">이름</span>
-              <span id="userName" class="font-medium"></span>
+              <span id="dropperNickname" class="font-medium"></span>
             </div>
             <div class="flex items-center">
               <span class="text-gray-600 w-16">연락처</span>
-              <span id="userPhone" class="font-medium"></span>
+              <span id="dropperPhone" class="font-medium">정보 없음</span>
             </div>
           </div>
         </div>
@@ -55,8 +55,13 @@
         <!-- 보관소 정보 -->
         <div class="bg-gray-50 p-4 rounded-lg mb-4">
           <h3 class="font-semibold text-gray-900 mb-2">보관소 정보</h3>
-          <h4 id="lockerName" class="font-medium text-gray-900 mb-1"></h4>
-          <p id="lockerAddress" class="text-sm text-gray-600"></p>
+          <div class="flex items-center">
+            <img id="lockerImage" src="" alt="보관소 이미지" class="w-12 h-12 rounded-lg mr-3 object-cover">
+            <div>
+              <h4 id="keeperNickname" class="font-medium text-gray-900 mb-1"></h4>
+              <p id="lockerAddress" class="text-sm text-gray-600">서울 강남구 강남대로 396</p>
+            </div>
+          </div>
         </div>
 
         <!-- 예약 정보 -->
@@ -102,6 +107,18 @@
           </div>
         </div>
 
+        <!-- 픽업 방식 -->
+        <div class="bg-white border border-gray-200 rounded-lg p-4 mb-4">
+          <h3 class="font-semibold text-gray-900 mb-3">픽업 방식</h3>
+          <div class="flex items-center">
+            <svg class="w-4 h-4 text-gray-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+            </svg>
+            <span class="font-medium">직접 짐 전달받기</span>
+          </div>
+        </div>
+
         <!-- 결제 정보 -->
         <div class="bg-gray-50 p-4 rounded-lg mb-4">
           <h3 class="font-semibold text-gray-900 mb-3">결제 정보</h3>
@@ -111,7 +128,7 @@
             </div>
             <div class="flex justify-between text-sm">
               <span>서비스 수수료</span>
-              <span id="serviceFee"></span>
+              <span id="serviceFee">400원</span>
             </div>
             <hr class="border-gray-300">
             <div class="flex justify-between font-semibold text-lg">
@@ -119,6 +136,11 @@
               <span id="totalPrice"></span>
             </div>
           </div>
+        </div>
+
+        <!-- 안내 문구 -->
+        <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
+          <p class="text-sm text-blue-700">* 상대방이 거절하면 일정이 자동으로 취소됩니다.</p>
         </div>
 
         <!-- 승인/거절 버튼 섹션 -->

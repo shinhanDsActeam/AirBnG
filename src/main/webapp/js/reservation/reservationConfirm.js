@@ -26,7 +26,7 @@ function loadReservationData() {
     const loadingState = document.getElementById('loadingState');
     const reservationContainer = document.getElementById('reservationContainer');
 
-    // TODO: 실제 API 엔드포인트로 변경 필요
+    // 실제 API 엔드포인트로 변경 필요
     fetch(`/AirBnG/reservations/${reservationId}/members/${memberId}/detail`)
         .then(response => response.json())
         .then(data => {
@@ -53,12 +53,19 @@ function loadReservationData() {
 // 예약 데이터 표시
 function displayReservationData(data) {
     // 예약자 정보
-    document.getElementById('userName').textContent = data.userName || '정보 없음';
-    document.getElementById('userPhone').textContent = data.userPhone || '정보 없음';
+    document.getElementById('dropperNickname').textContent = data.dropperNickname || '정보 없음';
 
     // 보관소 정보
-    document.getElementById('lockerName').textContent = data.lockerName || '정보 없음';
-    document.getElementById('lockerAddress').textContent = data.lockerAddress || '정보 없음';
+    document.getElementById('keeperNickname').textContent = data.keeperNickname || '정보 없음';
+
+    // 세션 스토리지에서 이미지 URL 가져오기
+    const imageUrl = sessionStorage.getItem('lockerImage');
+    if (imageUrl) {
+        document.getElementById('lockerImage').src = imageUrl;
+    } else {
+        // 기본 이미지 설정
+        document.getElementById('lockerImage').src = '/AirBnG/images/default-locker.png';
+    }
 
     // 예약 날짜
     const startDate = new Date(data.startTime);
@@ -74,10 +81,10 @@ function displayReservationData(data) {
     statusElement.className = `px-2 py-1 rounded-full text-xs font-medium ${getStatusClass(data.state)}`;
 
     // 짐 정보
-    displayJimTypes(data.jimTypes);
+    displayJimTypes(data.reservationJimTypes);
 
     // 결제 정보
-    displayPriceDetails(data.priceDetails);
+    displayPriceDetails(data.reservationJimTypes);
 }
 
 // 짐 타입 정보 표시
@@ -92,45 +99,64 @@ function displayJimTypes(jimTypes) {
 
     jimTypes.forEach(jim => {
         const jimItem = document.createElement('div');
-        jimItem.className = 'jim-item';
+        jimItem.className = 'jim-item flex items-center';
         jimItem.innerHTML = `
-            <div>
-                <div class="jim-item-name">${jim.typeName}</div>
-                <div class="jim-item-count">${jim.count}개</div>
+            <div class="flex items-center mr-3">
+                <svg class="w-4 h-4 text-gray-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
+                </svg>
+                <span class="font-medium">${jim.typeName} ${jim.count}개</span>
             </div>
-            <div class="jim-item-price">${jim.totalPrice.toLocaleString()}원</div>
         `;
         container.appendChild(jimItem);
     });
 }
 
 // 가격 상세 정보 표시
-function displayPriceDetails(priceDetails) {
+function displayPriceDetails(jimTypes) {
     const container = document.getElementById('priceDetailsList');
     container.innerHTML = '';
 
-    if (!priceDetails) return;
+    if (!jimTypes || jimTypes.length === 0) return;
 
-    // 각 짐 타입별 가격 표시
-    if (priceDetails.itemPrices) {
-        priceDetails.itemPrices.forEach(item => {
-            const priceItem = document.createElement('div');
-            priceItem.className = 'price-item';
-            priceItem.innerHTML = `
-                <span>${item.typeName} × ${item.count}개 × ${item.hours}시간</span>
-                <span>${item.totalPrice.toLocaleString()}원</span>
-            `;
-            container.appendChild(priceItem);
-        });
+    let totalAmount = 0;
+    const serviceFee = 400;
+
+    jimTypes.forEach(item => {
+        // 시간 계산 (30분 = 0.5시간)
+        const startTime = new Date(reservationData.startTime);
+        const endTime = new Date(reservationData.endTime);
+        const diffMinutes = (endTime - startTime) / (1000 * 60);
+        const hours = diffMinutes / 60;
+
+        const itemTotal = item.pricePerHour * item.count * hours;
+        totalAmount += itemTotal;
+
+        const priceItem = document.createElement('div');
+        priceItem.className = 'price-item flex justify-between';
+        priceItem.innerHTML = `
+            <span>${item.typeName} × ${item.count}개 × ${formatHours(hours)}</span>
+            <span>${itemTotal.toLocaleString()}원</span>
+        `;
+        container.appendChild(priceItem);
+    });
+
+    // 총 결제 금액 업데이트
+    const finalTotal = totalAmount + serviceFee;
+    document.getElementById('totalPrice').textContent = finalTotal.toLocaleString() + '원';
+}
+
+// 시간 포맷팅 함수
+function formatHours(hours) {
+    if (hours < 1) {
+        return `${Math.round(hours * 60)}분`;
+    } else if (hours === parseInt(hours)) {
+        return `${hours}시간`;
+    } else {
+        const wholeHours = Math.floor(hours);
+        const minutes = Math.round((hours - wholeHours) * 60);
+        return `${wholeHours}시간${minutes}분`;
     }
-
-    // 서비스 수수료
-    document.getElementById('serviceFee').textContent =
-        priceDetails.serviceFee ? priceDetails.serviceFee.toLocaleString() + '원' : '0원';
-
-    // 총 결제 금액
-    document.getElementById('totalPrice').textContent =
-        priceDetails.totalPrice ? priceDetails.totalPrice.toLocaleString() + '원' : '0원';
 }
 
 // 상태에 따라 액션 버튼 표시
@@ -155,10 +181,6 @@ function handleApproveReject(approve) {
 
     isProcessing = true;
     setButtonsDisabled(true);
-
-    const requestData = {
-        approve: approve
-    };
 
     fetch(`/AirBnG/reservations/${reservationId}/members/${memberId}/confirm?approve=${approve}`, {
         method: 'PATCH',
@@ -285,8 +307,8 @@ function formatTimeRange(startDate, endDate) {
 // 상태 텍스트 변환
 function getStatusText(state) {
     const statusMap = {
-        'PENDING': '승인 대기',
-        'CONFIRMED': '승인됨',
+        'PENDING': '대기중',
+        'CONFIRMED': '확정',
         'CANCELLED': '취소됨',
         'COMPLETED': '완료됨'
     };
