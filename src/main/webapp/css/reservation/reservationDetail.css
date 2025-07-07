@@ -11,33 +11,7 @@ body {
     max-width: 412px;
     margin: 0 auto;
     padding-bottom: 80px;
-}
-
-.header {
-    background: white;
-    padding: 15px 20px;
-    border-bottom: 1px solid #eee;
-    display: flex;
-    align-items: center;
-    max-width: 412px;
-    margin: 0 auto;
-    position: relative;
-}
-
-.back-btn {
-    background: none;
-    border: none;
-    font-size: 24px;
-    cursor: pointer;
-    margin-right: 10px;
-    margin-left:6px;
-    color: #333;
-}
-
-.header h1 {
-    font-size: 18px;
-    font-weight: 600;
-    margin:12px;
+    padding-top: var(--header-height); /* 헤더 높이 */
 }
 
 .container {

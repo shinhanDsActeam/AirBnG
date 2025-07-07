@@ -11,10 +11,9 @@
     <link rel="stylesheet" href="<c:url value='/css/reservation/reservationDetail.css' />" />
 </head>
 <body>
-    <div class="header">
-        <button class="back-btn" onclick="history.back()">←</button>
-        <h1>예약 상세</h1>
-    </div>
+    <c:set var="headerTitle" value="예약 상세"/>
+    <c:set var="showBackButton" value="true"/>  <%-- 뒤로가기 있는 버전 --%>
+    <%@ include file="../common/header.jsp" %>
 
     <div class="container">
         <div id="loading" class="loading">
