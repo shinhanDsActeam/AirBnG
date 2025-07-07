@@ -109,18 +109,7 @@
         </main>
     </div>
 
-    <!-- 모달 영역 -->
-    <div id="success-modal" class="modal-overlay hidden">
-        <div class="modal">
-            <div class="modal-content">
-                <div class="modal-title">로그인 성공</div>
-            </div>
-            <div class="modal-buttons">
-                <button class="modal-btn" onclick="confirmLoginSuccess()" style="width: 100%; border-right: none;">확인</button>
-            </div>
-        </div>
-    </div>
-
+    <%@ include file="common/modal.jsp" %>
     <%@ include file="navbar.jsp" %>
 
     <script>
