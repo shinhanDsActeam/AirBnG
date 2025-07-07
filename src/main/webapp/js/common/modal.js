@@ -36,6 +36,7 @@ class ModalUtils {
 
         // 콜백 저장
         this.confirmCallback = config.onConfirm;
+        this.cancelCallback = config.onCancel;
         this.currentModal = modalId;
 
         // 모달 표시
@@ -179,13 +180,16 @@ class ModalUtils {
                     <div class="modal-title">${config.title || '알림'}</div>
                     <div class="modal-text">${config.message || ''}</div>
                 </div>
-                <div class="modal-buttons">
-                    ${config.showCancel ?
-            `<button class="modal-btn" onclick="ModalUtils.hideModal('${modalId}')">${config.cancelText || '취소'}</button>` :
-            ''
-        }
-                    <button class="modal-btn" onclick="ModalUtils.confirmAction('${modalId}')">${config.confirmText || '확인'}</button>
+                <div class="modal-buttons ${config.showCancel ? 'two-buttons' : 'one-button'}">
+                    ${config.showCancel ? `
+                        <button class="modal-btn left" onclick="ModalUtils.handleCustomCancel('${modalId}')">${config.cancelText || '취소'}</button>
+                        <div class="modal-divider"></div>
+                        <button class="modal-btn right" onclick="ModalUtils.confirmAction('${modalId}')">${config.confirmText || '확인'}</button>
+                    ` : `
+                        <button class="modal-btn" onclick="ModalUtils.confirmAction('${modalId}')">${config.confirmText || '확인'}</button>
+                    `}
                 </div>
+
             </div>
         `;
 
@@ -219,10 +223,22 @@ class ModalUtils {
             buttons[0].textContent = config.cancelText;
             buttons[1].textContent = config.confirmText;
 
-            // 취소 버튼 표시/숨김
-            if (!config.showCancel) {
-                buttons[0].style.display = 'none';
-                buttons[1].classList.add('single');
+            // carrier-size-modal인 경우: 선택 효과 제거
+            if (modal.id === 'carrier-size-modal') {
+                setTimeout(() => {
+                    if (modal.id === 'carrier-size-modal') {
+                        buttons.forEach(btn => btn.blur());  // 자동 포커스 제거
+                    }
+                }, 50);
+            } else {
+                // 기존 동작 유지 (다른 모달들)
+                if (!config.showCancel) {
+                    buttons[0].style.display = 'none';
+                    buttons[1].classList.add('single');
+                } else {
+                    buttons[0].style.display = '';
+                    buttons[1].classList.remove('single');
+                }
             }
         } else if (buttons.length === 1) {
             buttons[0].textContent = config.confirmText;
@@ -281,6 +297,19 @@ class ModalUtils {
         });
         this.currentModal = null;
         this.confirmCallback = null;
+    }
+
+    /**
+     * 커스텀 취소 액션 처리
+     */
+    static handleCustomCancel(modalId) {
+        const modal = document.getElementById(modalId);
+        if (modal) {
+            this.hideModal(modalId);
+            if (typeof this.cancelCallback === 'function') {
+                this.cancelCallback();
+            }
+        }
     }
 
     /**
