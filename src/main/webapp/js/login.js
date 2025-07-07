@@ -33,25 +33,20 @@ document.querySelector('.login-form').addEventListener('submit', function(e) {
             const data = await response.json();
             if (response.status === 429 || data.code === 8003) {
                 startCooldown(30); // 30초동안 로그인 시도 제한
-                showWarningModal();
+                ModalUtils.showWarning('잠시 후 다시 시도해주세요.','요청이 너무 많습니다');
                 return;
             }
 
             if (data.code === 2000) {
-                document.getElementById('success-modal').classList.remove('hidden');
-                document.addEventListener('keydown', function handleEnter(e) {
-                    if (e.key === 'Enter') {
-                        confirmLoginSuccess();
-                        document.removeEventListener('keydown', handleEnter);
-                    }
-                });
+                ModalUtils.showSuccess(' ', '로그인 성공',
+                    ()=>{ window.location.href = `${contextPath}/page/home` });
             } else {
                 showErrorModal();
             }
         })
         .catch(err => {
             console.error('로그인 요청 실패:', err);
-            showErrorModal();
+            ModalUtils.showError('이메일 또는 비밀번호가 올바르지 않습니다.', '로그인 실패', closeErrorModal);
         });
 });
 
@@ -97,33 +92,4 @@ function updateCountdown() {
             }
         }, 1000);
     }
-}
-
-function confirmLoginSuccess() {
-    document.getElementById('success-modal').classList.add('hidden');
-    location.href = `${contextPath}/page/home`;
-}
-
-function closeErrorModal() {
-    document.getElementById('error-modal').classList.add('hidden');
-}
-
-function showErrorModal() {
-    document.getElementById('error-modal').classList.remove('hidden');
-}
-
-function showWarningModal() {
-    document.getElementById('warning-modal').classList.remove('hidden');
-
-    function handleWarningEnter(e) {
-        if (e.key === 'Enter') {
-            closeWarningModal();
-            document.removeEventListener('keydown', handleWarningEnter);
-        }
-    }
-    document.addEventListener('keydown', handleWarningEnter);
-}
-
-function closeWarningModal() {
-    document.getElementById('warning-modal').classList.add('hidden');
 }
