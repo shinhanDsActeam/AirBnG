@@ -6,7 +6,7 @@
 <div id="confirm-modal" class="modal-overlay hidden">
     <div class="modal">
         <div class="modal-content">
-            <div class="modal-icon warning">?</div>
+            <div class="modal-icon confirm-bounce">?</div>
             <div class="modal-title">확인이 필요합니다</div>
             <div class="modal-message">
                 정말로 진행하시겠습니까?

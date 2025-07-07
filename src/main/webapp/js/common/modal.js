@@ -23,7 +23,7 @@ class ModalUtils {
             title: '',
             message: '',
             confirmText: '확인',
-            cancelText: '취소',
+            cancelText: '아니요',
             showCancel: true,
             onConfirm: null,
             onCancel: null
@@ -145,11 +145,13 @@ class ModalUtils {
     /**
      * 확인 모달 표시
      * @param {string} message - 확인 메시지
+     * @param {string} title - 확인 타이틀
      * @param {Function} onConfirm - 확인 콜백
      * @param {Function} onCancel - 취소 콜백
      */
-    static showConfirm(message = '정말로 진행하시겠습니까?', onConfirm = null, onCancel = null) {
+    static showConfirm(message = '정말로 진행하시겠습니까?', title = '확인', onConfirm = null, onCancel = null) {
         this.showModal('confirm-modal', {
+            title: title,
             message: message,
             onConfirm: onConfirm,
             onCancel: onCancel,
@@ -227,32 +229,19 @@ class ModalUtils {
         }
     }
 
-    /**
-     * ESC 키 이벤트 처리
-     * @param {Event} event - 키보드 이벤트
-     */
     static handleEscKey = (event) => {
         if (event.key === 'Escape' && this.currentModal) {
             this.hideModal(this.currentModal);
         }
     }
 
-
     // 빼자.. 무조건 취소 혹은 확인을 눌러야만 꺼지게!
-    /**
-     * 배경 클릭 이벤트 처리
-     * @param {Event} event - 클릭 이벤트
-     */
     static handleBackgroundClick = (event) => {
         if (event.target.classList.contains('modal-overlay')) {
             this.hideModal(this.currentModal);
         }
     }
 
-    /**
-     * 포커스 관리
-     * @param {Element} modal - 모달 요소
-     */
     static manageFocus(modal) {
         const focusableElements = modal.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
         if (focusableElements.length > 0) {
@@ -260,11 +249,6 @@ class ModalUtils {
         }
     }
 
-    /**
-     * 아이콘 클래스 반환
-     * @param {string} type - 모달 타입
-     * @returns {string} 아이콘 클래스
-     */
     static getIconClass(type) {
         const iconClasses = {
             success: 'success-rotate',
@@ -276,11 +260,6 @@ class ModalUtils {
         return iconClasses[type] || 'info';
     }
 
-    /**
-     * 아이콘 심볼 반환
-     * @param {string} type - 모달 타입
-     * @returns {string} 아이콘 심볼
-     */
     static getIconSymbol(type) {
         const iconSymbols = {
             success: '✓',
@@ -349,11 +328,6 @@ class ModalUtils {
 
         showNext(0);
     }
-}
-
-// 전역 함수들 (기존 코드와의 호환성을 위해)
-function closeWarningModal() {
-    ModalUtils.hideModal('warning-modal');
 }
 
 // DOM 로드 완료 시 이벤트 리스너 등록
