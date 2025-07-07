@@ -34,4 +34,14 @@ public class ReservationPageController {
         model.addAttribute("lockerId", lockerId);
         return "reservation/reservationForm";
     }
+
+    @GetMapping("confirm")
+    public String reservationConfirm(@RequestParam("reservationId") Long reservationId,
+                                     @RequestParam("memberId") Long memberId,
+                                     Model model) {
+        //이때 memberId는 dropper 기준으로 요청
+        model.addAttribute("reservationId", reservationId);
+        model.addAttribute("memberId", memberId);
+        return "reservation/reservationConfirm";
+    }
 }

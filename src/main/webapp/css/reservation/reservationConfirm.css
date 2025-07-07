@@ -1,0 +1,264 @@
+body {
+    width: 412px;
+    margin: 0;
+    padding: 0;
+}
+
+.main-wrapper {
+    width: 412px;
+    margin: 0 auto;
+    padding: 15px 20px;
+}
+
+/* 예약 상태 스타일 */
+.status-pending {
+    background-color: #fef3c7;
+    color: #d97706;
+}
+
+.status-confirmed {
+    background-color: #d1fae5;
+    color: #059669;
+}
+
+.status-cancelled {
+    background-color: #fecaca;
+    color: #dc2626;
+}
+
+.status-completed {
+    background-color: #e0e7ff;
+    color: #4338ca;
+}
+
+/* 버튼 스타일 */
+.btn-approve {
+    background-color: #4561DB;
+    transition: background-color 0.2s;
+}
+
+.btn-approve:hover {
+    background-color: #3b52d1;
+}
+
+.btn-reject {
+    background-color: #ffffff;
+    border: 1px solid #e5e7eb;
+    color: #374151;
+    transition: all 0.2s;
+}
+
+.btn-reject:hover {
+    background-color: #f9fafb;
+    border-color: #d1d5db;
+}
+
+/* 카드 스타일 */
+.info-card {
+    background-color: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 16px;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+.info-card h3 {
+    font-weight: 600;
+    color: #111827;
+    margin-bottom: 12px;
+    font-size: 16px;
+}
+
+/* 짐 정보 스타일 */
+.jim-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid #f3f4f6;
+}
+
+.jim-item:last-child {
+    border-bottom: none;
+}
+
+.jim-item-name {
+    font-weight: 500;
+    color: #374151;
+}
+
+.jim-item-count {
+    color: #6b7280;
+    font-size: 14px;
+}
+
+.jim-item-price {
+    font-weight: 600;
+    color: #111827;
+}
+
+/* 가격 정보 스타일 */
+.price-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 4px 0;
+    color: #6b7280;
+    font-size: 14px;
+}
+
+.price-total {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    font-weight: 600;
+    color: #111827;
+    font-size: 18px;
+    border-top: 1px solid #e5e7eb;
+    margin-top: 8px;
+    padding-top: 16px;
+}
+
+/* 로딩 스타일 */
+.loading-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 48px 0;
+}
+
+.loading-spinner {
+    width: 32px;
+    height: 32px;
+    border: 2px solid #e5e7eb;
+    border-top: 2px solid #4561DB;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* 알림 카드 스타일 */
+.alert-card {
+    background-color: #fef3c7;
+    border: 1px solid #fbbf24;
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 16px;
+}
+
+.alert-card .alert-icon {
+    width: 20px;
+    height: 20px;
+    color: #d97706;
+}
+
+.alert-card .alert-title {
+    font-weight: 500;
+    color: #92400e;
+}
+
+.alert-card .alert-message {
+    color: #b45309;
+    font-size: 14px;
+}
+
+/* 반응형 버튼 */
+.action-buttons {
+    display: flex;
+    gap: 12px;
+    padding: 16px;
+    background-color: #ffffff;
+    border-top: 1px solid #e5e7eb;
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: 412px;
+    z-index: 1000;
+}
+
+.action-buttons button {
+    flex: 1;
+    padding: 16px;
+    border-radius: 8px;
+    font-weight: 500;
+    font-size: 16px;
+    transition: all 0.2s ease;
+    border: none;
+    cursor: pointer;
+}
+
+/* 비활성화된 버튼 스타일 */
+.btn-disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.btn-disabled:hover {
+    opacity: 0.5;
+}
+
+/* 성공/실패 상태 표시 */
+.status-success {
+    background-color: #d1fae5;
+    color: #059669;
+    border: 1px solid #a7f3d0;
+}
+
+.status-error {
+    background-color: #fecaca;
+    color: #dc2626;
+    border: 1px solid #fca5a5;
+}
+
+/* 상세 정보 섹션 간격 */
+.detail-section {
+    margin-bottom: 24px;
+}
+
+.detail-section:last-child {
+    margin-bottom: 0;
+}
+
+/* 아이콘과 텍스트 정렬 */
+.icon-text {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.icon-text svg {
+    width: 16px;
+    height: 16px;
+    color: #6b7280;
+    flex-shrink: 0;
+}
+
+/* 예약 정보 그리드 */
+.reservation-info-grid {
+    display: grid;
+    gap: 12px;
+}
+
+.reservation-info-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.reservation-info-label {
+    font-size: 14px;
+    color: #6b7280;
+}
+
+.reservation-info-value {
+    font-weight: 500;
+    color: #111827;
+}
