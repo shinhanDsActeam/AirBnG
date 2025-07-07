@@ -13,7 +13,7 @@ document.querySelector('.login-form').addEventListener('submit', function(e) {
     const password = document.getElementById('password').value.trim();
 
     if (!email || !password) {
-        showErrorModal();
+        ModalUtils.showError('이메일 또는 비밀번호가 올바르지 않습니다.', '로그인 실패');
         return;
     }
 
@@ -34,14 +34,11 @@ document.querySelector('.login-form').addEventListener('submit', function(e) {
             if (response.status === 429 || data.code === 8003) {
                 startCooldown(30); // 30초동안 로그인 시도 제한
                 ModalUtils.showWarning('잠시 후 다시 시도해주세요.','요청이 너무 많습니다');
-                return;
-            }
-
-            if (data.code === 2000) {
+            } else if (data.code === 2000) {
                 ModalUtils.showSuccess(' ', '로그인 성공',
                     ()=>{ window.location.href = `${contextPath}/page/home` });
             } else {
-                showErrorModal();
+                ModalUtils.showError('이메일 또는 비밀번호가 올바르지 않습니다.', '로그인 실패');
             }
         })
         .catch(err => {
