@@ -64,15 +64,20 @@ document.addEventListener('DOMContentLoaded', function () {
             .then(data => {
                 if (data.code === 4000) {
                     ModalUtils.showSuccess("예약이 완료되었습니다!", "", () => {
-                        // TODO : redirect 경로 변경 필요
-                        // history.back();
                         let reservationId = data.result.reservationId || 0;
+                        if(reservationId === 0){
+                            window.location.href = `${contextPath}/page/home`;
+                        }
                         window.location.href = `${contextPath}/page/reservations?id=${reservationId}`;
                     });
                     // 성공 페이지로 이동 또는 다른 처리
                 } else if(data.code === 3005){
                     ModalUtils.showWarning("보관소가 비활성화 되었습니다.", "이용 불가",() => {
                         history.back();
+                    });
+                } else if(data.code === 9002){
+                    ModalUtils.showError('세션이 존재하지 않습니다.\n다시 로그인해주세요.', "예약 실패", () => {
+                        window.location.href = `${contextPath}/page/login`;
                     });
                 }
                 else {
@@ -122,28 +127,25 @@ function loadLockerData() {
                 calculateTotal();
             }else if (data.code === 3005) { // 비활성화된 보관소
                 ModalUtils.showWarning("보관소가 비활성화 되었습니다.", "이용 불가",() => {
-                    // TODO : redirect 경로 변경 필요
-                    // history.back();
-                    window.location.href = `${contextPath}/page/home`;
+                    history.back();
                 });
             }else if (data.code === 1007) { // uri 오류
                 ModalUtils.showError("서버 연결에 실패했습니다. 다시 시도해주세요.", "서버 오류",() => {
-                    // TODO : redirect 경로 변경 필요
-                    // history.back();
-                    window.location.href = `${contextPath}/page/home`;
+                    history.back();
                 });
             }
             else {
                 ModalUtils.showError("보관소 정보를 불러올 수 없습니다.", "정보 없음", () => {
-                    // history.back();
-                    // TODO : redirect 경로 변경 필요
-                    window.location.href = `${contextPath}/page/home`;
+                    history.back();
                 });
             }
         })
         .catch(err => {
             console.error("API 요청 실패:", err);
             alert("서버 오류가 발생했습니다.");
+            ModalUtils.showError(err, "서버 오류 발생", () => {
+                history.back();
+            });
         });
 }
 

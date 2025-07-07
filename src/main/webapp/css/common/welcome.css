@@ -1,0 +1,66 @@
+/* 웰컴 섹션 (로그인 전) */
+.welcome-section {
+    text-align: center;
+    margin-bottom: 30px;
+    padding: 40px 20px;
+    background: #f8f9ff;
+    border-radius: 20px;
+    border: 1px solid #e8ebff;
+    animation: fadeInUp 0.6s ease-out;
+}
+
+.welcome-title {
+    color: #333;
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+
+.welcome-subtitle {
+    color: #666;
+    font-size: 15px;
+    margin-bottom: 30px;
+    line-height: 1.5;
+}
+
+.auth-buttons {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+}
+
+.login-btn, .signup-btn {
+    flex: 1;
+    max-width: 140px;
+    padding: 16px 24px;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.login-btn {
+    background: #4561DB;
+    color: white;
+}
+
+.login-btn:hover {
+    background: #3651cb;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(69, 97, 219, 0.3);
+}
+
+.signup-btn {
+    background: transparent;
+    color: #4561DB;
+    border: 2px solid #4561DB;
+}
+
+.signup-btn:hover {
+    background: #4561DB;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(69, 97, 219, 0.3);
+}

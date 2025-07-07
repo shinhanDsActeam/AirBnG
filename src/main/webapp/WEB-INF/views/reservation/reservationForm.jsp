@@ -10,10 +10,8 @@
     <link rel="icon" type="image/svg+xml" href="${pageContext.request.contextPath}/images/favicon.svg"/>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="<c:url value='/css/reservation/reservationForm.css' />"/>
-    <link rel="stylesheet" href="<c:url value='/css/common/modal.css' />"/>
 </head>
 <body class="bg-gray-100 mx-auto">
-<script src="<c:url value='/js/common/modal.js' />"></script>
 <script src="<c:url value='/js/reservation/reservationForm.js' />"></script>
 <div class="max-w-md mx-auto bg-white min-h-screen">
     <%-- 전역변수 --%>
@@ -27,17 +25,21 @@
     <c:set var="showBackButton" value="true"/>  <%-- 뒤로가기 있는 버전 --%>
     <%@ include file="../common/header.jsp" %>
 
-
     <div class="main-wrapper">
 
         <form id="reservationForm" method="post" action="/AirBnG/reservations">
             <div class="form space-y-6 pb-24">
                 <!-- 보관소 정보 -->
                 <div class="bg-gray-50 p-4 rounded-lg">
-                    <h2 id="lockerName" class="font-semibold text-gray-900 mb-1">
-                    </h2>
-                    <p id="lockerAddress" class="text-sm text-gray-600">
-                    </p>
+                    <div class="flex items-center gap-4">
+                        <svg class="w-12 h-12 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"></path>
+                        </svg>
+                        <div class="flex-1">
+                            <h2 id="lockerName" class="font-semibold text-gray-900 mb-1"></h2>
+                            <p id="lockerAddress" class="text-sm text-gray-600"></p>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- 보관 날짜 -->
@@ -109,13 +111,17 @@
             <input type="hidden" name="lockerId" id="lockerId" value=""/>
         </form>
 
-        <div class="main-wrapper fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4 z-50">
-            <button type="submit" form="reservationForm"
-                    class="submit-btn w-full text-white py-4 rounded-lg font-medium text-lg transition-colors">
-                예약하기
-            </button>
-        </div>
     </div>
+
+    <div class="bottom-buttons">
+        <button type="submit" form="reservationForm"
+                class="submit-btn">
+            예약하기
+        </button>
+    </div>
+
+    <div class="spacer"></div>
+    <div class="spacer"></div>
 
     <%@ include file="../common/modal.jsp" %>
 
