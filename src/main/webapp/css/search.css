@@ -105,3 +105,30 @@ html, body {
 }
 
 
+.no-result-wrapper {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: #999;
+}
+
+.no-result-icon {
+    width: 40px;
+    height: 40px;
+    margin-bottom: 1rem;
+    opacity: 0.5;
+}
+
+.no-result-main {
+    font-size: 17px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 25px;
+}
+
+.no-result-sub {
+    color: #B5B5B5;
+    font-size: 15px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 25px;
+}

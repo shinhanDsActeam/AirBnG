@@ -107,7 +107,7 @@ html, body {
     display: flex;
     width: 91px;
     height: 28px;
-    padding: 5px 10px;
+    padding: 5px;
     justify-content: center;
     align-items: center;
     gap: 3px;
@@ -193,6 +193,10 @@ html, body {
     background-color: rgba(69, 97, 219, 0.15);
 }
 
+.storage-item:hover {
+    background-color: rgba(69, 97, 219, 0.15);
+    cursor: pointer
+}
 
 .storage-item.selected .storage-button {
     background-color: #4561DB;
@@ -200,6 +204,7 @@ html, body {
 }
 
 .storage-item.disabled {
+    cursor: not-allowed;
     opacity: 0.3;
 }
 
@@ -254,4 +259,19 @@ html, body {
 .disabled .storage-button {
     background: #ccc;
     cursor: not-allowed;
+}
+
+
+.no-result-wrapper {
+    padding: 40px 20px;
+    text-align: center;
+    color: #999;
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.search-warning {
+    width: 50px;
+    height: 50px;
+    margin: 10px;
 }
