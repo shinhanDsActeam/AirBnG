@@ -457,6 +457,11 @@
             <result property="password" column="keeper_password"/>
             <result property="status" column="keeper_status"/>
         </association>
+
+        <association property="dropper" javaType="com.airbng.domain.Member">
+            <result property="memberId" column="dropper_id"/>
+            <result property="nickname" column="dropper_nickname"/>
+        </association>
     </resultMap>
 
     <select id="findReservationWithKeeperById" parameterType="Long" resultMap="ReservationWithKeeperMap">
@@ -465,6 +470,9 @@
             r.state,
             r.start_time,
             r.end_time,
+
+            d.member_id AS dropper_id,
+            d.nickname AS dropper_nickname,
 
             k.member_id AS keeper_id,
             k.email AS keeper_email,
@@ -475,7 +483,8 @@
             k.status AS keeper_status
 
         FROM reservation r
-                 JOIN member k ON r.keeper_id = k.member_id
+            JOIN member k ON r.keeper_id = k.member_id
+            JOIN member d ON r.dropper_id = d.member_id
         WHERE r.reservation_id = #{reservationId}
     </select>
 

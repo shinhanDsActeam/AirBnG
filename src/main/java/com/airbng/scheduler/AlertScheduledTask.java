@@ -123,7 +123,7 @@ public class AlertScheduledTask {
         }
     }
 
-    private void sendToOne(Long id, Long resId, String name, String role, NotificationType type, String message) {
+    public void sendToOne(Long id, Long resId, String name, String role, NotificationType type, String message) {
         if (!sseService.hasConnected(id)) return;
         if (reservationAlarmCacheService.isSent(resId, id, type)) {
             log.debug("🚫 이미 Redis에 발송됨 표시가 있어 재발송 안함 (reservationId={}, memberId={}, type={})", resId, id, type);

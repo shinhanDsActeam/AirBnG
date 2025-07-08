@@ -17,6 +17,7 @@ import com.airbng.mappers.JimTypeMapper;
 import com.airbng.mappers.LockerMapper;
 import com.airbng.mappers.MemberMapper;
 import com.airbng.mappers.ReservationMapper;
+import com.airbng.scheduler.AlertScheduledTask;
 import com.airbng.util.LocalDateTimeUtils;
 import com.github.benmanes.caffeine.cache.Cache;
 import lombok.RequiredArgsConstructor;
@@ -37,8 +38,7 @@ import static com.airbng.common.response.status.BaseResponseStatus.*;
 @RequiredArgsConstructor
 public class ReservationServiceImpl implements ReservationService{
 
-    private final ReservationAlarmSseService reservationAlarmSseService;
-    private final ReservationAlarmCacheService reservationAlarmCacheService;
+    private final AlertScheduledTask alertScheduledTask;
     private final ReservationMapper reservationMapper;
     private final JimTypeMapper jimTypeMapper;
     private final MemberMapper memberMapper;
@@ -160,8 +160,8 @@ public class ReservationServiceImpl implements ReservationService{
             reservationMapper.updateReservationState(reservationId,
                     ReservationState.CANCELLED);
 
-            // 취소로 변경된 알림 발송
-            sendCancelNotification(reservationId, reservation.getDropper());
+            // 예약 거절 알림 발송
+            alertScheduledTask.sendToOne(reservation.getDropper().getMemberId(), reservationId, reservation.getDropper().getNickname(), "DROPPER", NotificationType.CANCEL_NOTICE, "예약이 취소되었습니다.");
 
             return ReservationCancelResponse.of(reservation,
                     chargeType.discountAmount(), ReservationState.CANCELLED);
@@ -196,15 +196,14 @@ public class ReservationServiceImpl implements ReservationService{
             ReservationState newState;
             if ("yes".equalsIgnoreCase(approve)) {
                 newState = ReservationState.CONFIRMED;
-
-                // 예약 확정 알림 발송
-                sendConfirmNotification(reservationId, reservation.getDropper());
+                // 예약 승인 알림 발송
+                alertScheduledTask.sendToOne(reservation.getDropper().getMemberId(), reservationId, reservation.getDropper().getNickname(), "DROPPER", NotificationType.STATE_CHANGE, "예약이 확정되었습니다.");
 
             } else if ("no".equalsIgnoreCase(approve)) {
                 newState = ReservationState.CANCELLED;
 
-                // 예약 취소 알림 발송
-                sendCancelNotification(reservationId, reservation.getDropper());
+                // 예약 거절 알림 발송
+                alertScheduledTask.sendToOne(reservation.getDropper().getMemberId(), reservationId, reservation.getDropper().getNickname(), "DROPPER", NotificationType.CANCEL_NOTICE, "예약이 취소되었습니다.");
 
             } else {
                 throw new ReservationException(CANNOT_UPDATE_STATE);
@@ -214,58 +213,6 @@ public class ReservationServiceImpl implements ReservationService{
             return ReservationConfirmResponse.of(reservation, newState);
         } finally {
             lock.unlock();
-        }
-    }
-    /**
-     * 예약 확정 알림 전송
-     */
-    private void sendConfirmNotification(Long reservationId, Member dropper) {
-        Long dropperId = dropper.getMemberId();
-
-        if (!reservationAlarmCacheService.isSent(reservationId, dropperId, NotificationType.STATE_CHANGE)) {
-            log.info("!!!!!!!!!!!!!!알림 보내기 시작!!!!!!!!!1: {}", NotificationType.STATE_CHANGE);
-
-            boolean connected = reservationAlarmSseService.hasConnected(dropperId);
-            log.info("!!!!!!!!!!!알림 연결 상태 확인: memberId = {}, connected = {}", dropperId, connected);
-
-            AlarmResponse alarm = AlarmResponse.builder()
-                    .reservationId(reservationId)
-                    .receiverId(dropperId)
-                    .nickName(dropper.getNickname())
-                    .role("DROPPER")
-                    .type(NotificationType.STATE_CHANGE)
-                    .message("예약이 확정되었습니다.")
-                    .sendTime(LocalDateTime.now().toString())
-                    .build();
-
-            if (reservationAlarmSseService.hasConnected(dropperId)) {
-                reservationAlarmSseService.sendMessage(dropperId, alarm);
-            }
-            reservationAlarmCacheService.markSent(reservationId, dropperId, NotificationType.STATE_CHANGE);
-        }
-    }
-
-    /**
-     * 예약 취소 알림 전송
-     */
-    private void sendCancelNotification(Long reservationId, Member dropper) {
-        Long dropperId = dropper.getMemberId();
-
-        if (!reservationAlarmCacheService.isSent(reservationId, dropperId, NotificationType.CANCEL_NOTICE)) {
-            AlarmResponse alarm = AlarmResponse.builder()
-                    .reservationId(reservationId)
-                    .receiverId(dropperId)
-                    .nickName(dropper.getNickname())
-                    .role("DROPPER")
-                    .type(NotificationType.CANCEL_NOTICE)
-                    .message("예약이 취소되었습니다.")
-                    .sendTime(LocalDateTime.now().toString())
-                    .build();
-
-            if (reservationAlarmSseService.hasConnected(dropperId)) {
-                reservationAlarmSseService.sendMessage(dropperId, alarm);
-            }
-            reservationAlarmCacheService.markSent(reservationId, dropperId, NotificationType.CANCEL_NOTICE);
         }
     }
 
