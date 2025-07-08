@@ -10,6 +10,7 @@
   <title>회원가입</title>
   <link rel="stylesheet" href="<c:url value='/css/signup.css' />" />
 </head>
+<%@ include file="common/modal.jsp" %>
 <body>
 <div class="page-container">
   <button class="back-button" onclick="goBack()">
@@ -134,22 +135,10 @@
   </div>
 </div>
 
-<!-- 성공 모달 -->
-<div id="success-modal" class="modal-overlay hidden">
-  <div class="modal">
-    <div class="modal-content">
-      <div class="modal-icon success-rotate">✓</div>
-      <h3 class="modal-title">회원가입 완료!</h3>
-<%--      <p>환영합니다! 로그인 페이지로 이동합니다.</p>--%>
-    </div>
-    <div class="modal-buttons">
-      <button class="modal-btn" onclick="goToLogin()">확인</button>
-    </div>
-  </div>
-</div>
 <script>
   const contextPath = '${pageContext.request.contextPath}';
 </script>
 <script src="<c:url value='/js/signup.js' />"></script>
+
 </body>
 </html>

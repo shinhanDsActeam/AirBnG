@@ -6,10 +6,6 @@ function goBack() {
     window.history.back();
 }
 
-function goToLogin() {
-    window.location.href = `${contextPath}/page/login`;
-}
-
 function handleProfileImageChange(event) {
     const file = event.target.files[0];
     if (file) {
@@ -200,12 +196,6 @@ document.getElementById('password-confirm').addEventListener('input', function (
     }
 });
 
-function showError(message) {
-    const container = document.getElementById('error-container');
-    container.innerHTML = `<div class=\"error-message\">${message}</div>`;
-    container.scrollIntoView({ behavior: 'smooth' });
-}
-
 async function handleSignup(event) {
     event.preventDefault();
 
@@ -218,21 +208,21 @@ async function handleSignup(event) {
     const passwordConfirm = document.getElementById('password-confirm').value;
 
     if (!email || !name || !phone || !nickname || !password || !passwordConfirm) {
-        return showError('모든 필드를 입력해주세요.');
+        return ModalUtils.showError('모든 필드를 입력해주세요.');
     }
     if (!emailChecked) {
-        return showError('이메일 중복 확인을 해주세요.');
+        return ModalUtils.showError('이메일 중복 확인을 해주세요.');
     }
     if (!nicknameChecked) {
-        return showError('닉네임 중복 확인을 해주세요.');
+        return ModalUtils.showError('닉네임 중복 확인을 해주세요.');
     }
     if (password !== passwordConfirm) {
-        return showError('비밀번호가 일치하지 않습니다.');
+        return ModalUtils.showError('비밀번호가 일치하지 않습니다.');
     }
 
     const passwordError = validatePassword(password);
     if (passwordError) {
-        return showError(passwordError);
+        return ModalUtils.showError(passwordError);
     }
 
     const signupButton = document.getElementById('signup-btn');
@@ -266,21 +256,16 @@ async function handleSignup(event) {
         const result = await response.json();
 
         if (response.ok && result.code === 1000) {
-            document.getElementById('success-modal').classList.remove('hidden');
-            // ✅ Enter 키 입력 시 로그인 페이지로 이동
-            document.addEventListener('keydown', function handleEnter(e) {
-                if (e.key === 'Enter') {
-                    goToLogin();
-                    document.removeEventListener('keydown', handleEnter); // 중복 방지
-                }
+            ModalUtils.showSuccess(' ', '회원가입 완료!', () => {
+                window.location.replace(`${contextPath}/page/login?redirect=${redirectUrl}`);
             });
         } else {
-            showError(result.message || '회원가입에 실패했습니다.');
+            ModalUtils.showError(result.message || '회원가입에 실패했습니다.');
         }
 
     } catch (error) {
         console.error('회원가입 오류:', error);
-        showError('서버 오류로 회원가입에 실패했습니다.');
+        ModalUtils.showError('서버 오류로 회원가입에 실패했습니다.');
     } finally {
         signupButton.disabled = false;
         signupButton.textContent = '회원가입';
