@@ -25,8 +25,9 @@ public interface ReservationService {
     ReservationFormResponse getReservationForm(Long lockerId);
 
     // 예약 등록
-    BaseResponseStatus insertReservation(ReservationInsertRequest request);
+    ReservationInsertResponse insertReservation(ReservationInsertRequest request);
 
     //예약 상새
     ReservationDetailResponse findReservationDetail(Long reservationId, Long memberId);
+    void deleteReservationById(Long reservationId);
 }

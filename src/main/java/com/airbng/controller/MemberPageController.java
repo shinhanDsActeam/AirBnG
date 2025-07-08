@@ -21,4 +21,9 @@ public class MemberPageController {
     public String signup() {
         return "signup";
     }
+
+    @GetMapping("/myInfo")
+    public String myInfo() {
+        return "myInfo";
+    }
 }

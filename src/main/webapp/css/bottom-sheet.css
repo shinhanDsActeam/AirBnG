@@ -56,9 +56,6 @@ html, body {
     text-align: center;
     cursor: grab;
     user-select: none;
-    background: white;
-    border-top-left-radius: 20px;
-    border-top-right-radius: 20px;
     height: 18px;
     display: flex;
     justify-content: center;

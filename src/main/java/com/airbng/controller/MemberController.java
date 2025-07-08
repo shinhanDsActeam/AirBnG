@@ -55,7 +55,7 @@ public class MemberController {
 
     @GetMapping("/my-page/{memberId}")
     public BaseResponse<MemberMyPageResponse> findUserById(
-            @RequestParam @NotNull @Min(1) Long memberId
+            @PathVariable("memberId") @NotNull @Min(1) Long memberId
     ) {
         MemberMyPageRequest request = MemberMyPageRequest.builder()
                 .memberId(memberId)
@@ -68,12 +68,15 @@ public class MemberController {
     @PostMapping("/my-page/update")
     public BaseResponse<MemberMyPageResponse> updateUserById(
             @Valid @RequestPart ("memberUpdateRequest") MemberUpdateRequest memberUpdateRequest,
-            @RequestPart(value = "profileImage", required = false) MultipartFile profileImage) {
+            @RequestPart(value = "profileImage", required = false) MultipartFile profileImage,
+            HttpSession session) {
 
         log.info("회원 정보 수정 요청: {}", memberUpdateRequest);
         log.info("프로필 이미지: {}", profileImage != null ? profileImage.getOriginalFilename() : "없음");
 
         MemberMyPageResponse response = memberService.updateUserById(memberUpdateRequest, profileImage);
+        session.setAttribute("memberId", response.getMemberId());
+        session.setAttribute("nickname", response.getNickname());
         return new BaseResponse<>(response);
     }
 

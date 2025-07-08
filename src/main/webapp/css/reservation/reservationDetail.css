@@ -1,0 +1,225 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', sans-serif;
+}
+
+body {
+    background-color: #f5f5f5;
+    color: #111827;
+    max-width: 412px;
+    margin: 0 auto;
+    padding-bottom: 80px;
+}
+
+.container {
+    padding: 15px;
+    max-width: 412px;
+    margin: 0 auto;
+    margin-top: calc(var(--header-height) + 15px);
+/* 헤더 높이 */
+}
+
+.card {
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    margin-bottom: 15px;
+    overflow: hidden;
+}
+
+.card-content {
+    padding: 24px;
+}
+
+.reservation-status {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 15px;
+}
+
+.status-confirmed {
+    background: #dcfce7;
+    color: #28a745;
+}
+
+.status-cancelled {
+    background: #fee2e2;
+    color: #dc3545;
+}
+
+.status-completed {
+    background: #dbeafe;
+    color: #6c757d;
+}
+
+.reservation-info {
+    border-bottom: 1px solid #eee;
+    padding-bottom: 15px;
+    margin-bottom: 15px;
+}
+
+.date-time {
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.date-main {
+    font-weight: 600;
+    font-size: 16px;
+    color: #333;
+}
+
+.time-range {
+    font-size: 13px;
+    color: #666;
+}
+
+.section-title {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 15px;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 15px 0;
+}
+
+.user-details {
+    display: flex;
+    align-items: center;
+}
+
+.user-avatar {
+    width: 40px;
+    height: 40px;
+    background: #f8f9fa;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 15px;
+    font-size: 18px;
+    color: #6b7280;
+}
+
+.user-text {
+    display: flex;
+    flex-direction: column;
+}
+
+.user-name {
+    font-weight: 600;
+    font-size: 15px;
+    color: #333;
+}
+
+.user-role {
+    font-size: 13px;
+    color: #666;
+    margin-top: 2px;
+}
+
+.jim-list {
+    space-y: 8px;
+}
+
+.jim-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid #f8f9fa;
+}
+
+.jim-item:last-child {
+    border-bottom: none;
+}
+
+.jim-name {
+    font-weight: 500;
+    font-size: 15px;
+    color: #333;
+}
+
+.jim-count {
+    background: #f8f9fa;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #666;
+}
+
+.loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 200px;
+}
+
+.spinner {
+    border: 2px solid #f8f9fa;
+    border-top: 2px solid #4561DB;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    animation: spin 1s linear infinite;
+    margin-right: 8px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.error {
+    background: #fee2e2;
+    color: #dc2626;
+    padding: 15px;
+    border-radius: 10px;
+    text-align: center;
+}
+
+.bottom-buttons {
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    max-width: 412px;
+    width: 100%;
+    background: white;
+    border-top: 1px solid #eee;
+    padding: 15px;
+    display: flex;
+    gap: 8px;
+    box-sizing: border-box;
+}
+
+.btn {
+    flex: 1;
+    padding: 15px 20px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 500;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+    height: 50px;
+}
+
+.spacer {
+    height: 80px;
+}
+
+.hidden {
+    display: none;
+}

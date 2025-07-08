@@ -49,7 +49,7 @@ public class LoginRateLimitInterceptor implements HandlerInterceptor {
         System.out.println("Redis 로그인 시도 횟수: " + count + " (key: " + key + ")");
 
         if (count != null && count == 1) {
-            redisTemplate.expire(key, 60, TimeUnit.SECONDS);
+            redisTemplate.expire(key, 30, TimeUnit.SECONDS);
         }
 
         if (count != null && count > 5) {

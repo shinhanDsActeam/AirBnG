@@ -16,8 +16,6 @@ import java.util.List;
 @RequestMapping("/page")
 public class HomePageController {
 
-    private final LockerMapper lockerMapper;
-
     @GetMapping("/home")
     public String home() {
         return "home";
