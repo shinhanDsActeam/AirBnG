@@ -55,25 +55,25 @@ public class AlertScheduledTask {
             sendToOne(r.getDropper().getMemberId(), r.getReservationId(), r.getDropper().getNickname(), "DROPPER", NotificationType.REMINDER, "곧 짐을 찾아가셔야 해요.");
         }
 
-        // 3. STATE_CHANGE 알림
-        List<ReservationResponse> confirmed = reservationMapper.findStateChangedToConfirmed();
-        //예외처리
-        if (confirmed == null) {
-            throw new ReservationException(NOT_FOUND_STATE_CHANGE_RESERVATION);
-        }
-        for (ReservationResponse r : confirmed) {
-            sendToOne(r.getDropper().getMemberId(), r.getReservationId(), r.getDropper().getNickname(),"DROPPER", NotificationType.STATE_CHANGE, "예약이 확정되었습니다.");
-        }
-
-        // 4. CANCEL_NOTICE 알림
-        List<ReservationResponse> cancelled = reservationMapper.findStateChangedToCancelled();
-        //예외처리
-        if (cancelled == null) {
-            throw new ReservationException(NOT_FOUND_CANCEL_NOTICE_RESERVATION);
-        }
-        for (ReservationResponse r : cancelled) {
-            sendToOne(r.getDropper().getMemberId(), r.getReservationId(), r.getDropper().getNickname(),"DROPPER", NotificationType.CANCEL_NOTICE, "예약이 취소되었습니다.");
-        }
+//        // 3. STATE_CHANGE 알림
+//        List<ReservationResponse> confirmed = reservationMapper.findStateChangedToConfirmed();
+//        //예외처리
+//        if (confirmed == null) {
+//            throw new ReservationException(NOT_FOUND_STATE_CHANGE_RESERVATION);
+//        }
+//        for (ReservationResponse r : confirmed) {
+//            sendToOne(r.getDropper().getMemberId(), r.getReservationId(), r.getDropper().getNickname(),"DROPPER", NotificationType.STATE_CHANGE, "예약이 확정되었습니다.");
+//        }
+//
+//        // 4. CANCEL_NOTICE 알림
+//        List<ReservationResponse> cancelled = reservationMapper.findStateChangedToCancelled();
+//        //예외처리
+//        if (cancelled == null) {
+//            throw new ReservationException(NOT_FOUND_CANCEL_NOTICE_RESERVATION);
+//        }
+//        for (ReservationResponse r : cancelled) {
+//            sendToOne(r.getDropper().getMemberId(), r.getReservationId(), r.getDropper().getNickname(),"DROPPER", NotificationType.CANCEL_NOTICE, "예약이 취소되었습니다.");
+//        }
     }
 
     private void sendToBoth(ReservationResponse r, NotificationType type, String dropperMsg, String keeperMsg) {

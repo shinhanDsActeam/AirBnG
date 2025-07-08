@@ -80,6 +80,7 @@ public class ReservationAlarmSseServiceImpl implements ReservationAlarmSseServic
                 } catch (IOException e) {
                     log.warn("SSE 메시지 전송 실패: memberId={}, error={}", memberId, e.getMessage());
                     deadEmitters.add(emitter);
+                    emitter.completeWithError(e);
                 }
             }
             // 연결 끊긴 emitter 정리
