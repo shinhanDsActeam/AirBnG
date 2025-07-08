@@ -242,12 +242,9 @@ function showActionButtonsIfNeeded() {
         if (reservationData.state === 'PENDING') {
             bottomButtons.classList.remove('hidden');
             confirmedBtnContainer.classList.add('hidden');
-        } else if (reservationData.state === 'CONFIRMED') {
-            bottomButtons.classList.add('hidden');
-            confirmedBtnContainer.classList.remove('hidden');
         } else {
             bottomButtons.classList.add('hidden');
-            confirmedBtnContainer.classList.add('hidden');
+            confirmedBtnContainer.classList.remove('hidden');
         }
     }
 }
