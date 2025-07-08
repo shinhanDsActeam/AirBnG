@@ -108,7 +108,6 @@
     const contextPath = '${pageContext.request.contextPath}';
 </script>
 
-<script src="<c:url value='/js/common/modal.js'/>"></script>
 <script src="<c:url value='/js/locker.js'/>"></script>
 </body>
 </html>
