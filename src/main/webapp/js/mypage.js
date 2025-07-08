@@ -1,7 +1,6 @@
 // 페이지 로드 시 초기화
 document.addEventListener('DOMContentLoaded', function() {
     initializeMyPage();
-    setupModalEvents(); // 모달 이벤트 설정 추가
 
     // 페이지 로드시 로그인 상태에 따른 UI 표시
     if (sessionData.isLoggedIn) {
@@ -18,7 +17,6 @@ function initializeMyPage() {
     checkLoginStatus(); // 로그인 상태 확인
     animatePageElements();
     setupEventListeners();
-    console.log('마이페이지가 초기화되었습니다.');
 }
 
 // 로그인 상태 확인 (서버 세션 데이터 기반)
@@ -27,10 +25,8 @@ function checkLoginStatus() {
     if (typeof sessionData !== 'undefined' && sessionData.isLoggedIn && sessionData.memberId && sessionData.memberId !== 'null' && sessionData.memberId !== '') {
         showLoggedInSection();
         loadUserInfoFromSession();
-        console.log('로그인 상태 확인됨:', sessionData.nickname);
     } else {
         showLoggedOutSection();
-        console.log('로그아웃 상태');
     }
 }
 
