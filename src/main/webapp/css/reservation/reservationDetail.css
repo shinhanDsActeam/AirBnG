@@ -1,179 +1,172 @@
-* {
+body {
+    width: 412px;
     margin: 0;
     padding: 0;
-    box-sizing: border-box;
-    font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', sans-serif;
 }
 
-body {
-    background-color: #f5f5f5;
-    color: #111827;
-    max-width: 412px;
+.main-wrapper {
+    width: 412px;
     margin: 0 auto;
-    padding-bottom: 80px;
+    padding: 45px 20px 15px 20px;
 }
 
-.container {
-    padding: 15px;
-    max-width: 412px;
-    margin: 0 auto;
-    margin-top: calc(var(--header-height) + 15px);
-/* 헤더 높이 */
-}
-
-.card {
-    background: white;
-    border-radius: 10px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    margin-bottom: 15px;
-    overflow: hidden;
-}
-
-.card-content {
-    padding: 24px;
-}
-
-.reservation-status {
-    display: inline-block;
-    padding: 4px 12px;
-    border-radius: 20px;
-    font-size: 13px;
-    font-weight: 600;
-    margin-bottom: 15px;
+/* 예약 상태 스타일 */
+.status-pending {
+    background-color: #fef3c7;
+    color: #d97706;
 }
 
 .status-confirmed {
-    background: #dcfce7;
-    color: #28a745;
+    background-color: #d1fae5;
+    color: #059669;
 }
 
 .status-cancelled {
-    background: #fee2e2;
-    color: #dc3545;
+    background-color: #fecaca;
+    color: #dc2626;
 }
 
 .status-completed {
-    background: #dbeafe;
-    color: #6c757d;
+    background-color: #e0e7ff;
+    color: #4338ca;
 }
 
-.reservation-info {
-    border-bottom: 1px solid #eee;
-    padding-bottom: 15px;
-    margin-bottom: 15px;
+/* 버튼 스타일 */
+.btn-approve {
+    background-color: #4561DB;
+    transition: background-color 0.2s;
 }
 
-.date-time {
-    display: flex;
-    align-items: center;
-    margin-bottom: 8px;
+.btn-approve:hover {
+    background-color: #3b52d1;
 }
 
-.date-main {
+.btn-reject {
+    background-color: #ffffff;
+    border: 1px solid #e5e7eb;
+    color: #374151;
+    transition: all 0.2s;
+}
+
+.btn-reject:hover {
+    background-color: #f9fafb;
+    border-color: #d1d5db;
+}
+
+/* 취소 버튼 색상 수정 */
+.btn-cancel {
+    background-color: #4561DB !important;
+    border-color: #4561DB !important;
+}
+
+.btn-cancel:hover {
+    background-color: #3A4FCF !important;
+    border-color: #3A4FCF !important;
+}
+
+/* 취소완료 상태 버튼 스타일 */
+.btn-cancelled-complete {
+    background-color: #EBEBEB !important;
+    border-color: #EBEBEB !important;
+    color: #6B7280 !important;
+    cursor: not-allowed !important;
+    transition: none !important;
+}
+
+.btn-cancelled-complete:hover {
+    background-color: #EBEBEB !important;
+    border-color: #EBEBEB !important;
+    color: #6B7280 !important;
+}
+
+.btn-cancelled-complete:focus {
+    outline: none;
+    box-shadow: none;
+}
+
+/* 카드 스타일 */
+.info-card {
+    background-color: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 16px;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+.info-card h3 {
     font-weight: 600;
+    color: #111827;
+    margin-bottom: 12px;
     font-size: 16px;
-    color: #333;
 }
 
-.time-range {
-    font-size: 13px;
-    color: #666;
-}
-
-.section-title {
-    font-size: 16px;
-    font-weight: 600;
-    margin-bottom: 15px;
-}
-
-.user-info {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 15px 0;
-}
-
-.user-details {
-    display: flex;
-    align-items: center;
-}
-
-.user-avatar {
-    width: 40px;
-    height: 40px;
-    background: #f8f9fa;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-right: 15px;
-    font-size: 18px;
-    color: #6b7280;
-}
-
-.user-text {
-    display: flex;
-    flex-direction: column;
-}
-
-.user-name {
-    font-weight: 600;
-    font-size: 15px;
-    color: #333;
-}
-
-.user-role {
-    font-size: 13px;
-    color: #666;
-    margin-top: 2px;
-}
-
-.jim-list {
-    space-y: 8px;
-}
-
+/* 짐 정보 스타일 */
 .jim-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 8px 0;
-    border-bottom: 1px solid #f8f9fa;
+    border-bottom: 1px solid #f3f4f6;
 }
 
 .jim-item:last-child {
     border-bottom: none;
 }
 
-.jim-name {
+.jim-item-name {
     font-weight: 500;
-    font-size: 15px;
-    color: #333;
+    color: #374151;
 }
 
-.jim-count {
-    background: #f8f9fa;
-    padding: 4px 8px;
-    border-radius: 12px;
-    font-size: 13px;
-    font-weight: 500;
-    color: #666;
+.jim-item-count {
+    color: #6b7280;
+    font-size: 14px;
 }
 
-.loading {
+.jim-item-price {
+    font-weight: 600;
+    color: #111827;
+}
+
+/* 가격 정보 스타일 */
+.price-item {
     display: flex;
+    justify-content: space-between;
     align-items: center;
-    justify-content: center;
-    height: 200px;
+    padding: 4px 0;
+    color: #6b7280;
+    font-size: 14px;
 }
 
-.spinner {
-    border: 2px solid #f8f9fa;
+.price-total {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    font-weight: 600;
+    color: #111827;
+    font-size: 18px;
+    border-top: 1px solid #e5e7eb;
+    margin-top: 8px;
+    padding-top: 16px;
+}
+
+/* 로딩 스타일 */
+.loading-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 48px 0;
+}
+
+.loading-spinner {
+    width: 32px;
+    height: 32px;
+    border: 2px solid #e5e7eb;
     border-top: 2px solid #4561DB;
     border-radius: 50%;
-    width: 20px;
-    height: 20px;
     animation: spin 1s linear infinite;
-    margin-right: 8px;
 }
 
 @keyframes spin {
@@ -181,45 +174,122 @@ body {
     100% { transform: rotate(360deg); }
 }
 
-.error {
-    background: #fee2e2;
-    color: #dc2626;
-    padding: 15px;
-    border-radius: 10px;
-    text-align: center;
+/* 알림 카드 스타일 */
+.alert-card {
+    background-color: #fef3c7;
+    border: 1px solid #fbbf24;
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 16px;
 }
 
-.bottom-buttons {
+.alert-card .alert-icon {
+    width: 20px;
+    height: 20px;
+    color: #d97706;
+}
+
+.alert-card .alert-title {
+    font-weight: 500;
+    color: #92400e;
+}
+
+.alert-card .alert-message {
+    color: #b45309;
+    font-size: 14px;
+}
+
+/* 반응형 버튼 */
+.action-buttons {
+    display: flex;
+    gap: 12px;
+    padding: 16px;
+    background-color: #ffffff;
+    border-top: 1px solid #e5e7eb;
     position: fixed;
     bottom: 0;
     left: 50%;
     transform: translateX(-50%);
-    max-width: 412px;
     width: 100%;
-    background: white;
-    border-top: 1px solid #eee;
-    padding: 15px;
-    display: flex;
-    gap: 8px;
-    box-sizing: border-box;
+    max-width: 412px;
+    z-index: 1000;
 }
 
-.btn {
+.action-buttons button {
     flex: 1;
-    padding: 15px 20px;
+    padding: 16px;
     border-radius: 8px;
-    font-size: 16px;
     font-weight: 500;
+    font-size: 16px;
+    transition: all 0.2s ease;
     border: none;
     cursor: pointer;
-    transition: all 0.2s;
-    height: 50px;
 }
 
-.spacer {
-    height: 80px;
+/* 비활성화된 버튼 스타일 */
+.btn-disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
 }
 
-.hidden {
-    display: none;
+.btn-disabled:hover {
+    opacity: 0.5;
+}
+
+/* 성공/실패 상태 표시 */
+.status-success {
+    background-color: #d1fae5;
+    color: #059669;
+    border: 1px solid #a7f3d0;
+}
+
+.status-error {
+    background-color: #fecaca;
+    color: #dc2626;
+    border: 1px solid #fca5a5;
+}
+
+/* 상세 정보 섹션 간격 */
+.detail-section {
+    margin-bottom: 24px;
+}
+
+.detail-section:last-child {
+    margin-bottom: 0;
+}
+
+/* 아이콘과 텍스트 정렬 */
+.icon-text {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.icon-text svg {
+    width: 16px;
+    height: 16px;
+    color: #6b7280;
+    flex-shrink: 0;
+}
+
+/* 예약 정보 그리드 */
+.reservation-info-grid {
+    display: grid;
+    gap: 12px;
+}
+
+.reservation-info-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.reservation-info-label {
+    font-size: 14px;
+    color: #6b7280;
+}
+
+.reservation-info-value {
+    font-weight: 500;
+    color: #111827;
 }
