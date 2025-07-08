@@ -151,12 +151,15 @@ function initLockerRegister() {
     document.getElementById('locationInputWrapper').addEventListener('click', () => {
         new daum.Postcode({
             oncomplete: function(data) {
-                const addr = data.roadAddress || data.jibunAddress;
-                document.getElementById('location').value = addr;
+                const addrKo = data.roadAddress || data.jibunAddress;
+                const addrEn = data.roadAddressEnglish || data.jibunAddressEnglish;
+
+                document.getElementById('location').value = addrKo;
+                document.getElementById('locationEnglish').value = addrEn;
 
                 // 주소를 좌표로 변환
                 const geocoder = new kakao.maps.services.Geocoder();
-                geocoder.addressSearch(addr, function(result, status) {
+                geocoder.addressSearch(addrKo, function(result, status) {
                     if (status === kakao.maps.services.Status.OK) {
                         document.getElementById('latitude').value = result[0].y;
                         document.getElementById('longitude').value = result[0].x;
@@ -332,7 +335,7 @@ document.querySelector('.submit-btn').addEventListener('click', async () => {
         isAvailable: 'YES',
         keeperId: Number(memberId),
         address: document.querySelector('#location').value,
-        addressEnglish: '',
+        addressEnglish: document.querySelector('#locationEnglish').value,
         addressDetail: document.querySelector('#detailAddress').value,
         latitude: parseFloat(document.getElementById('latitude').value),
         longitude: parseFloat(document.getElementById('longitude').value),
