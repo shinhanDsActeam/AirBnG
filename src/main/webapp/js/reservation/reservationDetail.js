@@ -128,7 +128,6 @@ function displayPriceDetails(jimTypes) {
     if (!jimTypes || jimTypes.length === 0) return;
 
     let totalAmount = 0;
-    const serviceFee = 400;
 
     // 시간 계산 (공통)
     const startTime = new Date(reservationData.startTime);
@@ -138,22 +137,27 @@ function displayPriceDetails(jimTypes) {
 
     jimTypes.forEach(item => {
         const { typeName, count, pricePerHour } = item;
+        if(count > 0 && pricePerHour > 0) {
+            // 단일 짐 총액 계산
+            const itemTotal = pricePerHour * count * hours;
+            totalAmount += itemTotal;
 
-        // 단일 짐 총액 계산
-        const itemTotal = pricePerHour * count * hours;
-        totalAmount += itemTotal;
-
-        const priceItem = document.createElement('div');
-        priceItem.className = 'flex justify-between text-sm text-gray-600';
-        priceItem.innerHTML = `
-            <span>${typeName} × ${count}개 × ${formatHours(hours)}</span>
-            <span>${Math.round(itemTotal).toLocaleString()}원</span>
-        `;
-        container.appendChild(priceItem);
+            const priceItem = document.createElement('div');
+            priceItem.className = 'flex justify-between text-sm text-gray-600';
+            priceItem.innerHTML = `
+                <span>${typeName} × ${count}개 × ${formatHours(hours)}</span>
+                <span>${Math.floor(itemTotal).toLocaleString()}원</span>
+            `;
+            container.appendChild(priceItem);
+        }
     });
 
+    // 서비스 수수료
+    const serviceFee = Math.floor(totalAmount * 0.05);
+
     // 총 결제 금액 (서비스 수수료 포함)
-    const finalTotal = Math.round(totalAmount + serviceFee);
+    const finalTotal = Math.floor(totalAmount + serviceFee);
+    document.getElementById('serviceFee').textContent = serviceFee.toLocaleString() + '원';
     document.getElementById('totalPrice').textContent = finalTotal.toLocaleString() + '원';
 }
 

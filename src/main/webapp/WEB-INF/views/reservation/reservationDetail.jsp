@@ -127,8 +127,8 @@
                             <!-- 가격 상세 정보가 여기에 동적으로 추가됩니다 -->
                         </div>
                         <div class="flex justify-between text-sm text-gray-600">
-                            <span>서비스 수수료</span>
-                            <span id="serviceFee">400원</span>
+                            <span>서비스 수수료 (5%)</span>
+                            <span id="serviceFee">0원</span>
                         </div>
                         <div class="border-t border-gray-300 pt-3">
                             <div class="flex justify-between font-semibold text-lg">

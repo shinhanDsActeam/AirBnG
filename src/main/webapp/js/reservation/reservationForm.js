@@ -549,19 +549,33 @@ function calculateTotal() {
             const itemDiv = document.createElement('div');
             itemDiv.className = 'flex justify-between text-sm';
             itemDiv.innerHTML = `
-                <span>${jimType.typeName} × ${count}개 × ${totalHours}시간</span>
+                <span>${jimType.typeName} × ${count}개 × ${formatHours(totalHours)}</span>
                 <span>${itemPrice.toLocaleString()}원</span>
             `;
             itemsList.appendChild(itemDiv);
         }
     });
 
-    const serviceFee = totalItemPrice * 0.05;
-    const totalPrice = totalItemPrice + serviceFee;
+    const serviceFee = Math.floor(totalItemPrice * 0.05);
+    const totalPrice = Math.floor(totalItemPrice + serviceFee);
 
     document.getElementById('serviceFee').textContent = serviceFee.toLocaleString() + '원';
     document.getElementById('totalPrice').textContent = totalPrice.toLocaleString() + '원';
 }
+
+// 시간 포맷팅 함수
+function formatHours(hours) {
+    if (hours < 1) {
+        return `${Math.round(hours * 60)}분`;
+    } else if (hours === parseInt(hours)) {
+        return `${hours}시간`;
+    } else {
+        const wholeHours = Math.floor(hours);
+        const minutes = Math.round((hours - wholeHours) * 60);
+        return `${wholeHours}시간${minutes}분`;
+    }
+}
+
 // 짐 타입 박스들에 하이라이팅 효과 적용
 function highlightJimSection() {
     const jimTitle = document.querySelector('#jimSection h3'); // h3로 변경
