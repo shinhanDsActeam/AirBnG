@@ -18,7 +18,7 @@
     display: grid;
     grid-template-columns: auto 1fr auto;
     align-items: center;
-    padding: 10px 16px 0 16px;
+    padding: 10px 16px 10px 16px;
     z-index: 1000;
     box-sizing: border-box;
 }
@@ -29,9 +29,18 @@
     transition: opacity 0.2s ease;
 }
 
-.back-icon:hover {
+.menu-icon {
+    cursor: pointer;
+    width: var(--icon-size);
+    height: var(--icon-size);
+    transition: opacity 0.2s ease;
+}
+
+.back-icon:hover, .menu-icon:hover {
     opacity: 0.7;
 }
+
+
 
 .header-title {
     font-weight: 600;

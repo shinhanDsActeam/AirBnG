@@ -14,5 +14,22 @@
     </c:choose>
 
     <div class="header-title">${headerTitle}</div>
-    <div class="header-spacer"></div>
+
+    <c:choose>
+        <c:when test="${not empty showMenuButton and showMenuButton}">
+            <c:choose>
+                <c:when test="${not empty menuUrl}">
+                    <img class="menu-icon" src="${pageContext.request.contextPath}/images/menu.svg" alt="메뉴"
+                         onclick="location.href='${menuUrl}'">
+                </c:when>
+                <c:otherwise>
+                    <img class="menu-icon" src="${pageContext.request.contextPath}/images/menu.svg" alt="메뉴"
+                         onclick="window.location.href='${pageContext.request.contextPath}/page/home'">
+                </c:otherwise>
+            </c:choose>
+        </c:when>
+        <c:otherwise>
+            <div class="header-spacer"></div>
+        </c:otherwise>
+    </c:choose>
 </div>
