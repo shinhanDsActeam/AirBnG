@@ -1,28 +1,28 @@
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     setJimTypeNameFromURL();
     initializeSearchFilter();
 });
 
 function performSearch() {
-     const visibleAddressInput = document.querySelector('.searchFilter-input');
-     const address = visibleAddressInput?.value.trim();
-     //const date = document.getElementById('searchDate')?.value || '';
-     const jimTypeId = document.getElementById('searchJimType')?.value || '';
+    const visibleAddressInput = document.querySelector('.searchFilter-input');
+    const address = visibleAddressInput?.value.trim();
+    //const date = document.getElementById('searchDate')?.value || '';
+    const jimTypeId = document.getElementById('searchJimType')?.value || '';
 
-     if (!address) {
-         alert('주소를 입력해주세요');
-         return;
-     }
+    if (!address) {
+        alert('주소를 입력해주세요');
+        return;
+    }
 
-     // 페이지 이동 시 URL에 파라미터 포함
-     const params = new URLSearchParams({
-         address,
-         //reservationDate: date,
-         jimTypeId
-     });
+    // 페이지 이동 시 URL에 파라미터 포함
+    const params = new URLSearchParams({
+        address,
+        //reservationDate: date,
+        jimTypeId
+    });
 
-     window.location.href = `/AirBnG/page/lockerSearchDetails?${params.toString()}`;
- }
+    window.location.href = `/AirBnG/page/lockerSearchDetails?${params.toString()}`;
+}
 
 // 초기화 함수
 function initializeSearchFilter() {
@@ -35,32 +35,32 @@ function initializeSearchFilter() {
     }
 
     // ✅ (2) 화면에 날짜 표시용 <span id="selected-date">에도 표시
-        const selectedDateSpan = document.getElementById('selected-date');
-        if (selectedDateSpan) {
-            const weekdays = ['일', '월', '화', '수', '목', '금', '토'];
-            const year = today.getFullYear();
-            const month = String(today.getMonth() + 1).padStart(2, '0');
-            const date = String(today.getDate()).padStart(2, '0');
-            const day = weekdays[today.getDay()];
-            selectedDateSpan.textContent = `${year}.${month}.${date} (${day})`;
-        }
+    const selectedDateSpan = document.getElementById('selected-date');
+    if (selectedDateSpan) {
+        const weekdays = ['일', '월', '화', '수', '목', '금', '토'];
+        const year = today.getFullYear();
+        const month = String(today.getMonth() + 1).padStart(2, '0');
+        const date = String(today.getDate()).padStart(2, '0');
+        const day = weekdays[today.getDay()];
+        selectedDateSpan.textContent = `${year}.${month}.${date} (${day})`;
+    }
 
-        // ✅ (3) 시간 설정
-        const selectedTimeSpan = document.getElementById('selected-time');
-        if (selectedTimeSpan) {
-            const startHour = today.getHours();
-            const endHour = startHour + 2;
+    // ✅ (3) 시간 설정
+    const selectedTimeSpan = document.getElementById('selected-time');
+    if (selectedTimeSpan) {
+        const startHour = today.getHours();
+        const endHour = startHour + 2;
 
-            const formattedStart = `${String(startHour).padStart(2, '0')}:00`;
-            const formattedEnd = `${String(endHour).padStart(2, '0')}:00`;
-            selectedTimeSpan.textContent = `${formattedStart} - ${formattedEnd} (2시간)`;
+        const formattedStart = `${String(startHour).padStart(2, '0')}:00`;
+        const formattedEnd = `${String(endHour).padStart(2, '0')}:00`;
+        selectedTimeSpan.textContent = `${formattedStart} - ${formattedEnd} (2시간)`;
 
-            // 숨겨진 input에 기본값 세팅도 가능하면 같이
-            const startInput = document.getElementById('searchStartTime');
-            const endInput = document.getElementById('searchEndTime');
-            if (startInput) startInput.value = formattedStart;
-            if (endInput) endInput.value = formattedEnd;
-        }
+        // 숨겨진 input에 기본값 세팅도 가능하면 같이
+        const startInput = document.getElementById('searchStartTime');
+        const endInput = document.getElementById('searchEndTime');
+        if (startInput) startInput.value = formattedStart;
+        if (endInput) endInput.value = formattedEnd;
+    }
 
     // 이벤트 리스너 추가
     addEventListeners();
@@ -99,7 +99,7 @@ function setJimTypeNameFromURL() {
 // 이벤트 리스너 추가
 function addEventListeners() {
     document.querySelectorAll('.modal').forEach(modal => {
-        modal.addEventListener('click', function(e) {
+        modal.addEventListener('click', function (e) {
             if (e.target === this) {
                 closeModal(this.id);
             }
@@ -112,7 +112,7 @@ function addEventListeners() {
     }
 
     document.querySelectorAll('.location-option').forEach(option => {
-        option.addEventListener('click', function() {
+        option.addEventListener('click', function () {
             selectLocation(this.dataset.location);
         });
     });
@@ -180,17 +180,12 @@ function initializeCustomDropdowns() {
 // 검색 랭킹 아이템 초기화
 function initializeRankingItems() {
     document.querySelectorAll('.ranking-item').forEach(item => {
-        item.addEventListener('click', function() {
+        item.addEventListener('click', function () {
             const location = this.dataset.location;
             searchByLocation(location);
         });
     });
 }
-
-// 위치 검색 모달 열기
-//function openLocationSearch() {
-//    openModal('locationModal');
-//}
 
 // 날짜 선택 모달 열기
 function openDatePicker() {
@@ -219,29 +214,6 @@ function closeModal(modalId) {
         document.body.style.overflow = 'auto';
     }
 }
-
-// 위치 필터링
-//function filterLocations() {
-//    const searchTerm = document.getElementById('locationSearchInput').value.toLowerCase();
-//    const locationOptions = document.querySelectorAll('.location-option');
-//
-//    locationOptions.forEach(option => {
-//        const locationName = option.textContent.toLowerCase();
-//        option.style.display = locationName.includes(searchTerm) ? 'block' : 'none';
-//    });
-//}
-
-// 위치 선택
-//function selectLocation(location) {
-//    const searchInput = document.querySelector('.search-input');
-//    if (searchInput) {
-//        searchInput.value = location + ' 근처 짐 맡길 곳';
-//    }
-//
-//    document.getElementById('searchLocation').value = location;
-//    closeModal('locationModal');
-//    performSearch();
-//}
 
 // 날짜 선택
 function selectDate() {
@@ -274,8 +246,6 @@ function calculateDuration(startTime, endTime) {
     return end - start;
 }
 
-
-
 // 시간 선택
 function selectTime() {
     const startTime = document.querySelector('#startDropdown .selected').textContent;
@@ -290,43 +260,3 @@ function selectTime() {
 
     closeModal('timeModal');
 }
-
-// 위치별 검색
-//function searchByLocation(location) {
-//    const searchInput = document.querySelector('.search-input');
-//    if (searchInput) {
-//        searchInput.value = location + ' 근처 짐 맡길 곳';
-//    }
-//
-//    document.getElementById('searchLocation').value = location;
-//    performSearch();
-//}
-
-// 검색 실행
-//function performSearch() {
-//    const searchForm = document.getElementById('searchForm');
-//    const location = document.getElementById('searchLocation').value;
-//    const date = document.getElementById('searchDate').value;
-//    const startTime = document.getElementById('searchStartTime').value;
-//    const endTime = document.getElementById('searchEndTime').value;
-//
-//    if (!location) {
-//        alert('위치를 선택해 주세요.');
-//        return;
-//    }
-//
-//    if (!date) {
-//        const today = new Date().toISOString().split('T')[0];
-//        document.getElementById('searchDate').value = today;
-//    }
-//
-//    if (!startTime) {
-//        document.getElementById('searchStartTime').value = '18:00';
-//    }
-//
-//    if (!endTime) {
-//        document.getElementById('searchEndTime').value = '20:00';
-//    }
-//
-//    searchForm.submit(); // ← 폼 전송
-//}
