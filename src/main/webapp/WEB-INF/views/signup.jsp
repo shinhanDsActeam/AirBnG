@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ page import="java.net.URLDecoder" %>
 
 <!DOCTYPE html>
 <html lang="ko">
@@ -137,6 +138,7 @@
 
 <script>
   const contextPath = '${pageContext.request.contextPath}';
+  var redirectUrl = '<%= request.getParameter("redirect") != null ? URLDecoder.decode(request.getParameter("redirect"), "UTF-8") : "" %>';
 </script>
 <script src="<c:url value='/js/signup.js' />"></script>
 

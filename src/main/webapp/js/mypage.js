@@ -141,7 +141,7 @@ function goToLogin() {
     showLoadingAnimation();
 
     setTimeout(() => {
-        window.location.replace(`${ctx}/page/login`);
+        window.location.replace(`${ctx}/page/login?redirect=${ctx}/page/mypage`);
     }, 300);
 }
 
@@ -151,7 +151,7 @@ function goToSignup() {
     showLoadingAnimation();
 
     setTimeout(() => {
-        window.location.href = `${ctx}/page/signup`;
+        window.location.replace(`${ctx}/page/signup?redirect=${ctx}/page/mypage`);
     }, 300);
 }
 
