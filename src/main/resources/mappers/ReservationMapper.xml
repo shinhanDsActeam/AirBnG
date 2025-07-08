@@ -342,6 +342,7 @@
 
         WHERE r.state = 'CONFIRMED'
         AND r.end_time &lt; #{deadline}
+        AND r.updated_at &lt; #{endtime}
     </select>
 
     <!-- 30분 이내 end_time 도래 예정인 예약 (CONFIRMED) -->

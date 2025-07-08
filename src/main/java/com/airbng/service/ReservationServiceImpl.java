@@ -194,21 +194,44 @@ public class ReservationServiceImpl implements ReservationService{
 
             //상태값 저장
             ReservationState newState;
+            String notificationMessage;
+
             if ("yes".equalsIgnoreCase(approve)) {
                 newState = ReservationState.CONFIRMED;
-                // 예약 승인 알림 발송
-                alertScheduledTask.sendToOne(reservation.getDropper().getMemberId(), reservationId, reservation.getDropper().getNickname(), "DROPPER", NotificationType.STATE_CHANGE, "예약이 확정되었습니다.");
+
+                notificationMessage = "예약이 확정되었습니다.";
 
             } else if ("no".equalsIgnoreCase(approve)) {
                 newState = ReservationState.CANCELLED;
 
-                // 예약 거절 알림 발송
-                alertScheduledTask.sendToOne(reservation.getDropper().getMemberId(), reservationId, reservation.getDropper().getNickname(), "DROPPER", NotificationType.CANCEL_NOTICE, "예약이 취소되었습니다.");
+                notificationMessage = "예약이 거절되었습니다.";
 
             } else {
                 throw new ReservationException(CANNOT_UPDATE_STATE);
             }
             reservationMapper.updateReservationState(reservationId, newState);
+
+            // 예약을 다시 조회해서 최신 상태의 Dropper 정보 가져오기
+            Reservation updatedReservation = reservationMapper.findReservationWithDropperById(reservationId);
+
+            if (updatedReservation != null && updatedReservation.getDropper() != null) {
+                NotificationType notificationType = newState == ReservationState.CONFIRMED ?
+                        NotificationType.STATE_CHANGE : NotificationType.CANCEL_NOTICE;
+                log.info("알림 발송: memberId={}, reservationId={}, nickname={}, role=DROPPER, type={}, message={}",
+                        updatedReservation.getDropper().getMemberId(), reservationId,
+                        updatedReservation.getDropper().getNickname(), notificationType, notificationMessage);;
+
+                alertScheduledTask.sendToOne(
+                        updatedReservation.getDropper().getMemberId(),
+                        reservationId,
+                        updatedReservation.getDropper().getNickname(),
+                        "DROPPER",
+                        notificationType,
+                        notificationMessage
+                );
+
+
+            }
 
             return ReservationConfirmResponse.of(reservation, newState);
         } finally {
