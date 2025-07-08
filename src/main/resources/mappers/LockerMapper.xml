@@ -23,6 +23,26 @@
         </collection>
     </resultMap>
 
+    <select id="findLockerDetailByMemberId" parameterType="long" resultMap="LockerDetails">
+        SELECT
+            l.locker_id,
+            l.locker_name,
+            l.address,
+            l.address_english,
+            l.address_detail,
+            l.is_available,
+            m.member_id AS keeper_id,
+            m.name,
+            m.phone,
+            jt.jimtype_id,
+            jt.type_name,
+            jt.price_per_hour
+        FROM Locker l
+            LEFT JOIN Member m ON l.member_id = m.member_id
+            LEFT JOIN LockerJimType ljt ON l.locker_id = ljt.locker_id
+            LEFT JOIN JimType jt ON ljt.jimtype_id = jt.jimtype_id
+        WHERE l.member_id = #{memberId}
+    </select>
 
     <select id="findLockerById" parameterType="Long" resultMap="LockerDetails">
         SELECT

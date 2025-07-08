@@ -25,6 +25,10 @@ public interface LockerService {
      * */
     LockerDetailResponse findUserById(Long lockerId);
 
+    LockerDetailResponse findMyLocker(Long memberId);
+
     void updateLockerActivation(Long lockerId);
+
+    boolean isExistLocker(Long memberId);
 }
 

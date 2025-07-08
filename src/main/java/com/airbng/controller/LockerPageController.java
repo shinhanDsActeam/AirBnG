@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import javax.servlet.http.HttpSession;
+
 
 @Controller
 @RequestMapping("/page")
@@ -22,18 +24,27 @@ public class LockerPageController {
     }
 
     @GetMapping("/lockers")
-    public String lockerPage() {
+    public String lockerPage(HttpSession session, Model model) {
+        Long memberId = (Long) session.getAttribute("memberId");
+        boolean isLoggedIn = memberId != null;
+        model.addAttribute("isLoggedIn", isLoggedIn);
+
+        if (isLoggedIn) {
+            boolean isExistLocker = lockerService.isExistLocker(memberId);
+            model.addAttribute("isExistLocker", isExistLocker);
+
+            if (isExistLocker) {
+                LockerDetailResponse lockerDetail = lockerService.findMyLocker(memberId);
+                model.addAttribute("lockerDetail", lockerDetail);
+            }
+        }
+
         return "locker";
     }
 
     @GetMapping("/lockers/register")
     public String lockerRegisterPage() {
         return "lockerRegister";
-    }
-
-    @GetMapping("/lockers/manage")
-    public String lockerManagePage() {
-        return "lockerManage";
     }
 
     @GetMapping ("/lockerDetails")

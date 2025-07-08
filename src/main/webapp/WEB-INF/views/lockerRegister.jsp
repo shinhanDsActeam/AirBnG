@@ -74,6 +74,7 @@
                     <input type="text" id="location" name="location" class="address-field" readonly required placeholder="건물, 지번 또는 도로명 검색" />
                 </div>
                 <input type="text" id="detailAddress" name="detailAddress" placeholder="상세주소" />
+                <input type="hidden" id="locationEnglish" name="addressEnglish" />
                 <input type="hidden" id="latitude" />
                 <input type="hidden" id="longitude" />
             </div>
