@@ -1,8 +1,10 @@
-class NotificationManager {
+class NotificationSSE {
     constructor() {
         this.notifications = [];
+        // 삭제된 알림 ID와 삭제 시각을 저장 (Map: key=알림id, value=삭제시간 timestamp)
+        this.deletedNotificationIds = new Map();
         this.sseManager = null;
-        this.memberId = document.body.dataset.memberId;
+        this.memberId = window.memberId || document.body.dataset.memberId;
     }
 
     // 초기화
@@ -13,6 +15,7 @@ class NotificationManager {
         }
 
         this.loadFromStorage();
+        this.cleanExpiredDeletions(); // 만료된 삭제 기록 정리
         this.renderNotifications();
         this.initSSE();
         this.bindEvents();
@@ -33,7 +36,6 @@ class NotificationManager {
 
     // 이벤트 바인딩
     bindEvents() {
-        // 전체 삭제 버튼
         const clearAllBtn = document.getElementById('clearAllBtn');
         if (clearAllBtn) {
             clearAllBtn.addEventListener('click', () => {
@@ -44,6 +46,18 @@ class NotificationManager {
 
     // 알림 처리
     handleNotification(alarmData) {
+        // 삭제 기록 확인 (23시간 이내면 무시)
+        const deletedAt = this.deletedNotificationIds.get(alarmData.id);
+        const now = Date.now();
+        if (deletedAt && (now - deletedAt) < 23 * 60 * 60 * 1000) {
+            // 삭제된 지 23시간 안됐으면 무시
+            return;
+        } else if (deletedAt) {
+            // 23시간 넘었으면 삭제 기록에서 제거
+            this.deletedNotificationIds.delete(alarmData.id);
+        }
+
+        // 새 알림 생성 (id는 timestamp+랜덤값)
         const newNotification = {
             ...alarmData,
             receivedAt: this.formatDateTime(new Date()),
@@ -52,7 +66,6 @@ class NotificationManager {
 
         this.notifications.unshift(newNotification);
 
-        // 최대 50개까지만 보관
         if (this.notifications.length > 50) {
             this.notifications = this.notifications.slice(0, 50);
         }
@@ -62,7 +75,7 @@ class NotificationManager {
         this.showBrowserNotification(alarmData);
     }
 
-    // 시간 포맷 (12시간 형식 + 오전/오후)
+    // 시간 포맷 (12시간 + 오전/오후)
     formatDateTime(date) {
         const year = date.getFullYear();
         const month = String(date.getMonth() + 1).padStart(2, '0');
@@ -97,7 +110,7 @@ class NotificationManager {
                             <span class="notification-type">${this.getTypeLabel(notification.type)}</span>
                             <div class="notification-actions">
                                 <span class="notification-time">${notification.receivedAt}</span>
-                                <button class="clear-btn" onclick="notificationManager.removeNotification('${notification.id}')">×</button>
+                                <button class="clear-btn" onclick="notificationSSE.removeNotification('${notification.id}')">×</button>
                             </div>
                         </div>
                         <div class="notification-message">${notification.message}</div>
@@ -113,7 +126,6 @@ class NotificationManager {
         this.updateClearAllButton();
     }
 
-    // 빈 상태 표시
     showEmptyState() {
         const container = document.getElementById('notifications');
         if (container) {
@@ -122,29 +134,33 @@ class NotificationManager {
         this.updateClearAllButton();
     }
 
-    // 전체 삭제 버튼 상태 업데이트
     updateClearAllButton() {
         const clearAllBtn = document.getElementById('clearAllBtn');
         if (clearAllBtn) {
-            clearAllBtn.disabled = this.notifications.length === 0;
+            const visibleCount = this.notifications.filter(n => !this.deletedNotificationIds.has(n.id)).length;
+            clearAllBtn.disabled = visibleCount === 0;
         }
     }
 
     // 개별 알림 삭제
     removeNotification(id) {
         this.notifications = this.notifications.filter(n => n.id != id);
+        // 삭제한 시간 기록
+        this.deletedNotificationIds.set(id, Date.now());
         this.saveToStorage();
         this.renderNotifications();
     }
 
-    // 모든 알림 삭제
+    // 전체 삭제
     clearAllNotifications() {
+        // 모든 알림 삭제 기록에 추가 (삭제 시간 기록)
+        const now = Date.now();
+        this.notifications.forEach(n => this.deletedNotificationIds.set(n.id, now));
         this.notifications = [];
         this.saveToStorage();
         this.renderNotifications();
     }
 
-    // 알림 타입 라벨 반환
     getTypeLabel(type) {
         const labelMap = {
             'EXPIRED': '만료 알림',
@@ -155,7 +171,6 @@ class NotificationManager {
         return labelMap[type] || type;
     }
 
-    // 브라우저 알림 표시
     showBrowserNotification(alarmData) {
         if (this.sseManager) {
             this.sseManager.showBrowserNotification(
@@ -166,22 +181,22 @@ class NotificationManager {
         }
     }
 
-    // 로컬 스토리지에 저장
     saveToStorage() {
         if (!this.memberId) return;
         localStorage.setItem(`alarmHistory_${this.memberId}`, JSON.stringify(this.notifications));
+        localStorage.setItem(`deletedAlarms_${this.memberId}`, JSON.stringify([...this.deletedNotificationIds.entries()]));
     }
 
-    // 로컬 스토리지에서 불러오기
     loadFromStorage() {
         if (!this.memberId) return;
 
         const saved = localStorage.getItem(`alarmHistory_${this.memberId}`);
+        const deleted = localStorage.getItem(`deletedAlarms_${this.memberId}`);
+
         if (saved) {
             try {
                 this.notifications = JSON.parse(saved);
 
-                // 기존 저장된 알림의 시간 형식 업데이트
                 this.notifications = this.notifications.map(notification => {
                     if (notification.receivedAt && notification.receivedAt.includes('.')) {
                         const date = new Date(notification.receivedAt.replace(/\./g, '-').replace(' ', 'T'));
@@ -196,14 +211,32 @@ class NotificationManager {
                 this.notifications = [];
             }
         }
+
+        if (deleted) {
+            try {
+                const entries = JSON.parse(deleted);
+                this.deletedNotificationIds = new Map(entries);
+            } catch (e) {
+                this.deletedNotificationIds = new Map();
+            }
+        }
+    }
+
+    // 23시간 넘은 삭제 기록 삭제
+    cleanExpiredDeletions() {
+        const now = Date.now();
+        for (const [id, deletedAt] of this.deletedNotificationIds.entries()) {
+            if (now - deletedAt > 23 * 60 * 60 * 1000) {
+                this.deletedNotificationIds.delete(id);
+            }
+        }
     }
 }
 
 // 전역 알림 매니저 인스턴스
 let notificationSSE = null;
 
-// DOM 로딩 완료 시 초기화
 document.addEventListener('DOMContentLoaded', () => {
-    notificationSSE  = new NotificationManager();
-    notificationSSE .init();
+    notificationSSE = new NotificationSSE();
+    notificationSSE.init();
 });

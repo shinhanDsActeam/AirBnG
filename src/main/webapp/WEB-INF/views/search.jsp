@@ -8,6 +8,7 @@
     <meta charset="utf-8">
     <title>AirBnG | ${address}&nbsp;검색 결과</title>
     <link rel="icon" type="image/svg+xml" href="${pageContext.request.contextPath}/images/favicon.svg" />
+    <link rel="stylesheet" href="<c:url value='/css/dot.css' />" />
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/search.css">
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/bottom-sheet.css">
 
@@ -50,5 +51,16 @@
             </div>
         </div>
     </div>
+
+    <c:if test="${not empty sessionScope.memberId}">
+        <script>
+            window.memberId = "${sessionScope.memberId}";
+        </script>
+    </c:if>
+    <script src="<c:url value='/js/sse.js'/>"></script>
+    <script src="<c:url value='/js/dot.js'/>"></script>
+
+    <script src="${pageContext.request.contextPath}/js/notification.js"></script>
+
 </body>
 </html>

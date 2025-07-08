@@ -99,71 +99,14 @@ document.addEventListener('DOMContentLoaded', function () {
             console.error("인기 보관소 가져오기 실패:", error);
         });
 
-    // 알림 표시 로직
-    function showDotIndicator() {
-
-        const bellWrapper = document.querySelector('.bell-wrapper');
-        if (!bellWrapper) {
-            console.error("bell-wrapper 요소를 찾을 수 없습니다.");
-            return;
-        }
-
-        let dotIndicator = document.getElementById('dotIndicator');
-
-        if (dotIndicator) {
-            dotIndicator.style.animation = 'none';
-            dotIndicator.offsetHeight; // 강제 리플로우
-            dotIndicator.style.animation = 'dot-appear 0.4s ease-out, dot-pulse 2s ease-in-out infinite 0.8s';
-            dotIndicator.style.display = 'block';
-            dotIndicator.style.visibility = 'visible';
-            dotIndicator.style.opacity = '1';
-
-            dotIndicator.classList.remove('hide');
-            dotIndicator.classList.add('show');
-        } else {
-            console.log("새 dot 생성");
-            const newDot = document.createElement('img');
-            newDot.src = `${contextPath}/images/dot.svg`;
-            newDot.alt = '새 알림 표시';
-            newDot.className = 'dot-indicator show';
-            newDot.id = 'dotIndicator';
-            newDot.style.display = 'block';
-            newDot.style.visibility = 'visible';
-            newDot.style.opacity = '1';
-            newDot.style.animation = 'dot-appear 0.4s ease-out, dot-pulse 2s ease-in-out infinite 0.8s';
-
-            bellWrapper.insertBefore(newDot, bellWrapper.firstChild);
-        }
-    }
-
-    function hideDotIndicator() {
-
-        const dotIndicator = document.getElementById('dotIndicator');
-        if (dotIndicator) {
-            dotIndicator.classList.remove('show');
-            dotIndicator.classList.add('hide');
-
-            dotIndicator.style.opacity = '0';
-            dotIndicator.style.transition = 'opacity 0.3s ease-out';
-
-            setTimeout(() => {
-                dotIndicator.style.display = 'none';
-                dotIndicator.style.visibility = 'hidden';
-                dotIndicator.classList.remove('hide');
-            }, 300);
-        }
-    }
-
     // ======= SSE 매니저를 통한 알림 처리 =======
     const memberId = document.body.dataset.memberId;
 
     if (memberId && memberId !== 'null' && memberId !== '') {
       const sseManager = getSSEManager();
 
-      // 중복 등록 방지용으로 같은 콜백을 변수에 할당하거나 외부에서 관리하면 좋지만
-      // 간단히 이렇게 등록해도 무방함
       sseManager.addEventListener('alarm', (alarmData) => {
-          showDotIndicator();
+          showDotIndicator(contextPath);
 
           console.log('알림 메시지:', alarmData.message);
 

@@ -125,7 +125,15 @@
             const memberId = '${loginMemberId}';
             console.log('로그인한 회원 ID:', memberId);
      </script>
-    <script src="<c:url value='/js/ReservationList.js'/>"></script>
 
+     <c:if test="${not empty sessionScope.memberId}">
+         <script>
+             window.memberId = "${sessionScope.memberId}";
+         </script>
+     </c:if>
+
+    <script src="${pageContext.request.contextPath}/js/sse.js"></script>
+    <script src="<c:url value='/js/ReservationList.js'/>"></script>
+    <script src="${pageContext.request.contextPath}/js/notification.js"></script>
 </body>
 </html>

@@ -49,9 +49,11 @@
         </div>
 
         <!-- JS -->
-        <script>
-            const memberId = "${loginMember}";
-        </script>
+        <c:if test="${not empty sessionScope.memberId}">
+            <script>
+                window.memberId = "${sessionScope.memberId}";
+            </script>
+        </c:if>
         <script src="${pageContext.request.contextPath}/js/sse.js"></script>
         <script src="<c:url value='/js/notification.js'/>"></script>
     </c:otherwise>

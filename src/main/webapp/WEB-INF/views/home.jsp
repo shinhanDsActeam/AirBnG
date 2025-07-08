@@ -8,6 +8,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/gh/webfontworld/bmjua/BMJUA.css" rel="stylesheet">
+    <link rel="stylesheet" href="<c:url value='/css/dot.css' />" />
     <link rel="stylesheet" href="<c:url value='/css/home.css' />" />
 </head>
 <body class="airbng-home" data-member-id="${sessionScope.memberId}">
@@ -112,6 +113,7 @@
     const contextPath = '${pageContext.request.contextPath}';
 </script>
 <script src="${pageContext.request.contextPath}/js/sse.js"></script>
+<script src="${pageContext.request.contextPath}/js/dot.js"></script>
 <script src="<c:url value='/js/home.js' />"></script>
 <script src="${pageContext.request.contextPath}/js/notification.js"></script>
 

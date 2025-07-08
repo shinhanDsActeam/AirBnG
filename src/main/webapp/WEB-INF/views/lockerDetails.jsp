@@ -17,6 +17,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>보관소 상세</title>
     <link rel="icon" type="image/svg+xml" href="${pageContext.request.contextPath}/images/favicon.svg" />
+    <link rel="stylesheet" href="<c:url value='/css/dot.css' />" />
     <link rel="stylesheet" href="<c:url value='/css/lockerDetails.css'/>">
 </head>
 <body>
@@ -96,7 +97,16 @@
                 const memberId = '${loginMemberId}';
                 console.log('로그인한 회원 ID:', memberId);
     </script>
+    <c:if test="${not empty sessionScope.memberId}">
+        <script>
+            window.memberId = "${sessionScope.memberId}";
+        </script>
+    </c:if>
+
+    <script src="<c:url value='/js/sse.js'/>"></script>
+    <script src="<c:url value='/js/dot.js'/>"></script>
 
     <script src="${pageContext.request.contextPath}/js/lockerDetails.js"></script>
+    <script src="${pageContext.request.contextPath}/js/notification.js"></script>
 </body>
 </html>

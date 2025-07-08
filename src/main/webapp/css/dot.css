@@ -1,0 +1,90 @@
+/* ==== dot.css ==== */
+
+/* dot 등장/사라짐 애니메이션 */
+@keyframes dot-appear {
+    0% {
+        transform: scale(0);
+        opacity: 0;
+    }
+    50% {
+        transform: scale(1.3);
+        opacity: 0.8;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+@keyframes dot-disappear {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(0);
+        opacity: 0;
+    }
+}
+
+/* dot 깜빡임 애니메이션 */
+@keyframes dot-pulse {
+    0%, 100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.6;
+        transform: scale(1.1);
+    }
+}
+
+/* 알림 점 기본 스타일 */
+.dot-indicator {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    width: 10px;
+    height: 10px;
+    z-index: 11;
+
+    display: block;
+    opacity: 1;
+    transform: scale(1);
+    transition: all 0.3s ease;
+    animation: dot-pulse 2s ease-in-out infinite;
+
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+}
+
+/* 알림 점 표시 상태 */
+.dot-indicator.show {
+    display: block;
+    opacity: 1;
+    transform: scale(1);
+    animation: dot-appear 0.4s ease-out, dot-pulse 2s ease-in-out infinite 0.8s;
+}
+
+/* 알림 점 숨김 상태 */
+.dot-indicator.hide {
+    opacity: 0;
+    transform: scale(0);
+    animation: dot-disappear 0.3s ease-out forwards;
+}
+
+/* 벨 아이콘 강조 효과 */
+.bell-wrapper.has-notification .notification-icon {
+    filter: drop-shadow(0 0 4px rgba(255, 68, 68, 0.3));
+}
+
+/* 반응형 dot 크기 조절 */
+@media (max-width: 380px) {
+    .dot-indicator {
+        width: 8px;
+        height: 8px;
+        top: -3px;
+        right: -3px;
+        border-width: 1px;
+    }
+}

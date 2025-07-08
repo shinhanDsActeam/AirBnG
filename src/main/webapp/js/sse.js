@@ -5,7 +5,7 @@ class SSEManager {
         this.isConnecting = false;  // 중복 connect 방지 플래그
         this.reconnectAttempts = 0;
         this.maxReconnectAttempts = 5;
-        this.memberId = document.body.dataset.memberId;
+        this.memberId = window.memberId || document.body.dataset.memberId;
         this.listeners = new Map();
         this.connectionStatusCallbacks = [];
         this.isInitialized = false;  // init 중복 방지용
