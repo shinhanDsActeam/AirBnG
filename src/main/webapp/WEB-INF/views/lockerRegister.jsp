@@ -199,6 +199,15 @@
 
     const memberId = '${sessionScope.memberId}';
 </script>
+
+<c:if test="${not empty sessionScope.memberId}">
+    <script>
+     window.memberId = "${sessionScope.memberId}";
+    </script>
+</c:if>
+
+<script src="${pageContext.request.contextPath}/js/sse.js"></script>
+<script src="${pageContext.request.contextPath}/js/notification.js"></script>
 <script src="<c:url value='/js/common/modal.js'/>"></script>
 <%@ include file="/WEB-INF/views/common/modal.jsp" %>
 <script src="<c:url value='/js/config/kakao.config.js'/>"></script>

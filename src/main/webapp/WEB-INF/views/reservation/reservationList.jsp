@@ -9,6 +9,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>예약 내역</title>
     <link rel="icon" type="image/svg+xml" href="${pageContext.request.contextPath}/images/favicon.svg"/>
+    <link rel="stylesheet" href="<c:url value='/css/dot.css' />" />
     <link rel="stylesheet" href="<c:url value='/css/reservation/reservationList.css'/>">
 </head>
 <body class="page-container">
@@ -144,7 +145,14 @@
                 });
     </script>
 
-    <script src="<c:url value='/js/reservation/reservationList.js'/>"></script>
+    <c:if test="${not empty sessionScope.memberId}">
+         <script>
+             window.memberId = "${sessionScope.memberId}";
+         </script>
+    </c:if>
 
+    <script src="${pageContext.request.contextPath}/js/sse.js"></script>
+    <script src="<c:url value='/js/reservation/reservationList.js'/>"></script>
+    <script src="${pageContext.request.contextPath}/js/notification.js"></script>
 </body>
 </html>

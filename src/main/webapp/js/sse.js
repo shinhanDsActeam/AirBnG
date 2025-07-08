@@ -147,15 +147,15 @@ class SSEManager {
         this.connectionStatusCallbacks.push(callback);
     }
 
-    showBrowserNotification(title, message, icon = null) {
-        if ('Notification' in window && Notification.permission === 'granted') {
-            const notification = new Notification(title, {
-                body: message,
-                icon: icon || '/favicon.ico'
-            });
-            setTimeout(() => notification.close(), 5000);
-        }
-    }
+//    showBrowserNotification(title, message, icon = null) {
+//        if ('Notification' in window && Notification.permission === 'granted') {
+//            const notification = new Notification(title, {
+//                body: message,
+//                icon: icon || '/favicon.ico'
+//            });
+//            setTimeout(() => notification.close(), 5000);
+//        }
+//    }
 
     requestNotificationPermission() {
         if ('Notification' in window && Notification.permission === 'default') {
