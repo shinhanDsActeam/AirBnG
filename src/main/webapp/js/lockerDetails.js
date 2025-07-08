@@ -22,7 +22,9 @@ window.addEventListener("DOMContentLoaded", function () {
         const lockerId = reserveBtn.dataset.lockerId;
 
         if (!lockerId || !memberId) {
-            alert('로그인이 필요합니다.');
+            ModalUtils.showConfirm('로그인하러 이동하시겠습니까?', "앗, 로그인이 필요해요!", () => {
+                window.location.replace(`${contextPath}/page/login?redirect=${encodeURIComponent(window.location.pathname + window.location.search)}`);
+            });
             return;
         }
 

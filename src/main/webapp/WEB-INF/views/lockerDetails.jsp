@@ -85,6 +85,7 @@
         </button>
     </div>
 </div>
+<%@ include file="common/modal.jsp" %>
 <div class="spacer"></div>
 <div class="spacer"></div>
 <script>
