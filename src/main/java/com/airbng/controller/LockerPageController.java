@@ -63,7 +63,7 @@ public class LockerPageController {
     @GetMapping("/lockerSearchDetails")
     public String showMapPage(@RequestParam String address,
                               @RequestParam(required = false) Long jimTypeId,
-                              @RequestParam String reservationDate,
+                              @RequestParam(required = false) String reservationDate,
                               Model model) {
 
         model.addAttribute("address", address);
