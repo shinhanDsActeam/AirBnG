@@ -34,4 +34,14 @@ public class ReservationPageController {
         model.addAttribute("lockerId", lockerId);
         return "reservation/reservationForm";
     }
+
+    @GetMapping("confirm")
+    public String reservationConfirm(@RequestParam("reservationId") Long reservationId,
+                                     HttpSession session,
+                                     Model model) {
+        Long memberId = (Long) session.getAttribute("memberId");
+        model.addAttribute("reservationId", reservationId);
+        model.addAttribute("memberId", memberId);
+        return "reservation/reservationConfirm";
+    }
 }

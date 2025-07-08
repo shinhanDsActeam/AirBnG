@@ -44,6 +44,7 @@
         <collection property="reservationJimTypes" ofType="com.airbng.domain.jimtype.ReservationJimType">
             <result property="jimType.jimTypeId" column="jimtype_id"/>
             <result property="jimType.typeName" column="type_name"/>
+            <result property="jimType.pricePerHour" column="price_per_hour"/>
             <result property="count" column="count"/>
         </collection>
     </resultMap>
@@ -73,6 +74,7 @@
 
             rjt.jimtype_id AS jimtype_id,
             jt.type_name AS type_name,
+            jt.price_per_hour AS price_per_hour,
             rjt.count AS count
 
         FROM reservation r
@@ -93,6 +95,8 @@
         <result property="state" column="state"/>
         <result property="role" column="role"/>
         <result property="lockerName" column="locker_name"/>
+        <result property="address" column="address"/>
+        <result property="addressDetail" column="address_detail"/>
         <result property="lockerImage" column="locker_image"/>
         <result property="startTime" column="start_time"/>
         <result property="endTime" column="end_time"/>
@@ -116,6 +120,8 @@
         DATE_FORMAT(r.end_time, '%m.%d %H:%i') AS end_time,
         DATE_FORMAT(r.start_time, '%Y-%m-%d') AS date_only,
         l.locker_name,
+        l.address,
+        l.address_detail,
         i.url AS locker_image,
         TIMESTAMPDIFF(MINUTE, r.start_time, r.end_time) / 60.0 AS duration_hours,
         jt.jimtype_id,
