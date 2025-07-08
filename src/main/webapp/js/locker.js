@@ -42,6 +42,7 @@ function toggleLockerAvailability(buttonElement) {
     }
 
     ModalUtils.showConfirm(
+        confirmTitle,
         confirmMessage,
         () => {
             // 확인 시 fetch 실행
@@ -64,7 +65,6 @@ function toggleLockerAvailability(buttonElement) {
         () => {
             // 취소 시 아무 일 없음
             console.log("상태 변경 취소됨");
-        },
-        confirmTitle
+        }
     );
 }
