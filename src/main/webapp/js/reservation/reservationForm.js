@@ -1,7 +1,12 @@
 let selectedDateRange = {
-    startDate: 0,
-    endDate: 0
+    startDate: -1,
+    endDate: -1
 };
+
+
+// 드래그 관련 변수들
+let isDragging = false;
+let dragStartIndex = -1;
 
 let currentJimTypes = [];
 let jimTypeCounts = {};
@@ -16,7 +21,7 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('reservationForm').addEventListener('submit', function (e) {
         e.preventDefault();
 
-        if (!selectedDateRange.startDate && selectedDateRange.startDate !== 0) {
+        if (!selectedDateRange.startDate === -1) {
             alert('보관 날짜를 선택해주세요.');
             return;
         }
@@ -77,25 +82,27 @@ document.addEventListener('DOMContentLoaded', function () {
                     });
                 } else if(data.code === 9002){
                     ModalUtils.showError('세션이 존재하지 않습니다.\n다시 로그인해주세요.', "예약 실패", () => {
-                        window.location.href = `${contextPath}/page/login`;
+                        window.location.replace(`${contextPath}/page/login`);
                     });
                 }
                 else {
                     ModalUtils.showError(data.message, "예약 실패", () => {
                         history.back();
-                        // window.location.href = `${contextPath}/page/home`;
                     });
                 }
             })
             .catch(error => {
                 console.error('예약 요청 실패:', error);
                 ModalUtils.showError("네트워크 오류가 발생하였습니다.", "", () => {
-                    // TODO : redirect 경로 변경 필요
-                    // history.back();
                     window.location.href = `${contextPath}/page/home`;
                 });
             });
     });
+
+
+    // 전역 마우스 이벤트 리스너 추가 (드래그 종료 처리)
+    document.addEventListener('mouseup', endDrag);
+    document.addEventListener('mouseleave', endDrag);
 });
 
 // 드롭다운 외부 클릭 시 닫기
@@ -163,12 +170,23 @@ function formatDateTimeForServer(date) {
 
 function generateDateButtons() {
     const container = document.getElementById('date-buttons');
+
+    // 현재 날짜 기준으로 년도/월 제목 설정
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = today.getMonth() + 1; // getMonth()는 0부터 시작하므로 +1
+
+    // 달력 제목 설정
+    const calendarTitle = document.getElementById('calendar-title');
+    calendarTitle.textContent = `${year}년 ${month}월`;
+
+
+
     const labelContainer = document.createElement('div');
     const btnContainer = document.createElement('div');
     labelContainer.className = 'flex justify-around w-full mb-2 text-center text-sm text-gray-500';
     btnContainer.className = 'inline-flex overflow-hidden w-full rounded-md text-sm p-1 gap-0';
 
-    const today = new Date();
     const days = ['일', '월', '화', '수', '목', '금', '토'];
 
     for (let i = 0; i < 7; i++) {
@@ -185,18 +203,31 @@ function generateDateButtons() {
         const button = document.createElement('button');
         button.type = 'button';
         button.className = 'date-btn flex-1 h-12 text-sm font-semibold border-r last:border-r-0 flex items-center justify-center';
-        if (i === 0) {
-            button.className += ' selected';
-        }
+
         button.textContent = dayNum;
         const formatted = formatDateTimeForServer(targetDate);
         button.dataset.date = formatted;
         dateArray.push(formatted);
         button.dataset.index = i;
 
-        button.onclick = function () {
-            selectDate(i);
-        };
+        // 드래그 이벤트 리스너 추가
+        button.addEventListener('mousedown', (e) => startDrag(e, i));
+        button.addEventListener('mouseenter', () => updateDrag(i));
+        button.addEventListener('mouseup', endDrag);
+
+        // TODO : 터치 이벤트 지원 (모바일)
+        // button.addEventListener('touchstart', (e) => startDrag(e, i));
+        // button.addEventListener('touchmove', (e) => {
+        //     e.preventDefault();
+        //     const touch = e.touches[0];
+        //     const elementBelow = document.elementFromPoint(touch.clientX, touch.clientY);
+        //     if (elementBelow && elementBelow.classList.contains('date-btn')) {
+        //         const index = parseInt(elementBelow.dataset.index);
+        //         updateDrag(index);
+        //     }
+        // });
+        // button.addEventListener('touchend', endDrag);
+
 
         labelContainer.appendChild(label);
         btnContainer.appendChild(button);
@@ -205,38 +236,36 @@ function generateDateButtons() {
     container.appendChild(btnContainer);
 }
 
-function selectDate(index) {
+// 드래그 시작
+function startDrag(e, index) {
+    e.preventDefault();
+    isDragging = true;
+    dragStartIndex = index;
+    selectedDateRange.startDate = index;
+    selectedDateRange.endDate = index;
+    updateDateButtons();
+}
 
-    if (selectedDateRange.startDate === -1) {
-        // 첫 번째 날짜 선택
-        selectedDateRange.startDate = selectedDateRange.endDate = index;
-    } else if (selectedDateRange.startDate === selectedDateRange.endDate) {
-        // 두 번째 날짜 선택
-        if (index < selectedDateRange.startDate) {
-            selectedDateRange.startDate = index;
-        } else if (index > selectedDateRange.endDate) {
-            selectedDateRange.endDate = index;
-        } else if (index === selectedDateRange.startDate) {
-            // 같은 날짜 선택 시 초기화
-            selectedDateRange.startDate = selectedDateRange.endDate = index;
-        }
-    } else {
-        // 범위가 이미 설정된 상태에서 추가 선택
-        if (index === selectedDateRange.startDate || index === selectedDateRange.endDate) {
-            // 시작/끝 날짜 클릭 시 초기화
-            selectedDateRange.startDate = selectedDateRange.endDate = index;
-        } else if (index < selectedDateRange.startDate) {
-            selectedDateRange.startDate = index;
-        } else if (index > selectedDateRange.endDate) {
-            selectedDateRange.endDate = index;
-        } else {
-            // 범위 내부 클릭 시 끝 날짜 갱신
-            selectedDateRange.endDate = index;
-        }
-    }
+// 드래그 중 업데이트
+function updateDrag(index) {
+    if (!isDragging) return;
 
+    const startIdx = Math.min(dragStartIndex, index);
+    const endIdx = Math.max(dragStartIndex, index);
+
+    selectedDateRange.startDate = startIdx;
+    selectedDateRange.endDate = endIdx;
 
     updateDateButtons();
+}
+
+// 드래그 종료
+function endDrag() {
+    if (!isDragging) return;
+
+    isDragging = false;
+    dragStartIndex = -1;
+
     // 날짜 변경시 시간 옵션 업데이트
     updateTimeOptions();
     calculateTotal();
@@ -246,16 +275,17 @@ function updateDateButtons() {
     const buttons = document.querySelectorAll('.date-btn');
     buttons.forEach((btn, index) => {
         btn.classList.remove('selected', 'in-range');
+        if (selectedDateRange.startDate === -1) {
+            // 아무것도 선택되지 않은 상태
+            return;
+        }
         if (index === selectedDateRange.startDate || index === selectedDateRange.endDate) {
             btn.classList.add('selected');
-            console.log(index, " = selected");
         } else if (index > selectedDateRange.startDate && index < selectedDateRange.endDate) {
             btn.classList.add('in-range');
-            console.log(index, " = in-range");
         }
     });
 }
-
 
 /***************************************************************************************/
 /*                                 시간 옵션 관련 함수                                 */

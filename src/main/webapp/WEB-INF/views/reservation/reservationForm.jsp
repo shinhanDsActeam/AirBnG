@@ -45,13 +45,15 @@
 
                 <!-- 보관 날짜 -->
                 <div>
-                    <h3 class="font-medium text-gray-900 mb-3">보관 날짜</h3>
+                    <div class="flex items-center gap-3 mb-3">
+                        <h3 id="calendar-title" class="text-l font-bold text-gray-900"></h3>
+                    </div>
                     <div class="flex flex-col items-center" id="date-buttons"></div>
                 </div>
 
                 <!-- 보관 시간 -->
                 <div>
-                    <h3 class="font-medium text-gray-900 mb-3">보관 시간</h3>
+                    <h3 class="font-bold text-l text-gray-900 mb-3">보관 시간</h3>
                     <div class="flex items-center space-x-4">
                         <div class="flex-1">
                             <label class="block text-sm text-gray-600 mb-1">시작 시간</label>
@@ -86,7 +88,7 @@
 
                 <!-- 짐 종류 -->
                 <div id="jimSection">
-                    <h3 class="font-medium text-gray-900 mb-3">짐 종류</h3>
+                    <h3 class="font-bold text-l text-gray-900 mb-3">짐 종류</h3>
                     <div class="space-y-3" id="jimTypes">
                     </div>
                 </div>
