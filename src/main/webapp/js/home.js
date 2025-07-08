@@ -159,11 +159,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
           console.log('알림 메시지:', alarmData.message);
 
-          sseManager.showBrowserNotification(
-              '새로운 알림',
-              alarmData.message || '새로운 예약 알림이 도착했습니다.',
-              `${contextPath}/images/dot.svg`
-          );
+//          sseManager.showBrowserNotification(
+//              '새로운 알림',
+//              alarmData.message || '새로운 예약 알림이 도착했습니다.',
+//              `${contextPath}/images/dot.svg`
+//          );
       });
 
       sseManager.onConnectionStatusChange((connected) => {
