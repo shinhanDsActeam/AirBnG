@@ -45,7 +45,7 @@ function initToggle() {
     const activeToggle = document.querySelector('.toggle-option.active');
     if (activeToggle) {
         currentIsDropper = activeToggle.getAttribute('data-dropper') === 'true';
-        console.log('📍 [initToggle] 초기 isDropper 상태:', currentIsDropper);
+        // console.log('📍 [initToggle] 초기 isDropper 상태:', currentIsDropper);
     }
 
     // 토글 이벤트 등록
@@ -165,9 +165,9 @@ function getApiUrl() {
     const cursorParam = (nextCursorId !== null && nextCursorId !== -1) ? `&nextCursorId=${nextCursorId}` : '';
 
     const apiUrl = baseUrl + statesParam + periodParam + cursorParam;
-    console.log('📍 [getApiUrl] isDropper:', currentIsDropper);
-    console.log('📍 [getApiUrl] nextCursorId:', nextCursorId);
-    console.log('📍 [getApiUrl] API URL:', apiUrl);
+    // console.log('📍 [getApiUrl] isDropper:', currentIsDropper);
+    // console.log('📍 [getApiUrl] nextCursorId:', nextCursorId);
+    // console.log('📍 [getApiUrl] API URL:', apiUrl);
     return apiUrl;
 }
 
@@ -232,6 +232,8 @@ function renderReservations(reservations) {
         }));
         const card = document.createElement('div');
         card.className = 'reservation-card';
+        card.dataset.id = res.reservationId;
+        card.dataset.role = res.role;
         if (res.state === 'CANCELLED') card.classList.add('cancelled');
 
         // 상태에 따라 다른 클래스 추가
@@ -252,7 +254,9 @@ function renderReservations(reservations) {
             card.innerHTML = `
                 <div class="reservation-header">
                     <div class="reservation-info-row">
-                        <a href="${contextPath}/page/reservations?id=${res.reservationId}" class="view-details">예약 상세 &gt;</a>
+                        <!--dropper, keeper에 따라 다른 상세 화면 이동-->
+<!--                        <a href="${contextPath}/page/reservations?id=${res.reservationId}" class="view-details">예약 상세 &gt;</a>-->
+                        <a href="javascript:void(0);" onclick="goToReservationDetail(${res.reservationId})" class="view-details">예약 상세 &gt;</a>
                         ${getStatusText(res.state)}
                     </div>
                 </div>
@@ -299,7 +303,9 @@ function renderReservations(reservations) {
                 <div class="reservation-header">
                     <div class="reservation-date">${formatDate(res.dateOnly)}</div>
                     <div class="reservation-info-row">
-                        <a href="${contextPath}/page/reservations?id=${res.reservationId}" class="view-details">예약 상세 &gt;</a>
+                    <!--dropper, keeper에 따라 다른 상세 화면 이동-->
+<!--                         <a href="${contextPath}/page/reservations?id=${res.reservationId}" class="view-details">예약 상세 &gt;</a>-->
+                        <a href="javascript:void(0);" onclick="goToReservationDetail(${res.reservationId})" class="view-details">예약 상세 &gt;</a>
                         ${getStatusText(res.state)}
                     </div>
                 </div>
@@ -330,7 +336,8 @@ function renderReservations(reservations) {
 
 // ▶ 버튼 렌더링
 function getActionButtons(reservation) {
-    if (reservation.state === 'PENDING') {
+    // 맡긴 내역(currentIsDropper = false)일 때만 취소 요청 버튼을 보이게
+    if (reservation.state === 'PENDING' && currentIsDropper === true) {
         return `<div class="action-buttons">
             <button class="btn btn-cancel" onclick="goToReservationDetail(${reservation.reservationId})">취소 요청</button>
         </div>`;
@@ -349,19 +356,28 @@ function getActionButtons(reservation) {
             </div>`;
     }
 
-    if (reservation.state === 'CONFIRMED') {
+    if (reservation.state === 'CONFIRMED' && currentIsDropper === true) {
         return `<div class="action-buttons">
             <button class="btn btn-cancel" onclick="goToReservationDetail(${reservation.reservationId})">취소 요청</button>
         </div>`;
     }
 
-    // 취소완료 상태는 버튼 없음
-    return '';
+    return ''; // CANCELLED 등 나머지는 버튼 없음
 }
 
 // ▶ 예약 상세 페이지로 이동하는 함수 추가
 function goToReservationDetail(reservationId) {
-    window.location.href = `${contextPath}/page/reservations?id=${reservationId}`;
+    //맡긴 내역 / 맡아준 내역에 따라서 다른 예약 상세화면 이동
+    const card = document.querySelector(`.reservation-card[data-id="${reservationId}"]`);
+    const role = card?.getAttribute('data-role');
+
+    if (role === 'KEEPER') {
+        window.location.href = `${contextPath}/page/reservations/confirm?reservationId=${reservationId}`;
+        console.log("맡아준 내역일때 예약 상세 이동");
+    } else {
+        window.location.href = `${contextPath}/page/reservations?id=${reservationId}`;
+        console.log("맡긴 내역일때 예약 상세 이동");
+    }
 }
 
 // ▶ 날짜 포맷
@@ -405,10 +421,11 @@ function fetchReservations(isFirst = false) {
         .then(res => res.ok ? res.json() : Promise.reject(`HTTP ${res.status}`))
         .then(data => {
             const reservations = data.result.reservations || [];
+            console.log(reservations);
 
-            console.log('📍 [fetchReservations] 받은 예약 수:', reservations.length);
-            console.log('📍 [fetchReservations] nextCursorId:', data.result.nextCursorId);
-            console.log('📍 [fetchReservations] hasNextPage:', data.result.hasNextPage);
+            // console.log('📍 [fetchReservations] 받은 예약 수:', reservations.length);
+            // console.log('📍 [fetchReservations] nextCursorId:', data.result.nextCursorId);
+            // console.log('📍 [fetchReservations] hasNextPage:', data.result.hasNextPage);
 
             // ✅ 커서 먼저 갱신
             nextCursorId = data.result.nextCursorId;

@@ -11,6 +11,7 @@ document.addEventListener('DOMContentLoaded', function () {
 function setupEventListeners() {
     const approveBtn = document.getElementById('approveBtn');
     const rejectBtn = document.getElementById('rejectBtn');
+    const confirmDoneBtn = document.getElementById('confirmDoneBtn');
 
     if (approveBtn) {
         approveBtn.addEventListener('click', () => handleApproveReject('yes'));
@@ -19,6 +20,13 @@ function setupEventListeners() {
     if (rejectBtn) {
         rejectBtn.addEventListener('click', () => handleApproveReject('no'));
     }
+
+    if (confirmDoneBtn) {
+        confirmDoneBtn.addEventListener('click', () => {
+            // history.back(); // 또는 location.href = '...' 로 특정 페이지 이동
+            location.href= document.referrer || '/AirBnG/page/reservations/list';
+        });
+    }
 }
 
 // 예약 데이터 로드
@@ -26,7 +34,6 @@ function loadReservationData() {
     const loadingState = document.getElementById('loadingState');
     const reservationContainer = document.getElementById('reservationContainer');
 
-    // 실제 API 엔드포인트로 변경 필요
     fetch(`/AirBnG/reservations/${reservationId}/members/${memberId}/detail`)
         .then(response => response.json())
         .then(data => {
@@ -52,19 +59,18 @@ function loadReservationData() {
 
 // 예약 데이터 표시
 function displayReservationData(data) {
-    // 예약자 정보
-    document.getElementById('dropperNickname').textContent = data.dropperNickname || '정보 없음';
+    // 보관소 정보 (세션 스토리지에서 가져오기)
+    const lockerData = JSON.parse(sessionStorage.getItem(`reservationData_${reservationId}`) || '{}');
 
-    // 보관소 정보
-    document.getElementById('keeperNickname').textContent = data.keeperNickname || '정보 없음';
+    document.getElementById('keeperNickname').textContent = lockerData.address || '정보 없음';
+    document.getElementById('lockerAddress').textContent = lockerData.addressDetail || '주소 정보 없음';
 
-    // 세션 스토리지에서 이미지 URL 가져오기
-    const imageUrl = sessionStorage.getItem('lockerImage');
-    if (imageUrl) {
-        document.getElementById('lockerImage').src = imageUrl;
+    // 보관소 이미지 설정
+    const lockerImage = document.getElementById('lockerImage');
+    if (lockerData.lockerImage) {
+        lockerImage.src = lockerData.lockerImage;
     } else {
-        // 기본 이미지 설정
-        document.getElementById('lockerImage').src = '/AirBnG/images/default-locker.png';
+        lockerImage.src = '/AirBnG/images/user.svg';
     }
 
     // 예약 날짜
@@ -75,16 +81,19 @@ function displayReservationData(data) {
     // 예약 시간
     document.getElementById('reservationTime').textContent = formatTimeRange(startDate, endDate);
 
-    // 예약 상태
-    const statusElement = document.getElementById('reservationStatus');
-    statusElement.textContent = getStatusText(data.state);
-    statusElement.className = `px-2 py-1 rounded-full text-xs font-medium ${getStatusClass(data.state)}`;
-
     // 짐 정보
     displayJimTypes(data.reservationJimTypes);
 
     // 결제 정보
     displayPriceDetails(data.reservationJimTypes);
+
+    // 안내 문구 표시 여부 결정
+    const notice = document.getElementById('autoApproveNotice');
+    if (data.state === 'PENDING') {
+        notice.classList.remove('hidden');
+    } else {
+        notice.classList.add('hidden');
+    }
 }
 
 // 짐 타입 정보 표시
@@ -99,14 +108,10 @@ function displayJimTypes(jimTypes) {
 
     jimTypes.forEach(jim => {
         const jimItem = document.createElement('div');
-        jimItem.className = 'jim-item flex items-center';
+        jimItem.className = 'flex items-center';
         jimItem.innerHTML = `
-            <div class="flex items-center mr-3">
-                <svg class="w-4 h-4 text-gray-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
-                </svg>
-                <span class="font-medium">${jim.typeName} ${jim.count}개</span>
-            </div>
+            <img src="${contextPath}/images/box_ic.svg" alt="짐 아이콘" class="w-5 h-5 mr-2">
+            <span class="text-gray-900">${jim.typeName} ${jim.count}개</span>
         `;
         container.appendChild(jimItem);
     });
@@ -122,27 +127,30 @@ function displayPriceDetails(jimTypes) {
     let totalAmount = 0;
     const serviceFee = 400;
 
-    jimTypes.forEach(item => {
-        // 시간 계산 (30분 = 0.5시간)
-        const startTime = new Date(reservationData.startTime);
-        const endTime = new Date(reservationData.endTime);
-        const diffMinutes = (endTime - startTime) / (1000 * 60);
-        const hours = diffMinutes / 60;
+    // 시간 계산 (공통)
+    const startTime = new Date(reservationData.startTime);
+    const endTime = new Date(reservationData.endTime);
+    const diffMinutes = (endTime - startTime) / (1000 * 60);
+    const hours = diffMinutes / 60;
 
-        const itemTotal = item.pricePerHour * item.count * hours;
+    jimTypes.forEach(item => {
+        const { typeName, count, pricePerHour } = item;
+
+        // 단일 짐 총액 계산
+        const itemTotal = pricePerHour * count * hours;
         totalAmount += itemTotal;
 
         const priceItem = document.createElement('div');
-        priceItem.className = 'price-item flex justify-between';
+        priceItem.className = 'flex justify-between text-sm text-gray-600';
         priceItem.innerHTML = `
-            <span>${item.typeName} × ${item.count}개 × ${formatHours(hours)}</span>
-            <span>${itemTotal.toLocaleString()}원</span>
+            <span>${typeName} × ${count}개 × ${formatHours(hours)}</span>
+            <span>${Math.round(itemTotal).toLocaleString()}원</span>
         `;
         container.appendChild(priceItem);
     });
 
-    // 총 결제 금액 업데이트
-    const finalTotal = totalAmount + serviceFee;
+    // 총 결제 금액 (서비스 수수료 포함)
+    const finalTotal = Math.round(totalAmount + serviceFee);
     document.getElementById('totalPrice').textContent = finalTotal.toLocaleString() + '원';
 }
 
@@ -160,78 +168,95 @@ function formatHours(hours) {
 }
 
 // 상태에 따라 액션 버튼 표시
-function showActionButtonsIfNeeded() {
-    const actionButtons = document.getElementById('actionButtons');
+function hideActionButtons() {
     const bottomButtons = document.getElementById('bottomButtons');
-
-    if (reservationData && reservationData.state === 'PENDING') {
-        actionButtons.classList.remove('hidden');
-        bottomButtons.classList.remove('hidden');
-    }
+    bottomButtons.classList.add('hidden');
+}
+//
+function showConfirmedButton() {
+    const confirmedBtnContainer = document.getElementById('confirmedButton');
+    confirmedBtnContainer.classList.remove('hidden');
 }
 
-// 승인/거절 처리
 function handleApproveReject(approve) {
     if (isProcessing) return;
 
     const action = approve === 'yes' ? '승인' : '거절';
     const message = `이 예약을 ${action}하시겠습니까?`;
 
-    if (!confirm(message)) return;
+    ModalUtils.showConfirm(
+        message,                   // 본문
+        "예약 확인",                // 제목
+        () => {
+            // 확인 버튼 클릭 시 실행될 콜백
+            isProcessing = true;
+            setButtonsDisabled(true);
 
-    isProcessing = true;
-    setButtonsDisabled(true);
+            fetch(`/AirBnG/reservations/${reservationId}/members/${memberId}/confirm?approve=${approve}`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.code === 1000) {
+                        const newState = data.result.state;
+                        const successMessage = approve === 'yes' ? '예약이 승인되었습니다.' : '예약이 거절되었습니다.';
 
-    fetch(`/AirBnG/reservations/${reservationId}/members/${memberId}/confirm?approve=${approve}`, {
-        method: 'PATCH',
-        headers: {
-            'Content-Type': 'application/json',
-        }
-    })
-        .then(response => response.json())
-        .then(data => {
-            if (data.code === 1000) {
-                const newState = data.result.state;
-                const successMessage = approve === 'yes' ? '예약이 승인되었습니다.' : '예약이 거절되었습니다.';
-
-                ModalUtils.showSuccess(successMessage, "", () => {
-                    // 상태 업데이트
-                    updateReservationState(newState);
-                    // 버튼 숨기기
-                    hideActionButtons();
+                        ModalUtils.showSuccess(successMessage, "", () => {
+                            updateReservationState(newState);
+                            hideActionButtons();
+                            showConfirmedButton();
+                        });
+                    } else {
+                        handleError(data.message || `예약 ${action}에 실패했습니다.`);
+                    }
+                })
+                .catch(error => {
+                    console.error(`예약 ${action} 요청 실패:`, error);
+                    handleError('네트워크 오류가 발생했습니다.');
+                })
+                .finally(() => {
+                    isProcessing = false;
+                    setButtonsDisabled(false);
                 });
-            } else {
-                handleError(data.message || `예약 ${action}에 실패했습니다.`);
-            }
-        })
-        .catch(error => {
-            console.error(`예약 ${action} 요청 실패:`, error);
-            handleError('네트워크 오류가 발생했습니다.');
-        })
-        .finally(() => {
-            isProcessing = false;
-            setButtonsDisabled(false);
-        });
+        },
+        () => {
+            // 취소 버튼 클릭 시 아무 동작 안 함
+        }
+    );
 }
-
 // 예약 상태 업데이트
 function updateReservationState(newState) {
-    const statusElement = document.getElementById('reservationStatus');
-    statusElement.textContent = getStatusText(newState);
-    statusElement.className = `px-2 py-1 rounded-full text-xs font-medium ${getStatusClass(newState)}`;
-
     // 예약 데이터 업데이트
     if (reservationData) {
         reservationData.state = newState;
     }
 }
+function showActionButtonsIfNeeded() {
+    const bottomButtons = document.getElementById('bottomButtons');
+    const confirmedBtnContainer = document.getElementById('confirmedButton');
 
+    if (reservationData) {
+        if (reservationData.state === 'PENDING') {
+            bottomButtons.classList.remove('hidden');
+            confirmedBtnContainer.classList.add('hidden');
+        } else if (reservationData.state === 'CONFIRMED') {
+            bottomButtons.classList.add('hidden');
+            confirmedBtnContainer.classList.remove('hidden');
+        } else {
+            bottomButtons.classList.add('hidden');
+            confirmedBtnContainer.classList.add('hidden');
+        }
+    }
+}
 // 액션 버튼 숨기기
 function hideActionButtons() {
-    const actionButtons = document.getElementById('actionButtons');
+    // const actionButtons = document.getElementById('actionButtons');
     const bottomButtons = document.getElementById('bottomButtons');
 
-    actionButtons.classList.add('hidden');
+    // actionButtons.classList.add('hidden');
     bottomButtons.classList.add('hidden');
 }
 
@@ -268,22 +293,20 @@ function handleError(message) {
 function formatDateRange(startDate, endDate) {
     const startDateStr = startDate.toLocaleDateString('ko-KR', {
         year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-        weekday: 'short'
-    });
+        month: '2-digit',
+        day: '2-digit'
+    }).replace(/\./g, '.').replace(/\s/g, '');
 
     const endDateStr = endDate.toLocaleDateString('ko-KR', {
         year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-        weekday: 'short'
-    });
+        month: '2-digit',
+        day: '2-digit'
+    }).replace(/\./g, '.').replace(/\s/g, '');
 
     if (startDate.toDateString() === endDate.toDateString()) {
-        return startDateStr;
+        return startDateStr.slice(0, -1); // 마지막 점 제거
     } else {
-        return `${startDateStr} ~ ${endDateStr}`;
+        return `${startDateStr.slice(0, -1)} ~ ${endDateStr.slice(0, -1)}`;
     }
 }
 
