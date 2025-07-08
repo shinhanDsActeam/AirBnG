@@ -1,62 +1,114 @@
-kakao.maps.load(function () {
-  var mapContainer = document.getElementById('map');
-  var mapOption = {
-    center: new kakao.maps.LatLng(37.55935630141197, 126.92263348592226),
-    level: 4
-  };
+function loadKakaoScript(callback) {
+    const existingScript = document.querySelector("script[src*='dapi.kakao.com']");
+    if (!existingScript) {
+        const script = document.createElement("script");
+        script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${window.KAKAO_APP_KEY}&autoload=false&libraries=services`;
+        script.async = true;
+        script.onload = () => kakao.maps.load(callback);
+        document.head.appendChild(script);
+    } else {
+        kakao.maps.load(callback);
+    }
+}
 
-  var map = new kakao.maps.Map(mapContainer, mapOption);
-  var position = new kakao.maps.LatLng(37.55935630141197, 126.92263348592226);
+let map; // 전역으로 선언하여 다른 함수에서도 접근 가능
 
-  var marker = new kakao.maps.Marker({
-    position: position,
-    clickable: true
-  });
+function initMapAndResults() {
+    const mapContainer = document.getElementById('map');
+    const mapOption = {
+        center: new kakao.maps.LatLng(37.55935630141197, 126.92263348592226),
+        level: 4
+    };
+    map = new kakao.maps.Map(mapContainer, mapOption);
 
-  marker.setMap(map);
+    setupSearchBar();
+    setupBottomSheet();
 
-  var iwContent = '<div style="padding:5px;">Hello World!</div>';
-  var iwRemoveable = true;
+    const urlParams = new URLSearchParams(window.location.search);
+    const address = urlParams.get("address");
+    const jimTypeId = urlParams.get("jimTypeId");
+    const reservationDate = urlParams.get("reservationDate");
 
-  var infowindow = new kakao.maps.InfoWindow({
-    content: iwContent,
-    removable: iwRemoveable
-  });
+    if (address) {
+        fetchAndRenderLockers(address, jimTypeId, reservationDate);
+    }
+}
 
-  kakao.maps.event.addListener(marker, 'click', function () {
-    infowindow.open(map, marker);
-  });
-});
+function setupSearchBar() {
+    const input = document.getElementById('searchInput');
+    const urlParams = new URLSearchParams(window.location.search);
+    const address = urlParams.get('address');
 
-// ✅ 공통: 락커 목록 가져와서 렌더링하는 함수
+    if (input && address) {
+        input.value = decodeURIComponent(address);
+        input.addEventListener("focus", function () {
+            window.location.href = `${contextPath}/page/lockerSearch?jimTypeId=0`;
+        });
+    }
+}
+
+function setupBottomSheet() {
+    const sheet = document.getElementById('bottomSheet');
+    const header = document.getElementById('sheetHeader');
+
+    let startY = 0;
+    let isDragging = false;
+
+    sheet.style.transform = "translateX(-50%) translateY(70%)";
+    sheet.classList.remove("fixed");
+
+    header.addEventListener('mousedown', function (e) {
+        startY = e.clientY;
+        isDragging = true;
+        sheet.classList.add("dragging");
+
+        document.addEventListener('mousemove', mouseMoveHandler);
+        document.addEventListener('mouseup', mouseUpHandler);
+    });
+
+    function mouseMoveHandler(e) {
+        const debug = document.getElementById("debugOutput");
+        if (debug) debug.textContent = "현재 Y: " + e.clientY;
+    }
+
+    function mouseUpHandler(e) {
+        if (!isDragging) return;
+
+        const deltaY = e.clientY - startY;
+        if (deltaY > 20) {
+            sheet.style.transform = "translateX(-50%) translateY(70%)";
+            sheet.classList.remove("fixed");
+        } else {
+            sheet.style.transform = "translateX(-50%) translateY(0%)";
+            sheet.classList.add("fixed");
+        }
+
+        isDragging = false;
+        sheet.classList.remove("dragging");
+        document.removeEventListener('mousemove', mouseMoveHandler);
+        document.removeEventListener('mouseup', mouseUpHandler);
+    }
+}
+
 function fetchAndRenderLockers(address, jimTypeId, reservationDate) {
     let queryString = `address=${encodeURIComponent(address)}`;
-
-    if (jimTypeId && jimTypeId !== "0") {
-        queryString += `&jimTypeId=${jimTypeId}`;
-    }
-
-    if (reservationDate) {
-        queryString += `&reservationDate=${reservationDate}`;
-    }
+    if (jimTypeId && jimTypeId !== "0") queryString += `&jimTypeId=${jimTypeId}`;
+    if (reservationDate) queryString += `&reservationDate=${reservationDate}`;
 
     fetch(`${contextPath}/lockers?${queryString}`)
         .then(response => {
             const contentType = response.headers.get("content-type");
-            if (contentType && contentType.includes("application/json")) {
-                return response.json();
-            } else {
-                return response.text().then(text => {
-                    console.error("JSON이 아닌 응답:", text);
-                    throw new Error("서버에서 잘못된 응답을 반환했습니다.");
-                });
-            }
+            if (contentType?.includes("application/json")) return response.json();
+            return response.text().then(text => {
+                console.error("JSON이 아닌 응답:", text);
+                throw new Error("잘못된 응답입니다.");
+            });
         })
         .then(data => {
             const container = document.getElementById("lockerList");
             if (!container) return;
 
-            if (data.code === 3001) {
+            if (data.code === 3001 || !data.result?.lockers?.length) {
                 container.innerHTML = `
                     <div class="no-result-wrapper">
                         <img class="search-warning" src="${contextPath}/images/danger.svg" alt="검색결과없음">
@@ -64,37 +116,20 @@ function fetchAndRenderLockers(address, jimTypeId, reservationDate) {
                         <p class="no-result-sub">다른 위치나 키워드로 다시 시도해보세요!</p>
                     </div>
                 `;
-
                 document.querySelector(".sheet-count").textContent = "0";
-                const sheet = document.getElementById("bottomSheet");
-                sheet.style.transform = "translateX(-50%) translateY(0%)";
-                sheet.classList.add("fixed");
+                document.getElementById("bottomSheet").classList.add("fixed");
                 return;
             }
 
-            let lockers = data.result?.lockers || [];
-
+            let lockers = data.result.lockers;
             if (jimTypeId && jimTypeId !== "0") {
                 lockers = lockers.filter(locker =>
                     locker.jimTypeResults?.some(jtr => String(jtr.jimTypeId) === String(jimTypeId))
                 );
             }
 
-            if (!lockers.length) {
-                container.innerHTML = `
-                    <div class="no-result-wrapper">
-                        🔍 <span class="no-result-text">검색 결과가 없습니다.</span>
-                    </div>
-                `;
-                document.querySelector(".sheet-count").textContent = "0";
-                const sheet = document.getElementById("bottomSheet");
-                sheet.style.transform = "translateX(-50%) translateY(0%)";
-                sheet.classList.add("fixed");
-                return;
-            }
-
-            document.querySelector(".sheet-count").textContent = lockers.length;
             container.innerHTML = "";
+            document.querySelector(".sheet-count").textContent = lockers.length;
 
             lockers.forEach(locker => {
                 const div = document.createElement("div");
@@ -116,9 +151,8 @@ function fetchAndRenderLockers(address, jimTypeId, reservationDate) {
                 container.appendChild(div);
             });
 
-            const sheet = document.getElementById("bottomSheet");
-            sheet.style.transform = "translateX(-50%) translateY(0%)";
-            sheet.classList.add("fixed");
+            document.getElementById("bottomSheet").classList.add("fixed");
+            document.getElementById("bottomSheet").style.transform = "translateX(-50%) translateY(0%)";
             addLockerItemClickEvents();
         })
         .catch(error => {
@@ -137,7 +171,6 @@ function fetchAndRenderLockers(address, jimTypeId, reservationDate) {
         });
 }
 
-// ✅ 상세보기 버튼 로직 묶기
 function addLockerItemClickEvents() {
     const container = document.getElementById("lockerList");
     container.addEventListener("click", function (e) {
@@ -160,8 +193,8 @@ function addLockerItemClickEvents() {
         document.querySelectorAll(".storage-item").forEach(item => {
             item.classList.remove("selected");
             const btn = item.querySelector(".storage-button");
-            const isAvailable = btn.dataset.available === "YES";
-            btn.textContent = isAvailable ? "보관가능" : "보관대기";
+            const available = btn.dataset.available === "YES";
+            btn.textContent = available ? "보관가능" : "보관대기";
             btn.onclick = null;
         });
 
@@ -169,21 +202,20 @@ function addLockerItemClickEvents() {
         clickedButton.textContent = "상세보기";
 
         clickedButton.onclick = function () {
-            if (clickedButton.textContent !== "상세보기") return;
             const lockerId = clickedButton.dataset.id;
             window.location.href = `${contextPath}/page/lockerDetails?lockerId=${encodeURIComponent(lockerId)}`;
         };
     });
 }
 
-// ✅ 짐 타입 선택 시 URL만 바꾸고 데이터 다시 불러오기
 function selectBagType(jimTypeId) {
     const typeMap = {
         0: '모든 짐',
         1: '백팩/가방',
-        2: '캐리어',
-        3: '박스/큰 짐',
-        4: '유모차'
+        2: '캐리어 소형',
+        3: '캐리어 대형',
+        4: '박스/큰 짐',
+        5: '유모차'
     };
 
     document.getElementById("selectedBagType").textContent = typeMap[jimTypeId];
@@ -200,77 +232,16 @@ function selectBagType(jimTypeId) {
     fetchAndRenderLockers(address, jimTypeId, reservationDate);
 }
 
-// ✅ 페이지 초기화
-
-document.addEventListener("DOMContentLoaded", function () {
-    const searchInput = document.getElementById("searchInput");
-
-    if (searchInput) {
-        searchInput.addEventListener("focus", function () {
-            // input 클릭(포커스) 시 이동
-            window.location.href = `${contextPath}/page/lockerSearch?jimTypeId=0`;
-        });
-    }
-
-    const urlParams = new URLSearchParams(window.location.search);
-    const address = urlParams.get("address");
-    const jimTypeId = urlParams.get("jimTypeId");
-    const reservationDate = urlParams.get("reservationDate");
-
-    const sheet = document.getElementById('bottomSheet');
-    const header = document.getElementById('sheetHeader');
-    let startY = 0;
-    let isDragging = false;
-
-    // 페이지가 로딩될 때는 바텀시트 초기 상태로 내려가 있게 설정
-    sheet.style.transform = "translateX(-50%) translateY(70%)";
-    sheet.classList.remove("fixed");
-
-    header.addEventListener('mousedown', function (e) {
-        startY = e.clientY;
-        isDragging = true;
-        sheet.classList.add("dragging");
-
-        document.addEventListener('mousemove', mouseMoveHandler);
-        document.addEventListener('mouseup', mouseUpHandler);
-    });
-
-    function mouseMoveHandler(e) {
-        const debug = document.getElementById("debugOutput");
-        if (debug) debug.textContent = "현재 Y: " + e.clientY;
-    }
-
-    function mouseUpHandler(e) {
-        if (!isDragging) return;
-        const currentY = e.clientY;
-        const deltaY = currentY - startY;
-
-        if (deltaY > 20) {
-            sheet.style.transform = "translateX(-50%) translateY(70%)";
-            sheet.classList.remove("fixed");
-        } else {
-            sheet.style.transform = "translateX(-50%) translateY(0%)";
-            sheet.classList.add("fixed");
-        }
-
-        isDragging = false;
-        sheet.classList.remove("dragging");
-        document.removeEventListener('mousemove', mouseMoveHandler);
-        document.removeEventListener('mouseup', mouseUpHandler);
-    }
-
-    if (address) {
-        const input = document.getElementById('searchInput');
-        if (input) input.value = decodeURIComponent(address);
-        fetchAndRenderLockers(address, jimTypeId, reservationDate);
-    }
-});
-
 function dropdown() {
     const dropdownMenu = document.getElementById("bag-dropdown");
     const sheet = document.getElementById("bottomSheet");
-    if (!sheet.classList.contains("fixed")) return; // 바텀시트가 올라와 있을 때만 허용
+    if (!sheet.classList.contains("fixed")) return;
     if (dropdownMenu) {
         dropdownMenu.classList.toggle("hidden");
     }
 }
+
+// 진입점
+document.addEventListener("DOMContentLoaded", () => {
+    loadKakaoScript(initMapAndResults);
+});

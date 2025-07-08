@@ -79,9 +79,10 @@ function setJimTypeNameFromURL() {
     const jimTypeMap = {
         0: "모든 짐",
         1: "백팩/가방",
-        2: "캐리어",
-        3: "박스/큰 짐",
-        4: "유모차"
+        2: "캐리어 소형",
+        3: "캐리어 대형",
+        4: "박스/큰 짐",
+        5: "유모차"
     };
 
     const bagName = jimTypeMap[jimTypeId];
@@ -131,9 +132,10 @@ function selectBagType(type) {
     const typeMap = {
         '모든 짐': 0,
         '백팩/가방': 1,
-        '캐리어': 2,
-        '박스/큰 짐': 3,
-        '유아용품': 4
+        '캐리어 소형': 2,
+        '캐리어 대형': 3,
+        '박스/큰 짐': 4,
+        '유아용품': 5
     };
 
     const jimTypeId = typeMap[type];

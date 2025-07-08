@@ -7,18 +7,9 @@
 <head>
     <meta charset="utf-8">
     <title>AirBnG | ${address}&nbsp;검색 결과</title>
-
+    <link rel="icon" type="image/svg+xml" href="${pageContext.request.contextPath}/images/favicon.svg" />
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/search.css">
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/bottom-sheet.css">
-
-    <!-- Kakao Maps -->
-    <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=8a880aef5e46496024dc825928ba9333&autoload=false"></script>
-
-    <!-- JS에서 contextPath 사용 -->
-    <script>
-        const contextPath = '${pageContext.request.contextPath}';
-    </script>
-    <script type="text/javascript" src="${pageContext.request.contextPath}/js/search.js"></script>
 </head>
 
 <body>
@@ -51,9 +42,10 @@
                             <c:choose>
                                 <c:when test="${empty jimTypeId || jimTypeId == 0}">모든 짐</c:when>
                                 <c:when test="${jimTypeId == 1}">백팩/가방</c:when>
-                                <c:when test="${jimTypeId == 2}">캐리어</c:when>
-                                <c:when test="${jimTypeId == 3}">박스/큰 짐</c:when>
-                                <c:when test="${jimTypeId == 4}">유모차</c:when>
+                                <c:when test="${jimTypeId == 2}">캐리어 소형</c:when>
+                                <c:when test="${jimTypeId == 3}">캐리어 대형</c:when>
+                                <c:when test="${jimTypeId == 4}">박스/큰 짐</c:when>
+                                <c:when test="${jimTypeId == 5}">유모차</c:when>
                             </c:choose>
                         </span>
                         <img class="dropdown-down" src="${pageContext.request.contextPath}/images/arrow-down.svg" alt="드롭다운">
@@ -62,17 +54,24 @@
                     <ul id="bag-dropdown" class="dropdown-menu hidden">
                         <li onclick="selectBagType(0)">모든 짐</li>
                         <li onclick="selectBagType(1)">백팩/가방</li>
-                        <li onclick="selectBagType(2)">캐리어</li>
-                        <li onclick="selectBagType(3)">박스/큰 짐</li>
-                        <li onclick="selectBagType(4)">유모차</li>
+                        <li onclick="selectBagType(2)">캐리어 소형</li>
+                        <li onclick="selectBagType(3)">캐리어 대형</li>
+                        <li onclick="selectBagType(4)">박스/큰 짐</li>
+                        <li onclick="selectBagType(5)">유모차</li>
                     </ul>
             </div>
-
 
             <div class="sheet-content" id="lockerList">
                 <%-- 여기 안에는 JS가 검색 결과를 동적으로 삽입함 --%>
             </div>
         </div>
     </div>
+
+    <script type="text/javascript" src="${pageContext.request.contextPath}/js/config/kakao.config.js"></script>
+    <!-- JS에서 contextPath 사용 -->
+    <script>
+        const contextPath = '${pageContext.request.contextPath}';
+    </script>
+    <script type="text/javascript" src="${pageContext.request.contextPath}/js/search.js"></script>
 </body>
 </html>

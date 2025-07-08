@@ -51,7 +51,8 @@
                     <div id="bag-dropdown" class="dropdown hidden">
                         <div class="dropdown-option" onclick="selectBagType('모든 짐')">모든 짐</div>
                         <div class="dropdown-option" onclick="selectBagType('백팩/가방')">백팩/가방</div>
-                        <div class="dropdown-option" onclick="selectBagType('캐리어')">캐리어</div>
+                        <div class="dropdown-option" onclick="selectBagType('캐리어 소형')">캐리어 소형</div>
+                        <div class="dropdown-option" onclick="selectBagType('캐리어 대형')">캐리어 대형</div>
                         <div class="dropdown-option" onclick="selectBagType('박스/큰 짐')">박스/큰 짐</div>
                         <div class="dropdown-option" onclick="selectBagType('유아용품')">유아용품</div>
                     </div>
