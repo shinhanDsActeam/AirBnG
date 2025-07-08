@@ -13,6 +13,7 @@
 </head>
 <body class="bg-gray-100 mx-auto">
 <script src="<c:url value='/js/reservation/reservationForm.js' />"></script>
+<script src="<c:url value='/js/common/timeUtil.js' />"></script>
 <div class="max-w-md mx-auto bg-white min-h-screen">
     <%-- 전역변수 --%>
     <script>
