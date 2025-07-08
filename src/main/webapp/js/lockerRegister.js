@@ -161,7 +161,7 @@ function initLockerRegister() {
                         document.getElementById('latitude').value = result[0].y;
                         document.getElementById('longitude').value = result[0].x;
                     } else {
-                        alert("위치 좌표를 찾을 수 없습니다.");
+                        ModalUtils.showError("위치 좌표를 찾을 수 없습니다.", "주소 변환 실패");
                     }
                 });
 
@@ -183,7 +183,7 @@ function initLockerRegister() {
 
         // 총 5장 제한
         if (selectedFiles.length + newFiles.length > 5) {
-            alert("사진은 최대 5장까지 업로드할 수 있습니다.");
+            ModalUtils.showWarning("사진은 최대 5장까지 업로드할 수 있습니다.", "업로드 제한");
             e.target.value = '';
             return;
         }
@@ -305,6 +305,26 @@ function initLockerRegister() {
     renderDropdownOptions('endTime', '21:00');
 }
 
+function toggleDropdown(selectId) {
+  const dropdown = document.getElementById(`dropdown-${selectId}`);
+  const isVisible = dropdown.classList.contains('show');
+
+  // 모두 닫고 이 하나만 열기
+  document.querySelectorAll('.custom-select-dropdown').forEach(el => el.classList.remove('show'));
+  if (!isVisible) {
+    dropdown.classList.add('show');
+
+    // 외부 클릭 시 닫기
+    const closeOnClickOutside = (e) => {
+      if (!dropdown.previousElementSibling.contains(e.target)) {
+        dropdown.classList.remove('show');
+        window.removeEventListener('click', closeOnClickOutside);
+      }
+    };
+    setTimeout(() => window.addEventListener('click', closeOnClickOutside), 0);
+  }
+}
+
 // 등록 버튼 클릭 시 실제 fetch 전송
 document.querySelector('.submit-btn').addEventListener('click', async () => {
     const locker = {
@@ -352,33 +372,14 @@ document.querySelector('.submit-btn').addEventListener('click', async () => {
         });
 
         if (res.ok) {
-            alert("보관소 등록 완료!");
-            location.href = contextPath + "/page/lockers";
+            ModalUtils.showSuccess('보관소 등록이 완료되었습니다!', '등록 완료', () => {
+                location.href = contextPath + "/page/lockers";
+            });
         } else {
-            alert("등록 실패 - 서버 오류");
+            ModalUtils.showError('이미 등록된 보관소가 있거나 서버 오류입니다.', '등록 실패');
         }
     } catch (err) {
         console.error("전송 실패:", err);
-        alert("전송 중 오류가 발생했습니다.");
+        ModalUtils.showError('전송 중 오류가 발생했습니다.', '오류');
     }
 });
-
-function toggleDropdown(selectId) {
-  const dropdown = document.getElementById(`dropdown-${selectId}`);
-  const isVisible = dropdown.classList.contains('show');
-
-  // 모두 닫고 이 하나만 열기
-  document.querySelectorAll('.custom-select-dropdown').forEach(el => el.classList.remove('show'));
-  if (!isVisible) {
-    dropdown.classList.add('show');
-
-    // 외부 클릭 시 닫기
-    const closeOnClickOutside = (e) => {
-      if (!dropdown.previousElementSibling.contains(e.target)) {
-        dropdown.classList.remove('show');
-        window.removeEventListener('click', closeOnClickOutside);
-      }
-    };
-    setTimeout(() => window.addEventListener('click', closeOnClickOutside), 0);
-  }
-}

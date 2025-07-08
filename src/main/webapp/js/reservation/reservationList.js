@@ -1,5 +1,6 @@
 let currentStates = ['CONFIRMED', 'PENDING'];
 let currentPeriod = 'ALL';
+let currentIsDropper = false; // 🆕 토글 상태 추가
 let nextCursorId = null;
 let loading = false;
 let hasNextPage = true;
@@ -14,6 +15,7 @@ console.log(`Blodspot SVG URL: ${blodspotSvgUrl}`);
 // 초기화
 document.addEventListener('DOMContentLoaded', () => {
     initTabs();
+    initToggle(); // 🆕 토글 초기화 추가
     fetchReservations(true);
 
     window.addEventListener('scroll', () => {
@@ -23,11 +25,55 @@ document.addEventListener('DOMContentLoaded', () => {
         const viewportHeight = window.innerHeight;
         const fullHeight = document.body.offsetHeight;
 
-        if (scrollTop + viewportHeight >= fullHeight - 100) {
+        if (scrollTop + viewportHeight >= fullHeight - 200) {
             fetchReservations(false);  // 다음 커서 로드
         }
     });
 });
+
+// 🆕 토글 초기화
+function initToggle() {
+    document.querySelectorAll('.toggle-option').forEach(option => {
+        option.addEventListener('click', () => {
+            const isDropper = option.getAttribute('data-dropper') === 'true';
+            changeToggle(isDropper, option);
+        });
+    });
+}
+function initToggle() {
+    // 초기 상태 설정: HTML에서 active 클래스가 있는 토글의 상태로 설정
+    const activeToggle = document.querySelector('.toggle-option.active');
+    if (activeToggle) {
+        currentIsDropper = activeToggle.getAttribute('data-dropper') === 'true';
+        // console.log('📍 [initToggle] 초기 isDropper 상태:', currentIsDropper);
+    }
+
+    // 토글 이벤트 등록
+    document.querySelectorAll('.toggle-option').forEach(option => {
+        option.addEventListener('click', () => {
+            const isDropper = option.getAttribute('data-dropper') === 'true';
+            changeToggle(isDropper, option);
+        });
+    });
+}
+// 🆕 토글 변경 처리
+function changeToggle(newIsDropper, toggleElem) {
+    if (loading) return;
+
+    currentIsDropper = newIsDropper;
+    nextCursorId = null;
+    hasNextPage = true;
+
+    // 화면 맨 위로 스크롤
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    // 토글 UI 갱신
+    document.querySelectorAll('.toggle-option').forEach(option => option.classList.remove('active'));
+    toggleElem.classList.add('active');
+
+    clearReservationList();
+    fetchReservations(true);
+}
 
 // ▶ 탭 이벤트 초기화
 function initTabs() {
@@ -49,7 +95,7 @@ function changeTab(newStates, tabElem) {
     hasNextPage = true;
 
      // 화면 맨 위로 스크롤
-     window.scrollTo({ top: 0, behavior: 'smooth' });  // 👈 이 줄 추가!
+     window.scrollTo({ top: 0, behavior: 'smooth' });
 
     // UI 갱신
     document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
@@ -106,12 +152,10 @@ function toggleMoreMenu(reservationId) {
     target.classList.toggle('show');
 }
 
-// ▶ API URL 생성
+// ▶ API URL 생성 (수정됨)
 function getApiUrl() {
-    // memberId가 'DROPPER'로 시작하면 isDropper=true, 아니면 false
-//    const isDropper = memberId && memberId.startsWith('DROPPER');
-    const isDropper = true;
-    const baseUrl = `/AirBnG/reservations?isDropper=${isDropper}&memberId=${memberId}`;
+    // 🆕 토글 상태에 따라 isDropper 설정
+    const baseUrl = `/AirBnG/reservations?isDropper=${currentIsDropper}&memberId=${memberId}`;
     const statesParam = currentStates.map(s => `&state=${s}`).join('');
 
     // 기간 필터링: 완료되거나 취소된 예약에만 적용
@@ -121,7 +165,9 @@ function getApiUrl() {
     const cursorParam = (nextCursorId !== null && nextCursorId !== -1) ? `&nextCursorId=${nextCursorId}` : '';
 
     const apiUrl = baseUrl + statesParam + periodParam + cursorParam;
-    console.log(`API URL: ${apiUrl}`);
+    // console.log('📍 [getApiUrl] isDropper:', currentIsDropper);
+    // console.log('📍 [getApiUrl] nextCursorId:', nextCursorId);
+    // console.log('📍 [getApiUrl] API URL:', apiUrl);
     return apiUrl;
 }
 
@@ -178,8 +224,16 @@ function renderReservations(reservations) {
     const list = document.getElementById('reservation-list');
 
     reservations.forEach(res => {
+        //sessionStorage에 이미지, 주소, 상세주소 저장
+        sessionStorage.setItem(`reservationData_${res.reservationId}`, JSON.stringify({
+            lockerImage : res.lockerImage,
+            address : res.address,
+            addressDetail : res.addressDetail
+        }));
         const card = document.createElement('div');
         card.className = 'reservation-card';
+        card.dataset.id = res.reservationId;
+        card.dataset.role = res.role;
         if (res.state === 'CANCELLED') card.classList.add('cancelled');
 
         // 상태에 따라 다른 클래스 추가
@@ -200,7 +254,9 @@ function renderReservations(reservations) {
             card.innerHTML = `
                 <div class="reservation-header">
                     <div class="reservation-info-row">
-                        <a href="${contextPath}/page/reservations?id=${res.reservationId}" class="view-details">예약 상세 &gt;</a>
+                        <!--dropper, keeper에 따라 다른 상세 화면 이동-->
+<!--                        <a href="${contextPath}/page/reservations?id=${res.reservationId}" class="view-details">예약 상세 &gt;</a>-->
+                        <a href="javascript:void(0);" onclick="goToReservationDetail(${res.reservationId})" class="view-details">예약 상세 &gt;</a>
                         ${getStatusText(res.state)}
                     </div>
                 </div>
@@ -247,7 +303,9 @@ function renderReservations(reservations) {
                 <div class="reservation-header">
                     <div class="reservation-date">${formatDate(res.dateOnly)}</div>
                     <div class="reservation-info-row">
-                        <a href="${contextPath}/page/reservations?id=${res.reservationId}" class="view-details">예약 상세 &gt;</a>
+                    <!--dropper, keeper에 따라 다른 상세 화면 이동-->
+<!--                         <a href="${contextPath}/page/reservations?id=${res.reservationId}" class="view-details">예약 상세 &gt;</a>-->
+                        <a href="javascript:void(0);" onclick="goToReservationDetail(${res.reservationId})" class="view-details">예약 상세 &gt;</a>
                         ${getStatusText(res.state)}
                     </div>
                 </div>
@@ -278,7 +336,8 @@ function renderReservations(reservations) {
 
 // ▶ 버튼 렌더링
 function getActionButtons(reservation) {
-    if (reservation.state === 'PENDING') {
+    // 맡긴 내역(currentIsDropper = false)일 때만 취소 요청 버튼을 보이게
+    if (reservation.state === 'PENDING' && currentIsDropper === true) {
         return `<div class="action-buttons">
             <button class="btn btn-cancel" onclick="goToReservationDetail(${reservation.reservationId})">취소 요청</button>
         </div>`;
@@ -297,19 +356,28 @@ function getActionButtons(reservation) {
             </div>`;
     }
 
-    if (reservation.state === 'CONFIRMED') {
+    if (reservation.state === 'CONFIRMED' && currentIsDropper === true) {
         return `<div class="action-buttons">
             <button class="btn btn-cancel" onclick="goToReservationDetail(${reservation.reservationId})">취소 요청</button>
         </div>`;
     }
 
-    // 취소완료 상태는 버튼 없음
-    return '';
+    return ''; // CANCELLED 등 나머지는 버튼 없음
 }
 
 // ▶ 예약 상세 페이지로 이동하는 함수 추가
 function goToReservationDetail(reservationId) {
-    window.location.href = `${contextPath}/page/reservations?id=${reservationId}`;
+    //맡긴 내역 / 맡아준 내역에 따라서 다른 예약 상세화면 이동
+    const card = document.querySelector(`.reservation-card[data-id="${reservationId}"]`);
+    const role = card?.getAttribute('data-role');
+
+    if (role === 'KEEPER') {
+        window.location.href = `${contextPath}/page/reservations/confirm?reservationId=${reservationId}`;
+        console.log("맡아준 내역일때 예약 상세 이동");
+    } else {
+        window.location.href = `${contextPath}/page/reservations?id=${reservationId}`;
+        console.log("맡긴 내역일때 예약 상세 이동");
+    }
 }
 
 // ▶ 날짜 포맷
@@ -352,20 +420,25 @@ function fetchReservations(isFirst = false) {
     fetch(getApiUrl())
         .then(res => res.ok ? res.json() : Promise.reject(`HTTP ${res.status}`))
         .then(data => {
-            if (data.code !== 1000) throw new Error(data.message || 'API 오류');
-
             const reservations = data.result.reservations || [];
+            console.log(reservations);
+
+            // console.log('📍 [fetchReservations] 받은 예약 수:', reservations.length);
+            // console.log('📍 [fetchReservations] nextCursorId:', data.result.nextCursorId);
+            // console.log('📍 [fetchReservations] hasNextPage:', data.result.hasNextPage);
+
+            // ✅ 커서 먼저 갱신
+            nextCursorId = data.result.nextCursorId;
+            hasNextPage = data.result.hasNextPage;
+
             if (isFirst && reservations.length === 0) {
                 document.getElementById('empty-state').style.display = 'block';
             } else {
                 const filtered = reservations.filter(r => currentStates.includes(r.state));
                 if (filtered.length > 0) renderReservations(filtered);
-                nextCursorId = data.result.nextCursorId;
-                hasNextPage = data.result.hasNextPage;
-//                document.getElementById('load-more').style.display = hasNextPage ? 'block' : 'none';
-//                document.getElementById('load-more').style.display = 'none';
             }
         })
+
         .catch(err => {
             console.error('Fetch 오류:', err);
             if (isFirst) document.getElementById('empty-state').style.display = 'block';

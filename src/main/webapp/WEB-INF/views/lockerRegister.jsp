@@ -11,6 +11,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/gh/webfontworld/bmjua/BMJUA.css" rel="stylesheet">
     <link rel="stylesheet" href="<c:url value='/css/lockerRegister.css'/>" />
+    <link rel="stylesheet" href="<c:url value='/css/common/modal.css'/>" />
+    <link rel="icon" type="image/svg+xml" href="${pageContext.request.contextPath}/images/favicon.svg" />
 </head>
 
 <body class="airbng-register">
@@ -191,11 +193,14 @@
     </div>
 </div>
 
+
 <script>
     const contextPath = '${pageContext.request.contextPath}';
 
     const memberId = '${sessionScope.memberId}';
 </script>
+<script src="<c:url value='/js/common/modal.js'/>"></script>
+<%@ include file="/WEB-INF/views/common/modal.jsp" %>
 <script src="<c:url value='/js/config/kakao.config.js'/>"></script>
 <script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 <script src="<c:url value='/js/lockerRegister.js'/>" defer></script>
