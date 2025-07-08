@@ -28,15 +28,9 @@
             <!-- 로그인 상태에 따른 조건부 렌더링 -->
             <div id="loggedOutSection">
                 <!-- 로그인 안된 상태 -->
-                <div class="welcome-section">
-                    <h2 class="welcome-title">환영합니다!</h2>
-                    <p class="welcome-subtitle">로그인하여 더 많은 서비스를 이용해보세요.</p>
-
-                    <div class="auth-buttons">
-                        <button class="login-btn" onclick="goToLogin()">로그인</button>
-                        <button class="signup-btn" onclick="goToSignup()">회원가입</button>
-                    </div>
-                </div>
+                <c:set var="welcomeTitle" value="환영합니다!"/>
+                <c:set var="welcomeSubtitle" value="로그인하여 더 많은 서비스를 이용해보세요."/>
+                <%@ include file="/WEB-INF/views/common/welcom.jsp" %>
 
                 <!-- 로그인 전 제한된 메뉴 -->
                 <div class="limited-menu">
@@ -115,18 +109,7 @@
         </main>
     </div>
 
-    <!-- 모달 영역 -->
-    <div id="success-modal" class="modal-overlay hidden">
-        <div class="modal">
-            <div class="modal-content">
-                <div class="modal-title">로그인 성공</div>
-            </div>
-            <div class="modal-buttons">
-                <button class="modal-btn" onclick="confirmLoginSuccess()" style="width: 100%; border-right: none;">확인</button>
-            </div>
-        </div>
-    </div>
-
+    <%@ include file="common/modal.jsp" %>
     <%@ include file="navbar.jsp" %>
 
     <script>

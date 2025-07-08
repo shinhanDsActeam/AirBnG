@@ -23,7 +23,7 @@ class ModalUtils {
             title: '',
             message: '',
             confirmText: '확인',
-            cancelText: '취소',
+            cancelText: '아니요',
             showCancel: true,
             onConfirm: null,
             onCancel: null
@@ -36,6 +36,7 @@ class ModalUtils {
 
         // 콜백 저장
         this.confirmCallback = config.onConfirm;
+        this.cancelCallback = config.onCancel;
         this.currentModal = modalId;
 
         // 모달 표시
@@ -145,11 +146,12 @@ class ModalUtils {
     /**
      * 확인 모달 표시 (타이틀도 지정 가능하도록 개선)
      * @param {string} message - 확인 메시지
+     * @param {string} title - 확인 타이틀
      * @param {Function} onConfirm - 확인 콜백
      * @param {Function} onCancel - 취소 콜백
      * @param {string} title - 확인 모달 타이틀
      */
-    static showConfirm(message = '정말로 진행하시겠습니까?', onConfirm = null, onCancel = null, title = '확인') {
+    static showConfirm(message = '정말로 진행하시겠습니까?', title = '확인', onConfirm = null, onCancel = null) {
         this.showModal('confirm-modal', {
             title: title,
             message: message,
@@ -179,13 +181,16 @@ class ModalUtils {
                     <div class="modal-title">${config.title || '알림'}</div>
                     <div class="modal-text">${config.message || ''}</div>
                 </div>
-                <div class="modal-buttons">
-                    ${config.showCancel ?
-            `<button class="modal-btn" onclick="ModalUtils.hideModal('${modalId}')">${config.cancelText || '취소'}</button>` :
-            ''
-        }
-                    <button class="modal-btn" onclick="ModalUtils.confirmAction('${modalId}')">${config.confirmText || '확인'}</button>
+                <div class="modal-buttons ${config.showCancel ? 'two-buttons' : 'one-button'}">
+                    ${config.showCancel ? `
+                        <button class="modal-btn left" onclick="ModalUtils.handleCustomCancel('${modalId}')">${config.cancelText || '취소'}</button>
+                        <div class="modal-divider"></div>
+                        <button class="modal-btn right" onclick="ModalUtils.confirmAction('${modalId}')">${config.confirmText || '확인'}</button>
+                    ` : `
+                        <button class="modal-btn" onclick="ModalUtils.confirmAction('${modalId}')">${config.confirmText || '확인'}</button>
+                    `}
                 </div>
+
             </div>
         `;
 
@@ -219,42 +224,41 @@ class ModalUtils {
             buttons[0].textContent = config.cancelText;
             buttons[1].textContent = config.confirmText;
 
-            // 취소 버튼 표시/숨김
-            if (!config.showCancel) {
-                buttons[0].style.display = 'none';
-                buttons[1].classList.add('single');
+            // carrier-size-modal인 경우: 선택 효과 제거
+            if (modal.id === 'carrier-size-modal') {
+                setTimeout(() => {
+                    if (modal.id === 'carrier-size-modal') {
+                        buttons.forEach(btn => btn.blur());  // 자동 포커스 제거
+                    }
+                }, 50);
+            } else {
+                // 기존 동작 유지 (다른 모달들)
+                if (!config.showCancel) {
+                    buttons[0].style.display = 'none';
+                    buttons[1].classList.add('single');
+                } else {
+                    buttons[0].style.display = '';
+                    buttons[1].classList.remove('single');
+                }
             }
         } else if (buttons.length === 1) {
             buttons[0].textContent = config.confirmText;
         }
     }
 
-    /**
-     * ESC 키 이벤트 처리
-     * @param {Event} event - 키보드 이벤트
-     */
     static handleEscKey = (event) => {
         if (event.key === 'Escape' && this.currentModal) {
             this.hideModal(this.currentModal);
         }
     }
 
-
     // 빼자.. 무조건 취소 혹은 확인을 눌러야만 꺼지게!
-    /**
-     * 배경 클릭 이벤트 처리
-     * @param {Event} event - 클릭 이벤트
-     */
     static handleBackgroundClick = (event) => {
         if (event.target.classList.contains('modal-overlay')) {
             this.hideModal(this.currentModal);
         }
     }
 
-    /**
-     * 포커스 관리
-     * @param {Element} modal - 모달 요소
-     */
     static manageFocus(modal) {
         const focusableElements = modal.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
         if (focusableElements.length > 0) {
@@ -262,11 +266,6 @@ class ModalUtils {
         }
     }
 
-    /**
-     * 아이콘 클래스 반환
-     * @param {string} type - 모달 타입
-     * @returns {string} 아이콘 클래스
-     */
     static getIconClass(type) {
         const iconClasses = {
             success: 'success-rotate',
@@ -278,11 +277,6 @@ class ModalUtils {
         return iconClasses[type] || 'info';
     }
 
-    /**
-     * 아이콘 심볼 반환
-     * @param {string} type - 모달 타입
-     * @returns {string} 아이콘 심볼
-     */
     static getIconSymbol(type) {
         const iconSymbols = {
             success: '✓',
@@ -304,6 +298,19 @@ class ModalUtils {
         });
         this.currentModal = null;
         this.confirmCallback = null;
+    }
+
+    /**
+     * 커스텀 취소 액션 처리
+     */
+    static handleCustomCancel(modalId) {
+        const modal = document.getElementById(modalId);
+        if (modal) {
+            this.hideModal(modalId);
+            if (typeof this.cancelCallback === 'function') {
+                this.cancelCallback();
+            }
+        }
     }
 
     /**
@@ -351,11 +358,6 @@ class ModalUtils {
 
         showNext(0);
     }
-}
-
-// 전역 함수들 (기존 코드와의 호환성을 위해)
-function closeWarningModal() {
-    ModalUtils.hideModal('warning-modal');
 }
 
 // DOM 로드 완료 시 이벤트 리스너 등록

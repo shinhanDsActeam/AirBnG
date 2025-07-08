@@ -14,17 +14,25 @@
 <body class="page-container">
     <!-- 헤더 -->
     <c:set var="headerTitle" value="예약 내역"/>
-    <c:set var="showBackButton" value="false"/>
+    <c:set var="showBackButton" value="true"/>
     <%@ include file="../common/header.jsp" %>
 
     <!-- 탭 메뉴 -->
-    <div class="tab-container">
-        <div class="tabs">
-            <a class="tab active" id="tab-before" data-states="CONFIRMED,PENDING">이용전</a>
-            <a class="tab" id="tab-after" data-states="COMPLETED">이용후</a>
-            <a class="tab" id="tab-cancelled" data-states="CANCELLED">취소됨</a>
+       <div class="tab-container">
+            <div class="tabs">
+                <a class="tab active" data-states="CONFIRMED,PENDING">이용전</a>
+                <a class="tab" data-states="COMPLETED">이용후</a>
+                <a class="tab" data-states="CANCELLED">취소됨</a>
+            </div>
         </div>
-    </div>
+
+        <!-- 토글 섹션 -->
+        <div class="toggle-section">
+            <div class="toggle-container">
+              <div class="toggle-option active" data-dropper="true">맡긴 내역</div>
+              <div class="toggle-option" data-dropper="false">맡아준 내역</div>
+            </div>
+        </div>
 
     <!-- 필터 섹션 (탭 메뉴 아래) -->
     <div class="filter-section" id="filter-section">
@@ -122,6 +130,18 @@
         const memberId = '${loginMemberId}';
         console.log('로그인한 회원 ID:', memberId);
         const contextPath = '${pageContext.request.contextPath}';
+
+                document.querySelectorAll('.toggle-option').forEach(option => {
+                    option.addEventListener('click', () => {
+                        // 모든 토글에서 active 제거
+                        document.querySelectorAll('.toggle-option').forEach(opt => opt.classList.remove('active'));
+                        // 클릭된 토글에 active 추가
+                        option.classList.add('active');
+
+                        const isDropper = option.getAttribute('data-dropper') === 'true';
+                        console.log('토글 변경:', isDropper ? '맡긴 내역' : '맡아준 내역');
+                    });
+                });
     </script>
     <script src="<c:url value='/js/reservation/reservationList.js'/>"></script>
 

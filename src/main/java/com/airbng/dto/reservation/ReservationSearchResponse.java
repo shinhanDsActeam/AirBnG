@@ -18,6 +18,8 @@ public class ReservationSearchResponse {
     private String state;
     private String role;   // "KEEPER" or "DROPPER"
     private String lockerName;
+    private String address;
+    private String addressDetail;
     private String lockerImage;
     private String startTime;
     private String endTime;

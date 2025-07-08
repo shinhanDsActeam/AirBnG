@@ -156,6 +156,26 @@
     color: white;
 }
 
+/* 오른쪽 화살표 */
+.airbng-locker .menu-arrow {
+    color: #4561DB;
+    width: 24px;
+    height: 24px;
+    position: relative;
+}
+
+.airbng-locker .right-arrow::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 8px;
+    height: 8px;
+    border-top: 2.5px solid currentColor;
+    border-right: 2.5px solid currentColor;
+    transform: translate(-50%, -50%) rotate(45deg);
+}
+
 /* 애니메이션 */
 @keyframes fadeInUp {
     from {
