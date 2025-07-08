@@ -5,6 +5,7 @@ let isProcessing = false;
 document.addEventListener('DOMContentLoaded', function () {
     loadReservationData();
     setupEventListeners();
+    initSSE();
 });
 
 // 이벤트 리스너 설정
@@ -454,8 +455,3 @@ function initSSE() {
         console.log('브라우저 알림 권한:', permission);
     });
 }
-
-// 페이지 로드 시 데이터 가져오기
-document.addEventListener('DOMContentLoaded', () => {
-    initSSE();
-});
