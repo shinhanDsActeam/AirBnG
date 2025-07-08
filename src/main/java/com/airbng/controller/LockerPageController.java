@@ -62,6 +62,7 @@ public class LockerPageController {
 
     @GetMapping("/lockerSearchDetails")
     public String showMapPage(@RequestParam String address,
+                              @RequestParam(required = false) Long jimTypeId,
                               @RequestParam String reservationDate,
                               Model model) {
 
