@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', function() {
 function performSearch() {
      const visibleAddressInput = document.querySelector('.searchFilter-input');
      const address = visibleAddressInput?.value.trim();
-     const date = document.getElementById('searchDate')?.value || '';
+     //const date = document.getElementById('searchDate')?.value || '';
      const jimTypeId = document.getElementById('searchJimType')?.value || '';
 
      if (!address) {
@@ -17,7 +17,7 @@ function performSearch() {
      // 페이지 이동 시 URL에 파라미터 포함
      const params = new URLSearchParams({
          address,
-         reservationDate: date,
+         //reservationDate: date,
          jimTypeId
      });
 
@@ -28,10 +28,39 @@ function performSearch() {
 function initializeSearchFilter() {
     // 현재 날짜 설정
     const today = new Date();
+
     const dateInput = document.getElementById('dateInput');
     if (dateInput) {
         dateInput.value = today.toISOString().split('T')[0];
     }
+
+    // ✅ (2) 화면에 날짜 표시용 <span id="selected-date">에도 표시
+        const selectedDateSpan = document.getElementById('selected-date');
+        if (selectedDateSpan) {
+            const weekdays = ['일', '월', '화', '수', '목', '금', '토'];
+            const year = today.getFullYear();
+            const month = String(today.getMonth() + 1).padStart(2, '0');
+            const date = String(today.getDate()).padStart(2, '0');
+            const day = weekdays[today.getDay()];
+            selectedDateSpan.textContent = `${year}.${month}.${date} (${day})`;
+        }
+
+        // ✅ (3) 시간 설정
+        const selectedTimeSpan = document.getElementById('selected-time');
+        if (selectedTimeSpan) {
+            const startHour = today.getHours();
+            const endHour = startHour + 2;
+
+            const formattedStart = `${String(startHour).padStart(2, '0')}:00`;
+            const formattedEnd = `${String(endHour).padStart(2, '0')}:00`;
+            selectedTimeSpan.textContent = `${formattedStart} - ${formattedEnd} (2시간)`;
+
+            // 숨겨진 input에 기본값 세팅도 가능하면 같이
+            const startInput = document.getElementById('searchStartTime');
+            const endInput = document.getElementById('searchEndTime');
+            if (startInput) startInput.value = formattedStart;
+            if (endInput) endInput.value = formattedEnd;
+        }
 
     // 이벤트 리스너 추가
     addEventListeners();
@@ -48,6 +77,7 @@ function setJimTypeNameFromURL() {
     const jimTypeId = urlParams.get('jimTypeId');
 
     const jimTypeMap = {
+        0: "모든 짐",
         1: "백팩/가방",
         2: "캐리어",
         3: "박스/큰 짐",
@@ -99,6 +129,7 @@ function toggleBagDropdown() {
 // 짐 타입 선택 함수 - URL 파라미터 업데이트
 function selectBagType(type) {
     const typeMap = {
+        '모든 짐': 0,
         '백팩/가방': 1,
         '캐리어': 2,
         '박스/큰 짐': 3,

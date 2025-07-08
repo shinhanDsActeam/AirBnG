@@ -20,8 +20,8 @@
 <body>
     <div class="page-container">
         <header class="header">
-                    <button class="back-button" onclick="history.back()">
-                        <img class="search-back-icon" src="${pageContext.request.contextPath}/images/arrow-left.svg" alt="뒤로가기" onclick="history.back()">
+                    <button class="back-button" onclick="window.location.href='${pageContext.request.contextPath}/page/home';">
+                        <img class="search-back-icon" src="${pageContext.request.contextPath}/images/arrow-left.svg" alt="뒤로가기">
                     </button>
                     <h1 class="header-title">검색</h1>
                 </header>
@@ -39,7 +39,7 @@
                                 <line x1="16" y1="2" x2="16" y2="6"/>
                                 <line x1="8" y1="2" x2="8" y2="6"/>
                                 <line x1="3" y1="10" x2="21" y2="10"/>
-                            <span id="selected-date">2025.06.29 (일)</span>
+                            <span id="selected-date"></span>
                         </div>
                         <div class="dropdown-wrapper">
                             <div class="filter-item bag-filter" onclick="toggleBagDropdown()">
@@ -49,6 +49,7 @@
 
                             <!-- 드롭다운 목록 -->
                             <div id="bag-dropdown" class="dropdown hidden">
+                                <div class="dropdown-option" onclick="selectBagType('모든 짐')">모든 짐</div>
                                 <div class="dropdown-option" onclick="selectBagType('백팩/가방')">백팩/가방</div>
                                 <div class="dropdown-option" onclick="selectBagType('캐리어')">캐리어</div>
                                 <div class="dropdown-option" onclick="selectBagType('박스/큰 짐')">박스/큰 짐</div>
@@ -61,7 +62,7 @@
                             <img class="filter-icon" src="${pageContext.request.contextPath}/images/clock.svg" alt="시계">
                                 <circle cx="12" cy="12" r="10"/>
                                 <polyline points="12,6 12,12 16,14"/>
-                            <span id="selected-time">18:00 - 20:00 (2시간)</span>
+                            <span id="selected-time"></span>
                         </div>
                 </div>
 
