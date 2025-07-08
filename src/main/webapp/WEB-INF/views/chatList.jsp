@@ -12,7 +12,11 @@
 </head>
 <body>
 <div class="page-container">
-  <div class="chat-header">채팅</div>
+
+  <!-- 헤더 -->
+  <c:set var="headerTitle" value="채팅"/>
+  <c:set var="showBackButton" value="false"/>
+  <%@ include file="/WEB-INF/views/common/header.jsp" %>
 
   <ul class="chat-list">
     <li class="chat-item" onclick="location.href='chatRoom.jsp'">
@@ -34,7 +38,7 @@
           <span class="chat-name">잠실공유센터</span>
           <span class="chat-time">오후 3:18</span>
         </div>
-        <div class="chat-message">안녕하세요! 방금 픽업 가능해요</div>
+        <div class="chat-message">안녕하세요! 지금 픽업 가능해요</div>
       </div>
     </li>
   </ul>

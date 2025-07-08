@@ -12,14 +12,6 @@
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/search.css">
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/bottom-sheet.css">
 
-    <!-- Kakao Maps -->
-    <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=앱_키_입력&autoload=false"></script>
-
-    <!-- JS에서 contextPath 사용 -->
-    <script>
-        const contextPath = '${pageContext.request.contextPath}';
-    </script>
-    <script type="text/javascript" src="${pageContext.request.contextPath}/js/search.js"></script>
 </head>
 
 <body>
@@ -52,6 +44,12 @@
         </div>
     </div>
 
+    <script type="text/javascript" src="${pageContext.request.contextPath}/js/config/kakao.config.js"></script>
+    <!-- JS에서 contextPath 사용 -->
+    <script>
+        const contextPath = '${pageContext.request.contextPath}';
+    </script>
+
     <c:if test="${not empty sessionScope.memberId}">
         <script>
             window.memberId = "${sessionScope.memberId}";
@@ -59,7 +57,8 @@
     </c:if>
     <script src="<c:url value='/js/sse.js'/>"></script>
     <script src="<c:url value='/js/dot.js'/>"></script>
-
+    <script type="text/javascript" src="${pageContext.request.contextPath}/js/config/kakao.config.js"></script>
+    <script type="text/javascript" src="${pageContext.request.contextPath}/js/search.js"></script>
     <script src="${pageContext.request.contextPath}/js/notification.js"></script>
 
 </body>

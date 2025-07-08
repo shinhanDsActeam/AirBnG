@@ -1,4 +1,4 @@
- <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!DOCTYPE html>
 <html lang="ko">
@@ -11,8 +11,8 @@
     <link rel="stylesheet" href="<c:url value='/css/dot.css' />" />
     <link rel="stylesheet" href="<c:url value='/css/home.css' />" />
 </head>
-<body class="airbng-home" data-member-id="${sessionScope.memberId}">
-
+<body class="airbng-home"  data-member-id="${sessionScope.memberId}">
+<%@ include file="common/modal.jsp" %>
 <div class="top-section">
     <div class="top-bar">
         <div class="logo-group">

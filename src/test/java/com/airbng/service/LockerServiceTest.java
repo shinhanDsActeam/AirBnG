@@ -218,7 +218,7 @@ class LockerServiceTest {
 
         List<String> mockImages = List.of("img1.jpg", "img2.jpg");
 
-        Mockito.when(lockerMapper.findUserById(lockerId)).thenReturn(mockResponse);
+        Mockito.when(lockerMapper.findLockerById(lockerId)).thenReturn(mockResponse);
         Mockito.when(lockerMapper.findImageById(lockerId)).thenReturn(mockImages);
 
         // when
@@ -237,7 +237,7 @@ class LockerServiceTest {
     void findUserById_결과없음_예외발생() {
         // given
         Long lockerId = 999L;
-        Mockito.when(lockerMapper.findUserById(lockerId)).thenReturn(null);
+        Mockito.when(lockerMapper.findLockerById(lockerId)).thenReturn(null);
 
         // when
         LockerException exception = assertThrows(LockerException.class, () -> {

@@ -9,21 +9,39 @@ import org.springframework.web.bind.annotation.RequestParam;
 import javax.servlet.http.HttpSession;
 
 @Controller
-@RequestMapping("/page/reservation")
+@RequestMapping("/page/reservations")
 public class ReservationPageController {
+
     @GetMapping("/list")
     public String reservationListPage() {
-        return "ReservationList";
+        return "reservation/reservationList";
     }
+
     @GetMapping("")
-    public String reservationDetails(@RequestParam("id") Long reservationId,
-                                     HttpSession session,
-                                     Model model) {
+    public String reservationDetail(@RequestParam("id") Long reservationId,
+                                    HttpSession session,
+                                    Model model) {
         Long memberId = (Long) session.getAttribute("memberId");
 
         model.addAttribute("reservationId", reservationId);
         model.addAttribute("memberId", memberId);
+        return "reservation/reservationDetail";
+    }
 
-        return "reservationDetails";
+    @GetMapping("/form")
+    public String getForm(@RequestParam(value = "lockerId", defaultValue = "0") Long lockerId,
+                          Model model) {
+        model.addAttribute("lockerId", lockerId);
+        return "reservation/reservationForm";
+    }
+
+    @GetMapping("confirm")
+    public String reservationConfirm(@RequestParam("reservationId") Long reservationId,
+                                     HttpSession session,
+                                     Model model) {
+        Long memberId = (Long) session.getAttribute("memberId");
+        model.addAttribute("reservationId", reservationId);
+        model.addAttribute("memberId", memberId);
+        return "reservation/reservationConfirm";
     }
 }

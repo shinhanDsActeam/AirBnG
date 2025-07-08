@@ -1,9 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 
-<c:set var="phone" value="${lockerDetail.keeperPhone}" />
-<c:set var="formattedPhone" value="${fn:substring(phone, 0, 3)}-${fn:substring(phone, 3, 7)}-${fn:substring(phone, 7, 11)}" />
 <c:set var="loginMemberId" value="${sessionScope.memberId}" />
 
 <%
@@ -22,76 +19,85 @@
 </head>
 <body>
 <div class="container">
-    <div class="header">
-        <button class="back-btn" onclick="history.back()">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M19 12H5M12 19l-7-7 7-7"/>
-            </svg>
-        </button>
-        <div class="header-title">보관소 상세</div>
-    </div>
+    <!-- 헤더 -->
+    <c:set var="headerTitle" value="보관소 상세"/>
+    <c:set var="showBackButton" value="true"/>
+    <%@ include file="common/header.jsp" %>
 
     <div class="content">
         <div id="lockerContent">
-            <div class="locker-title">${lockerDetail.lockerName}</div>
-
-            <!-- 이미지 여러 개 출력 -->
-            <c:if test="${not empty lockerDetail.images}">
-                <div class="image-gallery">
-                    <c:forEach var="img" items="${lockerDetail.images}" varStatus="status">
-                        <c:if test="${status.index < 6}">
-                            <img class="locker-image" src="${img}" alt="보관소 이미지 ${status.index + 1}">
-                        </c:if>
-                    </c:forEach>
-                </div>
-            </c:if>
-
-
-            <div class="price-info">
-                 <c:if test="${not empty lockerDetail.jimTypeResults}">
-                    <div class="price-title">
-                        <c:forEach var="type" items="${lockerDetail.jimTypeResults}" varStatus="status">
-                            ${type.typeName}<c:if test="${!status.last}">/</c:if>
-                        </c:forEach>
-                    </div>
-                    <div class="price-detail">
-                        • 시간당 2,000원<br>
-                        • 강남역 도보 3분
-                    </div>
-                </c:if>
+            <!-- 로딩 상태 -->
+            <div class="loading" id="loadingState">
+                보관소 정보를 불러오는 중...
             </div>
 
-            <div class="info-section">
-                <div class="info-item">
-                    <div class="info-label">주소 </div>
-                    <div class="info-value"> | ${lockerDetail.address} ${lockerDetail.addressDetail}</div>
-                </div>
-
-                <div class="info-item">
-                    <div class="info-label">Address</div>
-                    <div class="info-value"> | ${lockerDetail.addressEnglish}</div>
-                </div>
-
-                <div class="info-item">
-                    <div class="info-label">맡아주는 사람</div>
-                    <div class="info-value"> | ${lockerDetail.keeperName}</div>
-                </div>
-
-                <div class="info-item">
-                    <div class="info-label">전화번호</div>
-                    <div class="info-value"> | ${formattedPhone}</div>
-                </div>
+            <!-- 에러 상태 -->
+            <div class="error" id="errorState" style="display: none;">
+                보관소 정보를 불러오는데 실패했습니다.
             </div>
 
+            <!-- 실제 컨텐츠 (JS에서 동적으로 채움) -->
+            <div id="lockerDetailContent" style="display: none;">
+                <div class="locker-title" id="lockerTitle"></div>
+
+                <!-- 이미지 갤러리 -->
+                <div class="image-gallery" id="imageGallery" style="display: none;">
+                </div>
+
+                <!-- 가격 정보 -->
+                <div class="price-info" id="priceInfo">
+                    <div class="price-title" id="priceTitle"></div>
+                    <div class="price-detail" id="priceDetail"></div>
+                </div>
+
+                <!-- 정보 섹션 -->
+                <div class="info-section" id="infoSection">
+                    <div class="info-item">
+                        <div class="info-label">주소 </div>
+                        <div class="info-value" id="address"></div>
+                    </div>
+
+                    <div class="info-item">
+                        <div class="info-label">Address</div>
+                        <div class="info-value" id="addressEnglish"></div>
+                    </div>
+
+                    <div class="info-item">
+                        <div class="info-label">맡아주는 사람</div>
+                        <div class="info-value" id="keeperName"></div>
+                    </div>
+
+                    <div class="info-item">
+                        <div class="info-label">전화번호</div>
+                        <div class="info-value" id="keeperPhone"></div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
-    <!-- contextPath 반영해서 JS에서 URL 구성 -->
-    <button class="reserve-btn" id="reserveBtn" type="button" data-locker-id="${lockerDetail.lockerId}" data-member-id="${loginMemberId}">
-      보관소 선택
-    </button>
-
+    <div class="bottom-buttons">
+        <!-- 보관소 선택 버튼 -->
+        <button class="reserve-btn" id="reserveBtn" type="button" style="display: none;"
+                data-context-path="<%=contextPath%>"
+                data-member-id="${loginMemberId}">
+            예약하러 가기
+        </button>
     </div>
+</div>
+<div class="spacer"></div>
+<div class="spacer"></div>
+<script>
+    // URL에서 lockerId 추출
+    const urlParams = new URLSearchParams(window.location.search);
+    const lockerId = urlParams.get('lockerId');
+    const memberId = '${loginMemberId}';
+    const contextPath = '<%=contextPath%>';
+
+    console.log('Locker ID:', lockerId);
+    console.log('Member ID:', memberId);
+    console.log('Context Path:', contextPath);
+</script>
 
     <script>
                 const memberId = '${loginMemberId}';
@@ -106,6 +112,7 @@
     <script src="<c:url value='/js/sse.js'/>"></script>
     <script src="<c:url value='/js/dot.js'/>"></script>
 
+<script src="${pageContext.request.contextPath}/js/lockerDetails.js"></script>
     <script src="${pageContext.request.contextPath}/js/lockerDetails.js"></script>
     <script src="${pageContext.request.contextPath}/js/notification.js"></script>
 </body>

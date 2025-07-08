@@ -16,6 +16,7 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
+import static com.airbng.common.response.status.BaseResponseStatus.CREATED_RESERVATION;
 import static com.airbng.common.response.status.BaseResponseStatus.SUCCESS;
 
 @RestController
@@ -49,10 +50,13 @@ public class ReservationController {
 
     // 예약 등록
     @PostMapping
-    public BaseResponse<String> insertReservation(@RequestBody @Valid ReservationInsertRequest request,
+    public BaseResponse<ReservationInsertResponse> insertReservation(@RequestBody @Valid ReservationInsertRequest request,
                                                   HttpSession session) {
         request.setDropperId(SessionUtils.getLoginMemberId(session));
-        return new BaseResponse<>(reservationService.insertReservation(request));
+        return new BaseResponse<>(
+                CREATED_RESERVATION,
+                reservationService.insertReservation(request)
+        );
     }
 
     @GetMapping("{reservation-id}/members/{member-id}/detail")

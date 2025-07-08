@@ -53,10 +53,7 @@ public class ReservationServiceImpl implements ReservationService{
                 memberId, role, state, nextCursorId, LIMIT, period);
 
         // 초기 커서 ID 설정
-        if(nextCursorId == null) {
-            nextCursorId = (reservationMapper.findAllReservationByMemberId())+1L; // 커서 ID 초기화
-        }
-        log.info("!!! nextCursorId: {}", nextCursorId);
+
 
         List<ReservationState> stateList = null;
 
@@ -68,6 +65,13 @@ public class ReservationServiceImpl implements ReservationService{
             // 단일값이면 리스트로 감싸기
             stateList = Collections.singletonList((ReservationState) state);
         }
+
+        if (nextCursorId == null) {
+            Long maxId = reservationMapper.findMaxReservationIdByMemberId(memberId, role, stateList);
+            nextCursorId = (maxId != null) ? maxId + 1L : -1L;
+        }
+
+        log.info("!!! nextCursorId: {}", nextCursorId);
 
         // isHistoryTab 여부 판단
         boolean isHistoryTab = stateList != null &&
@@ -120,7 +124,7 @@ public class ReservationServiceImpl implements ReservationService{
                 .nextCursorId(nextCursorId)
                 .hasNextPage(hasNextPage)
                 .period(period)
-                .totalCount(reservationMapper.findReservationByMemberId(memberId, role))
+                .totalCount(reservationMapper.findReservationByMemberId(memberId, role,stateList))
                 .build();
         return paging;
     }
@@ -269,8 +273,9 @@ public class ReservationServiceImpl implements ReservationService{
     public ReservationDetailResponse findReservationDetail(Long reservationId, Long memberId) {
         Reservation reservation = reservationMapper.findReservationDetailById(reservationId);
         if (reservation == null) throw new ReservationException(NOT_FOUND_RESERVATION); // 보관소 있나요
-        if (!reservation.getDropper().getMemberId().equals(memberId))
-            throw new ReservationException(NOT_DROPPER_OF_RESERVATION); // 있는 보관소가 내거 맞나요
+        //keeper 기준으로도 예약 승인 거절 시에 필요하므로 주석처리
+//        if (!reservation.getDropper().getMemberId().equals(memberId))
+//            throw new ReservationException(NOT_DROPPER_OF_RESERVATION); // 있는 보관소가 내거 맞나요
 
         return ReservationDetailResponse.from(reservation);
     }
@@ -289,14 +294,15 @@ public class ReservationServiceImpl implements ReservationService{
     // 예약 등록
     @Override
     @Transactional // 짐타입 등록 실패한 경우 예약 등록까지 롤백
-    public BaseResponseStatus insertReservation(final ReservationInsertRequest request) {
+    public ReservationInsertResponse insertReservation(final ReservationInsertRequest request) {
         log.info("insertReservation({})", request);
 
         validateStartTimeAndEndTime(request.getStartTime(), request.getEndTime());
         validateLocker(request.getLockerId());
+        validateIsAvailable(request.getLockerId());
         validateJimTypes(request.getLockerId(), request.getJimTypeCounts());
 
-        Long keeperId = lockerMapper.getLockerKepperId(request.getLockerId());
+        Long keeperId = lockerMapper.getLockerKeeperId(request.getLockerId());
         request.setKeeperId(keeperId);
         validateMember(request.getDropperId(), keeperId);
 
@@ -308,7 +314,7 @@ public class ReservationServiceImpl implements ReservationService{
             throw new ReservationException(INVALID_JIMTYPE_COUNT);
         }
 
-        return CREATED_RESERVATION;
+        return new ReservationInsertResponse(request.getId());
     }
 
     @Override
