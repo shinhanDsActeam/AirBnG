@@ -26,7 +26,7 @@ public interface LockerMapper {
 
     Long findLockerCount(LockerSearchRequest condition);
 
-    LockerDetailResponse findUserById(Long lockerId);
+    LockerDetailResponse findLockerById(Long lockerId);
 
     List<String> findImageById(Long lockerId);
 
@@ -60,5 +60,5 @@ public interface LockerMapper {
 
     List<LockerJimTypeResult> getLockerJimTypeById(@Param("lockerId") Long lockerId);
 
-    Long getLockerKepperId(@Param("lockerId") Long lockerId);
+    Long getLockerKeeperId(@Param("lockerId") Long lockerId);
 }

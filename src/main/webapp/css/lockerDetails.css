@@ -1,0 +1,226 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', sans-serif;
+}
+
+body {
+    background-color: #f5f5f5;
+    color: #333;
+}
+
+.container {
+    max-width: 412px;
+    margin: 0 auto;
+    background-color: white;
+    min-height: 100vh;
+    position: relative;
+    padding-top: var(--header-height); /* 헤더 높이 */
+}
+
+.content {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 10px 24px 20px 24px; /* 좌우 패딩 동일하게 */
+    background: #FFF;
+}
+
+.locker-title {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 25px;
+    color: #333;
+}
+
+.image-gallery {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 16px;
+    width: 100%;
+}
+
+.locker-image {
+    width: 80px;
+    height: 80px;
+    margin:3px;
+    border-radius: 8px;
+    object-fit: cover;
+}
+
+.price-info {
+    padding: 16px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    width: 100%;
+}
+
+.price-title {
+    color: #333;
+    font-size: 20px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 20px; /* 100% */
+    margin-bottom: 8px;
+}
+
+.price-detail {
+    color: #333;
+    font-size: 17px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 25px; /* 147.059% */
+    padding-left: 16px; /* 전체 들여쓰기 */
+}
+
+.info-section {
+    display: flex;
+    min-height: 188px;
+    height: 188px;
+    width: 372px;
+    padding: 21px 18px;
+    flex-direction: column;
+    justify-content: center;
+    gap: 10px;
+    background: rgba(69, 97, 219, 0.10);
+    overflow: hidden;
+    margin: 0 auto; /* 가운데 정렬 */
+    box-sizing: border-box; /* 추가: 패딩을 포함한 크기 계산 */
+}
+
+.info-item {
+    display: flex;
+    align-items: flex-start;
+    font-size: 14px;
+    margin-bottom: 12px;
+}
+
+.info-label {
+    color: #4561DB;
+    font-size: 17px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 17px; /* 100% */
+    margin-right: 10px; /* 옆으로 간격 줌 */
+    min-width: 0px; /* 라벨 길이 정렬 용도 (원하면 조절 가능) */
+    white-space: nowrap; /* 줄바꿈 방지 */
+}
+
+.info-value {
+    color: #333;
+    font-size: 17px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 17px;
+    text-indent: -10px; /* 라벨 폭 + 간격만큼 음수 들여쓰기 */
+    padding-left: 10px; /* 들여쓰기 */
+    word-break: break-word;
+    flex: 1; /* 남은 공간 모두 차지 */
+}
+
+.bottom-buttons {
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    border-top: 1px solid #eee;
+    max-width: 412px;
+    width: 100%;
+    display: flex;
+    padding: 15px;
+}
+
+.reserve-btn {
+    flex: 1;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    width: 382px;
+    padding: 18px 140px;
+    border: none;
+    border-radius: 8px;
+    background: #4561DB;
+    color: white;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    height: 50px;
+}
+
+.reserve-btn:hover {
+    background-color: rgba(47, 70, 183);
+}
+
+.reserve-btn.disabled {
+    background-color: #cccccc;
+    color: #666666;
+    cursor: not-allowed;
+}
+
+.reserve-btn.disabled:hover {
+    background-color: #cccccc;
+}
+
+.loading {
+    text-align: center;
+    padding: 40px;
+    font-size: 16px;
+    color: #666;
+}
+
+.error {
+    text-align: center;
+    padding: 40px;
+    color: #ff5722;
+    font-size: 16px;
+}
+
+/* 캐러셀 관련 CSS (미래 사용을 위해 보존) */
+.carousel-container {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+}
+
+.carousel-track-wrapper {
+    overflow: hidden;
+    width: 100%;
+}
+
+.carousel-track {
+    display: flex;
+    transition: transform 0.3s ease-in-out;
+    width: 100%;
+}
+
+.carousel-item {
+    min-width: 100%;
+    box-sizing: border-box;
+}
+
+.carousel-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: rgba(255, 255, 255, 0.7);
+    border: none;
+    font-size: 24px;
+    padding: 5px 10px;
+    cursor: pointer;
+    z-index: 2;
+}
+
+.carousel-btn.left {
+    left: 10px;
+}
+
+.carousel-btn.right {
+    right: 10px;
+}
+
+.spacer {
+    height: 80px;
+}

@@ -7,13 +7,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>예약 상세</title>
-    <link rel="stylesheet" href="<c:url value='/css/reservationDetails.css' />" />
+    <link rel="icon" type="image/svg+xml" href="${pageContext.request.contextPath}/images/favicon.svg" />
+    <link rel="stylesheet" href="<c:url value='/css/reservation/reservationDetail.css' />" />
 </head>
 <body>
-    <div class="header">
-        <button class="back-btn" onclick="history.back()">←</button>
-        <h1>예약 상세</h1>
-    </div>
+    <c:set var="headerTitle" value="예약 상세"/>
+    <c:set var="showBackButton" value="true"/>  <%-- 뒤로가기 있는 버전 --%>
+    <%@ include file="../common/header.jsp" %>
 
     <div class="container">
         <div id="loading" class="loading">
@@ -83,55 +83,6 @@
         <button id="cancel-btn" class="btn btn-secondary">예약 취소</button>
     </div>
 
-<!-- 확인 모달 -->
-<div id="confirm-modal" class="modal-overlay hidden">
-    <div class="modal">
-        <div class="modal-content">
-            <div class="modal-icon confirm-bounce">?</div>
-            <div class="modal-title">예약을 취소하시겠습니까?</div>
-            <div class="modal-message">
-                취소하시면 환불 처리됩니다
-            </div>
-        </div>
-        <div class="modal-buttons">
-            <button class="modal-btn" onclick="closeConfirmModal()">아니요</button>
-            <button class="modal-btn" onclick="proceedCancel()">확인</button>
-        </div>
-    </div>
-</div>
-
-    <!-- 성공 모달 -->
-    <div id="success-modal" class="modal-overlay hidden">
-        <div class="modal">
-            <div class="modal-content">
-                <div class="modal-icon success-rotate">✓</div>
-                <div class="modal-title">예약을 취소했어요!</div>
-                <div class="modal-message">
-                    <span id="refund-amount">10,000원</span>의 수수료가 발생했어요!
-                </div>
-            </div>
-            <div class="modal-buttons">
-                <button class="modal-btn" onclick="confirmCancel()" style="width: 100%; border-right: none;">확인</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- 실패 모달 -->
-    <div id="error-modal" class="modal-overlay hidden">
-        <div class="modal">
-            <div class="modal-content">
-                <div class="modal-icon" style="background: #dc2626;">✗</div>
-                <div class="modal-title">예약 취소 실패</div>
-                <div class="modal-message" id="error-modal-message">
-                    예약 상태 변경에 실패하였습니다.
-                </div>
-            </div>
-            <div class="modal-buttons">
-                <button class="modal-btn" onclick="closeErrorModal()" style="width: 100%; border-right: none;">확인</button>
-            </div>
-        </div>
-    </div>
-
     <div class="spacer"></div>
     <div class="spacer"></div>
         <script>
@@ -145,7 +96,7 @@
             console.log('Reservation ID:', window.serverData.reservationId);
             console.log('Member ID:', window.serverData.memberId);
         </script>
-        <script src="<c:url value='/js/reservationDetails.js'/>"></script>
-    <script src="<c:url value='/js/reservationDetails.js'/>"></script>
+    <script src="<c:url value='/js/reservation/reservationDetail.js'/>"></script>
+    <%@ include file="../common/modal.jsp" %>
 </body>
 </html>

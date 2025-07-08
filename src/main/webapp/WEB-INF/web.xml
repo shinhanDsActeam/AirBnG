@@ -29,6 +29,7 @@
       <param-name>contextConfigLocation</param-name>
       <param-value>com.airbng.config.WebConfig</param-value>
     </init-param>
+    <async-supported>true</async-supported>  <!-- 이 라인 추가 -->
     <load-on-startup>1</load-on-startup>
   </servlet>
 
@@ -41,6 +42,7 @@
   <filter>
     <filter-name>encodingFilter</filter-name>
     <filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+    <async-supported>true</async-supported> <!-- 필터도 async 지원 설정 -->
     <init-param>
       <param-name>encoding</param-name>
       <param-value>UTF-8</param-value>

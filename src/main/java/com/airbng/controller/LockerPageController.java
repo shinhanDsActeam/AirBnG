@@ -1,5 +1,6 @@
 package com.airbng.controller;
 
+import com.airbng.dto.locker.LockerDetailResponse;
 import com.airbng.dto.locker.LockerSearchRequest;
 import com.airbng.dto.locker.LockerSearchResponse;
 import com.airbng.service.LockerService;
@@ -20,15 +21,50 @@ import java.util.List;
 @RequestMapping("/page")
 public class LockerPageController {
 
-    @GetMapping("/lockerSearchDetails")
-    public String showLockerSearchDetails(@RequestParam String address,
-                                          @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate reservationDate,
-                                          @RequestParam(required = false) Long jimTypeId,
-                                          Model model) {
+    private final LockerService lockerService;
 
-        log.info("검색 페이지 접근 - address: {}, reservationDate: {}, jimTypeId: {}", address, reservationDate, jimTypeId);
+    public LockerPageController(LockerService lockerService) {
+        this.lockerService = lockerService;
+    }
+
+    @GetMapping("/lockers")
+    public String lockerPage() {
+        return "locker";
+    }
+
+    @GetMapping("/lockers/register")
+    public String lockerRegisterPage() {
+        return "lockerRegister";
+    }
+
+    @GetMapping("/lockers/manage")
+    public String lockerManagePage() {
+        return "lockerManage";
+    }
+
+    @GetMapping ("/lockerDetails")
+    public String showMapPage(@RequestParam Long lockerId,
+                              Model model) {
+
+        LockerDetailResponse request = LockerDetailResponse.builder()
+                .lockerId(lockerId)
+                .build();
+
+        // 서비스 호출
+        LockerDetailResponse response = lockerService.findUserById(request.getLockerId());
 
         // JSP에 전달
+        model.addAttribute("lockerId", lockerId);
+        model.addAttribute("lockerDetail", response);
+
+        return "lockerDetails"; // lockerDetails.jsp로 이동
+    }
+
+    @GetMapping("/lockerSearchDetails")
+    public String showMapPage(@RequestParam String address,
+                              @RequestParam String reservationDate,
+                              Model model) {
+
         model.addAttribute("address", address);
         model.addAttribute("reservationDate", reservationDate);
         model.addAttribute("jimTypeId", jimTypeId);
