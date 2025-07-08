@@ -12,7 +12,7 @@
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/bottom-sheet.css">
 
     <!-- Kakao Maps -->
-    <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=f3a12e6a3faad91c83bf4e365fca3d15&autoload=false"></script>
+    <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=8a880aef5e46496024dc825928ba9333&autoload=false"></script>
 
     <!-- JS에서 contextPath 사용 -->
     <script>
@@ -27,10 +27,10 @@
 
         <!-- Top 검색 바 -->
         <div class="top-bar">
-            <img class="back-icon" src="${pageContext.request.contextPath}/images/arrow-left.svg" alt="뒤로가기" onclick="history.back()">
+            <img class="back-icon" src="${pageContext.request.contextPath}/images/arrow-left.svg" alt="뒤로가기" onclick="window.location.href='${pageContext.request.contextPath}/page/home';">
             <div class="search-container">
                 <form class="search-form" action="${pageContext.request.contextPath}/search" method="get">
-                    <input class="search-input" type="text" name="query" id="searchInput" value="${address} | ${reservationDate}" required>
+                    <input class="search-input" type="text" name="query" id="searchInput" placeholder="${address}" required>
                     <img class="search-button" src="${pageContext.request.contextPath}/images/Group 2.svg" alt="검색">
                 </form>
             </div>
@@ -46,15 +46,14 @@
                     <span>검색 결과&nbsp;</span>
                     <span class="sheet-count">${count}</span>
                 </div>
-                <c:if test="${not empty jimTypeId}">
                     <div class="sheet-subtitle" onclick="dropdown()">
                         <span id="selectedBagType">
                             <c:choose>
+                                <c:when test="${empty jimTypeId || jimTypeId == 0}">모든 짐</c:when>
                                 <c:when test="${jimTypeId == 1}">백팩/가방</c:when>
                                 <c:when test="${jimTypeId == 2}">캐리어</c:when>
                                 <c:when test="${jimTypeId == 3}">박스/큰 짐</c:when>
                                 <c:when test="${jimTypeId == 4}">유모차</c:when>
-                                <c:otherwise>알 수 없음</c:otherwise>
                             </c:choose>
                         </span>
                         <img class="dropdown-down" src="${pageContext.request.contextPath}/images/arrow-down.svg" alt="드롭다운">
@@ -67,7 +66,6 @@
                         <li onclick="selectBagType(3)">박스/큰 짐</li>
                         <li onclick="selectBagType(4)">유모차</li>
                     </ul>
-                </c:if>
             </div>
 
 
