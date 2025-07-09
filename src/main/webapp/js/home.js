@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         try {
             // 검색 결과 페이지로 GET 파라미터를 붙여서 이동
-            const targetUrl = `${contextPath}/page/lockerSearchDetails?address=${encodeURIComponent(address)}&reservationDate=${encodeURIComponent(reservationDate)}`;
+            const targetUrl = `${contextPath}/page/lockerSearchDetails?address=${encodeURIComponent(address)}&reservationDate=${encodeURIComponent(reservationDate)}&jimTypeId=0`;
             window.location.href = targetUrl;
         } catch (error) {
             console.error("페이지 이동 실패:", error);
