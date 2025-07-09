@@ -12,6 +12,9 @@ function loadKakaoScript(callback) {
 }
 
 let map; // 전역으로 선언하여 다른 함수에서도 접근 가능
+let markers = []; // 마커 배열 추가 (기존 마커 정리용)
+let infoWindows = []; // 인포윈도우 배열 추가 (토글 기능용)
+let lockersData = []; // 락커 데이터 저장 (리스트 클릭 시 지도 이동용)
 
 function initMapAndResults() {
     const mapContainer = document.getElementById('map');
@@ -31,6 +34,83 @@ function initMapAndResults() {
 
     if (address) {
         fetchAndRenderLockers(address, jimTypeId, reservationDate);
+    }
+}
+
+// 기존 마커들을 지도에서 제거하는 함수
+function clearMarkers() {
+    markers.forEach(marker => marker.setMap(null));
+    infoWindows.forEach(infoWindow => infoWindow.close());
+    markers = [];
+    infoWindows = [];
+}
+
+// 마커를 지도에 표시하는 함수
+function renderLockerMarkers(lockers) {
+    if (!map || !lockers || lockers.length === 0) {
+        console.log("지도 또는 락커 데이터가 없습니다.");
+        return;
+    }
+
+    // 기존 마커들 제거
+    clearMarkers();
+
+    console.log("마커 렌더링 시작, 락커 개수:", lockers.length);
+
+    lockers.forEach((locker, index) => {
+        const { latitude, longitude, lockerName, lockerId } = locker;
+
+        console.log(`락커 ${index + 1}: ${lockerName}, 위도: ${latitude}, 경도: ${longitude}`);
+
+        if (latitude && longitude) {
+            const position = new kakao.maps.LatLng(parseFloat(latitude), parseFloat(longitude));
+
+            const marker = new kakao.maps.Marker({
+                map: map,
+                position: position,
+                title: lockerName
+            });
+
+            // 마커 배열에 추가
+            markers.push(marker);
+
+            const infowindow = new kakao.maps.InfoWindow({
+                content: `<div style="padding:5px; font-size:12px;">${lockerName}</div>`
+            });
+
+            // 인포윈도우 배열에 추가
+            infoWindows.push(infowindow);
+
+            // 마커 클릭 시 토글 기능
+            kakao.maps.event.addListener(marker, 'click', () => {
+                // 현재 인포윈도우가 열려있는지 확인
+                const isOpen = infowindow.getMap();
+
+                if (isOpen) {
+                    // 열려있으면 닫기
+                    infowindow.close();
+                } else {
+                    // 다른 인포윈도우들은 모두 닫기
+                    infoWindows.forEach(iw => iw.close());
+                    // 현재 인포윈도우 열기
+                    infowindow.open(map, marker);
+                }
+            });
+
+            console.log(`마커 생성 완료: ${lockerName}`);
+        } else {
+            console.warn(`락커 ${lockerName}의 위도/경도 정보가 없습니다.`);
+        }
+    });
+
+    // 지도 중심을 첫 번째 락커로 이동 (선택)
+    if (lockers[0]?.latitude && lockers[0]?.longitude) {
+        const firstPosition = new kakao.maps.LatLng(
+            parseFloat(lockers[0].latitude),
+            parseFloat(lockers[0].longitude)
+        );
+        map.setCenter(firstPosition);
+        console.log("지도 중심 이동 완료");
     }
 }
 
@@ -90,7 +170,10 @@ function setupBottomSheet() {
     }
 }
 
+// 통합된 fetchAndRenderLockers 함수
 function fetchAndRenderLockers(address, jimTypeId, reservationDate) {
+    console.log("fetchAndRenderLockers 호출됨:", { address, jimTypeId, reservationDate });
+
     let queryString = `address=${encodeURIComponent(address)}`;
     if (jimTypeId && jimTypeId !== "0") queryString += `&jimTypeId=${jimTypeId}`;
     if (reservationDate) queryString += `&reservationDate=${reservationDate}`;
@@ -105,6 +188,8 @@ function fetchAndRenderLockers(address, jimTypeId, reservationDate) {
             });
         })
         .then(data => {
+            console.log("서버 응답 데이터:", data);
+
             const container = document.getElementById("lockerList");
             if (!container) return;
 
@@ -118,22 +203,34 @@ function fetchAndRenderLockers(address, jimTypeId, reservationDate) {
                 `;
                 document.querySelector(".sheet-count").textContent = "0";
                 document.getElementById("bottomSheet").classList.add("fixed");
+                clearMarkers(); // 검색 결과가 없으면 마커도 지우기
                 return;
             }
 
             let lockers = data.result.lockers;
+            console.log("락커 데이터:", lockers);
+
             if (jimTypeId && jimTypeId !== "0") {
                 lockers = lockers.filter(locker =>
                     locker.jimTypeResults?.some(jtr => String(jtr.jimTypeId) === String(jimTypeId))
                 );
+                console.log("필터링된 락커 데이터:", lockers);
             }
 
+            // 마커 렌더링 호출 (중요!)
+            renderLockerMarkers(lockers);
+
+            // 락커 데이터 저장 (리스트 클릭 시 지도 이동용)
+            lockersData = lockers;
+
+            // UI 업데이트
             container.innerHTML = "";
             document.querySelector(".sheet-count").textContent = lockers.length;
 
             lockers.forEach(locker => {
                 const div = document.createElement("div");
                 div.className = `storage-item ${locker.isAvailable === 'NO' ? 'disabled' : ''}`;
+                div.dataset.lockerId = locker.lockerId; // 락커 ID 추가
                 const imageUrl = locker.url || `${contextPath}/images/default.jpg`;
 
                 div.innerHTML = `
@@ -168,6 +265,7 @@ function fetchAndRenderLockers(address, jimTypeId, reservationDate) {
                 `;
             }
             document.querySelector(".sheet-count").textContent = "0";
+            clearMarkers(); // 에러 시에도 마커 지우기
         });
 }
 
@@ -182,6 +280,10 @@ function addLockerItemClickEvents() {
 
         const clickedButton = clickedItem.querySelector(".storage-button");
         const isAvailable = clickedButton.dataset.available === "YES";
+        const lockerId = clickedItem.dataset.lockerId;
+
+        // 리스트 클릭 시 지도 이동
+        moveMapToLocker(lockerId);
 
         if (clickedItem.classList.contains("selected")) {
             clickedItem.classList.remove("selected");
@@ -206,6 +308,34 @@ function addLockerItemClickEvents() {
             window.location.href = `${contextPath}/page/lockerDetails?lockerId=${encodeURIComponent(lockerId)}`;
         };
     });
+}
+
+// 특정 락커 위치로 지도 이동하는 함수
+function moveMapToLocker(lockerId) {
+    const targetLocker = lockersData.find(locker => String(locker.lockerId) === String(lockerId));
+
+    if (targetLocker && targetLocker.latitude && targetLocker.longitude) {
+        const position = new kakao.maps.LatLng(
+            parseFloat(targetLocker.latitude),
+            parseFloat(targetLocker.longitude)
+        );
+
+        // 지도 중심 이동 (부드러운 애니메이션)
+        map.panTo(position);
+
+        // 해당 락커의 인포윈도우 열기
+        const markerIndex = lockersData.findIndex(locker => String(locker.lockerId) === String(lockerId));
+        if (markerIndex !== -1 && infoWindows[markerIndex]) {
+            // 다른 인포윈도우들은 모두 닫기
+            infoWindows.forEach(iw => iw.close());
+            // 해당 인포윈도우 열기
+            infoWindows[markerIndex].open(map, markers[markerIndex]);
+        }
+
+        console.log(`지도가 ${targetLocker.lockerName} 위치로 이동했습니다.`);
+    } else {
+        console.warn(`락커 ID ${lockerId}의 위치 정보를 찾을 수 없습니다.`);
+    }
 }
 
 function selectBagType(jimTypeId) {
