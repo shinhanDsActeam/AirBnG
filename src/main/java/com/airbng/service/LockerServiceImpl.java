@@ -58,6 +58,17 @@ public class LockerServiceImpl implements LockerService {
     }
 
     @Override
+    public LockerDetailResponse findMyLocker(Long memberId) {
+        LockerDetailResponse result = lockerMapper.findLockerDetailByMemberId(memberId);
+        if (result == null) {
+            throw new LockerException(NOT_FOUND_LOCKERDETAILS);
+        }
+
+        result.setImages(lockerMapper.findImageById(result.getLockerId()));
+        return result;
+    }
+
+    @Override
     public LockerTop5Response findTop5Locker() {
         List<LockerPreviewResult> popularLockers = lockerMapper.findTop5Lockers(ReservationState.CONFIRMED);
 
@@ -163,6 +174,11 @@ public class LockerServiceImpl implements LockerService {
             throw new LockerException(NOT_FOUND_LOCKER);
 
         lockerMapper.toggleLockerIsAvailable(lockerId);
+    }
+
+    @Override
+    public boolean isExistLocker(Long memberId) {
+        return lockerMapper.findLockerByMemberId(memberId) > 0;
     }
 
 }

@@ -42,10 +42,12 @@
         </association>
 
         <collection property="reservationJimTypes" ofType="com.airbng.domain.jimtype.ReservationJimType">
-            <result property="jimType.jimTypeId" column="jimtype_id"/>
-            <result property="jimType.typeName" column="type_name"/>
-            <result property="jimType.pricePerHour" column="price_per_hour"/>
             <result property="count" column="count"/>
+            <association property="jimType" javaType="com.airbng.domain.jimtype.JimType">
+                <result property="jimTypeId" column="jimtype_id"/>
+                <result property="typeName" column="type_name"/>
+                <result property="pricePerHour" column="price_per_hour"/>
+            </association>
         </collection>
     </resultMap>
 
@@ -82,7 +84,6 @@
         JOIN member k ON r.keeper_id = k.member_id
         LEFT JOIN reservationJimtype rjt ON r.reservation_id = rjt.reservation_id
         LEFT JOIN jimtype jt ON rjt.jimtype_id = jt.jimtype_id
-
         WHERE r.reservation_id = #{reservationId}
     </select>
 

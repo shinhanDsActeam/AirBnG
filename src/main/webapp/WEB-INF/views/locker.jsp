@@ -9,6 +9,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/gh/webfontworld/bmjua/BMJUA.css" rel="stylesheet">
     <link rel="stylesheet" href="<c:url value='/css/locker.css'/>" />
+    <link rel="stylesheet" href="<c:url value='/css/common/modal.css'/>" />
     <link rel="icon" type="image/svg+xml" href="${pageContext.request.contextPath}/images/favicon.svg" />
 </head>
 
@@ -23,23 +24,72 @@
     <main class="main-content">
         <c:choose>
             <c:when test="${isLoggedIn}">
-                <div class="menu-section">
-                    <div class="menu-item active" onclick="goToRegisterLocker()">
-                        <div class="menu-content">
-                            <h3>보관소 등록하기</h3>
-                            <p>새로운 보관소를 등록해보세요</p>
-                        </div>
-                        <div class="menu-arrow right-arrow"></div>
-                    </div>
+                <c:choose>
+                    <c:when test="${isExistLocker}">
+                        <div class="menu-section">
+                            <div class="menu-item-card">
+                                <div class="menu-item-content">
+                                    <!-- 썸네일 -->
+                                    <div class="locker-thumbnail">
+                                        <img src="${lockerDetail.images[0]}" alt="보관소 이미지" />
+                                    </div>
 
-                    <div class="menu-item active" onclick="goToManageLocker()">
-                        <div class="menu-content">
-                            <h3>보관소 관리하기</h3>
-                            <p>등록한 보관소를 확인하고 수정하세요</p>
+                                    <!-- 텍스트 영역 -->
+                                    <div class="locker-info">
+                                        <div class="locker-title-row">
+                                            <h3 class="locker-title">${lockerDetail.lockerName}</h3>
+                                            <c:choose>
+                                                <c:when test="${lockerDetail.isAvailable eq 'YES'}">
+                                                    <span class="status-badge active">운영중</span>
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <span class="status-badge inactive">중지됨</span>
+                                                </c:otherwise>
+                                            </c:choose>
+                                        </div>
+                                        <div class="locker-jim-types">
+                                            <c:forEach var="type" items="${lockerDetail.jimTypeResults}">
+                                                <span class="jim-type-badge">
+                                                    ${type.typeName} : ₩${type.pricePerHour}
+                                                </span>
+                                            </c:forEach>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- 버튼 영역 -->
+                                <div class="locker-action-buttons">
+                                    <button class="manage-locker-btn"
+                                            data-locker-id="${lockerDetail.lockerId}"
+                                            onclick="goToLockerDetails(this)">
+                                        보관소 상세보기
+                                    </button>
+
+                                    <button type="button"
+                                            class="toggle-btn ${lockerDetail.isAvailable eq 'YES' ? 'btn-stop' : 'btn-restart'}"
+                                            data-locker-id="${lockerDetail.lockerId}"
+                                            onclick="toggleLockerAvailability(this)">
+                                        ${lockerDetail.isAvailable eq 'YES' ? '보관소 중지' : '보관소 재개'}
+                                    </button>
+                                </div>
+                            </div>
                         </div>
-                        <div class="menu-arrow right-arrow"></div>
-                    </div>
-                </div>
+                    </c:when>
+                    <c:otherwise>
+                        <!-- 보관소가 없는 경우 -->
+                        <div class="empty-locker-section">
+                            <div class="empty-locker-icon">
+                                <img src="<c:url value='/images/locker_empty_ic.svg'/>" alt="보관소 아이콘" />
+                            </div>
+                            <h2 class="empty-locker-title">보관소 등록</h2>
+                            <p class="empty-locker-subtext">
+                                보관소가 아직 등록되지 않았습니다!<br>
+                                보관소 등록하러 가시겠습니까?
+                            </p>
+                            <button class="register-locker-btn" onclick="goToRegisterLocker()">등록하기</button>
+                        </div>
+                    </c:otherwise>
+                </c:choose>
             </c:when>
 
             <c:otherwise>
@@ -52,6 +102,7 @@
 </div>
 
 <%@ include file="navbar.jsp" %>
+<%@ include file="common/modal.jsp" %>
 
 <script>
     const contextPath = '${pageContext.request.contextPath}';

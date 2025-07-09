@@ -84,7 +84,6 @@ class ModalUtils {
         }
     }
 
-
     /**
      * 성공 모달 표시
      * @param {string} message - 성공 메시지
@@ -144,13 +143,14 @@ class ModalUtils {
     }
 
     /**
-     * 확인 모달 표시
+     * 확인 모달 표시 (타이틀도 지정 가능하도록 개선)
      * @param {string} message - 확인 메시지
      * @param {string} title - 확인 타이틀
      * @param {Function} onConfirm - 확인 콜백
      * @param {Function} onCancel - 취소 콜백
+     * @param {string} title - 확인 모달 타이틀
      */
-    static showConfirm(message = '정말로 진행하시겠습니까?', title = '확인', onConfirm = null, onCancel = null) {
+    static showConfirm(title = '확인', message = '정말로 진행하시겠습니까?', onConfirm = null, onCancel = null) {
         this.showModal('confirm-modal', {
             title: title,
             message: message,
