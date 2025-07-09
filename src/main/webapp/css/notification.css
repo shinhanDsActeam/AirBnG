@@ -171,10 +171,7 @@ body {
     }
 }
 
-/* 로그인하지 않은 경우의 메시지 */
-.notification-empty-message {
-    text-align: center;
-    padding: 40px 20px;
-    color: #6c757d;
-    font-size: 16px;
+.main-content {
+    padding-top: 200px;
+    margin: 0 20px;
 }
