@@ -79,7 +79,7 @@
         </div>
         <div class="category-card">
             <img src="<c:url value='/images/carrier_img.svg' />" alt="캐리어" />
-            <p>캐리어<br><small>시간당 3,000원부터</small></p>
+            <p>캐리어<br><small>시간당 2,500원부터</small></p>
         </div>
         <div class="category-card">
             <img src="<c:url value='/images/box_img.svg' />" alt="박스" />
@@ -105,6 +105,7 @@
 
 <script>
     const contextPath = '${pageContext.request.contextPath}';
+    const isLoggedIn = ${not empty sessionScope.loginMemberId ? 'true' : 'false'};
 </script>
 <script src="<c:url value='/js/home.js' />"></script>
 
