@@ -46,6 +46,18 @@ document.addEventListener('DOMContentLoaded', function () {
     const categoryCards = document.querySelectorAll('.category-card');
     categoryCards.forEach(function (card, index) {
         card.addEventListener('click', function () {
+            if (!isLoggedIn) {
+                ModalUtils.showConfirm(
+                    '로그인 필요!',
+                    '짐 타입을 선택하려면 로그인이 필요합니다.\n로그인 페이지로 이동하시겠습니까?',
+                    () => {
+                        window.location.href = `${contextPath}/page/login`;
+                    },
+                    () => {}
+                );
+                return;
+            }
+
             // index 기준: 0=백팩, 1=캐리어, 2=박스, 3=유모차
             if (index === 1) {
                 // 캐리어 클릭 시 뒤로가기 히스토리 추가

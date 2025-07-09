@@ -32,10 +32,10 @@
     <div class="greeting">
         <c:choose>
             <c:when test="${not empty sessionScope.nickname}">
-                반갑습니다<br><span class="nickname">${sessionScope.nickname}</span>님.
+                반갑습니다 <span class="nickname">${sessionScope.nickname}님.</span>
             </c:when>
             <c:otherwise>
-                Welcome, <span>AirBnG!</span>
+                <span class="hello">Welcome, AirBnG!</span>
             </c:otherwise>
         </c:choose>
 
@@ -85,7 +85,7 @@
         </div>
         <div class="category-card">
             <img src="<c:url value='/images/carrier_img.svg' />" alt="캐리어" />
-            <p>캐리어<br><small>시간당 3,000원부터</small></p>
+            <p>캐리어<br><small>시간당 2,500원부터</small></p>
         </div>
         <div class="category-card">
             <img src="<c:url value='/images/box_img.svg' />" alt="박스" />
@@ -111,6 +111,7 @@
 
 <script>
     const contextPath = '${pageContext.request.contextPath}';
+    const isLoggedIn = <c:out value="${not empty sessionScope.memberId}" />;
 </script>
 <script src="${pageContext.request.contextPath}/js/sse.js"></script>
 <script src="${pageContext.request.contextPath}/js/dot.js"></script>

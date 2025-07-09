@@ -88,6 +88,9 @@
 <%@ include file="common/modal.jsp" %>
 <div class="spacer"></div>
 <div class="spacer"></div>
+
+<%@ include file="common/modal.jsp" %>
+
 <script>
     // URL에서 lockerId 추출
     const urlParams = new URLSearchParams(window.location.search);
