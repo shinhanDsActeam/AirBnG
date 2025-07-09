@@ -128,7 +128,6 @@ function displayPriceDetails(jimTypes) {
     if (!jimTypes || jimTypes.length === 0) return;
 
     let totalAmount = 0;
-    const serviceFee = 400;
 
     // 시간 계산 (공통)
     const startTime = new Date(reservationData.startTime);
@@ -138,36 +137,28 @@ function displayPriceDetails(jimTypes) {
 
     jimTypes.forEach(item => {
         const { typeName, count, pricePerHour } = item;
+        if(count > 0 && pricePerHour > 0) {
+            // 단일 짐 총액 계산
+            const itemTotal = pricePerHour * count * hours;
+            totalAmount += itemTotal;
 
-        // 단일 짐 총액 계산
-        const itemTotal = pricePerHour * count * hours;
-        totalAmount += itemTotal;
-
-        const priceItem = document.createElement('div');
-        priceItem.className = 'flex justify-between text-sm text-gray-600';
-        priceItem.innerHTML = `
-            <span>${typeName} × ${count}개 × ${formatHours(hours)}</span>
-            <span>${Math.round(itemTotal).toLocaleString()}원</span>
-        `;
-        container.appendChild(priceItem);
+            const priceItem = document.createElement('div');
+            priceItem.className = 'flex justify-between text-sm text-gray-600';
+            priceItem.innerHTML = `
+                <span>${typeName} × ${count}개 × ${formatHours(hours)}</span>
+                <span>${Math.floor(itemTotal).toLocaleString()}원</span>
+            `;
+            container.appendChild(priceItem);
+        }
     });
 
-    // 총 결제 금액 (서비스 수수료 포함)
-    const finalTotal = Math.round(totalAmount + serviceFee);
-    document.getElementById('totalPrice').textContent = finalTotal.toLocaleString() + '원';
-}
+    // 서비스 수수료
+    const serviceFee = Math.floor(totalAmount * 0.05);
 
-// 시간 포맷팅 함수
-function formatHours(hours) {
-    if (hours < 1) {
-        return `${Math.round(hours * 60)}분`;
-    } else if (hours === parseInt(hours)) {
-        return `${hours}시간`;
-    } else {
-        const wholeHours = Math.floor(hours);
-        const minutes = Math.round((hours - wholeHours) * 60);
-        return `${wholeHours}시간${minutes}분`;
-    }
+    // 총 결제 금액 (서비스 수수료 포함)
+    const finalTotal = Math.floor(totalAmount + serviceFee);
+    document.getElementById('serviceFee').textContent = serviceFee.toLocaleString() + '원';
+    document.getElementById('totalPrice').textContent = finalTotal.toLocaleString() + '원';
 }
 
 // 예약 취소 처리

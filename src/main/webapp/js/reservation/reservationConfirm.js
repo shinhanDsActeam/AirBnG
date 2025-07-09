@@ -155,19 +155,6 @@ function displayPriceDetails(jimTypes) {
     document.getElementById('totalPrice').textContent = finalTotal.toLocaleString() + '원';
 }
 
-// 시간 포맷팅 함수
-function formatHours(hours) {
-    if (hours < 1) {
-        return `${Math.round(hours * 60)}분`;
-    } else if (hours === parseInt(hours)) {
-        return `${hours}시간`;
-    } else {
-        const wholeHours = Math.floor(hours);
-        const minutes = Math.round((hours - wholeHours) * 60);
-        return `${wholeHours}시간${minutes}분`;
-    }
-}
-
 // 상태에 따라 액션 버튼 표시
 function hideActionButtons() {
     const bottomButtons = document.getElementById('bottomButtons');
