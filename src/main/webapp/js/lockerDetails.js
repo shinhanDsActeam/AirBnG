@@ -22,7 +22,14 @@ window.addEventListener("DOMContentLoaded", function () {
         const lockerId = reserveBtn.dataset.lockerId;
 
         if (!lockerId || !memberId) {
-            alert('로그인이 필요합니다.');
+            ModalUtils.showConfirm(
+                '로그인 필요!',
+                '보관소 예약하려면 로그인이 필요합니다.\n로그인 페이지로 이동하시겠습니까?',
+                () => {
+                    window.location.href = `${contextPath}/page/login`;
+                },
+                () => {}
+            );
             return;
         }
 
