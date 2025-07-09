@@ -214,7 +214,7 @@ class ModalUtils {
 
         if (config.message) {
             const messageElement = modal.querySelector('.modal-message') || modal.querySelector('.modal-text');
-            if (messageElement) messageElement.textContent = config.message;
+            if (messageElement) messageElement.innerHTML = config.message.replace(/\n/g, '<br>');
         }
 
         // 버튼 텍스트 업데이트
