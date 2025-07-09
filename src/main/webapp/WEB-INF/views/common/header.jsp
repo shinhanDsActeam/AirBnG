@@ -16,14 +16,14 @@
     <div class="header-title">${headerTitle}</div>
 
     <c:choose>
-        <c:when test="${not empty showMenuButton and showMenuButton}">
+        <c:when test="${not empty showHomeButton and showHomeButton}">
             <c:choose>
-                <c:when test="${not empty menuUrl}">
-                    <img class="menu-icon" src="${pageContext.request.contextPath}/images/menu.svg" alt="메뉴"
-                         onclick="location.href='${menuUrl}'">
+                <c:when test="${not empty homeUrl}">
+                    <img class="home-icon" src="${pageContext.request.contextPath}/images/home.svg" alt="홈"
+                         onclick="location.href='${homeUrl}'">
                 </c:when>
                 <c:otherwise>
-                    <img class="menu-icon" src="${pageContext.request.contextPath}/images/menu.svg" alt="메뉴"
+                    <img class="home-icon" src="${pageContext.request.contextPath}/images/home.svg" alt="홈"
                          onclick="window.location.href='${pageContext.request.contextPath}/page/home'">
                 </c:otherwise>
             </c:choose>

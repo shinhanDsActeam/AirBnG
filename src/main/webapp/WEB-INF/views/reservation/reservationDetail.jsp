@@ -4,44 +4,25 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>예약 승인</title>
-  <link rel="icon" type="image/svg+xml" href="${pageContext.request.contextPath}/images/favicon.svg"/>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            primary: '#4561DB',
-            'primary-hover': '#3A4FCF'
-          }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>예약 승인</title>
+    <link rel="icon" type="image/svg+xml" href="${pageContext.request.contextPath}/images/favicon.svg"/>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#4561DB',
+                        'primary-hover': '#3A4FCF'
+                    }
+                }
+            }
         }
-      }
-    }
-  </script>
-  <link rel="stylesheet" href="<c:url value='/css/dot.css' />" />
-  <link rel="stylesheet" href="<c:url value='/css/reservation/reservationDetail.css' />"/>
-  <link rel="stylesheet" href="<c:url value='/css/common/modal.css' />"/>
-  <style>
-    .btn-cancel {
-      background-color: #4561DB !important;
-      border-color: #4561DB !important;
-    }
-    .btn-cancel:hover {
-      background-color: #4561DB !important;
-      border-color: #4561DB !important;
-    }
-    .btn-primary {
-      background-color: #4561DB !important;
-      border-color: #4561DB !important;
-    }
-    .btn-primary:hover {
-      background-color: #4561DB !important;
-      border-color: #4561DB !important;
-    }
-  </style>
+    </script>
+    <link rel="stylesheet" href="<c:url value='/css/reservation/reservationDetail.css' />"/>
+    <link rel="stylesheet" href="<c:url value='/css/common/modal.css' />"/>
 </head>
 <body class="bg-gray-100 mx-auto">
 <!-- 스크립트 로드 순서 중요 -->
@@ -57,9 +38,9 @@
 
     <%-- 헤더 설정 --%>
     <c:set var="headerTitle" value="예약 상세"/>
-    <c:set var="showBackButton" value="true"/>  <%-- 뒤로가기 있는 버전 --%>
-    <c:set var="showMenuButton" value="true"/>  <%-- 메뉴 있는 버전 --%>
-    <c:set var="menuUrl" value="${pageContext.request.contextPath}/page/reservations/list"/> <%-- 메뉴 URL 설정 --%>
+    <c:set var="showBackButton" value="true"/> <%-- 뒤로가기 있는 버전 --%>
+    <c:set var="showHomeButton" value="true"/> <%-- 홈 버튼 있는 버전 --%>
+    <c:set var="homeUrl" value="${pageContext.request.contextPath}/page/home"/> <%-- 홈 URL 설정 --%>
     <%@ include file="../common/header.jsp" %>
 
     <div class="main-wrapper">

@@ -29,7 +29,7 @@
     transition: opacity 0.2s ease;
 }
 
-.menu-icon {
+.home-icon {
     cursor: pointer;
     width: var(--icon-size);
     height: var(--icon-size);
