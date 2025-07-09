@@ -1,0 +1,503 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    background-color: #f8f9fa;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+}
+
+
+.page-container {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    max-width: 412px;
+    width: 100%;
+    background-color: #ffffff;
+}
+
+
+/* 기존 CSS는 그대로 유지하고 아래 스타일들을 추가하세요 */
+
+/* 헤더 스타일 */
+.header {
+    display: flex;
+    align-items: center;
+    padding: 16px 20px;
+    margin-top: 60px;
+    background-color: #ffffff;
+    position: relative;
+    gap: 144px;
+}
+
+.back-button {
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+
+    background: none;
+    border: none;
+    cursor: pointer;
+
+    margin-right: 12px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.header-title {
+    color: #333;
+    text-align: center;
+    font-size: 20px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 20px; /* 100% */
+}
+
+/* 검색 필터 컨테이너 */
+.search-filter-container {
+    margin : 20px auto;
+    padding: 8px 20px 4px 20px;
+        width: fixed 372px;
+        height: fixed 168px;
+        flex-shrink: 0;
+        border-radius: 10px;
+        border: 2px solid #4561DB;
+        background: #FFF;
+        overflow: visible;
+
+}
+
+.searchFilter-input-wrapper {
+    display: flex;
+        align-items: center;
+        border-radius: 12px;
+        padding: 16px;
+        border: none;
+    gap: 15px;
+}
+
+.searchFilter-icon {
+    width: 17px;
+    height: 17px;
+        left: 12px;
+        color: #888;
+}
+
+.searchFilter-input {
+    width: 100%;
+        padding: 0px;
+        border: none;
+        font-size: 15px;
+        cursor: pointer;
+        outline: none;
+}
+
+.filter-row {
+    display: inline-flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.filter-item {
+    display: flex;
+        align-items: center;
+        padding: 15px;
+        cursor: pointer;
+        color: #333;
+        font-size: 16px;
+        font-style: normal;
+        font-weight: 500;
+        line-height: 16px;
+        min-width: 120px;
+}
+
+.filter-icon {
+    margin-right: 8px;
+    color: #666;
+    width: 24px;
+    height: 24px;
+}
+
+/* 검색 순위 */
+.search-ranking {
+    padding: 40px;
+    background-color: #ffffff;
+    flex: 1;
+    overflow-y: auto;
+}
+
+.ranking-title {
+    margin-bottom: 30px;
+    color: #333;
+    font-size: 17px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 17px;
+}
+
+.ranking-list {
+    display: flex;
+    flex-direction: column;
+    gap: 23px;
+}
+
+.ranking-item {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    gap: 20px;
+}
+
+.ranking-number {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #333;
+    text-align: center;
+    font-size: 17px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 17px; /* 100% */
+}
+
+.ranking-location {
+    color: #333;
+    font-size: 17px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 17px; /* 100% */
+}
+
+/* 드롭다운 */
+/* 부모는 상대 위치 */
+.dropdown-wrapper {
+    position: relative;
+    display: inline-block;
+}
+
+.bag-filter {
+    min-width: 140px; /* 짐 타입 텍스트를 고려한 충분한 너비 */
+    white-space: nowrap; /* 텍스트 줄바꿈 방지 */
+}
+
+/* 드롭다운은 부모 기준 아래에 위치 */
+.dropdown {
+    position: absolute;
+    top: calc(100% + 2px);
+    left: 0;
+    background-color: white;
+    border: 1px solid #ccc;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    width: 140px;
+    z-index: 1000;
+    overflow: hidden;
+}
+
+.dropdown-option {
+    padding: 12px 16px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    font-size: 14px;
+    white-space: nowrap;
+}
+
+.dropdown-option:hover {
+    background-color: #f0f0f0;
+}
+
+.hidden {
+    display: none;
+}
+
+/* 드롭다운이 열릴 때 선택된 항목의 스타일 조정 */
+.bag-filter:has(+ .dropdown:not(.hidden)) {
+    border-radius: 12px 12px 0 0;
+}
+
+/* 만약 :has() 선택자를 지원하지 않는 브라우저를 고려한다면 JavaScript로 클래스 추가 */
+.bag-filter.dropdown-open {
+    border-radius: 12px 12px 0 0;
+    border-bottom: 1px solid #ccc;
+}
+
+
+/* 모달 스타일 */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: none;
+    align-items: flex-end;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.searchFilter-button-container {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center; /* 버튼 가운데 정렬 */
+}
+
+.searchFilter-button {
+    width: 100%;
+    max-width: 360px;
+    padding: 14px 0;
+    background-color: #4561DB;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.searchFilter-button:hover {
+    background-color: #3249b5;
+}
+
+.searchFilter-button:active {
+    background-color: #293c99;
+}
+
+.modal.active {
+    display: flex;
+}
+
+.modal-content {
+    position: relative;
+    background-color: white;
+    width: 100%;
+    max-width: 412px;
+    border-radius: 20px 20px 0 0;
+    overflow: hidden;
+    animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(100%);
+    }
+    to {
+        transform: translateY(0);
+    }
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.modal-header h3 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #333;
+}
+
+.close-button {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #666;
+    padding: 4px;
+}
+
+.modal-body {
+    padding: 20px;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+/* 위치 검색 스타일 */
+.location-search-input {
+    margin-bottom: 16px;
+}
+
+.location-search-input input {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 14px;
+}
+
+.location-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.location-option {
+    padding: 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.location-option:hover {
+    background-color: #f8f9fa;
+}
+
+.location-option.selected {
+    background-color: #007bff;
+    color: white;
+}
+
+/* 날짜 선택 스타일 */
+.date-input {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 14px;
+    margin-bottom: 16px;
+}
+
+/* 시간 선택 스타일 */
+.time-selector {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+.time-group {
+    flex: 1;
+}
+
+.time-group label {
+    display: block;
+    font-size: 14px;
+    font-weight: 500;
+    color: #333;
+    margin-bottom: 8px;
+}
+
+.time-group select {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 14px;
+    background-color: white;
+}
+
+/* 확인 버튼 */
+.confirm-button {
+    width: 100%;
+    padding: 12px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.confirm-button:hover {
+    background-color: #0056b3;
+}
+
+/* 검색 결과 */
+.search-results {
+    padding: 20px;
+    background-color: #ffffff;
+    flex: 1;
+    overflow-y: auto;
+}
+
+.search-results h3 {
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 16px;
+}
+
+.results-container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+/* 반응형 */
+@media (max-width: 480px) {
+    .filter-row {
+        flex-direction: column;
+    }
+
+    .filter-item {
+        justify-content: center;
+    }
+
+    .time-selector {
+        flex-direction: column;
+    }
+}
+
+/* 드롭다운 스타일 */
+.custom-dropdown {
+  position: relative;
+  width: 120px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  cursor: pointer;
+  background-color: white;
+}
+
+.custom-dropdown .selected {
+  padding: 10px;
+}
+
+.custom-dropdown .dropdown-options {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  max-height: 150px;
+  overflow-y: auto;
+  border: 1px solid #ccc;
+  border-top: none;
+  display: none;
+  background-color: white;
+  z-index: 1000;
+}
+
+.custom-dropdown .dropdown-options li {
+  padding: 10px;
+  cursor: pointer;
+}
+
+.custom-dropdown .dropdown-options li:hover {
+  background-color: #f0f0f0;
+}
+
+.custom-dropdown.open .dropdown-options {
+  display: block;
+}
+
+.filter-divider {
+    border: none;
+    border-top: 1px solid #e0e0e0;
+}

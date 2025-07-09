@@ -11,7 +11,6 @@
     <link rel="stylesheet" href="<c:url value='/css/dot.css' />" />
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/search.css">
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/bottom-sheet.css">
-
 </head>
 
 <body>
@@ -20,10 +19,10 @@
 
         <!-- Top 검색 바 -->
         <div class="top-bar">
-            <img class="back-icon" src="${pageContext.request.contextPath}/images/arrow-left.svg" alt="뒤로가기" onclick="history.back()">
+            <img class="back-icon" src="${pageContext.request.contextPath}/images/arrow-left.svg" alt="뒤로가기" onclick="window.location.href='${pageContext.request.contextPath}/page/home';">
             <div class="search-container">
                 <form class="search-form" action="${pageContext.request.contextPath}/search" method="get">
-                    <input class="search-input" type="text" name="query" id="searchInput" value="${address} | ${reservationDate}" required>
+                    <input class="search-input" type="text" name="query" id="searchInput" placeholder="${address}" required>
                     <img class="search-button" src="${pageContext.request.contextPath}/images/Group 2.svg" alt="검색">
                 </form>
             </div>
@@ -35,9 +34,34 @@
                 <div class="sheet-drag-handle"></div>
             </div>
             <div class="sheet-title">
-                <span>검색 결과&nbsp;</span>
-                <span class="sheet-count">${count}</span>
+                <div class="sheet-left">
+                    <span>검색 결과&nbsp;</span>
+                    <span class="sheet-count">${count}</span>
+                </div>
+                    <div class="sheet-subtitle" onclick="dropdown()">
+                        <span id="selectedBagType">
+                            <c:choose>
+                                <c:when test="${empty jimTypeId || jimTypeId == 0}">모든 짐</c:when>
+                                <c:when test="${jimTypeId == 1}">백팩/가방</c:when>
+                                <c:when test="${jimTypeId == 2}">캐리어 소형</c:when>
+                                <c:when test="${jimTypeId == 3}">캐리어 대형</c:when>
+                                <c:when test="${jimTypeId == 4}">박스/큰 짐</c:when>
+                                <c:when test="${jimTypeId == 5}">유모차</c:when>
+                            </c:choose>
+                        </span>
+                        <img class="dropdown-down" src="${pageContext.request.contextPath}/images/arrow-down.svg" alt="드롭다운">
+                    </div>
+
+                    <ul id="bag-dropdown" class="dropdown-menu hidden">
+                        <li onclick="selectBagType(0)">모든 짐</li>
+                        <li onclick="selectBagType(1)">백팩/가방</li>
+                        <li onclick="selectBagType(2)">캐리어 소형</li>
+                        <li onclick="selectBagType(3)">캐리어 대형</li>
+                        <li onclick="selectBagType(4)">박스/큰 짐</li>
+                        <li onclick="selectBagType(5)">유모차</li>
+                    </ul>
             </div>
+
             <div class="sheet-content" id="lockerList">
                 <%-- 여기 안에는 JS가 검색 결과를 동적으로 삽입함 --%>
             </div>
