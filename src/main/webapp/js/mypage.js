@@ -187,7 +187,7 @@ function goToReservations() {
     showLoadingAnimation();
 
     setTimeout(() => {
-        window.location.href = `${ctx}/page/reservations`;
+        window.location.href = `${ctx}/page/reservations/list`;
     }, 300);
 }
 
