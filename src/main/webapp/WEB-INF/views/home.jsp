@@ -26,10 +26,10 @@
     <div class="greeting">
         <c:choose>
             <c:when test="${not empty sessionScope.nickname}">
-                반갑습니다<br><span class="nickname">${sessionScope.nickname}</span>님.
+                반갑습니다 <span class="nickname">${sessionScope.nickname}님.</span>
             </c:when>
             <c:otherwise>
-                Welcome, <span>AirBnG!</span>
+                <span class="hello">Welcome, AirBnG!</span>
             </c:otherwise>
         </c:choose>
 
@@ -105,7 +105,7 @@
 
 <script>
     const contextPath = '${pageContext.request.contextPath}';
-    const isLoggedIn = ${not empty sessionScope.loginMemberId ? 'true' : 'false'};
+    const isLoggedIn = <c:out value="${not empty sessionScope.memberId}" />;
 </script>
 <script src="<c:url value='/js/home.js' />"></script>
 
