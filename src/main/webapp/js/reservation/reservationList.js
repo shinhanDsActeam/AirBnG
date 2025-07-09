@@ -346,7 +346,7 @@ function getActionButtons(reservation) {
     if (reservation.state === 'COMPLETED') {
         return `
             <div class="completed-actions">
-                <button class="rebook-btn" onclick="reBooking(${reservation.lockerId || 1})">다시 예약</button>
+                <button class="btn rebook-btn" onclick="reBooking(${reservation.lockerId || 1})">다시 예약</button>
                 <div class="more-btn" onclick="toggleMoreMenu(${reservation.reservationId})">
                     <img src="${spotSvgUrl}" class="more-icon" alt="더보기 아이콘" />
                     <div class="more-menu" id="more-menu-${reservation.reservationId}">

@@ -87,6 +87,30 @@
     }
 }
 
+
+@keyframes dot-disappear {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(0);
+        opacity: 0;
+    }
+}
+
+/* 알림 점 깜박임 효과 */
+@keyframes dot-pulse {
+    0%, 100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.6;
+        transform: scale(1.1);
+    }
+}
+
 .airbng-home .bell-wrapper::after {
     animation: bell-pulse 6s ease-in-out infinite;
 }
@@ -178,6 +202,10 @@ body {
     margin-right: 10px;
     position: relative;
     z-index: 2;
+}
+
+.bell-ring {
+    pointer-events: none !important;
 }
 
 .airbng-home .bell-ring {
@@ -546,4 +574,40 @@ body {
     font-size: 13px;
     color: #777;
     line-height: 16px;
+}
+
+/* 벨 아이콘 wrapper - 상대적 위치 설정 */
+.airbng-home .bell-wrapper {
+    position: relative;
+    display: inline-block;
+    z-index: 10;
+}
+
+/* 알림 링크 스타일 */
+.airbng-home .notification-link {
+    position: relative;
+    display: inline-block;
+    text-decoration: none;
+    z-index: 9;
+}
+
+/* 벨 아이콘 기본 스타일 */
+.airbng-home .notification-icon {
+    width: 24px;
+    height: 24px;
+    display: block;
+    transition: transform 0.2s ease;
+}
+
+.airbng-home .notification-link:hover .notification-icon {
+    transform: scale(1.1);
+}
+
+/* 반응형 조정 */
+@media (max-width: 380px) {{
+        width: 8px;
+        height: 8px;
+        top: -3px;
+        right: -3px;
+        border-width: 1px;
 }

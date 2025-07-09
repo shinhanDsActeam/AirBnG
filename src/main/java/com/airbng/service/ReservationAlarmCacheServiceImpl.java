@@ -39,4 +39,29 @@ public class ReservationAlarmCacheServiceImpl implements ReservationAlarmCacheSe
     private String buildKey(Long reservationId, Long receiverId, NotificationType type) {
         return String.format("alarm:%d:%d:%s", reservationId, receiverId, type.name());
     }
+
+    //안읽은 알림 표시
+    public void markUnread(Long memberId) {
+        String key = buildUnreadKey(memberId);
+        // TTL 제거 (영구 저장 -> 사용자가 안읽으면 계속 안읽음 표시)
+        redisTemplate.opsForValue().set(key, "true");
+        log.info("안읽은 알림 표시: memberId={}", memberId);
+    }
+
+    //읽은 알림 표시
+    public void markAllAsRead(Long memberId) {
+        redisTemplate.delete(buildUnreadKey(memberId)); // 읽음 처리 (삭제)
+        log.info("모든 알림 읽음 처리: memberId={}", memberId);
+    }
+
+    //안읽음 확인
+    public boolean hasUnreadAlarm(Long memberId) {
+        return Boolean.TRUE.equals(redisTemplate.hasKey(buildUnreadKey(memberId)));  
+    }
+
+    //Redis 키를 일관되게 만들기 위한 헬퍼 메서드
+    private String buildUnreadKey(Long memberId) {
+        return "alarm:unread:" + memberId;
+    }
+
 }

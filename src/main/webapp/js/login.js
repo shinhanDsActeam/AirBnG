@@ -35,8 +35,9 @@ document.querySelector('.login-form').addEventListener('submit', function(e) {
                 startCooldown(30); // 30초동안 로그인 시도 제한
                 ModalUtils.showWarning('잠시 후 다시 시도해주세요.','요청이 너무 많습니다');
             } else if (data.code === 2000) {
+                const targetUrl = redirectUrl ? redirectUrl : `${contextPath}/page/home`;
                 ModalUtils.showSuccess(' ', '로그인 성공',
-                    ()=>{ window.location.href = `${contextPath}/page/home` });
+                    ()=>{ window.location.replace(`${targetUrl}`); });
             } else {
                 ModalUtils.showError('이메일 또는 비밀번호가 올바르지 않습니다.', '로그인 실패');
             }
@@ -89,4 +90,9 @@ function updateCountdown() {
             }
         }, 1000);
     }
+}
+
+function goToSignup(){
+    const targetUrl = redirectUrl ? redirectUrl : `${contextPath}/page/home`;
+    window.location.replace(`${contextPath}/page/signup?redirect=${targetUrl}`);
 }

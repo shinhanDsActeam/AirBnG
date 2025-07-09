@@ -108,6 +108,15 @@
     const contextPath = '${pageContext.request.contextPath}';
 </script>
 
+<c:if test="${not empty sessionScope.memberId}">
+     <script>
+         window.memberId = "${sessionScope.memberId}";
+     </script>
+</c:if>
+
+<script src="${pageContext.request.contextPath}/js/sse.js"></script>
+<script src="${pageContext.request.contextPath}/js/notification.js"></script>
+
 <script src="<c:url value='/js/locker.js'/>"></script>
 </body>
 </html>

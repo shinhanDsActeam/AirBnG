@@ -5,6 +5,7 @@ let isProcessing = false;
 document.addEventListener('DOMContentLoaded', function () {
     loadReservationData();
     setupEventListeners();
+    initSSE();
 });
 
 // 이벤트 리스너 설정
@@ -152,19 +153,6 @@ function displayPriceDetails(jimTypes) {
     // 총 결제 금액 (서비스 수수료 포함)
     const finalTotal = Math.round(totalAmount + serviceFee);
     document.getElementById('totalPrice').textContent = finalTotal.toLocaleString() + '원';
-}
-
-// 시간 포맷팅 함수
-function formatHours(hours) {
-    if (hours < 1) {
-        return `${Math.round(hours * 60)}분`;
-    } else if (hours === parseInt(hours)) {
-        return `${hours}시간`;
-    } else {
-        const wholeHours = Math.floor(hours);
-        const minutes = Math.round((hours - wholeHours) * 60);
-        return `${wholeHours}시간${minutes}분`;
-    }
 }
 
 // 상태에 따라 액션 버튼 표시
@@ -346,4 +334,41 @@ function getStatusClass(state) {
     };
 
     return classMap[state] || 'status-pending';
+}
+
+// SSE 연결 초기화
+function initSSE() {
+    if (!memberId || memberId === 'null' || memberId === '') {
+        console.log('로그인된 회원이 아니어서 SSE 연결하지 않습니다.');
+        return;
+    }
+
+    const sseManager = getSSEManager();
+
+    sseManager.addEventListener('alarm', (alarmData) => {
+        console.log('알림 메시지:', alarmData.message);
+        showDotIndicator();
+
+        if (typeof getNotificationSSE === 'function') {
+                const notificationManager = getNotificationSSE();
+                if (notificationManager) {
+                      notificationManager.handleNotification(alarmData);
+                }
+            }
+
+        // 현재 예약과 관련된 상태 변경 알림인 경우 페이지 새로고침
+        if (alarmData.reservationId == reservationId) {
+            console.log('현재 예약의 상태 변경 알림 감지 - 페이지 데이터 갱신');
+            loadReservationData();
+        }
+
+    });
+
+    sseManager.onConnectionStatusChange((connected) => {
+        console.log('SSE 연결 상태:', connected ? '연결됨' : '연결 끊김');
+    });
+
+    sseManager.requestNotificationPermission().then((permission) => {
+        console.log('브라우저 알림 권한:', permission);
+    });
 }
