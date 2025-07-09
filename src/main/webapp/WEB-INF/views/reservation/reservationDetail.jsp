@@ -21,6 +21,7 @@
       }
     }
   </script>
+  <link rel="stylesheet" href="<c:url value='/css/dot.css' />" />
   <link rel="stylesheet" href="<c:url value='/css/reservation/reservationDetail.css' />"/>
   <link rel="stylesheet" href="<c:url value='/css/common/modal.css' />"/>
   <style>
@@ -169,7 +170,17 @@
   <%@ include file="../common/modal.jsp" %>
 </div>
 
+<c:if test="${not empty sessionScope.memberId}">
+    <script>
+        window.memberId = "${sessionScope.memberId}";
+    </script>
+</c:if>
+
+<script src="<c:url value='/js/sse.js'/>"></script>
+<script src="<c:url value='/js/dot.js'/>"></script>
 <!-- 메인 스크립트를 마지막에 로드 -->
 <script src="<c:url value='/js/reservation/reservationDetail.js' />"></script>
+<script src="${pageContext.request.contextPath}/js/notification.js"></script>
+
 </body>
 </html>

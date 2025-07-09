@@ -29,5 +29,9 @@
         <span class="nav-text">마이</span>
     </a>
 </nav>
-
+<c:if test="${not empty sessionScope.memberId}">
+    <script>
+        window.memberId = "${sessionScope.memberId}";
+    </script>
+</c:if>
 <script src="<c:url value='/js/navigation.js'/>"></script>

@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if (realDateInput.showPicker) {
             realDateInput.showPicker();  // 최신 브라우저 (크롬 등)
         } else {
-            realDateInput.focus();       // fallback
+            realDateInput.focus();
             realDateInput.click();
         }
     });
@@ -147,4 +147,40 @@ document.addEventListener('DOMContentLoaded', function () {
         .catch(function (error) {
             console.error("인기 보관소 가져오기 실패:", error);
         });
+
+    // ======= SSE 매니저를 통한 알림 처리 =======
+    const memberId = document.body.dataset.memberId;
+
+    if (memberId && memberId !== 'null' && memberId !== '') {
+      const sseManager = getSSEManager();
+
+      sseManager.addEventListener('alarm', (alarmData) => {
+          showDotIndicator(contextPath);
+
+          console.log('알림 메시지:', alarmData.message);
+
+//          sseManager.showBrowserNotification(
+//              '새로운 알림',
+//              alarmData.message || '새로운 예약 알림이 도착했습니다.',
+//              `${contextPath}/images/dot.svg`
+//          );
+      });
+
+      sseManager.onConnectionStatusChange((connected) => {
+          console.log('home.js - SSE 연결 상태 변경:', connected ? '연결됨' : '연결 끊김');
+      });
+
+      sseManager.requestNotificationPermission().then((permission) => {
+          console.log('브라우저 알림 권한:', permission);
+      });
+    }
+
+    // 알림 링크 클릭 시 dot 숨기기 (필요 시)
+    const notificationLink = document.querySelector('.notification-link');
+    if (notificationLink) {
+      notificationLink.addEventListener('click', () => {
+          console.log('알림 링크 클릭됨');
+          hideDotIndicator();
+      });
+    }
 });

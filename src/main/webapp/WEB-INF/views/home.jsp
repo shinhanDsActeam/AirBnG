@@ -8,9 +8,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/gh/webfontworld/bmjua/BMJUA.css" rel="stylesheet">
+    <link rel="stylesheet" href="<c:url value='/css/dot.css' />" />
     <link rel="stylesheet" href="<c:url value='/css/home.css' />" />
 </head>
-<body class="airbng-home">
+<body class="airbng-home"  data-member-id="${sessionScope.memberId}">
 <%@ include file="common/modal.jsp" %>
 <div class="top-section">
     <div class="top-bar">
@@ -18,9 +19,14 @@
             <img src="<c:url value='/images/logo_ic.svg' />" alt="로고" />
             <span class="brand-text">에어비앤짐</span>
         </div>
-        <img src="<c:url value='/images/bell_ic.svg' />" alt="알림" />
-
-        <div class="bell-ring"></div>
+        <div class="bell-wrapper">
+            <c:if test="${sessionScope.hasUnreadAlarm eq true}">
+                <img src="<c:url value='/images/dot.svg' />" alt="새 알림 표시" class="dot-indicator show" id="dotIndicator" />
+            </c:if>
+            <a href="${pageContext.request.contextPath}/page/notification" class="notification-link">
+                <img src="<c:url value='/images/bell_ic.svg' />" alt="알림" class="notification-icon" />
+            </a>
+        </div>
     </div>
 
     <div class="greeting">
@@ -106,7 +112,10 @@
 <script>
     const contextPath = '${pageContext.request.contextPath}';
 </script>
+<script src="${pageContext.request.contextPath}/js/sse.js"></script>
+<script src="${pageContext.request.contextPath}/js/dot.js"></script>
 <script src="<c:url value='/js/home.js' />"></script>
+<script src="${pageContext.request.contextPath}/js/notification.js"></script>
 
 </body>
 </html>

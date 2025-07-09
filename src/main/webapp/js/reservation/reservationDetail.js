@@ -5,6 +5,7 @@ let isProcessing = false;
 document.addEventListener('DOMContentLoaded', function () {
     loadReservationData();
     setupEventListeners();
+    initSSE();
 });
 
 // 이벤트 리스너 설정
@@ -416,4 +417,41 @@ function getStatusClass(state) {
     };
 
     return classMap[state] || 'status-pending';
+}
+
+// SSE 초기화
+function initSSE() {
+    if (!memberId || memberId === 'null' || memberId === '') {
+        console.log('로그인된 회원이 아니어서 SSE 연결하지 않습니다.');
+        return;
+    }
+
+    const sseManager = getSSEManager();
+
+    sseManager.addEventListener('alarm', (alarmData) => {
+        console.log('알림 메시지:', alarmData.message);
+        showDotIndicator();
+
+        if (typeof getNotificationSSE === 'function') {
+                const notificationManager = getNotificationSSE();
+                if (notificationManager) {
+                      notificationManager.handleNotification(alarmData);
+                }
+            }
+
+        // 예약 상세 페이지에서 상태 변경 알림 수신 시 상세 데이터 갱신
+        if (alarmData.type === 'STATE_CHANGE' && alarmData.reservationId == reservationId) {
+            console.log('예약 상태 변경 알림 감지 - 상세 데이터 갱신');
+            fetchReservationDetail();
+        }
+
+    });
+
+    sseManager.onConnectionStatusChange((connected) => {
+        console.log('SSE 연결 상태:', connected ? '연결됨' : '연결 끊김');
+    });
+
+    sseManager.requestNotificationPermission().then((permission) => {
+        console.log('브라우저 알림 권한:', permission);
+    });
 }

@@ -8,6 +8,7 @@
     <meta charset="utf-8">
     <title>AirBnG | ${address}&nbsp;검색 결과</title>
     <link rel="icon" type="image/svg+xml" href="${pageContext.request.contextPath}/images/favicon.svg" />
+    <link rel="stylesheet" href="<c:url value='/css/dot.css' />" />
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/search.css">
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/bottom-sheet.css">
 </head>
@@ -72,6 +73,17 @@
     <script>
         const contextPath = '${pageContext.request.contextPath}';
     </script>
+
+    <c:if test="${not empty sessionScope.memberId}">
+        <script>
+            window.memberId = "${sessionScope.memberId}";
+        </script>
+    </c:if>
+    <script src="<c:url value='/js/sse.js'/>"></script>
+    <script src="<c:url value='/js/dot.js'/>"></script>
+    <script type="text/javascript" src="${pageContext.request.contextPath}/js/config/kakao.config.js"></script>
     <script type="text/javascript" src="${pageContext.request.contextPath}/js/search.js"></script>
+    <script src="${pageContext.request.contextPath}/js/notification.js"></script>
+
 </body>
 </html>

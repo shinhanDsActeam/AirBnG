@@ -13,8 +13,6 @@
   <link rel="stylesheet" href="<c:url value='/css/common/modal.css' />"/>
 </head>
 <body class="bg-gray-100 mx-auto">
-<script src="<c:url value='/js/common/modal.js' />"></script>
-<script src="<c:url value='/js/reservation/reservationConfirm.js' />"></script>
 <div class="max-w-md mx-auto bg-white min-h-screen">
   <%-- 전역변수 --%>
   <script>
@@ -141,6 +139,17 @@
 
   <%@ include file="../common/modal.jsp" %>
 </div>
+
+<c:if test="${not empty sessionScope.memberId}">
+    <script>
+        window.memberId = "${sessionScope.memberId}";
+    </script>
+</c:if>
+
+<script src="<c:url value='/js/sse.js'/>"></script>
+<script src="<c:url value='/js/dot.js'/>"></script>
+<script src="<c:url value='/js/reservation/reservationConfirm.js' />"></script>
+<script src="${pageContext.request.contextPath}/js/notification.js"></script>
 
 </body>
 </html>
