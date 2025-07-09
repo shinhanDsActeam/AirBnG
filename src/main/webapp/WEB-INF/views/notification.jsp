@@ -27,11 +27,9 @@
 
             <!-- 통합된 알림 컨테이너 -->
             <div class="notification-container">
-                <!-- 상단 바 (뒤로가기 + 타이틀만) -->
-                <div class="notification-header-bar">
-                    <button class="back-button" onclick="history.back()">←</button>
-                    <h1 class="notification-title">알림</h1>
-                </div>
+                <c:set var="headerTitle" value="알림"/>
+                <c:set var="showBackButton" value="true"/> <%-- 뒤로가기 있는 버전 --%>
+                <%@ include file="common/header.jsp" %>
 
                 <!-- 모든 알림 지우기 버튼 (별도 영역) -->
                 <div class="clear-all-section">

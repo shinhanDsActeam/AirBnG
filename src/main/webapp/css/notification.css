@@ -28,44 +28,12 @@ body {
     overflow: hidden;
 }
 
-/* 상단 바: ← 알림만 */
-.notification-header-bar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 24px 16px 16px 16px;
-    border-bottom: 1px solid #f0f0f0;
-    position: relative;
-}
-
-/* 뒤로가기 버튼 */
-.back-button {
-    background: none;
-    border: none;
-    font-size: 24px;
-    cursor: pointer;
-    color: #333;
-    width: 36px;
-    text-align: left;
-    padding: 0;
-    line-height: 1;
-}
-
-/* 타이틀은 가운데 정렬 */
-.notification-title {
-    font-size: 18px;
-    font-weight: bold;
-    margin: 0;
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-}
-
 /* 모든 알림 지우기 버튼 섹션 */
 .clear-all-section {
     display: flex;
     justify-content: flex-end;
     padding: 12px 16px;
+    margin-top: var(--header-height);
 }
 
 /* 모든 알림 지우기 버튼 */
