@@ -5,8 +5,16 @@
 <div class="common-header">
     <c:choose>
         <c:when test="${not empty showBackButton and showBackButton}">
-            <img class="back-icon" src="${pageContext.request.contextPath}/images/arrow-left.svg" alt="뒤로가기"
-                 onclick="history.back()">
+            <c:choose>
+                <c:when test="${not empty backUrl}">
+                    <img class="back-icon" src="${pageContext.request.contextPath}/images/arrow-left.svg" alt="뒤로가기"
+                         onclick="location.href='${backUrl}'">
+                </c:when>
+                <c:otherwise>
+                    <img class="back-icon" src="${pageContext.request.contextPath}/images/arrow-left.svg" alt="뒤로가기"
+                         onclick="history.back()">
+                </c:otherwise>
+            </c:choose>
         </c:when>
         <c:otherwise>
             <div class="back-spacer"></div>

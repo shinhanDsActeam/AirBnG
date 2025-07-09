@@ -39,6 +39,7 @@
     <%-- 헤더 설정 --%>
     <c:set var="headerTitle" value="예약 상세"/>
     <c:set var="showBackButton" value="true"/> <%-- 뒤로가기 있는 버전 --%>
+    <c:set var="backUrl" value="${pageContext.request.contextPath}/page/reservations/list"/> <%-- 뒤로가기에 다른 url 연결  --%>
     <c:set var="showHomeButton" value="true"/> <%-- 홈 버튼 있는 버전 --%>
     <c:set var="homeUrl" value="${pageContext.request.contextPath}/page/home"/> <%-- 홈 URL 설정 --%>
     <%@ include file="../common/header.jsp" %>
