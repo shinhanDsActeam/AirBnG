@@ -59,3 +59,12 @@ function toggleLockerAvailability(buttonElement) {
         }
     );
 }
+
+function goToLockerManage(buttonElement) {
+    const lockerId = buttonElement.getAttribute("data-locker-id");
+    if (!lockerId) {
+        ModalUtils.showWarning("보관소 ID가 존재하지 않습니다.", "유효하지 않은 요청");
+        return;
+    }
+    location.href = contextPath + '/page/lockers/manage?lockerId=' + lockerId;
+}

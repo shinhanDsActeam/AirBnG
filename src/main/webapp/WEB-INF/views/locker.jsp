@@ -65,6 +65,12 @@
                                         보관소 상세보기
                                     </button>
 
+                                    <button class="edit-locker-btn"
+                                            data-locker-id="${lockerDetail.lockerId}"
+                                            onclick="goToLockerManage(this)">
+                                        보관소 수정하기
+                                    </button>
+
                                     <button type="button"
                                             class="toggle-btn ${lockerDetail.isAvailable eq 'YES' ? 'btn-stop' : 'btn-restart'}"
                                             data-locker-id="${lockerDetail.lockerId}"

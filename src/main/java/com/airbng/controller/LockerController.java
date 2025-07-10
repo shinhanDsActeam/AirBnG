@@ -2,9 +2,7 @@ package com.airbng.controller;
 
 import com.airbng.common.response.BaseResponse;
 import com.airbng.common.response.status.BaseResponseStatus;
-import com.airbng.dto.locker.LockerDetailResponse;
-import com.airbng.dto.locker.LockerInsertRequest;
-import com.airbng.dto.locker.LockerTop5Response;
+import com.airbng.dto.locker.*;
 import com.airbng.service.LockerService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -58,6 +56,24 @@ public class LockerController {
     public BaseResponse<LockerTop5Response> selectTop5Lockers() {
         log.info("LockerController.selectTop5Lockers");
         return new BaseResponse<>(lockerService.findTop5Locker());
+    }
+
+    @GetMapping("/update/{lockerId}")
+    public BaseResponse<LockerUpdateResponse> findLockerForUpdate(@PathVariable Long lockerId) {
+        return new BaseResponse<>(lockerService.findUpdateUserById(lockerId));
+    }
+
+
+    @PostMapping(value = "/update/{lockerId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public BaseResponse<String> updateLocker(
+            @PathVariable Long lockerId,
+            @RequestPart("locker") LockerUpdateRequest request,
+            @RequestPart(value = "images", required = false) List<MultipartFile> images
+    ) throws IOException {
+        request.setLockerId(lockerId);
+        request.setImages(images);
+        lockerService.updateLocker(request);
+        return new BaseResponse<>("보관소 수정 완료");
     }
 
 }

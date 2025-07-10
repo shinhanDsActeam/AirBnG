@@ -4,10 +4,13 @@ import com.airbng.domain.Locker;
 import com.airbng.domain.base.Available;
 import com.airbng.domain.base.ReservationState;
 import com.airbng.domain.image.Image;
+import com.airbng.domain.jimtype.JimType;
 import com.airbng.dto.jimType.LockerJimTypeResult;
+import com.airbng.dto.jimType.LockerJimTypeUpdateResult;
 import com.airbng.dto.locker.LockerDetailResponse;
 import com.airbng.dto.locker.LockerPreviewResult;
 import com.airbng.dto.locker.LockerSearchRequest;
+import com.airbng.dto.locker.LockerUpdateResponse;
 import com.airbng.dto.reservation.ReservationFormResponse;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -30,6 +33,10 @@ public interface LockerMapper {
 
     LockerDetailResponse findLockerById(Long lockerId);
 
+    LockerUpdateResponse findUpdateLockerDetailById(@Param("memberId") Long memberId);
+
+    LockerUpdateResponse findUpdateLockerById(Long lockerId);
+
     List<String> findImageById(Long lockerId);
 
     void insertLocker(Locker locker);
@@ -45,6 +52,8 @@ public interface LockerMapper {
     int findLockerByMemberId(@Param("memberId") Long memberId);
 
     List<Long> findValidJimTypeIds(@Param("jimTypeIds") List<Long> jimTypeIds);
+
+    List<LockerJimTypeUpdateResult> findAllJimTypes();
 
     int findMemberId(@Param("memberId") Long memberId);
 
@@ -63,4 +72,12 @@ public interface LockerMapper {
     List<LockerJimTypeResult> getLockerJimTypeById(@Param("lockerId") Long lockerId);
 
     Long getLockerKeeperId(@Param("lockerId") Long lockerId);
+
+    void updateLockerInfo(Locker locker);
+
+    void deleteLockerJimTypes(Long lockerId);
+
+    void deleteLockerImages(Long lockerId);
+
+    List<Long> findJimTypeIdsByLocker(Long lockerId);
 }

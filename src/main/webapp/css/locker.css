@@ -292,6 +292,22 @@
     background-color: #3651cb;
 }
 
+.airbng-locker .edit-locker-btn {
+    background-color: #9c27b0;
+    color: white;
+    font-weight: bold;
+    border: none;
+    border-radius: 10px;
+    padding: 12px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+}
+
+.airbng-locker .edit-locker-btn:hover {
+    background-color: #8a3ca9;
+}
+
 /* 활성/비활성 버튼 */
 .airbng-locker .toggle-btn {
     width: 100%;
