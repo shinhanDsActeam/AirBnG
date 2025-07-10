@@ -16,5 +16,7 @@ public class LockerPreviewResult {
     private String lockerName;
     private String isAvailable;
     private String url;
+    private Double latitude;
+    private Double longitude;
     private List<JimTypeResult> jimTypeResults;
 }
