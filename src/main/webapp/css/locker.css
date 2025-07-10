@@ -20,26 +20,6 @@
     overflow: hidden;
 }
 
-/* 헤더 */
-.airbng-locker .header {
-    padding: 20px 20px 20px;
-    border-bottom: 1px solid #f0f0f0;
-    background: white;
-    z-index: 100;
-}
-
-.airbng-locker .header-content {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.airbng-locker .logo-text {
-    font-size: 20px;
-    font-weight: 700;
-    color: #333;
-}
-
 /* 메인 컨텐츠 */
 .airbng-locker .main-content {
     max-width: 412px;
@@ -91,70 +71,6 @@
 .airbng-locker .menu-content p {
     font-size: 14px;
     color: #666;
-}
-
-/* 로그인 안 된 경우 */
-.airbng-locker .welcome-section {
-    text-align: center;
-    margin-bottom: 30px;
-    padding: 40px 20px;
-    background: #f8f9ff;
-    border-radius: 20px;
-    border: 1px solid #e8ebff;
-    animation: fadeInUp 0.6s ease-out;
-}
-
-.airbng-locker .welcome-title {
-    font-size: 24px;
-    font-weight: 700;
-    margin-bottom: 12px;
-    color: #333;
-}
-
-.airbng-locker .welcome-subtitle {
-    font-size: 15px;
-    color: #666;
-    margin-bottom: 24px;
-}
-
-.airbng-locker .auth-buttons {
-    display: flex;
-    gap: 12px;
-    justify-content: center;
-}
-
-.airbng-locker .login-btn,
-.signup-btn {
-    flex: 1;
-    max-width: 140px;
-    padding: 14px 0;
-    font-size: 15px;
-    font-weight: 600;
-    border-radius: 12px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.airbng-locker .login-btn {
-    background: transparent;
-    color: #4561DB;
-    border: 2px solid #4561DB;
-}
-
-.airbng-locker .signup-btn {
-    background: transparent;
-    color: #4561DB;
-    border: 2px solid #4561DB;
-}
-
-.airbng-locker .login-btn:hover {
-    background: #4561DB;
-    color: white;
-}
-
-.airbng-locker .signup-btn:hover {
-    background: #4561DB;
-    color: white;
 }
 
 /* 오른쪽 화살표 */
