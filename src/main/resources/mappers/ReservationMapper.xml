@@ -113,20 +113,20 @@
 
     <select id="findAllReservationById" resultMap="ReservationResultMap" parameterType="map">
         SELECT
-        r.reservation_id,
-        r.state,
-        r.keeper_id,
-        r.dropper_id,
-        DATE_FORMAT(r.start_time, '%m.%d %H:%i') AS start_time,
-        DATE_FORMAT(r.end_time, '%m.%d %H:%i') AS end_time,
-        DATE_FORMAT(r.start_time, '%Y-%m-%d') AS date_only,
-        l.locker_name,
-        l.address,
-        l.address_detail,
-        i.url AS locker_image,
-        TIMESTAMPDIFF(MINUTE, r.start_time, r.end_time) / 60.0 AS duration_hours,
-        jt.jimtype_id,
-        jt.type_name
+            r.reservation_id,
+            r.state,
+            r.keeper_id,
+            r.dropper_id,
+            DATE_FORMAT(r.start_time, '%Y-%m-%dT%H:%i') AS start_time,
+            DATE_FORMAT(r.end_time, '%Y-%m-%dT%H:%i') AS end_time,
+            DATE_FORMAT(r.start_time, '%Y-%m-%d') AS date_only,
+            l.locker_name,
+            l.address,
+            l.address_detail,
+            i.url AS locker_image,
+            TIMESTAMPDIFF(MINUTE, r.start_time, r.end_time) / 60.0 AS duration_hours,
+            jt.jimtype_id,
+            jt.type_name
         FROM
         (
         SELECT reservation_id
@@ -180,18 +180,18 @@
         ) AS limited_r
 
         JOIN reservation r ON r.reservation_id = limited_r.reservation_id
+        LEFT JOIN locker l ON l.member_id = r.keeper_id
         LEFT JOIN reservationjimtype rjt ON r.reservation_id = rjt.reservation_id
         LEFT JOIN jimtype jt ON rjt.jimtype_id = jt.jimtype_id
         LEFT JOIN lockerjimtype ljt ON jt.jimtype_id = ljt.jimtype_id
-        LEFT JOIN locker l ON ljt.locker_id = l.locker_id
         LEFT JOIN (
-        SELECT li.locker_id, i.url
-        FROM lockerimage li
-        JOIN image i ON li.image_id = i.image_id
-        WHERE li.image_id IN (
-        SELECT MIN(li2.image_id)
-        FROM lockerimage li2
-        GROUP BY li2.locker_id
+            SELECT li.locker_id, i.url
+            FROM lockerimage li
+            JOIN image i ON li.image_id = i.image_id
+            WHERE li.image_id IN (
+            SELECT MIN(li2.image_id)
+            FROM lockerimage li2
+            GROUP BY li2.locker_id
         )
         ) i ON i.locker_id = l.locker_id
 
