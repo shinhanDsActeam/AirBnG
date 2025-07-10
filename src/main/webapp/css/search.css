@@ -137,7 +137,7 @@ html, body {
 /* InfoWindow 스타일 */
 .info-window {
     width: 280px;
-    height: 210px;
+    height: 220px;
     padding: 0;
     overflow: hidden;
     box-shadow: 0 2px 10px rgba(0,0,0,0.1);
