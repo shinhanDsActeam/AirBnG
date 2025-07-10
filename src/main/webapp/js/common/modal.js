@@ -86,18 +86,16 @@ class ModalUtils {
 
     /**
      * 성공 모달 표시 (Promise 기반)
-     * @param {string} message
-     * @param {string} title
-     * @returns {Promise<void>}
+     * @param {string} message - 성공 메시지
+     * @param {string} title - 성공 타이틀
+     * @param {Function} callback - 콜백 함수
      */
-    static showSuccess(message = '작업이 성공적으로 완료되었습니다.', title = '성공') {
-        return new Promise((resolve) => {
-            this.showModal('success-modal', {
-                title: title,
-                message: message,
-                showCancel: false,
-                onConfirm: resolve
-            });
+    static showSuccess(message = '작업이 성공적으로 완료되었습니다.', title = '성공', callback = null) {
+        this.showModal('success-modal', {
+            title: title,
+            message: message,
+            onConfirm: callback,
+            showCancel: false
         });
     }
 
