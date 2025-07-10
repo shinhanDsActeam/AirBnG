@@ -399,8 +399,10 @@ function fetchAndRenderLockers(address, jimTypeId, reservationDate) {
                     container.appendChild(div);
                 });
 
-                document.getElementById("bottomSheet").classList.add("fixed");
-                document.getElementById("bottomSheet").style.transform = "translateX(-50%) translateY(0%)";
+                const bottomSheet = document.getElementById("bottomSheet");
+                bottomSheet.classList.remove("fixed");
+                bottomSheet.style.transform = "translateX(-50%) translateY(70%)";
+
                 addLockerItemClickEvents();
             })
             .catch(error => {
@@ -416,7 +418,13 @@ function fetchAndRenderLockers(address, jimTypeId, reservationDate) {
                     `;
                 }
                 document.querySelector(".sheet-count").textContent = "0";
+
+                const bottomSheet = document.getElementById("bottomSheet");
+                bottomSheet.classList.remove("fixed");
+                bottomSheet.style.transform = "translateX(-50%) translateY(70%)";
+
                 clearMarkers();
+
             });
     });
 }
