@@ -137,6 +137,7 @@ html, body {
     background-color: #ffffff;
     flex: 1;
     overflow-y: auto;
+
 }
 
 .ranking-title {
@@ -161,25 +162,142 @@ html, body {
     gap: 20px;
 }
 
-.ranking-number {
+.ranking-content {
     display: flex;
     align-items: center;
-    justify-content: center;
-    color: #333;
-    text-align: center;
-    font-size: 17px;
-    font-style: normal;
-    font-weight: 500;
-    line-height: 17px; /* 100% */
+    gap: 20px;
+    perspective: 1000px;
+    height: 30px;
+}
+
+/*애니메이션 효과*/
+.ranking-number-container {
+  position: relative;
+  width: 30px;
+  height: 30px;
+  transform-style: preserve-3d;
+}
+
+.ranking-number {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #333;
+  text-align: center;
+  font-size: 17px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 17px;
+}
+
+.ranking-location-container {
+  position: relative;
+  width: 80px;
+  height: 30px;
+  transform-style: preserve-3d;
 }
 
 .ranking-location {
-    color: #333;
-    font-size: 17px;
-    font-style: normal;
-    font-weight: 400;
-    line-height: 17px; /* 100% */
+  color: #333;
+  font-size: 17px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 17px;
 }
+
+/* 4면 정육면체 스타일 */
+.cube-face {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 17px;
+  font-weight: 500;
+  color: #333;
+  background-color: #f8f9fa;
+  backface-visibility: hidden;
+}
+
+.cube-face.front  { transform: translateZ(15px); }
+.cube-face.back   { transform: translateZ(-15px) rotateX(180deg); }
+.cube-face.top    { transform: rotateX(90deg) translateZ(15px); }
+.cube-face.bottom { transform: rotateX(-90deg) translateZ(15px); }
+
+/* 애니메이션 적용 - 전체 16초 주기 (각 항목당 4초씩) */
+.ranking-number-container,
+.ranking-location-container {
+  animation: rotate90Degree 4s ease-in-out infinite;
+}
+
+/* 각 항목별 애니메이션 지연 시간 */
+.ranking-item:nth-child(1) .ranking-number-container,
+.ranking-item:nth-child(1) .ranking-location-container {
+  animation-delay: 0s;
+}
+
+.ranking-item:nth-child(2) .ranking-number-container,
+.ranking-item:nth-child(2) .ranking-location-container {
+  animation-delay: 1s;
+}
+
+.ranking-item:nth-child(3) .ranking-number-container,
+.ranking-item:nth-child(3) .ranking-location-container {
+  animation-delay: 2s;
+}
+
+.ranking-item:nth-child(4) .ranking-number-container,
+.ranking-item:nth-child(4) .ranking-location-container {
+  animation-delay: 3s;
+}
+
+/* 90도 회전 애니메이션 - 각 항목이 16초 중 2초만 천천히 90도 회전 */
+@keyframes rotate90Degree {
+  0%, 12.5% {
+    transform: rotateX(0deg);
+  }
+  25% {
+    transform: rotateX(90deg);
+  }
+  25.1%, 100% {
+    transform: rotateX(90deg);
+  }
+}
+
+/* 각 순위별 색상 */
+.ranking-item:nth-child(1) .cube-face {
+  background: linear-gradient(45deg, white, white);
+  color: black;
+}
+
+.ranking-item:nth-child(2) .cube-face {
+  background: linear-gradient(45deg, white, white);
+  color: black;
+}
+
+.ranking-item:nth-child(3) .cube-face {
+  background: linear-gradient(45deg, white, white);
+  color: black;
+}
+
+.ranking-item:nth-child(4) .cube-face {
+  background: linear-gradient(45deg, white, white);
+  color: black;
+}
+
+/* 데모용 추가 스타일 */
+.demo-info {
+  margin-top: 20px;
+  padding: 15px;
+  background-color: #e3f2fd;
+  border-radius: 8px;
+  color: #1565c0;
+  font-size: 14px;
+  text-align: center;
+}
+
+
 
 /* 드롭다운 */
 /* 부모는 상대 위치 */
