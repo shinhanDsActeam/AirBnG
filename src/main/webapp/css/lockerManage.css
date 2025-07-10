@@ -1,0 +1,352 @@
+/* 전체 배경 및 기본 폰트 */
+body.airbng-manage {
+    margin: 0;
+    padding: 0;
+    font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif;
+    background-color: #f5f5f5;
+    color: #333;
+}
+
+.manage-container {
+    max-width: 412px;
+    margin: 0 auto;
+    background-color: white;
+    min-height: 100vh;
+    padding: 24px;
+    box-sizing: border-box;
+}
+
+.back-icon {
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+    vertical-align: middle;
+    margin-right: 8px;
+}
+
+.manage-header {
+    position: relative;
+    text-align: center;
+    margin-bottom: 24px;
+}
+
+.back-wrapper {
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.back-icon {
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+    margin-left: 4px;
+}
+
+.center-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: #333;
+    margin: 0 auto;
+}
+
+.form-group {
+    margin-bottom: 20px;
+    width: 100%;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    font-size: 15px;
+}
+
+.input-with-icon {
+    position: relative;
+    width: 100%;
+}
+
+.input-with-icon input[type="text"] {
+    width: 100%;
+    padding: 10px 12px;
+    padding-left: 40px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+    background-color: #fff;
+    box-sizing: border-box;
+    transition: border-color 0.2s ease;
+    cursor: pointer;
+}
+
+#detailAddress {
+    margin-top: 10px;
+}
+
+.input-with-icon input:focus {
+    outline: none;
+    border-color: #4561DB;
+}
+
+.input-with-icon .location-icon {
+    position: absolute;
+    top: 50%;
+    left: 12px;
+    transform: translateY(-50%);
+    width: 18px;
+    height: 18px;
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+.location-icon {
+    width: 20px;
+    height: 20px;
+}
+
+/* input 스타일 통일 및 정리 */
+input[type="text"],
+input[type="number"] {
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+    background-color: #fff;
+    box-sizing: border-box;
+    transition: border-color 0.2s ease;
+    cursor: pointer;
+}
+
+input[type="text"]:focus,
+input[type="number"]:focus {
+    outline: none;
+    border-color: #4561DB;
+}
+
+.image-upload-area {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 0;
+    overflow-x: auto;
+}
+
+.image-upload-box {
+    width: 100px;
+    height: 100px;
+    flex-shrink: 0;
+    border-radius: 6px;
+    overflow: hidden;
+    border: 1px solid #ddd;
+    background-color: #fff;
+    position: relative;
+}
+
+.image-upload-box label {
+    display: block;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+}
+
+.image-upload-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+/* 이미지 미리보기 */
+.preview-item {
+    position: relative;
+    width: 100px;
+    height: 100px;
+    flex-shrink: 0;
+    border-radius: 6px;
+    overflow: hidden;
+    border: 1px solid #ddd;
+    background-color: #fff;
+}
+
+.preview-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.preview-item button {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    width: 16px;
+    height: 16px;
+    font-size: 12px;
+    line-height: 16px;
+    background-color: #ff4d4f;
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    padding: 0;
+    text-align: center;
+}
+
+#image-preview-container {
+    display: flex;
+    gap: 8px;
+}
+
+/* JS에서 추가되는 이미지 미리보기 wrapper */
+.preview-wrapper {
+    position: relative;
+    width: 100px;
+    height: 100px;
+    flex-shrink: 0;
+    border-radius: 6px;
+    overflow: hidden;
+    border: 1px solid #ddd;
+    background-color: #fff;
+}
+
+/* 미리보기 이미지 스타일 */
+.preview-wrapper .preview-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+/* 삭제 버튼 스타일 */
+.preview-wrapper .remove-btn {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    width: 16px;
+    height: 16px;
+    font-size: 12px;
+    line-height: 16px;
+    background-color: #ff4d4f;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    padding: 0;
+    text-align: center;
+}
+
+.price-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 10px;
+}
+
+.condition-row {
+    display: flex;
+    align-items: center;
+    padding: 0 12px;
+    border: 1.5px solid #E5E5E5;
+    border-radius: 5px;
+    margin-bottom: 8px;
+    background: #FFF;
+    height: 46px;
+    box-sizing: border-box;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.condition-row.selected {
+    background: rgba(69, 97, 219, 0.10);
+    border: 1.5px solid #4561DB;
+}
+
+.condition-row span {
+    font-size: 15px;
+    font-weight: 500;
+    color: #333;
+    min-width: 90px;
+    flex-shrink: 0;
+    margin-left: 10px;
+    margin-right: 120px;
+}
+
+.input-wrapper {
+    width: 72px;
+    height: 32px;
+    border: 1px solid #E5E5E5;
+    border-radius: 6px;
+    background-color: #FFF;
+    margin-right: 15px;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.condition-row.selected .input-wrapper {
+    border: 1px solid #4561DB;
+}
+
+.price-display {
+    font-family: 'Pretendard', sans-serif;
+    font-size: 15px; /* 기존 17px */
+    color: #E5E5E5;
+    text-align: center;
+    line-height: 1;
+    transition: all 0.2s ease;
+}
+
+.condition-row.selected .price-display {
+    color: #4561DB;
+}
+
+.check-btn {
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    width: 22px;
+    height: 22px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.check-btn img {
+    width: 22px;
+    height: 22px;
+    opacity: 0.6;
+    transition: all 0.2s ease;
+}
+
+.condition-row.selected .check-btn img {
+    opacity: 1;
+}
+
+.form-actions {
+    margin-top: 30px;
+}
+
+.save-btn {
+    width: 100%;
+    padding: 14px;
+    background-color: #4561DB;
+    color: white;
+    font-size: 15px;
+    font-weight: 600;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+}
+
+.save-btn:hover {
+    background-color: #2f46b7;
+}
