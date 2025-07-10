@@ -1,4 +1,4 @@
-# 에어비엔짐
+# 에어비앤짐
 
 ![에어비엔짐 컨셉 리얼](https://github.com/user-attachments/assets/9ac65df2-0ad9-4a1a-b19b-ad870d99ab9c)
 
@@ -37,7 +37,7 @@
 | 이름 | 주요 기여 | GitHub |
 |------|-----------|--------|
 | **강지윤** | - 보관소 상태 변경 기능<br>- 필터 기능 동시성 제어<br>- 예외 처리 및 에러 메시지 개선<br>- 도메인 구조 정리<br>- Swagger 문서 구성 | <a href="https://github.com/kwiyoon"><img src="http://img.shields.io/badge/kwiyoon-green?style=social&logo=github"/></a> |
-| **김서하** | - ERD 설계<br>- 서버 배포 및 CI/CD 구성<br>- 예약 알림 기능<br>- 예약 내역 조회 기능<br>- 이용방법 페이지 구현<br>- 보관소 상세 API | <a href="https://github.com/standha"><img src="http://img.shields.io/badge/standha-green?style=social&logo=github"/></a> |
+| **김서하** | - 예약 알림 기능<br>- 예약 내역 조회 기능<br>- 이용방법 페이지 구현<br>- 보관소 상세 API | <a href="https://github.com/standha"><img src="http://img.shields.io/badge/standha-green?style=social&logo=github"/></a> |
 | **문현준** | - 예약 도메인 및 클래스 설계<br>- 예약 상세 조회 및 취소 기능<br>- 인기 보관 지역 API | <a href="https://github.com/Mouon"><img src="http://img.shields.io/badge/Mouon-green?style=social&logo=github"/></a> |
 | **박재천** | - 로그인 및 세션 처리<br>- 보관소 등록 (이미지 포함/제외)<br>- 보관소 필터링 기능 | <a href="https://github.com/cheon1217"><img src="http://img.shields.io/badge/cheon1217-green?style=social&logo=github"/></a> |
 | **장해준** | - 회원가입 기능<br>- 이메일/닉네임 중복 검사<br>- 예약 승인/거절 처리 | <a href="https://github.com/HaejunJang"><img src="http://img.shields.io/badge/HaejunJang-green?style=social&logo=github"/></a> |
