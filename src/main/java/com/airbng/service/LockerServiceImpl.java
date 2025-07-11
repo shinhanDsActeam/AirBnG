@@ -18,6 +18,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import static com.airbng.common.response.status.BaseResponseStatus.*;
 
@@ -74,8 +76,18 @@ public class LockerServiceImpl implements LockerService {
 
         if (popularLockers.isEmpty()) throw new LockerException(NOT_FOUND_LOCKER);
 
+        List<LockerPreviewResult> deduplicated = popularLockers.stream()
+                .collect(Collectors.collectingAndThen(
+                        Collectors.toMap(
+                                LockerPreviewResult::getLockerId,
+                                Function.identity(),
+                                (existing, replacement) -> existing
+                        ),
+                        map -> map.values().stream().limit(5).collect(Collectors.toList())
+                ));
+
         return LockerTop5Response.builder()
-                .lockers(popularLockers)
+                .lockers(deduplicated)
                 .build();
     }
 

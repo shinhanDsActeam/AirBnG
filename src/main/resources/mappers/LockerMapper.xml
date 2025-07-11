@@ -126,7 +126,6 @@
             jt.jimtype_id,
             jt.type_name
         ORDER BY COUNT(r.reservation_id) DESC
-        LIMIT 5
     </select>
 
     <!-- 1. 보관소 등록 -->
