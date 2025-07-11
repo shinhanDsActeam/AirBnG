@@ -22,11 +22,9 @@
         }
     </script>
     <link rel="stylesheet" href="<c:url value='/css/reservation/reservationDetail.css' />"/>
-    <link rel="stylesheet" href="<c:url value='/css/common/modal.css' />"/>
 </head>
 <body class="bg-gray-100 mx-auto">
 <!-- 스크립트 로드 순서 중요 -->
-<script src="<c:url value='/js/common/modal.js' />"></script>
 <script src="<c:url value='/js/common/timeUtil.js' />"></script>
 <div class="max-w-md mx-auto bg-white min-h-screen">
     <%-- 전역변수 --%>
