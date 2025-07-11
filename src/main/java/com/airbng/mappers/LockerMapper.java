@@ -80,4 +80,6 @@ public interface LockerMapper {
     void deleteLockerImages(Long lockerId);
 
     List<Long> findJimTypeIdsByLocker(Long lockerId);
+
+    void deleteLocker(Long lockerId);
 }

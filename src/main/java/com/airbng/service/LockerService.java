@@ -33,5 +33,7 @@ public interface LockerService {
 
     LockerUpdateResponse findUpdateMyLocker(Long memberId);
 
+    void deleteLocker(Long lockerId);
+
 }
 

@@ -462,5 +462,9 @@
         DELETE FROM LockerJimType WHERE locker_id = #{lockerId}
     </delete>
 
+    <delete id="deleteLocker" parameterType="long">
+        DELETE FROM Locker WHERE locker_id = #{lockerId}
+    </delete>
+
 </mapper>
 
