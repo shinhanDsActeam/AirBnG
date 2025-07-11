@@ -273,5 +273,21 @@ public class LockerServiceImpl implements LockerService {
         }
     }
 
+    @Transactional
+    @Override
+    public void deleteLocker(Long lockerId) {
+        if (!lockerMapper.isExistLocker(lockerId)) {
+            throw new LockerException(NOT_FOUND_LOCKER);
+        }
+
+        // 1. 연결된 이미지 먼저 삭제 (LockerImage 테이블)
+        lockerMapper.deleteLockerImages(lockerId);
+
+        // 2. 연결된 짐타입 삭제 (LockerJimType 테이블)
+        lockerMapper.deleteLockerJimTypes(lockerId);
+
+        // 3. 보관소 자체 삭제
+        lockerMapper.deleteLocker(lockerId);
+    }
 
 }
