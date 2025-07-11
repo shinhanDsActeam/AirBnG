@@ -86,14 +86,13 @@ function deleteLocker(buttonElement) {
             .then(res => res.json())
             .then(data => {
                 if (data.code === 1000) {
-                    ModalUtils.showSuccess("보관소 삭제가 완료되었습니다.", "삭제 성공")
-                        .then(() => {
-                            const menuSection = document.querySelector(".menu-section");
-                            const emptySection = document.querySelector(".empty-locker-section");
-
-                            if (menuSection) menuSection.style.display = 'none';
-                            if (emptySection) emptySection.style.display = 'block';
-                        });
+                    ModalUtils.showSuccess(
+                        "보관소 삭제가 완료되었습니다.",
+                        "삭제 성공",
+                        () => {
+                            location.reload();
+                        }
+                    );
                 } else {
                     ModalUtils.showError(data.message || "삭제에 실패했습니다.", "삭제 실패");
                 }
