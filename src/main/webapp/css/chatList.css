@@ -7,6 +7,10 @@ body {
     justify-content: center;
 }
 
+.welcome-container{
+    padding: 200px 20px;
+}
+
 .page-container {
     display: flex;
     flex-direction: column;

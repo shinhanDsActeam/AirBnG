@@ -1,8 +1,6 @@
 package com.airbng.controller;
 
-import com.airbng.dto.locker.LockerPreviewResult;
-import com.airbng.domain.base.ReservationState;
-import com.airbng.mappers.LockerMapper;
+import com.airbng.service.MemberService;
 import com.airbng.service.ReservationAlarmSseService;
 import com.airbng.service.ReservationAlarmSseServiceImpl;
 import lombok.RequiredArgsConstructor;
@@ -10,27 +8,28 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpSession;
-import java.util.List;
 
-@Controller
 @RequiredArgsConstructor
+@Controller
 @RequestMapping("/page")
-public class HomePageController {
+public class AlarmPageController {
 
     private final ReservationAlarmSseService reservationAlarmSseService;
 
-    @GetMapping("/home")
-    public String home(HttpSession session) {
+    @GetMapping("/notification")
+    public String notificationPage(HttpSession session) {
+
         Long memberId = (Long) session.getAttribute("memberId");
 
         if (memberId != null) {
-            boolean hasUnread = reservationAlarmSseService.hasUnreadAlarm(memberId);
-            session.setAttribute("hasUnreadAlarm", hasUnread);
+            reservationAlarmSseService.markAllAsRead(memberId);   //알림 읽음 처리
+            session.setAttribute("hasUnreadAlarm", false);  // dot 제거
         }
 
-        return "home";
+        return "notification";
     }
 
 }

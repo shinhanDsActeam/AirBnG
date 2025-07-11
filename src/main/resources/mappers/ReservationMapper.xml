@@ -113,20 +113,20 @@
 
     <select id="findAllReservationById" resultMap="ReservationResultMap" parameterType="map">
         SELECT
-        r.reservation_id,
-        r.state,
-        r.keeper_id,
-        r.dropper_id,
-        DATE_FORMAT(r.start_time, '%m.%d %H:%i') AS start_time,
-        DATE_FORMAT(r.end_time, '%m.%d %H:%i') AS end_time,
-        DATE_FORMAT(r.start_time, '%Y-%m-%d') AS date_only,
-        l.locker_name,
-        l.address,
-        l.address_detail,
-        i.url AS locker_image,
-        TIMESTAMPDIFF(MINUTE, r.start_time, r.end_time) / 60.0 AS duration_hours,
-        jt.jimtype_id,
-        jt.type_name
+            r.reservation_id,
+            r.state,
+            r.keeper_id,
+            r.dropper_id,
+            DATE_FORMAT(r.start_time, '%Y-%m-%dT%H:%i') AS start_time,
+            DATE_FORMAT(r.end_time, '%Y-%m-%dT%H:%i') AS end_time,
+            DATE_FORMAT(r.start_time, '%Y-%m-%d') AS date_only,
+            l.locker_name,
+            l.address,
+            l.address_detail,
+            i.url AS locker_image,
+            TIMESTAMPDIFF(MINUTE, r.start_time, r.end_time) / 60.0 AS duration_hours,
+            jt.jimtype_id,
+            jt.type_name
         FROM
         (
         SELECT reservation_id
@@ -180,18 +180,18 @@
         ) AS limited_r
 
         JOIN reservation r ON r.reservation_id = limited_r.reservation_id
+        LEFT JOIN locker l ON l.member_id = r.keeper_id
         LEFT JOIN reservationjimtype rjt ON r.reservation_id = rjt.reservation_id
         LEFT JOIN jimtype jt ON rjt.jimtype_id = jt.jimtype_id
         LEFT JOIN lockerjimtype ljt ON jt.jimtype_id = ljt.jimtype_id
-        LEFT JOIN locker l ON ljt.locker_id = l.locker_id
         LEFT JOIN (
-        SELECT li.locker_id, i.url
-        FROM lockerimage li
-        JOIN image i ON li.image_id = i.image_id
-        WHERE li.image_id IN (
-        SELECT MIN(li2.image_id)
-        FROM lockerimage li2
-        GROUP BY li2.locker_id
+            SELECT li.locker_id, i.url
+            FROM lockerimage li
+            JOIN image i ON li.image_id = i.image_id
+            WHERE li.image_id IN (
+            SELECT MIN(li2.image_id)
+            FROM lockerimage li2
+            GROUP BY li2.locker_id
         )
         ) i ON i.locker_id = l.locker_id
 
@@ -343,6 +343,7 @@
 
         WHERE r.state = 'CONFIRMED'
         AND r.end_time &lt; #{deadline}
+        AND r.updated_at &lt; #{endtime}
     </select>
 
     <!-- 30분 이내 end_time 도래 예정인 예약 (CONFIRMED) -->
@@ -377,71 +378,71 @@
         AND TIMESTAMPDIFF(MINUTE, #{now}, r.end_time) BETWEEN 0 AND 30
     </select>
 
-    <!-- CONFIRMED 상태로 바뀐 예약 -->
-    <select id="findStateChangedToConfirmed" resultMap="ReservationAlarm">
-        SELECT
-            r.reservation_id,
-            r.state,
-            r.start_time,
-            r.end_time,
+<!--    &lt;!&ndash; CONFIRMED 상태로 바뀐 예약 &ndash;&gt;-->
+<!--    <select id="findStateChangedToConfirmed" resultMap="ReservationAlarm">-->
+<!--        SELECT-->
+<!--            r.reservation_id,-->
+<!--            r.state,-->
+<!--            r.start_time,-->
+<!--            r.end_time,-->
 
-            d.member_id AS dropper_id,
-            d.email AS dropper_email,
-            d.name AS dropper_name,
-            d.phone AS dropper_phone,
-            d.nickname AS dropper_nickname,
-            d.password AS dropper_password,
-            d.status AS dropper_status,
+<!--            d.member_id AS dropper_id,-->
+<!--            d.email AS dropper_email,-->
+<!--            d.name AS dropper_name,-->
+<!--            d.phone AS dropper_phone,-->
+<!--            d.nickname AS dropper_nickname,-->
+<!--            d.password AS dropper_password,-->
+<!--            d.status AS dropper_status,-->
 
-            k.member_id AS keeper_id,
-            k.email AS keeper_email,
-            k.name AS keeper_name,
-            k.phone AS keeper_phone,
-            k.nickname AS keeper_nickname,
-            k.password AS keeper_password,
-            k.status AS keeper_status
+<!--            k.member_id AS keeper_id,-->
+<!--            k.email AS keeper_email,-->
+<!--            k.name AS keeper_name,-->
+<!--            k.phone AS keeper_phone,-->
+<!--            k.nickname AS keeper_nickname,-->
+<!--            k.password AS keeper_password,-->
+<!--            k.status AS keeper_status-->
 
-        FROM reservation r
-        JOIN member d ON r.dropper_id = d.member_id
-        JOIN member k ON r.keeper_id = k.member_id
+<!--        FROM reservation r-->
+<!--        JOIN member d ON r.dropper_id = d.member_id-->
+<!--        JOIN member k ON r.keeper_id = k.member_id-->
 
-        WHERE r.state = 'CONFIRMED'
-        AND r.updated_at >= DATE_SUB(NOW(), INTERVAL 1 MINUTE)
-        AND r.updated_at != r.created_at
-    </select>
+<!--        WHERE r.state = 'CONFIRMED'-->
+<!--        AND r.updated_at >= DATE_SUB(NOW(), INTERVAL 1 MINUTE)-->
+<!--        AND r.updated_at != r.created_at-->
+<!--    </select>-->
 
-    <!-- CANCELLED 상태로 바뀐 예약 -->
-    <select id="findStateChangedToCancelled" resultMap="ReservationAlarm">
-        SELECT
-            r.reservation_id,
-            r.state,
-            r.start_time,
-            r.end_time,
+<!--    &lt;!&ndash; CANCELLED 상태로 바뀐 예약 &ndash;&gt;-->
+<!--    <select id="findStateChangedToCancelled" resultMap="ReservationAlarm">-->
+<!--        SELECT-->
+<!--            r.reservation_id,-->
+<!--            r.state,-->
+<!--            r.start_time,-->
+<!--            r.end_time,-->
 
-            d.member_id AS dropper_id,
-            d.email AS dropper_email,
-            d.name AS dropper_name,
-            d.phone AS dropper_phone,
-            d.nickname AS dropper_nickname,
-            d.password AS dropper_password,
-            d.status AS dropper_status,
+<!--            d.member_id AS dropper_id,-->
+<!--            d.email AS dropper_email,-->
+<!--            d.name AS dropper_name,-->
+<!--            d.phone AS dropper_phone,-->
+<!--            d.nickname AS dropper_nickname,-->
+<!--            d.password AS dropper_password,-->
+<!--            d.status AS dropper_status,-->
 
-            k.member_id AS keeper_id,
-            k.email AS keeper_email,
-            k.name AS keeper_name,
-            k.phone AS keeper_phone,
-            k.nickname AS keeper_nickname,
-            k.password AS keeper_password,
-            k.status AS keeper_status
+<!--            k.member_id AS keeper_id,-->
+<!--            k.email AS keeper_email,-->
+<!--            k.name AS keeper_name,-->
+<!--            k.phone AS keeper_phone,-->
+<!--            k.nickname AS keeper_nickname,-->
+<!--            k.password AS keeper_password,-->
+<!--            k.status AS keeper_status-->
 
-        FROM reservation r
-        JOIN member d ON r.dropper_id = d.member_id
-        JOIN member k ON r.keeper_id = k.member_id
+<!--        FROM reservation r-->
+<!--        JOIN member d ON r.dropper_id = d.member_id-->
+<!--        JOIN member k ON r.keeper_id = k.member_id-->
 
-        WHERE r.state = 'CANCELLED'
-        AND r.updated_at >= DATE_SUB(NOW(), INTERVAL 1 MINUTE)
-        AND r.updated_at != r.created_at
-    </select>
+<!--        WHERE r.state = 'CANCELLED'-->
+<!--        AND r.updated_at >= DATE_SUB(NOW(), INTERVAL 1 MINUTE)-->
+<!--        AND r.updated_at != r.created_at-->
+<!--    </select>-->
 
     <resultMap id="ReservationWithKeeperMap" type="com.airbng.domain.Reservation">
         <result property="reservationId" column="reservation_id"/>
@@ -458,6 +459,11 @@
             <result property="password" column="keeper_password"/>
             <result property="status" column="keeper_status"/>
         </association>
+
+        <association property="dropper" javaType="com.airbng.domain.Member">
+            <result property="memberId" column="dropper_id"/>
+            <result property="nickname" column="dropper_nickname"/>
+        </association>
     </resultMap>
 
     <select id="findReservationWithKeeperById" parameterType="Long" resultMap="ReservationWithKeeperMap">
@@ -466,6 +472,9 @@
             r.state,
             r.start_time,
             r.end_time,
+
+            d.member_id AS dropper_id,
+            d.nickname AS dropper_nickname,
 
             k.member_id AS keeper_id,
             k.email AS keeper_email,
@@ -476,7 +485,8 @@
             k.status AS keeper_status
 
         FROM reservation r
-                 JOIN member k ON r.keeper_id = k.member_id
+            JOIN member k ON r.keeper_id = k.member_id
+            JOIN member d ON r.dropper_id = d.member_id
         WHERE r.reservation_id = #{reservationId}
     </select>
 

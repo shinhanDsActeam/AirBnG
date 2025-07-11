@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ page import="java.net.URLDecoder" %>
 
 <!DOCTYPE html>
 <html lang="ko">
@@ -64,13 +65,14 @@
     <div class="signup-section">
       <p class="signup-text">
         아직 계정이 없으신가요?
-        <a href="${pageContext.request.contextPath}/page/signup" class="signup-link">회원가입</a>
+        <a href="#" onclick="goToSignup()" class="signup-link">회원가입</a>
       </p>
     </div>
   </div>
 </div>
 <script>
   const contextPath = '${pageContext.request.contextPath}';
+  var redirectUrl = '<%= request.getParameter("redirect") != null ? URLDecoder.decode(request.getParameter("redirect"), "UTF-8") : "" %>';
 </script>
 <script src="<c:url value='/js/login.js' />"></script>
 </body>

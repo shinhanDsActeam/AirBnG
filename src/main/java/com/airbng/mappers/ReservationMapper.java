@@ -7,7 +7,6 @@ import org.apache.ibatis.annotations.Param;
 import com.airbng.dto.reservation.ReservationInsertRequest;
 import com.airbng.dto.reservation.ReservationSearchResponse;
 import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -38,16 +37,16 @@ public interface ReservationMapper {
                                    @Param("state") List<ReservationState> state);
 
     // 24시간이 지난 CONFIRMED 예약 조회 (EXPIRED 알림용)
-    List<ReservationResponse> findExpiredConfirmedReservations(@Param("deadline") LocalDateTime deadline);
+    List<ReservationResponse> findExpiredConfirmedReservations(@Param("deadline") LocalDateTime deadline, @Param("endtime")LocalDateTime endtime);
 
     // endTime이 30분 이내인 예약 조회 (REMINDER 알림용)
     List<ReservationResponse> findConfirmedNearEndTime(@Param("now") LocalDateTime now);
 
-    // CONFIRMED로 변경된 예약 (STATE_CHANGE 알림용)
-    List<ReservationResponse> findStateChangedToConfirmed();
-
-    // CANCELLED로 변경된 예약 (CANCEL_NOTICE 알림용)
-    List<ReservationResponse> findStateChangedToCancelled();
+//    // CONFIRMED로 변경된 예약 (STATE_CHANGE 알림용)
+//    List<ReservationResponse> findStateChangedToConfirmed();
+//
+//    // CANCELLED로 변경된 예약 (CANCEL_NOTICE 알림용)
+//    List<ReservationResponse> findStateChangedToCancelled();
 
     Long findMaxReservationIdByMemberId(@Param("memberId") Long memberId,
                                         @Param("role") String role,

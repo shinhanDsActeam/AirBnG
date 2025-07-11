@@ -5,11 +5,11 @@ import com.airbng.common.exception.LockerException;
 import com.airbng.common.exception.MemberException;
 import com.airbng.common.exception.ReservationException;
 import com.airbng.common.response.status.BaseResponseStatus;
-import com.airbng.domain.base.ReservationState;
+import com.airbng.domain.Member;
+import com.airbng.domain.base.*;
 import com.airbng.domain.Reservation;
-import com.airbng.domain.base.Available;
-import com.airbng.domain.base.ChargeType;
 import com.airbng.domain.base.ReservationState;
+import com.airbng.dto.AlarmResponse;
 import com.airbng.dto.jimType.JimTypeCountResult;
 import com.airbng.dto.jimType.LockerJimTypeResult;
 import com.airbng.dto.reservation.*;
@@ -17,6 +17,7 @@ import com.airbng.mappers.JimTypeMapper;
 import com.airbng.mappers.LockerMapper;
 import com.airbng.mappers.MemberMapper;
 import com.airbng.mappers.ReservationMapper;
+import com.airbng.scheduler.AlertScheduledTask;
 import com.airbng.util.LocalDateTimeUtils;
 import com.github.benmanes.caffeine.cache.Cache;
 import lombok.RequiredArgsConstructor;
@@ -37,6 +38,7 @@ import static com.airbng.common.response.status.BaseResponseStatus.*;
 @RequiredArgsConstructor
 public class ReservationServiceImpl implements ReservationService{
 
+    private final AlertScheduledTask alertScheduledTask;
     private final ReservationMapper reservationMapper;
     private final JimTypeMapper jimTypeMapper;
     private final MemberMapper memberMapper;
@@ -158,6 +160,9 @@ public class ReservationServiceImpl implements ReservationService{
             reservationMapper.updateReservationState(reservationId,
                     ReservationState.CANCELLED);
 
+            // 예약 거절 알림 발송
+            alertScheduledTask.sendToOne(reservation.getDropper().getMemberId(), reservationId, reservation.getDropper().getNickname(), "DROPPER", NotificationType.CANCEL_NOTICE, "예약이 취소되었습니다.");
+
             return ReservationCancelResponse.of(reservation,
                     chargeType.discountAmount(), ReservationState.CANCELLED);
 
@@ -189,21 +194,50 @@ public class ReservationServiceImpl implements ReservationService{
 
             //상태값 저장
             ReservationState newState;
+            String notificationMessage;
+
             if ("yes".equalsIgnoreCase(approve)) {
                 newState = ReservationState.CONFIRMED;
+
+                notificationMessage = "예약이 확정되었습니다.";
+
             } else if ("no".equalsIgnoreCase(approve)) {
                 newState = ReservationState.CANCELLED;
+
+                notificationMessage = "예약이 거절되었습니다.";
+
             } else {
                 throw new ReservationException(CANNOT_UPDATE_STATE);
             }
             reservationMapper.updateReservationState(reservationId, newState);
+
+            // 예약을 다시 조회해서 최신 상태의 Dropper 정보 가져오기
+            Reservation updatedReservation = reservationMapper.findReservationWithDropperById(reservationId);
+
+            if (updatedReservation != null && updatedReservation.getDropper() != null) {
+                NotificationType notificationType = newState == ReservationState.CONFIRMED ?
+                        NotificationType.STATE_CHANGE : NotificationType.CANCEL_NOTICE;
+                log.info("알림 발송: memberId={}, reservationId={}, nickname={}, role=DROPPER, type={}, message={}",
+                        updatedReservation.getDropper().getMemberId(), reservationId,
+                        updatedReservation.getDropper().getNickname(), notificationType, notificationMessage);;
+
+                alertScheduledTask.sendToOne(
+                        updatedReservation.getDropper().getMemberId(),
+                        reservationId,
+                        updatedReservation.getDropper().getNickname(),
+                        "DROPPER",
+                        notificationType,
+                        notificationMessage
+                );
+
+
+            }
 
             return ReservationConfirmResponse.of(reservation, newState);
         } finally {
             lock.unlock();
         }
     }
-
 
     @Override
     public ReservationDetailResponse findReservationDetail(Long reservationId, Long memberId) {

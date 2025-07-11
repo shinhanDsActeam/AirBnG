@@ -9,17 +9,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/gh/webfontworld/bmjua/BMJUA.css" rel="stylesheet">
     <link rel="stylesheet" href="<c:url value='/css/locker.css'/>" />
-    <link rel="stylesheet" href="<c:url value='/css/common/modal.css'/>" />
     <link rel="icon" type="image/svg+xml" href="${pageContext.request.contextPath}/images/favicon.svg" />
 </head>
 
 <body class="airbng-locker">
 <div class="container">
-    <header class="header">
-        <div class="header-content">
-            <span class="logo-text">보관소</span>
-        </div>
-    </header>
+    <!-- 헤더 -->
+    <c:set var="headerTitle" value="보관소"/>
+    <c:set var="showBackButton" value="false"/>
+    <%@ include file="/WEB-INF/views/common/header.jsp" %>
 
     <main class="main-content">
         <c:choose>
@@ -120,6 +118,15 @@
 <script>
     const contextPath = '${pageContext.request.contextPath}';
 </script>
+
+<c:if test="${not empty sessionScope.memberId}">
+     <script>
+         window.memberId = "${sessionScope.memberId}";
+     </script>
+</c:if>
+
+<script src="${pageContext.request.contextPath}/js/sse.js"></script>
+<script src="${pageContext.request.contextPath}/js/notification.js"></script>
 
 <script src="<c:url value='/js/locker.js'/>"></script>
 </body>

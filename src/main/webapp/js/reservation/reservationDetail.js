@@ -5,6 +5,7 @@ let isProcessing = false;
 document.addEventListener('DOMContentLoaded', function () {
     loadReservationData();
     setupEventListeners();
+    initSSE();
 });
 
 // 이벤트 리스너 설정
@@ -127,7 +128,6 @@ function displayPriceDetails(jimTypes) {
     if (!jimTypes || jimTypes.length === 0) return;
 
     let totalAmount = 0;
-    const serviceFee = 400;
 
     // 시간 계산 (공통)
     const startTime = new Date(reservationData.startTime);
@@ -137,36 +137,28 @@ function displayPriceDetails(jimTypes) {
 
     jimTypes.forEach(item => {
         const { typeName, count, pricePerHour } = item;
+        if(count > 0 && pricePerHour > 0) {
+            // 단일 짐 총액 계산
+            const itemTotal = pricePerHour * count * hours;
+            totalAmount += itemTotal;
 
-        // 단일 짐 총액 계산
-        const itemTotal = pricePerHour * count * hours;
-        totalAmount += itemTotal;
-
-        const priceItem = document.createElement('div');
-        priceItem.className = 'flex justify-between text-sm text-gray-600';
-        priceItem.innerHTML = `
-            <span>${typeName} × ${count}개 × ${formatHours(hours)}</span>
-            <span>${Math.round(itemTotal).toLocaleString()}원</span>
-        `;
-        container.appendChild(priceItem);
+            const priceItem = document.createElement('div');
+            priceItem.className = 'flex justify-between text-sm text-gray-600';
+            priceItem.innerHTML = `
+                <span>${typeName} × ${count}개 × ${formatHours(hours)}</span>
+                <span>${Math.floor(itemTotal).toLocaleString()}원</span>
+            `;
+            container.appendChild(priceItem);
+        }
     });
 
-    // 총 결제 금액 (서비스 수수료 포함)
-    const finalTotal = Math.round(totalAmount + serviceFee);
-    document.getElementById('totalPrice').textContent = finalTotal.toLocaleString() + '원';
-}
+    // 서비스 수수료
+    const serviceFee = Math.floor(totalAmount * 0.05);
 
-// 시간 포맷팅 함수
-function formatHours(hours) {
-    if (hours < 1) {
-        return `${Math.round(hours * 60)}분`;
-    } else if (hours === parseInt(hours)) {
-        return `${hours}시간`;
-    } else {
-        const wholeHours = Math.floor(hours);
-        const minutes = Math.round((hours - wholeHours) * 60);
-        return `${wholeHours}시간${minutes}분`;
-    }
+    // 총 결제 금액 (서비스 수수료 포함)
+    const finalTotal = Math.floor(totalAmount + serviceFee);
+    document.getElementById('serviceFee').textContent = serviceFee.toLocaleString() + '원';
+    document.getElementById('totalPrice').textContent = finalTotal.toLocaleString() + '원';
 }
 
 // 예약 취소 처리
@@ -416,4 +408,41 @@ function getStatusClass(state) {
     };
 
     return classMap[state] || 'status-pending';
+}
+
+// SSE 초기화
+function initSSE() {
+    if (!memberId || memberId === 'null' || memberId === '') {
+        console.log('로그인된 회원이 아니어서 SSE 연결하지 않습니다.');
+        return;
+    }
+
+    const sseManager = getSSEManager();
+
+    sseManager.addEventListener('alarm', (alarmData) => {
+        console.log('알림 메시지:', alarmData.message);
+        showDotIndicator();
+
+        if (typeof getNotificationSSE === 'function') {
+                const notificationManager = getNotificationSSE();
+                if (notificationManager) {
+                      notificationManager.handleNotification(alarmData);
+                }
+            }
+
+        // 예약 상세 페이지에서 상태 변경 알림 수신 시 상세 데이터 갱신
+        if (alarmData.type === 'STATE_CHANGE' && alarmData.reservationId == reservationId) {
+            console.log('예약 상태 변경 알림 감지 - 상세 데이터 갱신');
+            fetchReservationDetail();
+        }
+
+    });
+
+    sseManager.onConnectionStatusChange((connected) => {
+        console.log('SSE 연결 상태:', connected ? '연결됨' : '연결 끊김');
+    });
+
+    sseManager.requestNotificationPermission().then((permission) => {
+        console.log('브라우저 알림 권한:', permission);
+    });
 }

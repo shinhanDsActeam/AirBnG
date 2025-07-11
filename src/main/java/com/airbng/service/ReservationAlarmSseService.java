@@ -18,4 +18,6 @@ public interface ReservationAlarmSseService {
     void sendMessage(Long memberId, Object data);
     boolean hasConnected(Long memberId);
 
+    void markAllAsRead(Long memberId);
+    boolean hasUnreadAlarm(Long memberId);
 }

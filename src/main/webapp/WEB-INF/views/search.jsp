@@ -8,8 +8,9 @@
     <meta charset="utf-8">
     <title>AirBnG | ${address}&nbsp;검색 결과</title>
     <link rel="icon" type="image/svg+xml" href="${pageContext.request.contextPath}/images/favicon.svg" />
-    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/search.css">
-    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/bottom-sheet.css">
+    <link rel="stylesheet" href="<c:url value='/css/dot.css' />" />
+    <link rel="stylesheet" href="<c:url value='/css/search.css' />" />
+    <link rel="stylesheet" href="<c:url value='/css/bottom-sheet.css' />" />
 </head>
 
 <body>
@@ -60,10 +61,7 @@
                         <li onclick="selectBagType(5)">유모차</li>
                     </ul>
             </div>
-
-            <div class="sheet-content" id="lockerList">
-                <%-- 여기 안에는 JS가 검색 결과를 동적으로 삽입함 --%>
-            </div>
+            <div class="sheet-content" id="lockerList"></div>
         </div>
     </div>
 
@@ -72,6 +70,17 @@
     <script>
         const contextPath = '${pageContext.request.contextPath}';
     </script>
-    <script type="text/javascript" src="${pageContext.request.contextPath}/js/search.js"></script>
+
+    <c:if test="${not empty sessionScope.memberId}">
+        <script>
+            window.memberId = "${sessionScope.memberId}";
+        </script>
+    </c:if>
+    <script src="<c:url value='/js/sse.js'/>"></script>
+    <script src="<c:url value='/js/dot.js'/>"></script>
+    <script src="<c:url value='/js/config/kakao.config.js'/>"></script>
+    <script src="<c:url value='/js/search.js'/>"></script>
+    <script src="${pageContext.request.contextPath}/js/notification.js"></script>
+
 </body>
 </html>

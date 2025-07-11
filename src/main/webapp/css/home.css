@@ -25,14 +25,90 @@
 }
 
 @keyframes fade-slide-down {
-  0% {
-    opacity: 0;
-    transform: translateY(-20px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-  }
+    0% {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes shake-bell {
+    0%, 100% {
+        transform: rotate(0deg);
+    }
+    25% {
+        transform: rotate(-5deg);
+    }
+    75% {
+        transform: rotate(5deg);
+    }
+}
+
+@keyframes slideUpFade {
+    0% {
+        opacity: 0;
+        transform: translateY(15px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeInScale {
+    0% {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes fadeInOnly {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+}
+
+@keyframes headingPulse {
+    0%, 100% {
+        transform: scale(1);
+        color: #333;
+        text-shadow: none;
+    }
+    50% {
+        transform: scale(1.04);
+        color: #000;
+        text-shadow: 0 0 6px rgba(0, 0, 0, 0.15);
+    }
+}
+
+
+@keyframes dot-disappear {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(0);
+        opacity: 0;
+    }
+}
+
+/* 알림 점 깜박임 효과 */
+@keyframes dot-pulse {
+    0%, 100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.6;
+        transform: scale(1.1);
+    }
 }
 
 .airbng-home .bell-wrapper::after {
@@ -48,6 +124,11 @@ body {
     max-width: 412px;
     padding-bottom: 80px;
     margin-top: 0;
+}
+
+.airbng-home .top-bar img[src*="bell"] {
+    animation: shake-bell 3s ease-in-out infinite;
+    transform-origin: center;
 }
 
 .airbng-home .top-section::before {
@@ -123,22 +204,26 @@ body {
     z-index: 2;
 }
 
+.bell-ring {
+    pointer-events: none !important;
+}
+
 .airbng-home .bell-ring {
-  position: absolute;
-  top: -80px;
-  right: -60px;
-  width: 176px;
-  height: 176px;
-  background: #ffffff;
-  opacity: 0.08;
-  border-radius: 50%;
+    position: absolute;
+    top: -80px;
+    right: -60px;
+    width: 176px;
+    height: 176px;
+    background: #ffffff;
+    opacity: 0.08;
+    border-radius: 50%;
 
-  /* 마스크로 가운데 뚫기 */
-  -webkit-mask-image: radial-gradient(circle, transparent 74px, black 76px);
-  mask-image: radial-gradient(circle, transparent 74px, black 76px);
+    /* 마스크로 가운데 뚫기 */
+    -webkit-mask-image: radial-gradient(circle, transparent 74px, black 76px);
+    mask-image: radial-gradient(circle, transparent 74px, black 76px);
 
-  pointer-events: none;
-  z-index: 0;
+    pointer-events: none;
+    z-index: 0;
 }
 
 .airbng-home .greeting {
@@ -149,45 +234,54 @@ body {
     color: white;
     opacity: 0;
     animation: fade-slide-down 0.6s ease-out 0.3s forwards;
+    pointer-events: none;
 }
 
 .airbng-home .greeting .nickname {
-  font-weight: normal;
-  color: white;
+    display: flex;
+    font-weight: normal;
+    color: white;
+}
+
+.airbng-home .greeting .hello {
+    display: inline-block;
+    animation: slideUpFade 4s ease-in-out 0.3s infinite;
+    animation-direction: alternate;
+    opacity: 0;
 }
 
 .airbng-home .greeting-ring {
-  position: absolute;
-  top: -10px;   /* 원하는 위치로 조정 */
-  left: -80px;  /* 원하는 위치로 조정 */
-  width: 206px;
-  height: 206px;
-  background: #ffffff;
-  opacity: 0.05;
-  border-radius: 50%;
+    position: absolute;
+    top: -10px;   /* 원하는 위치로 조정 */
+    left: -80px;  /* 원하는 위치로 조정 */
+    width: 206px;
+    height: 206px;
+    background: #ffffff;
+    opacity: 0.05;
+    border-radius: 50%;
 
-  -webkit-mask-image: radial-gradient(circle, transparent 84px, black 83px);
-  mask-image: radial-gradient(circle, transparent 84px, black 83px);
+    -webkit-mask-image: radial-gradient(circle, transparent 84px, black 83px);
+    mask-image: radial-gradient(circle, transparent 84px, black 83px);
 
-  pointer-events: none;
-  z-index: 0;
+    pointer-events: none;
+    z-index: 0;
 }
 
 .airbng-home .greeting-ring-inner {
-  position: absolute;
-  top: 30px;
-  left: -37px;
-  width: 120px;
-  height: 120px;
-  border-radius: 50%;
-  background: #ffffff;
-  opacity: 0.05;
+    position: absolute;
+    top: 30px;
+    left: -37px;
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: #ffffff;
+    opacity: 0.05;
 
-  -webkit-mask-image: radial-gradient(circle, transparent 45px, black 55px);
-  mask-image: radial-gradient(circle, transparent 45px, black 55px);
+    -webkit-mask-image: radial-gradient(circle, transparent 45px, black 55px);
+    mask-image: radial-gradient(circle, transparent 45px, black 55px);
 
-  pointer-events: none;
-  z-index: 0;
+    pointer-events: none;
+    z-index: 0;
 }
 
 /* 예약 카드 */
@@ -205,6 +299,7 @@ body {
 
     display: flex;
     flex-direction: column;
+    animation: fadeInOnly 1s ease-out forwards;
 }
 
 .airbng-home .info-row-group {
@@ -227,9 +322,9 @@ body {
 }
 
 .airbng-home .info-row input:-webkit-autofill {
-  box-shadow: 0 0 0px 1000px white inset !important;
-  -webkit-text-fill-color: #333 !important;
-  transition: background-color 9999s ease-out, color 9999s ease-out;
+    box-shadow: 0 0 0px 1000px white inset !important;
+    -webkit-text-fill-color: #333 !important;
+    transition: background-color 9999s ease-out, color 9999s ease-out;
 }
 
 .airbng-home .info-row:last-of-type {
@@ -253,6 +348,7 @@ body {
     background: transparent;
     color: #333333;
     text-align: right;
+    cursor: pointer;
 }
 
 /* select 화살표 제거 (크롬, 엣지 기준) */
@@ -264,46 +360,46 @@ body {
 }
 
 .airbng-home .date-wrapper {
-  flex: 2;
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  position: relative;
-  cursor: pointer;
-  width: 100%;
-  white-space: nowrap
+    flex: 2;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    position: relative;
+    cursor: pointer;
+    width: 100%;
+    white-space: nowrap
 }
 
 .airbng-home .custom-date-display {
-  font-size: 18px;
-  color: black;
-  text-align: right;
-  z-index: 1;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  padding: 0;
+    font-size: 18px;
+    color: black;
+    text-align: right;
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding: 0;
 }
 
 .airbng-home .real-date {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  opacity: 0;
-  z-index: 2;
-  border: none;
-  background: transparent;
-  cursor: pointer;
-  pointer-events: none;
-  appearance: none;
-  -webkit-appearance: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    z-index: 2;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    pointer-events: none;
+    appearance: none;
+    -webkit-appearance: none;
 }
 
 .airbng-home .find-button {
@@ -344,6 +440,8 @@ body {
     line-height: 22px;
     margin-bottom: 20px;
     color: #333;
+    animation: headingPulse 4s ease-in-out infinite;
+    pointer-events: none;
 }
 
 /* 그리드 배치 */
@@ -368,6 +466,8 @@ body {
     transition: transform 0.2s ease, box-shadow 0.2s ease;
     box-sizing: border-box;
     cursor: pointer;
+    opacity: 0;
+    animation: fadeInOnly 1s ease-out forwards;
 }
 
 /* 이미지 */
@@ -399,6 +499,11 @@ body {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
+.airbng-home .category-card:nth-child(1) { animation-delay: 0.1s; }
+.airbng-home .category-card:nth-child(2) { animation-delay: 0.2s; }
+.airbng-home .category-card:nth-child(3) { animation-delay: 0.3s; }
+.airbng-home .category-card:nth-child(4) { animation-delay: 0.4s; }
+
 /* 인기 보관소 */
 .airbng-home .popular-section {
     padding: 20px;
@@ -410,6 +515,8 @@ body {
     line-height: 22px;
     margin-bottom: 12px;
     color: #333;
+    animation: headingPulse 4s ease-in-out infinite;
+    pointer-events: none;
 }
 
 .airbng-home .popular-list {
@@ -427,6 +534,7 @@ body {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
     cursor: pointer;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
+    animation: fadeInScale 1s ease-out;
 }
 
 .airbng-home .popular-item:hover {
@@ -466,4 +574,40 @@ body {
     font-size: 13px;
     color: #777;
     line-height: 16px;
+}
+
+/* 벨 아이콘 wrapper - 상대적 위치 설정 */
+.airbng-home .bell-wrapper {
+    position: relative;
+    display: inline-block;
+    z-index: 10;
+}
+
+/* 알림 링크 스타일 */
+.airbng-home .notification-link {
+    position: relative;
+    display: inline-block;
+    text-decoration: none;
+    z-index: 9;
+}
+
+/* 벨 아이콘 기본 스타일 */
+.airbng-home .notification-icon {
+    width: 24px;
+    height: 24px;
+    display: block;
+    transition: transform 0.2s ease;
+}
+
+.airbng-home .notification-link:hover .notification-icon {
+    transform: scale(1.1);
+}
+
+/* 반응형 조정 */
+@media (max-width: 380px) {{
+        width: 8px;
+        height: 8px;
+        top: -3px;
+        right: -3px;
+        border-width: 1px;
 }

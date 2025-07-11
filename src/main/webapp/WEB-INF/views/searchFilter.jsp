@@ -77,20 +77,68 @@
             <h3 class="ranking-title">검색 순위</h3>
             <div class="ranking-list">
                 <div class="ranking-item" data-location="강남">
-                    <span class="ranking-number">1</span>
-                    <span class="ranking-location">강남</span>
+                    <div class="ranking-content">
+                        <div class="ranking-number-container">
+                            <div class="cube-face front">1</div>
+                            <div class="cube-face back">1</div>
+                            <div class="cube-face top">1</div>
+                            <div class="cube-face bottom">1</div>
+                        </div>
+                        <div class="ranking-location-container">
+                            <div class="cube-face front">강남</div>
+                            <div class="cube-face back">강남</div>
+                            <div class="cube-face top">강남</div>
+                            <div class="cube-face bottom">강남</div>
+                        </div>
+                    </div>
                 </div>
                 <div class="ranking-item" data-location="홍대">
-                    <span class="ranking-number">2</span>
-                    <span class="ranking-location">홍대</span>
+                    <div class="ranking-content">
+                        <div class="ranking-number-container">
+                            <div class="cube-face front">2</div>
+                            <div class="cube-face back">2</div>
+                            <div class="cube-face top">2</div>
+                            <div class="cube-face bottom">2</div>
+                        </div>
+                        <div class="ranking-location-container">
+                            <div class="cube-face front">홍대</div>
+                            <div class="cube-face back">홍대</div>
+                            <div class="cube-face top">홍대</div>
+                            <div class="cube-face bottom">홍대</div>
+                        </div>
+                    </div>
                 </div>
                 <div class="ranking-item" data-location="이태원">
-                    <span class="ranking-number">3</span>
-                    <span class="ranking-location">이태원</span>
+                    <div class="ranking-content">
+                        <div class="ranking-number-container">
+                            <div class="cube-face front">3</div>
+                            <div class="cube-face back">3</div>
+                            <div class="cube-face top">3</div>
+                            <div class="cube-face bottom">3</div>
+                        </div>
+                        <div class="ranking-location-container">
+                            <div class="cube-face front">이태원</div>
+                            <div class="cube-face back">이태원</div>
+                            <div class="cube-face top">이태원</div>
+                            <div class="cube-face bottom">이태원</div>
+                        </div>
+                    </div>
                 </div>
                 <div class="ranking-item" data-location="성수">
-                    <span class="ranking-number">4</span>
-                    <span class="ranking-location">성수</span>
+                    <div class="ranking-content">
+                        <div class="ranking-number-container">
+                            <div class="cube-face front">4</div>
+                            <div class="cube-face back">4</div>
+                            <div class="cube-face top">4</div>
+                            <div class="cube-face bottom">4</div>
+                        </div>
+                        <div class="ranking-location-container">
+                            <div class="cube-face front">성수</div>
+                            <div class="cube-face back">성수</div>
+                            <div class="cube-face top">성수</div>
+                            <div class="cube-face bottom">성수</div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

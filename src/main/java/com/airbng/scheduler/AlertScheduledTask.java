@@ -36,7 +36,7 @@ public class AlertScheduledTask {
         LocalDateTime now = LocalDateTime.now();
 
         // 1. EXPIRED 알림 (24시간 지난 CONFIRMED)
-        List<ReservationResponse> expired = reservationMapper.findExpiredConfirmedReservations(now.minusHours(24));
+        List<ReservationResponse> expired = reservationMapper.findExpiredConfirmedReservations(now.minusHours(24),now.minusHours(1));
         //예외처리
         if (expired == null) {
             throw new ReservationException(NOT_FOUND_EXPIRED_RESERVATION);
@@ -55,28 +55,28 @@ public class AlertScheduledTask {
             sendToOne(r.getDropper().getMemberId(), r.getReservationId(), r.getDropper().getNickname(), "DROPPER", NotificationType.REMINDER, "곧 짐을 찾아가셔야 해요.");
         }
 
-        // 3. STATE_CHANGE 알림
-        List<ReservationResponse> confirmed = reservationMapper.findStateChangedToConfirmed();
-        //예외처리
-        if (confirmed == null) {
-            throw new ReservationException(NOT_FOUND_STATE_CHANGE_RESERVATION);
-        }
-        for (ReservationResponse r : confirmed) {
-            sendToOne(r.getDropper().getMemberId(), r.getReservationId(), r.getDropper().getNickname(),"DROPPER", NotificationType.STATE_CHANGE, "예약이 확정되었습니다.");
-        }
-
-        // 4. CANCEL_NOTICE 알림
-        List<ReservationResponse> cancelled = reservationMapper.findStateChangedToCancelled();
-        //예외처리
-        if (cancelled == null) {
-            throw new ReservationException(NOT_FOUND_CANCEL_NOTICE_RESERVATION);
-        }
-        for (ReservationResponse r : cancelled) {
-            sendToOne(r.getDropper().getMemberId(), r.getReservationId(), r.getDropper().getNickname(),"DROPPER", NotificationType.CANCEL_NOTICE, "예약이 취소되었습니다.");
-        }
+//        // 3. STATE_CHANGE 알림
+//        List<ReservationResponse> confirmed = reservationMapper.findStateChangedToConfirmed();
+//        //예외처리
+//        if (confirmed == null) {
+//            throw new ReservationException(NOT_FOUND_STATE_CHANGE_RESERVATION);
+//        }
+//        for (ReservationResponse r : confirmed) {
+//            sendToOne(r.getDropper().getMemberId(), r.getReservationId(), r.getDropper().getNickname(),"DROPPER", NotificationType.STATE_CHANGE, "예약이 확정되었습니다.");
+//        }
+//
+//        // 4. CANCEL_NOTICE 알림
+//        List<ReservationResponse> cancelled = reservationMapper.findStateChangedToCancelled();
+//        //예외처리
+//        if (cancelled == null) {
+//            throw new ReservationException(NOT_FOUND_CANCEL_NOTICE_RESERVATION);
+//        }
+//        for (ReservationResponse r : cancelled) {
+//            sendToOne(r.getDropper().getMemberId(), r.getReservationId(), r.getDropper().getNickname(),"DROPPER", NotificationType.CANCEL_NOTICE, "예약이 취소되었습니다.");
+//        }
     }
 
-    private void sendToBoth(ReservationResponse r, NotificationType type, String dropperMsg, String keeperMsg) {
+    public void sendToBoth(ReservationResponse r, NotificationType type, String dropperMsg, String keeperMsg) {
         LocalDateTime now = LocalDateTime.now();
         // DROPPER
         //레디스 캐시에 해당 내용의 알림 없으면 알림 발송
@@ -123,7 +123,7 @@ public class AlertScheduledTask {
         }
     }
 
-    private void sendToOne(Long id, Long resId, String name, String role, NotificationType type, String message) {
+    public void sendToOne(Long id, Long resId, String name, String role, NotificationType type, String message) {
         if (!sseService.hasConnected(id)) return;
         if (reservationAlarmCacheService.isSent(resId, id, type)) {
             log.debug("🚫 이미 Redis에 발송됨 표시가 있어 재발송 안함 (reservationId={}, memberId={}, type={})", resId, id, type);

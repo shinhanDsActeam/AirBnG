@@ -8,9 +8,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/gh/webfontworld/bmjua/BMJUA.css" rel="stylesheet">
+    <link rel="stylesheet" href="<c:url value='/css/dot.css' />" />
     <link rel="stylesheet" href="<c:url value='/css/home.css' />" />
 </head>
-<body class="airbng-home">
+<body class="airbng-home"  data-member-id="${sessionScope.memberId}">
 <%@ include file="common/modal.jsp" %>
 <div class="top-section">
     <div class="top-bar">
@@ -18,18 +19,23 @@
             <img src="<c:url value='/images/logo_ic.svg' />" alt="로고" />
             <span class="brand-text">에어비앤짐</span>
         </div>
-        <img src="<c:url value='/images/bell_ic.svg' />" alt="알림" />
-
-        <div class="bell-ring"></div>
+        <div class="bell-wrapper">
+            <c:if test="${sessionScope.hasUnreadAlarm eq true}">
+                <img src="<c:url value='/images/dot.svg' />" alt="새 알림 표시" class="dot-indicator show" id="dotIndicator" />
+            </c:if>
+            <a href="${pageContext.request.contextPath}/page/notification" class="notification-link">
+                <img src="<c:url value='/images/bell_ic.svg' />" alt="알림" class="notification-icon" />
+            </a>
+        </div>
     </div>
 
     <div class="greeting">
         <c:choose>
             <c:when test="${not empty sessionScope.nickname}">
-                반갑습니다<br><span class="nickname">${sessionScope.nickname}</span>님.
+                반갑습니다 <span class="nickname">${sessionScope.nickname}님.</span>
             </c:when>
             <c:otherwise>
-                Welcome, <span>AirBnG!</span>
+                <span class="hello">Welcome, AirBnG!</span>
             </c:otherwise>
         </c:choose>
 
@@ -79,7 +85,7 @@
         </div>
         <div class="category-card">
             <img src="<c:url value='/images/carrier_img.svg' />" alt="캐리어" />
-            <p>캐리어<br><small>시간당 3,000원부터</small></p>
+            <p>캐리어<br><small>시간당 2,500원부터</small></p>
         </div>
         <div class="category-card">
             <img src="<c:url value='/images/box_img.svg' />" alt="박스" />
@@ -105,8 +111,12 @@
 
 <script>
     const contextPath = '${pageContext.request.contextPath}';
+    const isLoggedIn = <c:out value="${not empty sessionScope.memberId}" />;
 </script>
+<script src="${pageContext.request.contextPath}/js/sse.js"></script>
+<script src="${pageContext.request.contextPath}/js/dot.js"></script>
 <script src="<c:url value='/js/home.js' />"></script>
+<script src="${pageContext.request.contextPath}/js/notification.js"></script>
 
 </body>
 </html>
