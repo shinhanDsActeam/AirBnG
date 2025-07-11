@@ -72,6 +72,13 @@
                                     </button>
 
                                     <button type="button"
+                                            class="delete-locker-btn"
+                                            data-locker-id="${lockerDetail.lockerId}"
+                                            onclick="deleteLocker(this)">
+                                        보관소 삭제하기
+                                    </button>
+
+                                    <button type="button"
                                             class="toggle-btn ${lockerDetail.isAvailable eq 'YES' ? 'btn-stop' : 'btn-restart'}"
                                             data-locker-id="${lockerDetail.lockerId}"
                                             onclick="toggleLockerAvailability(this)">
