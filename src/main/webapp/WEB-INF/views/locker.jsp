@@ -44,6 +44,13 @@
                                                     <span class="status-badge inactive">중지됨</span>
                                                 </c:otherwise>
                                             </c:choose>
+
+                                            <button class="edit-locker-btn"
+                                                    data-locker-id="${lockerDetail.lockerId}"
+                                                    onclick="goToLockerManage(this)">
+                                                <img src="<c:url value='/images/settings.svg'/>" alt="편집" width="25" height="25">
+                                            </button>
+
                                         </div>
                                         <div class="locker-jim-types">
                                             <c:forEach var="type" items="${lockerDetail.jimTypeResults}">
@@ -62,19 +69,12 @@
                                             onclick="goToLockerDetails(this)">
                                         보관소 상세보기
                                     </button>
-
-                                    <button class="edit-locker-btn"
-                                            data-locker-id="${lockerDetail.lockerId}"
-                                            onclick="goToLockerManage(this)">
-                                        보관소 수정하기
-                                    </button>
-
-                                    <button type="button"
-                                            class="delete-locker-btn"
-                                            data-locker-id="${lockerDetail.lockerId}"
-                                            onclick="deleteLocker(this)">
-                                        보관소 삭제하기
-                                    </button>
+<%--                                    <button type="button"--%>
+<%--                                            class="delete-locker-btn"--%>
+<%--                                            data-locker-id="${lockerDetail.lockerId}"--%>
+<%--                                            onclick="deleteLocker(this)">--%>
+<%--                                        보관소 삭제하기--%>
+<%--                                    </button>--%>
 
                                     <button type="button"
                                             class="toggle-btn ${lockerDetail.isAvailable eq 'YES' ? 'btn-stop' : 'btn-restart'}"
