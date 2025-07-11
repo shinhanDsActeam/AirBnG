@@ -66,6 +66,79 @@
         WHERE l.locker_id = #{lockerId}
     </select>
 
+    <resultMap id="LockerUpdateDetails" type="com.airbng.dto.locker.LockerUpdateResponse">
+        <result property="lockerId" column="locker_id" />
+        <result property="lockerName" column="locker_name" />
+        <result property="address" column="address" />
+        <result property="addressEnglish" column="address_english" />
+        <result property="addressDetail" column="address_detail" />
+        <result property="latitude" column="latitude" />
+        <result property="longitude" column="longitude" />
+        <result property="keeperId" column="keeper_id" />
+        <result property="keeperName" column="name" />
+        <result property="keeperPhone" column="phone" />
+        <result property="isAvailable" column="is_available" />
+        <!-- 중첩 짐타입 매핑 -->
+        <collection property="jimTypeResults"
+                    ofType="com.airbng.dto.jimType.LockerJimTypeUpdateResult"
+                    javaType="java.util.ArrayList">
+            <id     column="jimtype_id"    property="jimTypeId" />
+            <result column="type_name"     property="typeName" />
+            <result column="price_per_hour"     property="pricePerHour" />
+        </collection>
+    </resultMap>
+
+    <select id="findUpdateLockerDetailById" parameterType="long" resultMap="LockerUpdateDetails">
+        SELECT
+            l.locker_id,
+            l.locker_name,
+            l.address,
+            l.address_english,
+            l.address_detail,
+            l.latitude,
+            l.longitude,
+            l.is_available,
+            m.member_id AS keeper_id,
+            m.name,
+            m.phone,
+            jt.jimtype_id,
+            jt.type_name,
+            jt.price_per_hour
+        FROM Locker l
+            LEFT JOIN Member m ON l.member_id = m.member_id
+            LEFT JOIN LockerJimType ljt ON l.locker_id = ljt.locker_id
+            LEFT JOIN JimType jt ON ljt.jimtype_id = jt.jimtype_id
+        WHERE l.member_id = #{memberId}
+    </select>
+
+    <select id="findUpdateLockerById" parameterType="Long" resultMap="LockerUpdateDetails">
+        SELECT
+            l.locker_id,
+            l.locker_name,
+            l.address,
+            l.address_english,
+            l.address_detail,
+            l.latitude,
+            l.longitude,
+            l.is_available,
+            m.member_id AS keeper_id,
+            m.name,
+            m.phone,
+            jt.jimtype_id,
+            jt.type_name,
+            jt.price_per_hour
+        FROM Locker l
+            LEFT JOIN Member m ON l.member_id = m.member_id
+            LEFT JOIN LockerJimType ljt ON l.locker_id = ljt.locker_id
+            LEFT JOIN JimType jt ON ljt.jimtype_id = jt.jimtype_id
+
+        WHERE l.locker_id = #{lockerId}
+    </select>
+
+    <select id="findJimTypeIdsByLocker" resultType="long">
+        SELECT jimtype_id FROM LockerJimType WHERE locker_id = #{lockerId}
+    </select>
+
     <!-- 이미지 URL만 조회하는 쿼리 (List<String>) -->
     <select id="findImageById" parameterType="Long" resultType="string">
         SELECT
@@ -176,6 +249,16 @@
         WHERE member_id = #{memberId}
     </select>
 
+    <resultMap id="LockerJimTypeUpdateResultMap" type="com.airbng.dto.jimType.LockerJimTypeUpdateResult">
+        <id     column="jimtype_id"    property="jimTypeId" />
+        <result column="type_name"     property="typeName" />
+        <result column="price_per_hour" property="pricePerHour" />
+    </resultMap>
+
+    <select id="findAllJimTypes" resultMap="LockerJimTypeUpdateResultMap">
+        SELECT jimtype_id, type_name, price_per_hour FROM JimType
+    </select>
+
     <select id="findValidJimTypeIds" resultType="long">
         SELECT jimtype_id
         FROM JimType
@@ -201,6 +284,8 @@
         <result column="is_available" property="isAvailable"/>
         <result column="url" property="url"/>
         <result column="address" property="address"/>
+        <result column="latitude" property="latitude"/>
+        <result column="longitude" property="longitude"/>
         <collection property="jimTypeResults" ofType="com.airbng.dto.jimType.JimTypeResult">
             <id column="jimtype_id" property="jimTypeId"/>
             <result column="type_name" property="typeName"/>
@@ -213,6 +298,8 @@
             l.locker_name,
             l.is_available,
             l.address,
+            l.latitude,
+            l.longitude,
             img.url,
             jt.jimtype_id,
             jt.type_name
@@ -352,6 +439,31 @@
                  JOIN JimType jt ON ljt.jimtype_id = jt.jimtype_id
         WHERE ljt.locker_id = #{lockerId}
     </select>
+
+    <update id="updateLockerInfo" parameterType="com.airbng.domain.Locker">
+        UPDATE Locker
+        SET
+            locker_name = #{lockerName},
+            is_available = #{isAvailable},
+            address = #{address},
+            address_english = #{addressEnglish},
+            address_detail = #{addressDetail},
+            latitude = #{latitude},
+            longitude = #{longitude}
+        WHERE locker_id = #{lockerId}
+    </update>
+
+    <delete id="deleteLockerImages" parameterType="long">
+        DELETE FROM LockerImage WHERE locker_id = #{lockerId}
+    </delete>
+
+    <delete id="deleteLockerJimTypes" parameterType="long">
+        DELETE FROM LockerJimType WHERE locker_id = #{lockerId}
+    </delete>
+
+    <delete id="deleteLocker" parameterType="long">
+        DELETE FROM Locker WHERE locker_id = #{lockerId}
+    </delete>
 
 </mapper>
 

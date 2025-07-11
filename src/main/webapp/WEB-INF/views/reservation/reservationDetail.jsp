@@ -22,11 +22,9 @@
         }
     </script>
     <link rel="stylesheet" href="<c:url value='/css/reservation/reservationDetail.css' />"/>
-    <link rel="stylesheet" href="<c:url value='/css/common/modal.css' />"/>
 </head>
 <body class="bg-gray-100 mx-auto">
 <!-- 스크립트 로드 순서 중요 -->
-<script src="<c:url value='/js/common/modal.js' />"></script>
 <script src="<c:url value='/js/common/timeUtil.js' />"></script>
 <div class="max-w-md mx-auto bg-white min-h-screen">
     <%-- 전역변수 --%>
@@ -59,7 +57,7 @@
                     <div class="flex items-center">
                         <img id="lockerImage" src="" alt="보관소 이미지" class="w-20 h-20 rounded-lg mr-4 object-cover">
                         <div>
-                            <h3 id="keeperNickname" class="text-lg font-semibold text-gray-900 mb-1"></h3>
+                            <h3 id="lockerName" class="text-lg font-semibold text-gray-900 mb-1"></h3>
                             <p id="lockerAddress" class="text-sm text-gray-600"></p>
                         </div>
                     </div>

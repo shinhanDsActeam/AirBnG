@@ -80,6 +80,15 @@ function renderLockerDetails(lockerDetail) {
     // 보관소 선택 버튼 설정
     setupReserveButton(lockerDetail.lockerId, lockerDetail.isAvailable);
 
+    sessionStorage.setItem(`lockerData_${lockerDetail.lockerId}`, JSON.stringify({
+        lockerImage : lockerDetail.images[0] || '',
+        lockerName : lockerDetail.lockerName,
+        address : lockerDetail.address,
+        addressDetail : lockerDetail.addressDetail
+    }));
+
+    console.log('보관소 데이터가 세션 스토리지에 저장되었습니다: ', sessionStorage.getItem(`lockerData_${lockerDetail.lockerId}`));
+
     // 컨텐츠 표시
     document.getElementById('lockerDetailContent').style.display = 'block';
     document.getElementById('reserveBtn').style.display = 'flex';

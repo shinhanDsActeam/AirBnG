@@ -73,6 +73,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         if(reservationId === 0){
                             window.location.href = `${contextPath}/page/home`;
                         }
+                        sessionStorage.setItem('lockerId', lockerId);
                         window.location.href = `${contextPath}/page/reservations?id=${reservationId}`;
                     });
                     // 성공 페이지로 이동 또는 다른 처리
@@ -299,6 +300,9 @@ function toggleDropdown(type) {
     const selected = dropdown.querySelector('.dropdown-selected');
     const options = dropdown.querySelector('.dropdown-options');
 
+    // 현재 스크롤 위치 저장
+    const currentScrollY = window.scrollY;
+
     // 다른 드롭다운 닫기
     document.querySelectorAll('.custom-dropdown').forEach(dd => {
         if (dd.id !== type + 'Dropdown') {
@@ -310,6 +314,12 @@ function toggleDropdown(type) {
     // 현재 드롭다운 토글
     selected.classList.toggle('active');
     options.classList.toggle('show');
+
+
+    // 스크롤 위치 복원
+    setTimeout(() => {
+        window.scrollTo(0, currentScrollY);
+    }, 0);
 
     // 선택된 옵션이 보이도록 스크롤 이동
     if (options.classList.contains('show')) {

@@ -85,7 +85,7 @@ class ModalUtils {
     }
 
     /**
-     * 성공 모달 표시
+     * 성공 모달 표시 (Promise 기반)
      * @param {string} message - 성공 메시지
      * @param {string} title - 성공 타이틀
      * @param {Function} callback - 콜백 함수

@@ -1,10 +1,6 @@
 package com.airbng.service;
 
-import com.airbng.dto.locker.LockerDetailResponse;
-import com.airbng.dto.locker.LockerTop5Response;
-import com.airbng.dto.locker.LockerInsertRequest;
-import com.airbng.dto.locker.LockerSearchRequest;
-import com.airbng.dto.locker.LockerSearchResponse;
+import com.airbng.dto.locker.*;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -30,5 +26,14 @@ public interface LockerService {
     void updateLockerActivation(Long lockerId);
 
     boolean isExistLocker(Long memberId);
+
+    void updateLocker(LockerUpdateRequest request) throws IOException;
+
+    LockerUpdateResponse findUpdateUserById(Long lockerId);
+
+    LockerUpdateResponse findUpdateMyLocker(Long memberId);
+
+    void deleteLocker(Long lockerId);
+
 }
 

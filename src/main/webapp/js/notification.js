@@ -24,7 +24,7 @@ class NotificationSSE {
      * 동일한 id라도 message나 type이 다르면 다른 알림으로 간주
      */
     getAlarmKey(alarmData) {
-        return `${alarmData.id}|${alarmData.message}|${alarmData.type}`;
+        return `${alarmData.id}|${alarmData.message}|${alarmData.type}|${alarmData.reservationId}`;
     }
 
     initSSE() {
@@ -179,7 +179,7 @@ class NotificationSSE {
         if ('Notification' in window && Notification.permission === 'granted') {
             const notification = new Notification('새 알림', {
                 body: alarmData.message,
-                icon: '/favicon.ico'
+                icon: `${contextPath}/images/favicon.svg`
             });
             setTimeout(() => notification.close(), 5000);
         }

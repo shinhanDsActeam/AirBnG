@@ -9,17 +9,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/gh/webfontworld/bmjua/BMJUA.css" rel="stylesheet">
     <link rel="stylesheet" href="<c:url value='/css/locker.css'/>" />
-    <link rel="stylesheet" href="<c:url value='/css/common/modal.css'/>" />
     <link rel="icon" type="image/svg+xml" href="${pageContext.request.contextPath}/images/favicon.svg" />
 </head>
 
 <body class="airbng-locker">
 <div class="container">
-    <header class="header">
-        <div class="header-content">
-            <span class="logo-text">보관소</span>
-        </div>
-    </header>
+    <!-- 헤더 -->
+    <c:set var="headerTitle" value="보관소"/>
+    <c:set var="showBackButton" value="false"/>
+    <%@ include file="/WEB-INF/views/common/header.jsp" %>
 
     <main class="main-content">
         <c:choose>
@@ -46,6 +44,13 @@
                                                     <span class="status-badge inactive">중지됨</span>
                                                 </c:otherwise>
                                             </c:choose>
+
+                                            <button class="edit-locker-btn"
+                                                    data-locker-id="${lockerDetail.lockerId}"
+                                                    onclick="goToLockerManage(this)">
+                                                <img src="<c:url value='/images/settings.svg'/>" alt="편집" width="25" height="25">
+                                            </button>
+
                                         </div>
                                         <div class="locker-jim-types">
                                             <c:forEach var="type" items="${lockerDetail.jimTypeResults}">
@@ -64,6 +69,12 @@
                                             onclick="goToLockerDetails(this)">
                                         보관소 상세보기
                                     </button>
+<%--                                    <button type="button"--%>
+<%--                                            class="delete-locker-btn"--%>
+<%--                                            data-locker-id="${lockerDetail.lockerId}"--%>
+<%--                                            onclick="deleteLocker(this)">--%>
+<%--                                        보관소 삭제하기--%>
+<%--                                    </button>--%>
 
                                     <button type="button"
                                             class="toggle-btn ${lockerDetail.isAvailable eq 'YES' ? 'btn-stop' : 'btn-restart'}"

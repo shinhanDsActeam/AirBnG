@@ -20,26 +20,6 @@
     overflow: hidden;
 }
 
-/* 헤더 */
-.airbng-locker .header {
-    padding: 20px 20px 20px;
-    border-bottom: 1px solid #f0f0f0;
-    background: white;
-    z-index: 100;
-}
-
-.airbng-locker .header-content {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.airbng-locker .logo-text {
-    font-size: 20px;
-    font-weight: 700;
-    color: #333;
-}
-
 /* 메인 컨텐츠 */
 .airbng-locker .main-content {
     max-width: 412px;
@@ -91,70 +71,6 @@
 .airbng-locker .menu-content p {
     font-size: 14px;
     color: #666;
-}
-
-/* 로그인 안 된 경우 */
-.airbng-locker .welcome-section {
-    text-align: center;
-    margin-bottom: 30px;
-    padding: 40px 20px;
-    background: #f8f9ff;
-    border-radius: 20px;
-    border: 1px solid #e8ebff;
-    animation: fadeInUp 0.6s ease-out;
-}
-
-.airbng-locker .welcome-title {
-    font-size: 24px;
-    font-weight: 700;
-    margin-bottom: 12px;
-    color: #333;
-}
-
-.airbng-locker .welcome-subtitle {
-    font-size: 15px;
-    color: #666;
-    margin-bottom: 24px;
-}
-
-.airbng-locker .auth-buttons {
-    display: flex;
-    gap: 12px;
-    justify-content: center;
-}
-
-.airbng-locker .login-btn,
-.signup-btn {
-    flex: 1;
-    max-width: 140px;
-    padding: 14px 0;
-    font-size: 15px;
-    font-weight: 600;
-    border-radius: 12px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.airbng-locker .login-btn {
-    background: transparent;
-    color: #4561DB;
-    border: 2px solid #4561DB;
-}
-
-.airbng-locker .signup-btn {
-    background: transparent;
-    color: #4561DB;
-    border: 2px solid #4561DB;
-}
-
-.airbng-locker .login-btn:hover {
-    background: #4561DB;
-    color: white;
-}
-
-.airbng-locker .signup-btn:hover {
-    background: #4561DB;
-    color: white;
 }
 
 /* 오른쪽 화살표 */
@@ -262,14 +178,14 @@
     border-radius: 15px;
     white-space: nowrap;
     border: 1px solid #dee2e6;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
     text-align: center;
 }
 
 /* 버튼 그룹 */
 .airbng-locker .locker-action-buttons {
     margin-top: 10px;
-    padding: 0 24px;
+    /*padding: 0 24px;*/
     display: flex;
     flex-direction: column;
     gap: 10px;
@@ -277,8 +193,11 @@
 
 /* 상세 보기 버튼 */
 .airbng-locker .manage-locker-btn {
-    background-color: #4561DB;
-    color: white;
+    /*background-color: #4561DB;*/
+    /*color: white;*/
+
+    background-color: #BFD0FF;
+    color: #1E2F93;
     font-weight: bold;
     border: none;
     border-radius: 10px;
@@ -289,7 +208,38 @@
 }
 
 .airbng-locker .manage-locker-btn:hover {
-    background-color: #3651cb;
+    background-color: #87A3FF;
+}
+
+.airbng-locker .edit-locker-btn {
+    border: none;
+    background: none;
+    /*padding: 12px;*/
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-left: 30px;
+    filter: invert(0.3);
+}
+
+.airbng-locker .edit-locker-btn:hover {
+    /*transform: scale(1.05);*/
+    transform: rotate(20deg);
+}
+
+.airbng-locker .delete-locker-btn {
+    background-color: #f44336;
+    color: white;
+    font-weight: bold;
+    border: none;
+    border-radius: 10px;
+    padding: 12px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+}
+
+.airbng-locker .delete-locker-btn:hover {
+    background-color: #d32f2f;
 }
 
 /* 활성/비활성 버튼 */

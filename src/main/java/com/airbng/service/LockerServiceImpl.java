@@ -7,6 +7,7 @@ import com.airbng.domain.Locker;
 import com.airbng.domain.Member;
 import com.airbng.domain.base.ReservationState;
 import com.airbng.domain.image.Image;
+import com.airbng.dto.jimType.LockerJimTypeUpdateResult;
 import com.airbng.dto.locker.*;
 import com.airbng.mappers.LockerMapper;
 import com.airbng.util.S3Utils;
@@ -191,6 +192,114 @@ public class LockerServiceImpl implements LockerService {
     @Override
     public boolean isExistLocker(Long memberId) {
         return lockerMapper.findLockerByMemberId(memberId) > 0;
+    }
+
+    @Override
+    public LockerUpdateResponse findUpdateUserById(Long lockerId) {
+        // 0. 보관소 기본 정보
+        LockerUpdateResponse result = lockerMapper.findUpdateLockerById(lockerId);
+        if (result == null) {
+            throw new LockerException(NOT_FOUND_LOCKERDETAILS);
+        }
+
+        result.setImages(lockerMapper.findImageById(lockerId)); // 이미지 리스트 포함
+
+        // 1. 전체 짐 타입 (5개 고정)
+        List<LockerJimTypeUpdateResult> allTypes = lockerMapper.findAllJimTypes();
+
+        // 2. 선택된 짐 타입 ID만 따로 조회
+        List<Long> selectedIds = lockerMapper.findJimTypeIdsByLocker(lockerId);
+        Set<Long> selectedIdSet = new HashSet<>(selectedIds); // 빠른 contains 체크용
+
+        // 3. enabled 플래그 설정
+        for (LockerJimTypeUpdateResult type : allTypes) {
+            type.setEnabled(selectedIdSet.contains(type.getJimTypeId()));
+        }
+
+        // 4. 전체 타입을 반영 (선택 여부 포함)
+        result.setJimTypeResults(allTypes);
+
+        return result;
+    }
+
+    @Override
+    public LockerUpdateResponse findUpdateMyLocker(Long memberId) {
+        LockerUpdateResponse result = lockerMapper.findUpdateLockerDetailById(memberId);
+        if (result == null) {
+            throw new LockerException(NOT_FOUND_LOCKERDETAILS);
+        }
+
+        result.setImages(lockerMapper.findImageById(result.getLockerId()));
+        return result;
+    }
+
+    @Transactional
+    @Override
+    public void updateLocker(LockerUpdateRequest dto) throws IOException {
+        if (!lockerMapper.isExistLocker(dto.getLockerId())) {
+            throw new LockerException(NOT_FOUND_LOCKER);
+        }
+
+        Locker locker = Locker.builder()
+                .lockerId(dto.getLockerId())
+                .lockerName(dto.getLockerName())
+                .isAvailable(dto.getIsAvailable())
+                .address(dto.getAddress())
+                .addressEnglish(dto.getAddressEnglish())
+                .addressDetail(dto.getAddressDetail())
+                .latitude(dto.getLatitude())
+                .longitude(dto.getLongitude())
+                .keeper(Member.withId(dto.getKeeperId()))
+                .build();
+
+        lockerMapper.updateLockerInfo(locker);
+
+        // 이미지 갱신
+        if (dto.getImages() != null && !dto.getImages().isEmpty()) {
+            lockerMapper.deleteLockerImages(dto.getLockerId());
+
+            List<Long> imageIds = new ArrayList<>();
+            for (MultipartFile file : dto.getImages()) {
+                if (file.isEmpty()) continue;
+
+                String uuid = UUID.randomUUID().toString();
+                String fileName = uuid + "_" + file.getOriginalFilename();
+                String path = "lockers/" + fileName;
+                String url = s3Utils.upload(file, path);
+
+                Image image = Image.builder()
+                        .url(url)
+                        .uploadName(file.getOriginalFilename())
+                        .build();
+
+                lockerMapper.insertImage(image);
+                imageIds.add(image.getImageId());
+            }
+            lockerMapper.insertLockerImages(dto.getLockerId(), imageIds);
+        }
+
+        // 짐 타입 연결 갱신 (기존 제거 후 재등록)
+        if (dto.getJimTypeIds() != null && !dto.getJimTypeIds().isEmpty()) {
+            lockerMapper.deleteLockerJimTypes(dto.getLockerId());
+            lockerMapper.insertLockerJimTypes(dto.getLockerId(), dto.getJimTypeIds());
+        }
+    }
+
+    @Transactional
+    @Override
+    public void deleteLocker(Long lockerId) {
+        if (!lockerMapper.isExistLocker(lockerId)) {
+            throw new LockerException(NOT_FOUND_LOCKER);
+        }
+
+        // 1. 연결된 이미지 먼저 삭제 (LockerImage 테이블)
+        lockerMapper.deleteLockerImages(lockerId);
+
+        // 2. 연결된 짐타입 삭제 (LockerJimType 테이블)
+        lockerMapper.deleteLockerJimTypes(lockerId);
+
+        // 3. 보관소 자체 삭제
+        lockerMapper.deleteLocker(lockerId);
     }
 
 }

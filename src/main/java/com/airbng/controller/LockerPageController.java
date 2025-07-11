@@ -1,8 +1,7 @@
 package com.airbng.controller;
 
 import com.airbng.dto.locker.LockerDetailResponse;
-import com.airbng.dto.locker.LockerSearchRequest;
-import com.airbng.dto.locker.LockerSearchResponse;
+import com.airbng.dto.locker.LockerUpdateResponse;
 import com.airbng.service.LockerService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -13,8 +12,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.LocalDate;
-import java.util.Collections;
-import java.util.List;
 import javax.servlet.http.HttpSession;
 @Slf4j
 @Controller
@@ -49,6 +46,13 @@ public class LockerPageController {
     @GetMapping("/lockers/register")
     public String lockerRegisterPage() {
         return "lockerRegister";
+    }
+
+    @GetMapping("/lockers/manage")
+    public String lockerManagePage(@RequestParam Long lockerId, Model model) {
+        LockerUpdateResponse lockerDetail = lockerService.findUpdateUserById(lockerId);
+        model.addAttribute("lockerDetail", lockerDetail);
+        return "lockerManage";
     }
 
     @GetMapping ("/lockerDetails")
