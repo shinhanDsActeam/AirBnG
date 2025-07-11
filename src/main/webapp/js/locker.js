@@ -68,3 +68,43 @@ function goToLockerManage(buttonElement) {
     }
     location.href = contextPath + '/page/lockers/manage?lockerId=' + lockerId;
 }
+
+function deleteLocker(buttonElement) {
+    const lockerId = buttonElement.getAttribute("data-locker-id");
+    if (!lockerId) {
+        ModalUtils.showWarning("보관소 ID가 존재하지 않습니다.", "유효하지 않은 요청");
+        return;
+    }
+
+    ModalUtils.showConfirm(
+        "보관소 삭제",
+        "정말 이 보관소를 삭제하시겠습니까? 삭제된 정보는 복구할 수 없습니다.",
+        () => {
+            fetch(`${contextPath}/lockers/${lockerId}`, {
+                method: 'DELETE',
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.code === 1000) {
+                    ModalUtils.showSuccess("보관소 삭제가 완료되었습니다.", "삭제 성공")
+                        .then(() => {
+                            const menuSection = document.querySelector(".menu-section");
+                            const emptySection = document.querySelector(".empty-locker-section");
+
+                            if (menuSection) menuSection.style.display = 'none';
+                            if (emptySection) emptySection.style.display = 'block';
+                        });
+                } else {
+                    ModalUtils.showError(data.message || "삭제에 실패했습니다.", "삭제 실패");
+                }
+            })
+            .catch(error => {
+                console.error("삭제 중 오류:", error);
+                ModalUtils.showError("서버 오류로 삭제에 실패했습니다.", "네트워크 오류");
+            });
+        },
+        () => {
+            console.log("삭제 취소됨");
+        }
+    );
+}
