@@ -249,10 +249,13 @@ function submitLockerUpdate(lockerId) {
     }).then(res => res.json())
       .then(data => {
           if (data.code === 1000) {
-              ModalUtils.showSuccess("보관소 정보가 성공적으로 수정되었습니다!", "완료")
-                  .then(() => {
+              ModalUtils.showSuccess(
+                  "보관소 정보가 성공적으로 수정되었습니다!",
+                  "완료",
+                  () => {
                       location.href = `${contextPath}/page/lockers`;
-                  });
+                  }
+              );
           } else {
               ModalUtils.showError(data.message || "수정 실패", "에러");
           }
