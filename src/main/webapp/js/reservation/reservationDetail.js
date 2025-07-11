@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', function () {
 // 이벤트 리스너 설정
 function setupEventListeners() {
     // 이벤트 위임 방식으로 변경하여 동적으로 생성되는 요소에도 이벤트 적용
-    document.addEventListener('click', function(event) {
+    document.addEventListener('click', function (event) {
         const target = event.target;
 
         if (target.id === 'cancelBtn') {
@@ -60,17 +60,23 @@ function loadReservationData() {
 // 예약 데이터 표시
 function displayReservationData(data) {
     // 보관소 정보 (세션 스토리지에서 가져오기)
-    const lockerData = JSON.parse(sessionStorage.getItem(`reservationData_${reservationId}`) || '{}');
+    const lockerId = sessionStorage.getItem('lockerId');
+    sessionStorage.removeItem('lockerId');
+    const lockerData = JSON.parse(
+        sessionStorage.getItem(`reservationData_${reservationId}`) ??
+        sessionStorage.getItem(`lockerData_${lockerId}`) ??
+        '{}'
+    );
 
-    document.getElementById('keeperNickname').textContent = lockerData.address || '정보 없음';
-    document.getElementById('lockerAddress').textContent = lockerData.addressDetail || '주소 정보 없음';
+    document.getElementById('lockerName').textContent = lockerData.lockerName || '정보 없음';
+    document.getElementById('lockerAddress').textContent = (lockerData.address + ' ' + lockerData.addressDetail) || '주소 정보 없음';
 
     // 보관소 이미지 설정
     const lockerImage = document.getElementById('lockerImage');
     if (lockerData.lockerImage) {
         lockerImage.src = lockerData.lockerImage;
     } else {
-        lockerImage.src = '/AirBnG/images/user.svg';
+        lockerImage.src = '/AirBnG/images/locker_empty_ic.svg';
     }
 
     // 예약 날짜
@@ -136,8 +142,8 @@ function displayPriceDetails(jimTypes) {
     const hours = diffMinutes / 60;
 
     jimTypes.forEach(item => {
-        const { typeName, count, pricePerHour } = item;
-        if(count > 0 && pricePerHour > 0) {
+        const {typeName, count, pricePerHour} = item;
+        if (count > 0 && pricePerHour > 0) {
             // 단일 짐 총액 계산
             const itemTotal = pricePerHour * count * hours;
             totalAmount += itemTotal;
@@ -424,11 +430,11 @@ function initSSE() {
         showDotIndicator();
 
         if (typeof getNotificationSSE === 'function') {
-                const notificationManager = getNotificationSSE();
-                if (notificationManager) {
-                      notificationManager.handleNotification(alarmData);
-                }
+            const notificationManager = getNotificationSSE();
+            if (notificationManager) {
+                notificationManager.handleNotification(alarmData);
             }
+        }
 
         // 예약 상세 페이지에서 상태 변경 알림 수신 시 상세 데이터 갱신
         if (alarmData.type === 'STATE_CHANGE' && alarmData.reservationId == reservationId) {

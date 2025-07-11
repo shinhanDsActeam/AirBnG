@@ -59,7 +59,7 @@
                     <div class="flex items-center">
                         <img id="lockerImage" src="" alt="보관소 이미지" class="w-20 h-20 rounded-lg mr-4 object-cover">
                         <div>
-                            <h3 id="keeperNickname" class="text-lg font-semibold text-gray-900 mb-1"></h3>
+                            <h3 id="lockerName" class="text-lg font-semibold text-gray-900 mb-1"></h3>
                             <p id="lockerAddress" class="text-sm text-gray-600"></p>
                         </div>
                     </div>

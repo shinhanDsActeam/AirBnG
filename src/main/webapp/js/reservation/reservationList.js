@@ -227,6 +227,7 @@ function renderReservations(reservations) {
         //sessionStorage에 이미지, 주소, 상세주소 저장
         sessionStorage.setItem(`reservationData_${res.reservationId}`, JSON.stringify({
             lockerImage : res.lockerImage,
+            lockerName : res.lockerName,
             address : res.address,
             addressDetail : res.addressDetail
         }));
