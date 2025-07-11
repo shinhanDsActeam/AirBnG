@@ -73,6 +73,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         if(reservationId === 0){
                             window.location.href = `${contextPath}/page/home`;
                         }
+                        sessionStorage.setItem('lockerId', lockerId);
                         window.location.href = `${contextPath}/page/reservations?id=${reservationId}`;
                     });
                     // 성공 페이지로 이동 또는 다른 처리
