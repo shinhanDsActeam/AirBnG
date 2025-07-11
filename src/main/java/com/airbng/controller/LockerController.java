@@ -41,6 +41,12 @@ public class LockerController {
         return new BaseResponse<>(SUCCESS);
     }
 
+    @DeleteMapping("/{lockerId}")
+    public BaseResponse<String> deleteLocker(@PathVariable Long lockerId) {
+        lockerService.deleteLocker(lockerId);
+        return new BaseResponse<>("보관소 삭제 완료");
+    }
+
     @PostMapping(value = "/register", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<BaseResponse<String>> registerLocker(
             @RequestPart("locker") LockerInsertRequest dto,

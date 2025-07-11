@@ -178,14 +178,14 @@
     border-radius: 15px;
     white-space: nowrap;
     border: 1px solid #dee2e6;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
     text-align: center;
 }
 
 /* 버튼 그룹 */
 .airbng-locker .locker-action-buttons {
     margin-top: 10px;
-    padding: 0 24px;
+    /*padding: 0 24px;*/
     display: flex;
     flex-direction: column;
     gap: 10px;
@@ -193,8 +193,11 @@
 
 /* 상세 보기 버튼 */
 .airbng-locker .manage-locker-btn {
-    background-color: #4561DB;
-    color: white;
+    /*background-color: #4561DB;*/
+    /*color: white;*/
+
+    background-color: #BFD0FF;
+    color: #1E2F93;
     font-weight: bold;
     border: none;
     border-radius: 10px;
@@ -205,11 +208,26 @@
 }
 
 .airbng-locker .manage-locker-btn:hover {
-    background-color: #3651cb;
+    background-color: #87A3FF;
 }
 
 .airbng-locker .edit-locker-btn {
-    background-color: #9c27b0;
+    border: none;
+    background: none;
+    /*padding: 12px;*/
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-left: 30px;
+    filter: invert(0.3);
+}
+
+.airbng-locker .edit-locker-btn:hover {
+    /*transform: scale(1.05);*/
+    transform: rotate(20deg);
+}
+
+.airbng-locker .delete-locker-btn {
+    background-color: #f44336;
     color: white;
     font-weight: bold;
     border: none;
@@ -220,8 +238,8 @@
     transition: background-color 0.3s ease;
 }
 
-.airbng-locker .edit-locker-btn:hover {
-    background-color: #8a3ca9;
+.airbng-locker .delete-locker-btn:hover {
+    background-color: #d32f2f;
 }
 
 /* 활성/비활성 버튼 */
