@@ -48,8 +48,8 @@ function clearMarkers() {
 // 마커 이미지 생성 함수
 function createMarkerImage(isAvailable) {
     const imageSrc = isAvailable === 'YES'
-        ? `${contextPath}/images/marker-available.png`
-        : `${contextPath}/images/marker-unavailable.png`;
+        ? `${contextPath}/images/marker-available.svg`
+        : `${contextPath}/images/marker-unavailable.svg`;
 
     const imageSize = new kakao.maps.Size(28, 32);
     const imageOption = { offset: new kakao.maps.Point(12, 35) };
