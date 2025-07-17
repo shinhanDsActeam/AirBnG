@@ -30,3 +30,19 @@ cloud:
     region: ${AWS_REGION}
     accessKey: ${AWS_ACCESSKEY}
     secretKey: ${AWS_SECRETKEY}
+springdoc:
+  packages-to-scan: com.airbng
+  default-consumes-media-type: application/json;charset=UTF-8
+  default-produces-media-type: application/json;charset=UTF-8
+  cache:
+    disabled: true
+  api-docs:
+    path: /v3/api-docs
+    groups:
+      enabled: true
+  swagger-ui:
+    path: /swagger-ui.html
+    url: /v3/api-docs
+    enabled: true
+    tags-sorter: alpha
+    operations-sorter: alpha
