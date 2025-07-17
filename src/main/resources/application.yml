@@ -1,0 +1,32 @@
+server:
+  port: 9000
+  servlet:
+    context-path: /AirBnG
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+spring:
+  application:
+    name: airbng
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+  data:
+    redis:
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT}
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+      enabled: true
+cloud:
+  aws:
+    s3:
+      bucket: ${AWS_S3_BUCKET}
+    region: ${AWS_REGION}
+    accessKey: ${AWS_ACCESSKEY}
+    secretKey: ${AWS_SECRETKEY}
