@@ -272,9 +272,9 @@ class MemberServiceTest {
         Image updatedImage = Image.withId(41L);
 
         // 이메일 형식 검증 및 이미지 서비스 호출에 대한 Mock 설정
-        when(memberMapper.findByEmail(request.getEmail())).thenReturn(false);
-        when(memberMapper.findByNickname(request.getNickname())).thenReturn(false);
-        when(memberMapper.findByPhone(request.getPhone())).thenReturn(false);
+//        when(memberMapper.findByEmail(request.getEmail())).thenReturn(false);
+//        when(memberMapper.findByNickname(request.getNickname())).thenReturn(false);
+//        when(memberMapper.findByPhone(request.getPhone())).thenReturn(false);
         // 이메일 검증됐다고 가정
         when(emailValidator.isValidEmail(request.getEmail())).thenReturn(true);
         when(imageService.updateDefaultProfileImage(eq(mockFile), eq(memberId))).thenReturn(updatedImage);
@@ -539,10 +539,10 @@ class MemberServiceTest {
                 .status(BaseStatus.ACTIVE)
                 .profileImage(Image.withId(1L))
                 .build();
-
-        when(memberMapper.findByEmailAndPassword(email, password)).thenReturn(member);
-
         // when
+        when(emailValidator.isValidEmail(member.getEmail())).thenReturn(true);
+        when(memberMapper.findMemberByEmail(member.getEmail())).thenReturn(member);
+        when(passwordEncoder.matches(password, member.getPassword())).thenReturn(true);
         MemberLoginResponse response = memberService.login(email, password);
 
         // 세션 객체 생성 및 저장 확인

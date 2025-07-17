@@ -3,9 +3,6 @@ package com.airbng.dto.jimType;
 import com.airbng.domain.jimtype.LockerJimType;
 import lombok.*;
 
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
-
 @Getter
 @Setter
 @NoArgsConstructor

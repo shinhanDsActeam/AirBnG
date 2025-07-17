@@ -5,15 +5,15 @@ import com.airbng.domain.base.ReservationState;
 import com.airbng.dto.reservation.*;
 import com.airbng.service.ReservationService;
 import com.airbng.util.SessionUtils;
+import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
-import org.springframework.validation.annotation.Validated;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpSession;
-import javax.validation.Valid;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
 import java.util.List;
 
 import static com.airbng.common.response.status.BaseResponseStatus.CREATED_RESERVATION;

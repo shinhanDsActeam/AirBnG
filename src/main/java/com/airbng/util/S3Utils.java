@@ -21,7 +21,7 @@ public class S3Utils {
     private final AmazonS3Client amazonS3Client;
     private static final List<String> ALLOWED_EXTENSIONS = List.of("jpeg", "jpg", "png");
 
-    @Value("${aws.s3.bucket}")
+    @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
     public String upload(MultipartFile file, String filePath) throws IOException {

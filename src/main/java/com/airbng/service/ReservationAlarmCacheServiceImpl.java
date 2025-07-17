@@ -23,7 +23,7 @@ public class ReservationAlarmCacheServiceImpl implements ReservationAlarmCacheSe
     public boolean isSent(Long reservationId, Long receiverId, NotificationType type) {
         String key = buildKey(reservationId, receiverId, type);
         Boolean result = Boolean.TRUE.equals(redisTemplate.hasKey(key));
-        log.info("🔍 Redis 캐시에 중복 여부 확인: {}, 결과={}", key, result);
+//        log.info("🔍 Redis 캐시에 중복 여부 확인: {}, 결과={}", key, result);
         return result;
     }
 
@@ -32,7 +32,7 @@ public class ReservationAlarmCacheServiceImpl implements ReservationAlarmCacheSe
     public void markSent(Long reservationId, Long receiverId, NotificationType type) {
         String key = buildKey(reservationId, receiverId, type);
         redisTemplate.opsForValue().set(key, "true", EXPIRE_SECONDS, TimeUnit.SECONDS);
-        log.info("🔔 Redis 캐시에 알림 발송 기록 저장: {}", key);
+//        log.info("🔔 Redis 캐시에 알림 발송 기록 저장: {}", key);
     }
 
     //Redis 키를 일관되게 만들기 위한 헬퍼 메서드
@@ -45,13 +45,13 @@ public class ReservationAlarmCacheServiceImpl implements ReservationAlarmCacheSe
         String key = buildUnreadKey(memberId);
         // TTL 제거 (영구 저장 -> 사용자가 안읽으면 계속 안읽음 표시)
         redisTemplate.opsForValue().set(key, "true");
-        log.info("안읽은 알림 표시: memberId={}", memberId);
+//        log.info("안읽은 알림 표시: memberId={}", memberId);
     }
 
     //읽은 알림 표시
     public void markAllAsRead(Long memberId) {
         redisTemplate.delete(buildUnreadKey(memberId)); // 읽음 처리 (삭제)
-        log.info("모든 알림 읽음 처리: memberId={}", memberId);
+//        log.info("모든 알림 읽음 처리: memberId={}", memberId);
     }
 
     //안읽음 확인

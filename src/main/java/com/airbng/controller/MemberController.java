@@ -1,25 +1,19 @@
 package com.airbng.controller;
 
 import com.airbng.common.response.BaseResponse;
-import com.airbng.dto.MemberLoginRequest;
-import com.airbng.dto.MemberLoginResponse;
-import com.airbng.dto.MemberSignupRequest;
 import com.airbng.dto.*;
-import com.airbng.service.ImageService;
 import com.airbng.service.MemberService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
-import javax.validation.Valid;
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
-import javax.servlet.http.HttpSession;
 
 import static com.airbng.common.response.status.BaseResponseStatus.SUCCESS_LOGIN;
 import static com.airbng.common.response.status.BaseResponseStatus.SUCCESS_LOGOUT;
