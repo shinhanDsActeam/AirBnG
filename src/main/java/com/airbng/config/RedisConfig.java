@@ -12,18 +12,12 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisHttpSession;
 
 @Configuration
-@PropertySource("classpath:application.properties")
-@EnableRedisHttpSession
 public class RedisConfig {
+    @Value("${spring.data.redis.host}")
+    private String host;
 
-    @Value("${redis.host}")
-    private String redisHost;
-
-    @Value("${redis.port}")
-    private int redisPort;
-
-    @Value("${redis.password:}")
-    private String redisPassword;
+    @Value("${spring.data.redis.port}")
+    private int port;
 
     @Bean
     public LettuceConnectionFactory redisConnectionFactory() {

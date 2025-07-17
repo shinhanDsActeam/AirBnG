@@ -8,22 +8,20 @@ import lombok.Getter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
 
 @Configuration
-@PropertySource("classpath:s3.properties")
 @Getter
 public class S3Config {
-    @Value("${aws.accessKey}")
+    @Value("${cloud.aws.accessKey}")
     private String accessKey;
 
-    @Value("${aws.secretKey}")
+    @Value("${cloud.aws.secretKey}")
     private String secretKey;
 
-    @Value("${aws.region}")
+    @Value("${cloud.aws.region}")
     private String region;
 
-    @Value("${aws.s3.bucket}")
+    @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
     @Bean
