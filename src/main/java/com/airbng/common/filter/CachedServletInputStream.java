@@ -1,7 +1,7 @@
 package com.airbng.common.filter;
 
-import javax.servlet.ReadListener;
-import javax.servlet.ServletInputStream;
+import jakarta.servlet.ReadListener;
+import jakarta.servlet.ServletInputStream;
 import java.io.ByteArrayInputStream;
 
 public class CachedServletInputStream extends ServletInputStream {

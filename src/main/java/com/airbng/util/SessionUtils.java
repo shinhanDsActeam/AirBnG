@@ -1,11 +1,9 @@
 package com.airbng.util;
 
-import com.airbng.common.exception.MemberException;
 import com.airbng.common.exception.SessionException;
-import com.airbng.common.response.status.BaseResponseStatus;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 
 import static com.airbng.common.response.status.BaseResponseStatus.*;
 

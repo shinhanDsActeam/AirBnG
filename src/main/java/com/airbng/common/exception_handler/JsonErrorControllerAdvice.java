@@ -5,17 +5,14 @@ import com.airbng.common.response.FieldValidationError;
 import com.airbng.common.response.JsonSyntaxError;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.util.ContentCachingRequestWrapper;
 
-import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 
 import static com.airbng.common.response.status.BaseResponseStatus.INVALID_JSON_FORMAT;
@@ -27,7 +24,7 @@ public class JsonErrorControllerAdvice {
 
     /** Json 역직렬화 오류 - Json 파싱 오류 */
     @ExceptionHandler(JsonParseException.class)
-    public ResponseEntity<BaseErrorResponse> handleJsonParseError(JsonParseException ex, HttpServletRequest request) {
+    public ResponseEntity<BaseErrorResponse<JsonSyntaxError>> handleJsonParseError(JsonParseException ex, HttpServletRequest request) {
         log.info("[JsonErrorControllerAdvice] JsonParseException: {}", ex.getMessage());
         String requestBody = getRequestBody(request);
         log.info("[JsonErrorControllerAdvice] Request Body: {}", requestBody);
@@ -35,12 +32,12 @@ public class JsonErrorControllerAdvice {
 
         return ResponseEntity
                 .status(INVALID_JSON_SYNTAX.getHttpStatus())
-                .body(new BaseErrorResponse(INVALID_JSON_SYNTAX, error));
+                .body(new BaseErrorResponse<>(INVALID_JSON_SYNTAX, error));
     }
 
     /** Json 역직렬화 오류 - DTO 맵핑 실패 (타입 미스매치) */
     @ExceptionHandler(InvalidFormatException.class)
-    public ResponseEntity<BaseErrorResponse> handleInvalidFormatException(InvalidFormatException ex) {
+    public ResponseEntity<BaseErrorResponse<FieldValidationError>> handleInvalidFormatException(InvalidFormatException ex) {
         log.info("[JsonErrorControllerAdvice] InvalidFormatException: {}", ex.getMessage());
 
         FieldValidationError error = FieldValidationError.builder()
@@ -66,8 +63,7 @@ public class JsonErrorControllerAdvice {
   
     /** 캐싱해둔 request body 반환 */
     private static String getRequestBody(HttpServletRequest request) {
-        if (request instanceof ContentCachingRequestWrapper) {
-            ContentCachingRequestWrapper wrapper = (ContentCachingRequestWrapper) request;
+        if (request instanceof ContentCachingRequestWrapper wrapper) {
             byte[] buf = wrapper.getContentAsByteArray();
             if (buf.length > 0) {
                 try {

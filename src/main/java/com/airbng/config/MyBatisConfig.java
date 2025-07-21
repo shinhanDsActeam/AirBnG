@@ -12,21 +12,20 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import javax.sql.DataSource;
 
 @Configuration
-@PropertySource("classpath:db.properties")
 @EnableTransactionManagement
 @MapperScan("com.airbng.mappers")
 public class MyBatisConfig {
 
-    @Value("${db.driver}")
+    @Value("${spring.datasource.driver-class-name}")
     private String driver;
 
-    @Value("${db.url}")
+    @Value("${spring.datasource.url}")
     private String url;
 
-    @Value("${db.username}")
+    @Value("${spring.datasource.username}")
     private String username;
 
-    @Value("${db.password}")
+    @Value("${spring.datasource.password}")
     private String password;
 
     @Bean

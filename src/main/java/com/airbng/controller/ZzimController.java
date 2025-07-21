@@ -1,20 +1,17 @@
 package com.airbng.controller;
 
-import com.airbng.common.exception.MemberException;
 import com.airbng.common.response.BaseResponse;
 import com.airbng.common.response.status.BaseResponseStatus;
 import com.airbng.service.ZzimService;
 import com.airbng.util.SessionUtils;
-import com.amazonaws.Response;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import javax.servlet.http.HttpSession;
-import java.util.Objects;
-
-import static com.airbng.common.response.status.BaseResponseStatus.NOT_FOUND_MEMBER;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
 @RestController

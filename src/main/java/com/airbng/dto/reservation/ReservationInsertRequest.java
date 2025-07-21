@@ -2,12 +2,11 @@ package com.airbng.dto.reservation;
 
 import com.airbng.dto.jimType.JimTypeCountResult;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.*;
 import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import javax.validation.Valid;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Getter
@@ -25,7 +24,8 @@ public class ReservationInsertRequest {
     @JsonIgnore
     private Long keeperId;
 
-    @NotNull @Min(1)
+    @NotNull
+    @Min(1)
     private Long lockerId;  // 맡길 짐을 보관하는 락커 ID
 
     @NotNull @DateTimeFormat(pattern = "yyyy-mm-dd HH:mm:ss")

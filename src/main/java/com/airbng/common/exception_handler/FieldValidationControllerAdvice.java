@@ -5,6 +5,7 @@ import com.airbng.common.response.BaseErrorResponse;
 import com.airbng.common.response.BaseResponse;
 import com.airbng.common.response.FieldErrors;
 import com.airbng.common.response.FieldValidationError;
+import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +18,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
-import javax.validation.ConstraintViolationException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -36,7 +36,7 @@ public class FieldValidationControllerAdvice {
      * 바인딩 후 발생하는 유효성 검증 예외
      */
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<BaseResponse> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
+    public ResponseEntity<BaseResponse<FieldErrors>> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
         log.info("[FieldValidationControllerAdvice] MethodArgumentNotValidException");
 
         List<FieldError> fieldErrors = ex.getBindingResult().getFieldErrors();
@@ -52,7 +52,7 @@ public class FieldValidationControllerAdvice {
 
         return ResponseEntity
                 .status(INVALID_FIELD.getHttpStatus())
-                .body(new BaseResponse(INVALID_FIELD, build));
+                .body(new BaseResponse<>(INVALID_FIELD, build));
     }
 
     /**
@@ -60,7 +60,7 @@ public class FieldValidationControllerAdvice {
      * -> 예외 자체는 validation 전에 발생
      */
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
-    public ResponseEntity<BaseErrorResponse> handleTypeMismatchException(MethodArgumentTypeMismatchException ex) {
+    public ResponseEntity<BaseErrorResponse<FieldValidationError>> handleTypeMismatchException(MethodArgumentTypeMismatchException ex) {
         log.info("[FieldValidationControllerAdvice] MethodArgumentTypeMismatchException");
 
         FieldValidationError build = FieldValidationError.builder()
@@ -71,12 +71,12 @@ public class FieldValidationControllerAdvice {
 
         return ResponseEntity
                 .status(INVALID_PARAMETER.getHttpStatus())
-                .body(new BaseErrorResponse(INVALID_PARAMETER, build));
+                .body(new BaseErrorResponse<>(INVALID_PARAMETER, build));
     }
 
     // RequestParameter가 누락된 경우 예외
     @ExceptionHandler(MissingServletRequestParameterException.class)
-    public ResponseEntity<BaseErrorResponse> handleMissingServletRequestParameterException(MissingServletRequestParameterException ex) {
+    public ResponseEntity<BaseErrorResponse<FieldValidationError>> handleMissingServletRequestParameterException(MissingServletRequestParameterException ex) {
         log.info("[FieldValidationControllerAdvice] MissingServletRequestParameterException");
 
         FieldValidationError build = FieldValidationError.builder()
@@ -87,7 +87,7 @@ public class FieldValidationControllerAdvice {
 
         return ResponseEntity
                 .status(INVALID_PARAMETER.getHttpStatus())
-                .body(new BaseErrorResponse(INVALID_PARAMETER, build));
+                .body(new BaseErrorResponse<>(INVALID_PARAMETER, build));
     }
 
 
@@ -95,7 +95,7 @@ public class FieldValidationControllerAdvice {
      * @Validated 에서 발생하는 예외
      */
     @ExceptionHandler(ConstraintViolationException.class)
-    public ResponseEntity<BaseErrorResponse> handleConstraintViolationException(ConstraintViolationException ex, HandlerMethod handlerMethod) {
+    public ResponseEntity<BaseErrorResponse<FieldErrors>> handleConstraintViolationException(ConstraintViolationException ex, HandlerMethod handlerMethod) {
         log.info("[FieldValidationControllerAdvice] ConstraintViolationException");
 
         List<String> parameterNames = getAllParameterNames(handlerMethod);
@@ -118,7 +118,7 @@ public class FieldValidationControllerAdvice {
 
         return ResponseEntity
                 .status(INVALID_PARAMETER.getHttpStatus())
-                .body(new BaseErrorResponse(INVALID_PARAMETER, errors));
+                .body(new BaseErrorResponse<>(INVALID_PARAMETER, errors));
     }
 
     // violation의 PropertyPath에서 Argument 인덱스를 추출하는 메소드

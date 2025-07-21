@@ -1,9 +1,7 @@
 package com.airbng.dto;
 
+import jakarta.validation.constraints.Min;
 import lombok.*;
-
-import javax.validation.constraints.Min;
-
 
 @Getter
 @Setter

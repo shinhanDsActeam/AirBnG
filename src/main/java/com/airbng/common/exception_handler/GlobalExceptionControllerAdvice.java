@@ -15,14 +15,14 @@ import static com.airbng.common.response.status.BaseResponseStatus.INVALID_DATET
 public class GlobalExceptionControllerAdvice {
 
     @ExceptionHandler(DomainException.class)
-    public ResponseEntity<BaseErrorResponse> handleDomainException(DomainException ex) {
+    public ResponseEntity<BaseErrorResponse<Object>> handleDomainException(DomainException ex) {
         return ResponseEntity
                 .status(ex.getBaseResponseStatus().getHttpStatus())
-                .body(new BaseErrorResponse(ex.getBaseResponseStatus(), ex.getMessage()));
+                .body(new BaseErrorResponse<>(ex.getBaseResponseStatus(), ex.getMessage()));
     }
 
     @ExceptionHandler(DateTimeParseException.class)
-    public ResponseEntity<BaseErrorResponse> handleDateTimeParseException(DateTimeParseException ex) {
+    public ResponseEntity<BaseErrorResponse<FieldValidationError>> handleDateTimeParseException(DateTimeParseException ex) {
         FieldValidationError error = FieldValidationError.builder()
                 .fieldName("dateTime")
                 .rejectValue(ex.getParsedString())
@@ -31,6 +31,6 @@ public class GlobalExceptionControllerAdvice {
 
         return ResponseEntity
                 .status(INVALID_DATETIME_FORMAT.getHttpStatus())
-                .body(new BaseErrorResponse(INVALID_DATETIME_FORMAT, error));
+                .body(new BaseErrorResponse<>(INVALID_DATETIME_FORMAT, error));
     }
 }
