@@ -22,6 +22,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 import static com.airbng.common.response.status.BaseResponseStatus.NOT_DROPPER_OF_RESERVATION;
 import static com.airbng.common.response.status.BaseResponseStatus.NOT_FOUND_RESERVATION;
@@ -115,8 +116,8 @@ public class ReservationDetailTest {
                 .build();
 
         reservation.setReservationJimTypes(List.of(
-                new ReservationJimType(1L, 백팩, reservation,1L),
-                new ReservationJimType(2L, 캐리어, reservation,1L)
+                new ReservationJimType(1L, 백팩, reservation,1L,BaseStatus.ACTIVE),
+                new ReservationJimType(2L, 캐리어, reservation,1L,BaseStatus.ACTIVE)
         ));
 
     }
