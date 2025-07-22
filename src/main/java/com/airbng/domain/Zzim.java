@@ -1,5 +1,6 @@
 package com.airbng.domain;
 
+import com.airbng.domain.base.BaseStatus;
 import com.airbng.domain.base.BaseTime;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -25,5 +26,9 @@ public class Zzim extends BaseTime {
     @ManyToOne
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, columnDefinition = "VARCHAR(10)")
+    private BaseStatus status;
 
 }

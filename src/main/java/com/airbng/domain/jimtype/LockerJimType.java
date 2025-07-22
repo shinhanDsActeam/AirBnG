@@ -3,6 +3,7 @@ package com.airbng.domain.jimtype;
 
 import com.airbng.domain.Locker;
 import com.airbng.domain.Reservation;
+import com.airbng.domain.base.BaseStatus;
 import com.airbng.domain.base.BaseTime;
 import jakarta.persistence.*;
 import lombok.*;
@@ -28,4 +29,8 @@ public class LockerJimType extends BaseTime {
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "locker_id", nullable = false)
     private Locker locker;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, columnDefinition = "VARCHAR(10)")
+    private BaseStatus status;
 }

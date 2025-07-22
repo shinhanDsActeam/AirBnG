@@ -1,5 +1,6 @@
 package com.airbng.domain;
 
+import com.airbng.domain.base.BaseStatus;
 import com.airbng.domain.base.BaseTime;
 import com.airbng.domain.base.ReservationState;
 import com.airbng.domain.jimtype.ReservationJimType;
@@ -38,8 +39,13 @@ public class Reservation extends BaseTime {
     @Column(nullable = false)
     private LocalDateTime endTime;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private ReservationState state;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, columnDefinition = "VARCHAR(10)")
+    private BaseStatus status;
 
     @OneToMany(mappedBy = "reservation")
     private List<ReservationJimType> reservationJimTypes;

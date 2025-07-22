@@ -2,6 +2,7 @@ package com.airbng.domain.jimtype;
 
 
 import com.airbng.domain.Reservation;
+import com.airbng.domain.base.BaseStatus;
 import com.airbng.domain.base.BaseTime;
 import jakarta.persistence.*;
 import lombok.*;
@@ -31,5 +32,9 @@ public class ReservationJimType extends BaseTime {
 
     @Column(nullable = false)
     private Long count;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, columnDefinition = "VARCHAR(10)")
+    private BaseStatus status;
 
 }

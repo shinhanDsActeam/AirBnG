@@ -1,6 +1,7 @@
 package com.airbng.domain;
 
 import com.airbng.domain.base.Available;
+import com.airbng.domain.base.BaseStatus;
 import com.airbng.domain.base.BaseTime;
 import com.airbng.domain.image.LockerImage;
 import com.airbng.domain.jimtype.LockerJimType;
@@ -9,6 +10,7 @@ import lombok.*;
 import org.springframework.lang.NonNull;
 
 import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -25,6 +27,7 @@ public class Locker extends BaseTime {
     @Column(nullable = false)
     private String lockerName;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Available isAvailable;
 
@@ -43,13 +46,17 @@ public class Locker extends BaseTime {
     @Column(nullable = false)
     private Double longitude; // 경도
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, columnDefinition = "VARCHAR(10)")
+    private BaseStatus status;
+
     @OneToOne
     @JoinColumn(name = "member_id", nullable = false)
     private Member keeper;
 
     @OneToMany(mappedBy = "locker")
-    private List<LockerImage> lockerImages;
+    private Set<LockerImage> lockerImages;
 
     @OneToMany(mappedBy = "locker")
-    private List<LockerJimType> lockerJimTypes;
+    private Set<LockerJimType> lockerJimTypes;
 }

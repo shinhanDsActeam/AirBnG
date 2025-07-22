@@ -1,6 +1,7 @@
 package com.airbng.domain.jimtype;
 
 
+import com.airbng.domain.base.BaseStatus;
 import com.airbng.domain.base.BaseTime;
 import jakarta.persistence.*;
 import lombok.*;
@@ -26,4 +27,8 @@ public class JimType extends BaseTime {
 
     @Column(nullable = false)
     private Long pricePerHour;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, columnDefinition = "VARCHAR(10)")
+    private BaseStatus status;
 }

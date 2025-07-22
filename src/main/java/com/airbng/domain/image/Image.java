@@ -1,5 +1,6 @@
 package com.airbng.domain.image;
 
+import com.airbng.domain.base.BaseStatus;
 import com.airbng.domain.base.BaseTime;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -26,6 +27,10 @@ public class Image extends BaseTime {
 
     @Column(nullable = false)
     private String uploadName;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, columnDefinition = "VARCHAR(10)")
+    private BaseStatus status;
 
     // com.airbng.domain.image.Image
     public static Image withId(Long imageId) {

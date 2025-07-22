@@ -1,6 +1,7 @@
 package com.airbng.domain.image;
 
 import com.airbng.domain.Locker;
+import com.airbng.domain.base.BaseStatus;
 import com.airbng.domain.base.BaseTime;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -31,4 +32,8 @@ public class LockerImage extends BaseTime {
     @OneToOne
     @JoinColumn(name = "image_id", nullable = false)
     private Image image;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, columnDefinition = "VARCHAR(10)")
+    private BaseStatus status;
 }

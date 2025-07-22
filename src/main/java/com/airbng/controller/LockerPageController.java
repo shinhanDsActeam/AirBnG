@@ -64,7 +64,7 @@ public class LockerPageController {
                 .build();
 
         // 서비스 호출
-        LockerDetailResponse response = lockerService.findUserById(request.getLockerId());
+        LockerDetailResponse response = lockerService.findLockerById(request.getLockerId());
 
         // JSP에 전달
         model.addAttribute("lockerId", lockerId);
