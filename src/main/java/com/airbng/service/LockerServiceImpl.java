@@ -10,6 +10,7 @@ import com.airbng.domain.image.Image;
 import com.airbng.dto.jimType.LockerJimTypeUpdateResult;
 import com.airbng.dto.locker.*;
 import com.airbng.mappers.LockerMapper;
+import com.airbng.repository.LockerRepository;
 import com.airbng.util.S3Utils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,6 +32,7 @@ import static com.airbng.common.response.status.BaseResponseStatus.*;
 public class LockerServiceImpl implements LockerService {
 
     private final LockerMapper lockerMapper;
+    private final LockerRepository lockerRepository;
     private final S3Utils s3Utils;
 
 
@@ -49,12 +51,10 @@ public class LockerServiceImpl implements LockerService {
     }
 
     @Override
-    public LockerDetailResponse findUserById(Long lockerId) {
-        LockerDetailResponse result = lockerMapper.findLockerById(lockerId);
-        // 만약 result가 null이라면, 해당 lockerId에 대한 정보가 없다는 예외를 발생시킴
-        if (result == null) {
-            throw new LockerException(NOT_FOUND_LOCKERDETAILS);
-        }
+    public LockerDetailResponse findLockerById(Long lockerId) {
+        Locker locker = lockerRepository.findLockerById(lockerId)
+                .orElseThrow(() -> new LockerException(NOT_FOUND_LOCKERDETAILS));
+        LockerDetailResponse result = LockerDetailResponse.from(locker);
         result.setImages(lockerMapper.findImageById(lockerId));
         return result;
 
