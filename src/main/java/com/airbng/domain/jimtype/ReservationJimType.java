@@ -3,22 +3,33 @@ package com.airbng.domain.jimtype;
 
 import com.airbng.domain.Reservation;
 import com.airbng.domain.base.BaseTime;
+import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.lang.NonNull;
 
+import static jakarta.persistence.FetchType.LAZY;
+
 @Getter
 @Setter
+@Entity
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class ReservationJimType extends BaseTime {
-//    @NonNull
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long reservationJimTypeId;
-    @NonNull
+
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "jimtype_id",nullable = false)
     private JimType jimType;
-    @NonNull
+
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "reservation_id",nullable = false)
     private Reservation reservation;
-    @NonNull
+
+    @Column(nullable = false)
     private Long count;
 
 }

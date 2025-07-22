@@ -1,6 +1,7 @@
 package com.airbng.domain.image;
 
 import com.airbng.domain.base.BaseTime;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,15 +11,20 @@ import org.springframework.lang.NonNull;
 
 @Getter
 @Setter
+@Entity
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class Image extends BaseTime {
-//    @NonNull
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long imageId;
-    @NonNull
+
+    @Column(nullable = false)
     private String url;
-    @NonNull
+
+    @Column(nullable = false)
     private String uploadName;
 
     // com.airbng.domain.image.Image

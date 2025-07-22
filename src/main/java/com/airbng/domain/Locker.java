@@ -4,6 +4,7 @@ import com.airbng.domain.base.Available;
 import com.airbng.domain.base.BaseTime;
 import com.airbng.domain.image.LockerImage;
 import com.airbng.domain.jimtype.LockerJimType;
+import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.lang.NonNull;
 
@@ -11,28 +12,44 @@ import java.util.List;
 
 @Getter
 @Setter
+@Entity
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class Locker extends BaseTime {
-    //    @NonNull
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long lockerId;
-    @NonNull
+
+    @Column(nullable = false)
     private String lockerName;
-    @NonNull
+
+    @Column(nullable = false)
     private Available isAvailable;
-    @NonNull
+
+    @Column(nullable = false)
     private String address;
-    @NonNull
+
+    @Column(nullable = false)
     private String addressEnglish;
-    @NonNull
+
+    @Column(nullable = false)
     private String addressDetail;
-    @NonNull
+
+    @Column(nullable = false)
     private Double latitude; // 위도
-    @NonNull
+
+    @Column(nullable = false)
     private Double longitude; // 경도
-    @NonNull
+
+    @OneToOne
+    @JoinColumn(name = "member_id", nullable = false)
     private Member keeper;
+
+    @OneToMany(mappedBy = "locker")
     private List<LockerImage> lockerImages;
+
+    @OneToMany(mappedBy = "locker")
     private List<LockerJimType> lockerJimTypes;
 }

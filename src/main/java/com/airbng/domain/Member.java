@@ -4,6 +4,7 @@ import com.airbng.domain.base.BaseStatus;
 
 import com.airbng.domain.base.BaseTime;
 import com.airbng.domain.image.Image;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,27 +12,40 @@ import lombok.Setter;
 import lombok.Builder;
 import org.springframework.lang.NonNull;
 
+import static jakarta.persistence.FetchType.LAZY;
+
 @Getter
 @Setter
+@Entity
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class Member extends BaseTime {
-//    @NonNull
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long memberId;
-    @NonNull
+
+    @Column(nullable = false)
     private String email;
-    @NonNull
+
+    @Column(nullable = false)
     private String name;
-    @NonNull
+
+    @Column(nullable = false)
     private String phone;
-    @NonNull
+
+    @Column(nullable = false)
     private String nickname;
-    @NonNull
+
+    @Column(nullable = false)
     private String password;
-    @NonNull
+
+    @Column(nullable = false, columnDefinition = "VARCHAR(10)")
     private BaseStatus status;
-    @NonNull
+
+    @OneToOne(fetch = LAZY)
+    @JoinColumn(name = "profile_image_id")
     private Image profileImage;
 
     //   테스트용
