@@ -29,6 +29,7 @@ import static com.airbng.common.response.status.BaseResponseStatus.*;
 @Slf4j
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class LockerServiceImpl implements LockerService {
 
     private final LockerMapper lockerMapper;
@@ -54,9 +55,7 @@ public class LockerServiceImpl implements LockerService {
     public LockerDetailResponse findLockerById(Long lockerId) {
         Locker locker = lockerRepository.findLockerById(lockerId)
                 .orElseThrow(() -> new LockerException(NOT_FOUND_LOCKERDETAILS));
-        LockerDetailResponse result = LockerDetailResponse.from(locker);
-        result.setImages(lockerMapper.findImageById(lockerId));
-        return result;
+        return LockerDetailResponse.from(locker);
 
     }
 
