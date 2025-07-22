@@ -41,6 +41,9 @@ public class Member extends BaseTime {
     @Column(nullable = false)
     private String password;
 
+    @OneToOne(mappedBy = "keeper")
+    private Locker locker;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, columnDefinition = "VARCHAR(10)")
     private BaseStatus status;

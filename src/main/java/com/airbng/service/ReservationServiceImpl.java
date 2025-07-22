@@ -17,6 +17,7 @@ import com.airbng.mappers.JimTypeMapper;
 import com.airbng.mappers.LockerMapper;
 import com.airbng.mappers.MemberMapper;
 import com.airbng.mappers.ReservationMapper;
+import com.airbng.repository.ReservationRepository;
 import com.airbng.scheduler.AlertScheduledTask;
 import com.airbng.util.LocalDateTimeUtils;
 import com.github.benmanes.caffeine.cache.Cache;
@@ -36,6 +37,7 @@ import static com.airbng.common.response.status.BaseResponseStatus.*;
 @Slf4j
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class ReservationServiceImpl implements ReservationService{
 
     private final AlertScheduledTask alertScheduledTask;
@@ -43,6 +45,7 @@ public class ReservationServiceImpl implements ReservationService{
     private final JimTypeMapper jimTypeMapper;
     private final MemberMapper memberMapper;
     private final LockerMapper lockerMapper;
+    private final ReservationRepository reservationRepository;
     private static final Long LIMIT= 10L; // 페이지당 최대 예약 개수
 
     //예약 조회 + 페이징 처리
@@ -241,11 +244,8 @@ public class ReservationServiceImpl implements ReservationService{
 
     @Override
     public ReservationDetailResponse findReservationDetail(Long reservationId, Long memberId) {
-        Reservation reservation = reservationMapper.findReservationDetailById(reservationId);
-        if (reservation == null) throw new ReservationException(NOT_FOUND_RESERVATION); // 보관소 있나요
-        //keeper 기준으로도 예약 승인 거절 시에 필요하므로 주석처리
-//        if (!reservation.getDropper().getMemberId().equals(memberId))
-//            throw new ReservationException(NOT_DROPPER_OF_RESERVATION); // 있는 보관소가 내거 맞나요
+        Reservation reservation =  reservationRepository.findReservationById(reservationId)
+                .orElseThrow(()->new ReservationException(NOT_FOUND_RESERVATION));
 
         return ReservationDetailResponse.from(reservation);
     }
