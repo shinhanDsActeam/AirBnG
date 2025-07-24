@@ -8,6 +8,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import static jakarta.persistence.FetchType.LAZY;
+
 @Getter
 @Builder
 @Entity
@@ -19,11 +21,11 @@ public class Zzim extends BaseTime {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long ZzimId;
 
-    @ManyToOne
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "locker_id", nullable = false)
     private Locker locker;
 
-    @ManyToOne
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 

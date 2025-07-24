@@ -12,6 +12,8 @@ import lombok.Setter;
 import lombok.Builder;
 import org.springframework.lang.NonNull;
 
+import java.util.Set;
+
 import static jakarta.persistence.FetchType.LAZY;
 
 @Getter
@@ -51,6 +53,9 @@ public class Member extends BaseTime {
     @OneToOne(fetch = LAZY)
     @JoinColumn(name = "profile_image_id")
     private Image profileImage;
+
+    @OneToMany(mappedBy = "member")
+    private Set<Zzim> zzims;
 
     //   테스트용
     public static Member withId(Long memberId) {

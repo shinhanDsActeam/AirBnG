@@ -59,4 +59,7 @@ public class Locker extends BaseTime {
 
     @OneToMany(mappedBy = "locker")
     private Set<LockerJimType> lockerJimTypes;
+
+    @OneToMany(mappedBy = "locker")
+    private Set<Zzim> zzims;
 }
