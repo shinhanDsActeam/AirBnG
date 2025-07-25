@@ -222,7 +222,7 @@ class LockerServiceTest {
         Mockito.when(lockerMapper.findImageById(lockerId)).thenReturn(mockImages);
 
         // when
-        LockerDetailResponse result = lockerService.findUserById(lockerId);
+        LockerDetailResponse result = lockerService.findLockerById(lockerId);
 
         // then
         assertNotNull(result);
@@ -241,7 +241,7 @@ class LockerServiceTest {
 
         // when
         LockerException exception = assertThrows(LockerException.class, () -> {
-            lockerService.findUserById(lockerId);
+            lockerService.findLockerById(lockerId);
         });
 
         assertSame(NOT_FOUND_LOCKERDETAILS, exception.getBaseResponseStatus());

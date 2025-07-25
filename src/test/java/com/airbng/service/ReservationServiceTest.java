@@ -34,6 +34,7 @@ import org.springframework.mock.web.MockHttpSession;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.airbng.common.response.status.BaseResponseStatus.*;
@@ -75,7 +76,7 @@ class ReservationServiceTest {
                 .nickname("보과니")
                 .password("pw1234")
                 .status(BaseStatus.ACTIVE)
-                .profileImage(new Image(1L, "profile1.jpg", "https://s3.amazonaws.com/airbng/profile.jpg"))
+                .profileImage(new Image(1L, "profile1.jpg", "https://s3.amazonaws.com/airbng/profile.jpg",BaseStatus.ACTIVE))
                 .build();
 
         맡김왕 = Member.builder()
@@ -86,7 +87,7 @@ class ReservationServiceTest {
                 .nickname("맡기미")
                 .password("pw1234")
                 .status(BaseStatus.ACTIVE)
-                .profileImage(new Image(2L, "profile2.jpg", "https://s3.amazonaws.com/airbng/profile.jpg"))
+                .profileImage(new Image(2L, "profile2.jpg", "https://s3.amazonaws.com/airbng/profile.jpg",BaseStatus.ACTIVE))
                 .build();
 
         session.setAttribute("memberId", 맡김왕.getMemberId());
@@ -104,14 +105,16 @@ class ReservationServiceTest {
                 .lockerImages(null)
                 .build();
 
-        서울역_보관소.setLockerImages(List.of(
+        서울역_보관소.setLockerImages(Set.of(
                 new LockerImage(
                         1L, 서울역_보관소,
-                        new Image(3L, "locker2.jpg", "https://s3.amazonaws.com/airbng/locker2.jpg")
+                        new Image(3L, "locker2.jpg", "https://s3.amazonaws.com/airbng/locker2.jpg",BaseStatus.ACTIVE)
+                        ,BaseStatus.ACTIVE
                 ),
                 new LockerImage(
                         2L, 서울역_보관소,
-                        new Image(4L, "locker3.jpg", "https://s3.amazonaws.com/airbng/locker3.jpg")
+                        new Image(4L, "locker3.jpg", "https://s3.amazonaws.com/airbng/locker3.jpg",BaseStatus.ACTIVE)
+                        ,BaseStatus.ACTIVE
                 )
         ));
 
@@ -134,9 +137,9 @@ class ReservationServiceTest {
                 .build();
 
 
-        서울역_보관소.setLockerJimTypes(List.of(
-                new LockerJimType(1L, 백팩, 서울역_보관소),
-                new LockerJimType(2L, 캐리어, 서울역_보관소)
+        서울역_보관소.setLockerJimTypes(Set.of(
+                new LockerJimType(1L, 백팩, 서울역_보관소,BaseStatus.ACTIVE),
+                new LockerJimType(2L, 캐리어, 서울역_보관소,BaseStatus.ACTIVE)
         ));
 
         perfectRequest = ReservationInsertRequest.builder()
