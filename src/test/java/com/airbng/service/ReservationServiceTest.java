@@ -17,7 +17,6 @@ import com.airbng.dto.jimType.JimTypeCountResult;
 import com.airbng.dto.jimType.LockerJimTypeResult;
 import com.airbng.dto.reservation.ReservationFormResponse;
 import com.airbng.dto.reservation.ReservationInsertRequest;
-import com.airbng.dto.reservation.ReservationInsertResponse;
 import com.airbng.mappers.JimTypeMapper;
 import com.airbng.mappers.LockerMapper;
 import com.airbng.mappers.ReservationMapper;
@@ -32,6 +31,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockHttpSession;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
@@ -146,8 +146,8 @@ class ReservationServiceTest {
                 .lockerId(서울역_보관소.getLockerId())
                 .keeperId(보관왕.getMemberId())
                 .dropperId(맡김왕.getMemberId())
-                .startTime("2025-10-02 10:00:00")
-                .endTime("2025-10-02 17:00:00")
+                .startTime(LocalDateTime.parse("2025-10-02 10:00:00"))
+                .endTime(LocalDateTime.parse("2025-10-02 17:00:00"))
                 .jimTypeCounts(List.of(
                         new JimTypeCountResult(백팩.getJimTypeId(), 1L),
                         new JimTypeCountResult(캐리어.getJimTypeId(), 3L)
@@ -170,15 +170,16 @@ class ReservationServiceTest {
             when(lockerMapper.getLockerKeeperId(서울역_보관소.getLockerId())).thenReturn(보관왕.getMemberId());
             when(jimTypeMapper.validateLockerJimTypes(서울역_보관소.getLockerId(), List.of(백팩.getJimTypeId(), 캐리어.getJimTypeId()), 2)).thenReturn(true);
             Long insertedId = 1L; // stubbing
-            when(request.getId()).thenReturn(insertedId); // 예약 삽입 성공 시 id set 됨
+//            when(request.getId()).thenReturn(insertedId); // 예약 삽입 성공 시 id set 됨
             List<JimTypeCountResult> jimTypeCounts = request.getJimTypeCounts(); // stubbing
             when(jimTypeMapper.insertReservationJimTypes(insertedId, jimTypeCounts))
                     .thenReturn(jimTypeCounts.size());
 
-            ReservationInsertResponse response = reservationService.insertReservation(request);
+            BaseResponseStatus status = reservationService.insertReservation(request);
 
             // then
-            assertEquals(insertedId, response.getReservationId());
+//            assertEquals(insertedId, response.getReservationId());
+            assertEquals(status, CREATED_RESERVATION);
         }
 
         @Nested
@@ -224,7 +225,7 @@ class ReservationServiceTest {
             void 시작시간이_종료시간보다_큼() {
                 // given
                 ReservationInsertRequest request = perfectRequest;
-                request.setEndTime("2025-10-02 09:00:00"); // startTime > endTime
+                request.setEndTime(LocalDateTime.parse("2025-10-02 09:00:00")); // startTime > endTime
 
                 // when
                 ReservationException exception = assertThrows(ReservationException.class, () -> {
@@ -323,7 +324,7 @@ class ReservationServiceTest {
                     when(lockerMapper.isExistLocker(서울역_보관소.getLockerId())).thenReturn(true);
                     when(jimTypeMapper.validateLockerJimTypes(서울역_보관소.getLockerId(), List.of(백팩.getJimTypeId(), 캐리어.getJimTypeId()), 2))
                             .thenReturn(true);
-                    when(request.getId()).thenReturn(1L); // 예약 삽입 성공 시 id set 됨
+//                    when(request.getId()).thenReturn(1L); // 예약 삽입 성공 시 id set 됨
 
                     when(jimTypeMapper.insertReservationJimTypes(1L, request.getJimTypeCounts())).thenReturn(0); // 등록 실패시 0 리턴
 

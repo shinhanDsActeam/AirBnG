@@ -1,11 +1,10 @@
 package com.airbng.controller;
 
 import com.airbng.common.response.BaseResponse;
+import com.airbng.domain.base.BaseStatus;
 import com.airbng.domain.base.ReservationState;
 import com.airbng.dto.reservation.*;
 import com.airbng.service.ReservationService;
-import com.airbng.util.SessionUtils;
-import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
@@ -16,7 +15,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import static com.airbng.common.response.status.BaseResponseStatus.CREATED_RESERVATION;
 import static com.airbng.common.response.status.BaseResponseStatus.SUCCESS;
 
 @RestController
@@ -50,11 +48,10 @@ public class ReservationController {
 
     // 예약 등록
     @PostMapping
-    public BaseResponse<ReservationInsertResponse> insertReservation(@RequestBody @Valid ReservationInsertRequest request,
-                                                  HttpSession session) {
-        request.setDropperId(SessionUtils.getLoginMemberId(session));
+    public BaseResponse<BaseStatus> insertReservation(@RequestBody @Valid ReservationInsertRequest request) {
+//        BaseStatus status = reservationService.insertReservation(request);
+
         return new BaseResponse<>(
-                CREATED_RESERVATION,
                 reservationService.insertReservation(request)
         );
     }

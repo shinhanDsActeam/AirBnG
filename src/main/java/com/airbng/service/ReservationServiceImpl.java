@@ -9,7 +9,8 @@ import com.airbng.domain.Member;
 import com.airbng.domain.base.*;
 import com.airbng.domain.Reservation;
 import com.airbng.domain.base.ReservationState;
-import com.airbng.dto.AlarmResponse;
+import com.airbng.domain.jimtype.JimType;
+import com.airbng.domain.jimtype.ReservationJimType;
 import com.airbng.dto.jimType.JimTypeCountResult;
 import com.airbng.dto.jimType.LockerJimTypeResult;
 import com.airbng.dto.reservation.*;
@@ -17,9 +18,8 @@ import com.airbng.mappers.JimTypeMapper;
 import com.airbng.mappers.LockerMapper;
 import com.airbng.mappers.MemberMapper;
 import com.airbng.mappers.ReservationMapper;
-import com.airbng.repository.ReservationRepository;
+import com.airbng.repository.*;
 import com.airbng.scheduler.AlertScheduledTask;
-import com.airbng.util.LocalDateTimeUtils;
 import com.github.benmanes.caffeine.cache.Cache;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -46,6 +46,10 @@ public class ReservationServiceImpl implements ReservationService{
     private final MemberMapper memberMapper;
     private final LockerMapper lockerMapper;
     private final ReservationRepository reservationRepository;
+    private final MemberRepository memberRepository;
+    private final LockerRepository lockerRepository;
+    private final JimTypeRepository jimTypeRepository;
+    private final ReservationJimTypeRepository reservationJimTypeRepository;
     private static final Long LIMIT= 10L; // 페이지당 최대 예약 개수
 
     //예약 조회 + 페이징 처리
@@ -264,27 +268,56 @@ public class ReservationServiceImpl implements ReservationService{
     // 예약 등록
     @Override
     @Transactional // 짐타입 등록 실패한 경우 예약 등록까지 롤백
-    public ReservationInsertResponse insertReservation(final ReservationInsertRequest request) {
+    public BaseResponseStatus insertReservation(final ReservationInsertRequest request) {
         log.info("insertReservation({})", request);
 
         validateStartTimeAndEndTime(request.getStartTime(), request.getEndTime());
-        validateLocker(request.getLockerId());
-        validateIsAvailable(request.getLockerId());
-        validateJimTypes(request.getLockerId(), request.getJimTypeCounts());
+//        validateLocker(request.getLockerId());
+//        validateIsAvailable(request.getLockerId());
+//        validateJimTypes(request.getLockerId(), request.getJimTypeCounts());
 
-        Long keeperId = lockerMapper.getLockerKeeperId(request.getLockerId());
-        request.setKeeperId(keeperId);
+        Long keeperId = lockerRepository.getKeeperIdByLockerId(request.getLockerId())
+                .orElseThrow(()->new LockerException(LOCKER_NOT_AVAILABLE));
+
+        Member dropper = memberRepository.findById(request.getDropperId())
+                .orElseThrow(()->new MemberException(INVALID_MEMBER));
+        Member keeper = memberRepository.findById(keeperId)
+                .orElseThrow(()->new MemberException(INVALID_MEMBER));
+
         validateMember(request.getDropperId(), keeperId);
 
-        reservationMapper.insertReservation(request);
+        Reservation reservation = Reservation.builder()
+                .dropper(dropper)
+                .keeper(keeper)
+                .startTime(request.getStartTime())
+                .endTime(request.getEndTime())
+                .state(ReservationState.PENDING)
+                .status(BaseStatus.ACTIVE)
+                .build();
 
-        int cnt = jimTypeMapper.insertReservationJimTypes(request.getId(), request.getJimTypeCounts());
+        List<ReservationJimType> reservationJimTypes = request.getJimTypeCounts().stream()
+                .map(jtc -> {
+                    JimType jt = jimTypeRepository.findById(jtc.getJimTypeId())
+                            .orElseThrow(() -> new JimTypeException(INVALID_JIMTYPE));
+                    return ReservationJimType.builder()
+                            .reservation(reservation)
+                            .jimType(jt)
+                            .count(jtc.getCount())
+                            .status(BaseStatus.ACTIVE)
+                            .build();
+                })
+                .toList();
 
-        if (cnt != request.getJimTypeCounts().size()) {
+        reservation.setReservationJimTypes(reservationJimTypes);
+
+        reservationRepository.save(reservation);
+        reservationJimTypeRepository.saveAll(reservationJimTypes);
+
+        if (reservationJimTypes.size() != request.getJimTypeCounts().size()) {
             throw new ReservationException(INVALID_JIMTYPE_COUNT);
         }
 
-        return new ReservationInsertResponse(request.getId());
+        return CREATED_RESERVATION;
     }
 
     @Override
@@ -300,9 +333,9 @@ public class ReservationServiceImpl implements ReservationService{
         reservationMapper.deleteReservationById(reservationId);
     }
 
-    private static void validateStartTimeAndEndTime(final String startTime, final String endTime) {
-        if (LocalDateTimeUtils.isStartTimeAfterEndTime(startTime, endTime)
-                || LocalDateTimeUtils.isStartTimeEqualEndTime(startTime, endTime)) {
+    private static void validateStartTimeAndEndTime(final LocalDateTime startTime, final LocalDateTime  endTime) {
+        if (endTime.isBefore(startTime)
+                || startTime.isAfter(endTime)) {
             throw new ReservationException(INVALID_RESERVATION_TIME_ORDER);
         }
     }
