@@ -5,6 +5,7 @@ import com.airbng.common.exception.LockerException;
 import com.airbng.common.exception.MemberException;
 import com.airbng.common.exception.ReservationException;
 import com.airbng.common.response.status.BaseResponseStatus;
+import com.airbng.domain.Locker;
 import com.airbng.domain.Member;
 import com.airbng.domain.base.*;
 import com.airbng.domain.Reservation;
@@ -254,7 +255,7 @@ public class ReservationServiceImpl implements ReservationService{
 
     @Override
     public ReservationFormResponse getReservationForm(Long lockerId) {
-        validateIsAvailable(lockerId);
+//        validateIsAvailable();
         ReservationFormResponse response = lockerMapper.getLockerInfoById(lockerId);
         if (response == null)
             throw new LockerException(NOT_FOUND_LOCKER);
@@ -271,15 +272,17 @@ public class ReservationServiceImpl implements ReservationService{
 
         validateStartTimeAndEndTime(request.getStartTime(), request.getEndTime());
 
-        Long keeperId = lockerRepository.getKeeperIdByLockerId(request.getLockerId())
-                .orElseThrow(()->new LockerException(LOCKER_NOT_AVAILABLE));
+        Locker locker = lockerRepository.findLockerById(request.getLockerId())
+                .orElseThrow(()->new LockerException(NOT_FOUND_LOCKER));
+
+        validateIsAvailable(locker);
 
         Member dropper = memberRepository.findById(request.getDropperId())
                 .orElseThrow(()->new MemberException(INVALID_MEMBER));
-        Member keeper = memberRepository.findById(keeperId)
+        Member keeper = memberRepository.findById(locker.getKeeper().getMemberId())
                 .orElseThrow(()->new MemberException(INVALID_MEMBER));
 
-        validateMember(request.getDropperId(), keeperId);
+        validateMember(dropper.getMemberId(),keeper.getMemberId());
 
         Reservation reservation = request.toEntity(dropper,keeper);
 
@@ -330,12 +333,6 @@ public class ReservationServiceImpl implements ReservationService{
         }
     }
 
-    private void validateLocker(final Long lockerId) {
-        if (!lockerMapper.isExistLocker(lockerId)) {
-            throw new LockerException(NOT_FOUND_LOCKER);
-        }
-    }
-
     private void validateMember(final Long dropperId, final Long keeperId) {
         // dropper와 keeper가 동일한 경우 예외
         if (dropperId.equals(keeperId)) {
@@ -344,9 +341,8 @@ public class ReservationServiceImpl implements ReservationService{
     }
 
 
-    void validateIsAvailable(Long lockerId) {
-        Available isAvailable = lockerMapper.getIsAvailableById(lockerId);
-        if (isAvailable == Available.NO)
+    void validateIsAvailable(Locker locker) {
+        if (!locker.getIsAvailable().isAvailable())
             throw new LockerException(BaseResponseStatus.LOCKER_NOT_AVAILABLE);
     }
 

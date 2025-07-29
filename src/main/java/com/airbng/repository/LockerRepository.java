@@ -19,9 +19,4 @@ public interface LockerRepository extends JpaRepository<Locker, Long> {
             "WHERE l.lockerId = :lockerId")
     Optional<Locker> findLockerById(Long lockerId);
 
-    @Query("SELECT l.keeper.memberId FROM Locker l " +
-            "WHERE l.lockerId = :lockerId" )
-    Optional<Long> getKeeperIdByLockerId(Long lockerId);
-
-
 }
