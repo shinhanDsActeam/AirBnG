@@ -39,7 +39,7 @@ import static com.airbng.common.response.status.BaseResponseStatus.*;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class ReservationServiceImpl implements ReservationService{
+public class ReservationServiceImpl implements ReservationService {
 
     private final AlertScheduledTask alertScheduledTask;
     private final ReservationMapper reservationMapper;
@@ -51,7 +51,8 @@ public class ReservationServiceImpl implements ReservationService{
     private final LockerRepository lockerRepository;
     private final JimTypeRepository jimTypeRepository;
     private final ReservationJimTypeRepository reservationJimTypeRepository;
-    private static final Long LIMIT= 10L; // 페이지당 최대 예약 개수
+    private final LockerJimTypeRepository lockerJimTypeRepository;
+    private static final Long LIMIT = 10L; // 페이지당 최대 예약 개수
 
     //예약 조회 + 페이징 처리
 
@@ -132,7 +133,7 @@ public class ReservationServiceImpl implements ReservationService{
                 .nextCursorId(nextCursorId)
                 .hasNextPage(hasNextPage)
                 .period(period)
-                .totalCount(reservationMapper.findReservationByMemberId(memberId, role,stateList))
+                .totalCount(reservationMapper.findReservationByMemberId(memberId, role, stateList))
                 .build();
         return paging;
     }
@@ -195,7 +196,8 @@ public class ReservationServiceImpl implements ReservationService{
             if (reservation == null) throw new ReservationException(NOT_FOUND_RESERVATION);
 
             //짐을 맡아주는 사람인지 확인
-            if (!reservation.getKeeper().getMemberId().equals(memberId)) throw new ReservationException(NOT_KEEPER_OF_RESERVATION);
+            if (!reservation.getKeeper().getMemberId().equals(memberId))
+                throw new ReservationException(NOT_KEEPER_OF_RESERVATION);
 
             //취소, 완료상태는 상태변경 불가
             reservation.getState().isAvailableUpdate(reservation.getState());
@@ -227,7 +229,8 @@ public class ReservationServiceImpl implements ReservationService{
                         NotificationType.STATE_CHANGE : NotificationType.CANCEL_NOTICE;
                 log.info("알림 발송: memberId={}, reservationId={}, nickname={}, role=DROPPER, type={}, message={}",
                         updatedReservation.getDropper().getMemberId(), reservationId,
-                        updatedReservation.getDropper().getNickname(), notificationType, notificationMessage);;
+                        updatedReservation.getDropper().getNickname(), notificationType, notificationMessage);
+                ;
 
                 alertScheduledTask.sendToOne(
                         updatedReservation.getDropper().getMemberId(),
@@ -247,15 +250,15 @@ public class ReservationServiceImpl implements ReservationService{
 
     @Override
     public ReservationDetailResponse findReservationDetail(Long reservationId, Long memberId) {
-        Reservation reservation =  reservationRepository.findReservationById(reservationId)
-                .orElseThrow(()->new ReservationException(NOT_FOUND_RESERVATION));
+        Reservation reservation = reservationRepository.findReservationById(reservationId)
+                .orElseThrow(() -> new ReservationException(NOT_FOUND_RESERVATION));
 
         return ReservationDetailResponse.from(reservation);
     }
 
     @Override
     public ReservationFormResponse getReservationForm(Long lockerId) {
-//        validateIsAvailable();
+//        validateIsAvailable(lockerId);
         ReservationFormResponse response = lockerMapper.getLockerInfoById(lockerId);
         if (response == null)
             throw new LockerException(NOT_FOUND_LOCKER);
@@ -273,29 +276,31 @@ public class ReservationServiceImpl implements ReservationService{
         validateStartTimeAndEndTime(request.getStartTime(), request.getEndTime());
 
         Locker locker = lockerRepository.findLockerById(request.getLockerId())
-                .orElseThrow(()->new LockerException(NOT_FOUND_LOCKER));
+                .orElseThrow(() -> new LockerException(NOT_FOUND_LOCKER));
 
         validateIsAvailable(locker);
 
         Member dropper = memberRepository.findById(request.getDropperId())
-                .orElseThrow(()->new MemberException(INVALID_MEMBER));
+                .orElseThrow(() -> new MemberException(INVALID_MEMBER));
         Member keeper = memberRepository.findById(locker.getKeeper().getMemberId())
-                .orElseThrow(()->new MemberException(INVALID_MEMBER));
+                .orElseThrow(() -> new MemberException(INVALID_MEMBER));
 
-        validateMember(dropper.getMemberId(),keeper.getMemberId());
+        validateMember(dropper.getMemberId(), keeper.getMemberId());
 
-        Reservation reservation = request.toEntity(dropper,keeper);
+        Reservation reservation = request.toEntity(dropper, keeper);
 
         request.getJimTypeCounts()
                 .forEach(jtc -> {
                     JimType jt = jimTypeRepository.findById(jtc.getJimTypeId())
                             .orElseThrow(() -> new JimTypeException(INVALID_JIMTYPE));
+                    validateJimTypes(locker, jt);
                     ReservationJimType reservationJimType = ReservationJimType.builder()
                             .reservation(reservation)
                             .jimType(jt)
                             .count(jtc.getCount())
                             .status(BaseStatus.ACTIVE)
                             .build();
+
                     reservation.addReservationJimType(reservationJimType);
                 });
 
@@ -306,10 +311,10 @@ public class ReservationServiceImpl implements ReservationService{
 
     @Override
     @Transactional
-    public void deleteReservationById(Long reservationId){
+    public void deleteReservationById(Long reservationId) {
         ReservationState state = reservationMapper.findReservationStateById(reservationId);
 
-        if(state.equals(ReservationState.PENDING)||state.equals(ReservationState.CONFIRMED)){
+        if (state.equals(ReservationState.PENDING) || state.equals(ReservationState.CONFIRMED)) {
             throw new ReservationException(FAILED_DELETE_RESERVATION);
         }
 
@@ -317,18 +322,15 @@ public class ReservationServiceImpl implements ReservationService{
         reservationMapper.deleteReservationById(reservationId);
     }
 
-    private static void validateStartTimeAndEndTime(final LocalDateTime startTime, final LocalDateTime  endTime) {
+    private static void validateStartTimeAndEndTime(final LocalDateTime startTime, final LocalDateTime endTime) {
         if (endTime.isBefore(startTime)
                 || startTime.isAfter(endTime)) {
             throw new ReservationException(INVALID_RESERVATION_TIME_ORDER);
         }
     }
 
-    private void validateJimTypes(final Long lockerId, final List<JimTypeCountResult> jimTypeCounts) {
-        List<Long> jimTypeIds = jimTypeCounts.stream()
-                .map(JimTypeCountResult::getJimTypeId)
-                .collect(Collectors.toList());
-        if (!jimTypeMapper.validateLockerJimTypes(lockerId, jimTypeIds, jimTypeIds.size())) {
+    private void validateJimTypes(final Locker locker, final JimType jimType) {
+        if (!locker.validateLockerJimtype(jimType)) {
             throw new JimTypeException(LOCKER_DOES_NOT_SUPPORT_JIMTYPE);
         }
     }
@@ -342,8 +344,9 @@ public class ReservationServiceImpl implements ReservationService{
 
 
     void validateIsAvailable(Locker locker) {
-        if (!locker.getIsAvailable().isAvailable())
+        if (!locker.getIsAvailable().isAvailable()) {
             throw new LockerException(BaseResponseStatus.LOCKER_NOT_AVAILABLE);
+        }
     }
 
 }

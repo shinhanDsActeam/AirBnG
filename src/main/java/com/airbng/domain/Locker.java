@@ -4,12 +4,15 @@ import com.airbng.domain.base.Available;
 import com.airbng.domain.base.BaseStatus;
 import com.airbng.domain.base.BaseTime;
 import com.airbng.domain.image.LockerImage;
+import com.airbng.domain.jimtype.JimType;
 import com.airbng.domain.jimtype.LockerJimType;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.lang.NonNull;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 @Getter
@@ -58,8 +61,14 @@ public class Locker extends BaseTime {
     private Set<LockerImage> lockerImages;
 
     @OneToMany(mappedBy = "locker")
-    private Set<LockerJimType> lockerJimTypes;
+    private Set<LockerJimType> lockerJimTypes = new HashSet<>();
 
     @OneToMany(mappedBy = "locker")
     private Set<Zzim> zzims;
+
+    public boolean validateLockerJimtype(JimType jimType){
+        return lockerJimTypes.stream()
+                .anyMatch(lockerJimType ->
+                        Objects.equals(lockerJimType.getJimType().getJimTypeId(), jimType.getJimTypeId()));
+    }
 }
