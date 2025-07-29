@@ -294,13 +294,8 @@ public class ReservationServiceImpl implements ReservationService {
                     JimType jt = jimTypeRepository.findById(jtc.getJimTypeId())
                             .orElseThrow(() -> new JimTypeException(INVALID_JIMTYPE));
                     validateJimTypes(locker, jt);
-                    ReservationJimType reservationJimType = ReservationJimType.builder()
-                            .reservation(reservation)
-                            .jimType(jt)
-                            .count(jtc.getCount())
-                            .status(BaseStatus.ACTIVE)
-                            .build();
-
+                    ReservationJimType reservationJimType
+                            = ReservationJimType.of(reservation,jt, jtc.count);
                     reservation.addReservationJimType(reservationJimType);
                 });
 
