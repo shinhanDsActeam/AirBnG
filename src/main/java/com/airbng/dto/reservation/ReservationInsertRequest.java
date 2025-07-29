@@ -1,5 +1,10 @@
 package com.airbng.dto.reservation;
 
+import com.airbng.domain.Member;
+import com.airbng.domain.Reservation;
+import com.airbng.domain.base.BaseStatus;
+import com.airbng.domain.base.ReservationState;
+import com.airbng.domain.jimtype.ReservationJimType;
 import com.airbng.dto.jimType.JimTypeCountResult;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -35,5 +40,23 @@ public class ReservationInsertRequest {
     private List<JimTypeCountResult> jimTypeCounts; // 맡길 짐 타입과 개수
 
 
+    public static ReservationJimTypeResult from(ReservationJimType reservationJimType){
+        return ReservationJimTypeResult.builder()
+                .typeName(reservationJimType.getJimType().getTypeName())
+                .count(reservationJimType.getCount())
+                .pricePerHour(reservationJimType.getJimType().getPricePerHour())
+                .build();
+    }
+
+    public Reservation toEntity(Member dropper,Member keeper){
+        return  Reservation.builder()
+                .dropper(dropper)
+                .keeper(keeper)
+                .startTime(startTime)
+                .endTime(endTime)
+                .state(ReservationState.PENDING)
+                .status(BaseStatus.ACTIVE)
+                .build();
+    }
 
 }

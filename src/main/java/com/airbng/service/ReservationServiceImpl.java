@@ -236,8 +236,6 @@ public class ReservationServiceImpl implements ReservationService{
                         notificationType,
                         notificationMessage
                 );
-
-
             }
 
             return ReservationConfirmResponse.of(reservation, newState);
@@ -272,9 +270,6 @@ public class ReservationServiceImpl implements ReservationService{
         log.info("insertReservation({})", request);
 
         validateStartTimeAndEndTime(request.getStartTime(), request.getEndTime());
-//        validateLocker(request.getLockerId());
-//        validateIsAvailable(request.getLockerId());
-//        validateJimTypes(request.getLockerId(), request.getJimTypeCounts());
 
         Long keeperId = lockerRepository.getKeeperIdByLockerId(request.getLockerId())
                 .orElseThrow(()->new LockerException(LOCKER_NOT_AVAILABLE));
@@ -286,36 +281,22 @@ public class ReservationServiceImpl implements ReservationService{
 
         validateMember(request.getDropperId(), keeperId);
 
-        Reservation reservation = Reservation.builder()
-                .dropper(dropper)
-                .keeper(keeper)
-                .startTime(request.getStartTime())
-                .endTime(request.getEndTime())
-                .state(ReservationState.PENDING)
-                .status(BaseStatus.ACTIVE)
-                .build();
+        Reservation reservation = request.toEntity(dropper,keeper);
 
-        List<ReservationJimType> reservationJimTypes = request.getJimTypeCounts().stream()
-                .map(jtc -> {
+        request.getJimTypeCounts()
+                .forEach(jtc -> {
                     JimType jt = jimTypeRepository.findById(jtc.getJimTypeId())
                             .orElseThrow(() -> new JimTypeException(INVALID_JIMTYPE));
-                    return ReservationJimType.builder()
+                    ReservationJimType reservationJimType = ReservationJimType.builder()
                             .reservation(reservation)
                             .jimType(jt)
                             .count(jtc.getCount())
                             .status(BaseStatus.ACTIVE)
                             .build();
-                })
-                .toList();
-
-        reservation.setReservationJimTypes(reservationJimTypes);
+                    reservation.addReservationJimType(reservationJimType);
+                });
 
         reservationRepository.save(reservation);
-        reservationJimTypeRepository.saveAll(reservationJimTypes);
-
-        if (reservationJimTypes.size() != request.getJimTypeCounts().size()) {
-            throw new ReservationException(INVALID_JIMTYPE_COUNT);
-        }
 
         return CREATED_RESERVATION;
     }

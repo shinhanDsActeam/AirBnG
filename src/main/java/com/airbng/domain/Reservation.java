@@ -9,7 +9,10 @@ import lombok.*;
 import org.springframework.lang.NonNull;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 import static jakarta.persistence.FetchType.LAZY;
 
@@ -47,6 +50,13 @@ public class Reservation extends BaseTime {
     @Column(nullable = false, columnDefinition = "VARCHAR(10)")
     private BaseStatus status;
 
-    @OneToMany(mappedBy = "reservation")
-    private List<ReservationJimType> reservationJimTypes;
+    @Builder.Default
+    @OneToMany(mappedBy = "reservation", cascade = CascadeType.ALL)
+    private Set<ReservationJimType> reservationJimTypes = new LinkedHashSet<>();
+
+    public void addReservationJimType(ReservationJimType reservationJimType){
+        reservationJimTypes.add(reservationJimType);
+        reservationJimType.setReservation(this);
+    }
+
 }
