@@ -36,3 +36,17 @@ build/
 .DS_Store
 
 src/main/webapp/js/config/
+
+### gradle 관련 ###
+.gradle/
+.gradle
+
+# Avoid ignoring Gradle wrapper jar file, Gradle wrappper properties
+!gradle-wrapper.jar
+!gradle-wrapper.properties
+
+# Ignore Gradle GUI config
+gradle-app.setting
+
+# Cache of project
+.gradletasknamecache
