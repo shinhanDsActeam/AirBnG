@@ -7,6 +7,9 @@ server:
       enabled: true
       force: true
 spring:
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: Asia/Seoul
   profiles:
     active: ${PROFILE}
   application:

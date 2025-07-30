@@ -115,7 +115,7 @@ public class ReservationDetailTest {
                 .pricePerHour(6000L)
                 .build();
 
-        reservation.setReservationJimTypes(List.of(
+        reservation.setReservationJimTypes((Set<ReservationJimType>) List.of(
                 new ReservationJimType(1L, 백팩, reservation,1L,BaseStatus.ACTIVE),
                 new ReservationJimType(2L, 캐리어, reservation,1L,BaseStatus.ACTIVE)
         ));

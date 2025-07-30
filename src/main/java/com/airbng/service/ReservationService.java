@@ -1,11 +1,9 @@
 package com.airbng.service;
 
 import com.airbng.common.response.status.BaseResponseStatus;
+import com.airbng.domain.base.BaseStatus;
 import com.airbng.dto.reservation.*;
-import com.airbng.domain.base.ReservationState;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 public interface ReservationService {
@@ -25,7 +23,7 @@ public interface ReservationService {
     ReservationFormResponse getReservationForm(Long lockerId);
 
     // 예약 등록
-    ReservationInsertResponse insertReservation(ReservationInsertRequest request);
+    BaseResponseStatus insertReservation(ReservationInsertRequest request);
 
     //예약 상새
     ReservationDetailResponse findReservationDetail(Long reservationId, Long memberId);

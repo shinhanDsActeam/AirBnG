@@ -47,8 +47,10 @@ public class MyBatisConfig {
         return factory.getObject();
     }
 
-    @Bean
-    public org.springframework.transaction.PlatformTransactionManager transactionManager(DataSource dataSource) {
-        return new org.springframework.jdbc.datasource.DataSourceTransactionManager(dataSource);
-    }
+//    jpa로 변경되며 삭제함
+
+//    @Bean
+//    public org.springframework.transaction.PlatformTransactionManager transactionManager(DataSource dataSource) {
+//        return new org.springframework.jdbc.datasource.DataSourceTransactionManager(dataSource);
+//    }
 }

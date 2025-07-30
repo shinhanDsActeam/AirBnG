@@ -37,4 +37,13 @@ public class ReservationJimType extends BaseTime {
     @Column(nullable = false, columnDefinition = "VARCHAR(10)")
     private BaseStatus status;
 
+    public static ReservationJimType of(Reservation reservation, JimType jimType, long count){
+        return ReservationJimType.builder()
+                .reservation(reservation)
+                .jimType(jimType)
+                .count(count)
+                .status(BaseStatus.ACTIVE)
+                .build();
+    }
+
 }
