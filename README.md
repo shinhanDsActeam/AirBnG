@@ -36,9 +36,9 @@
 
 | 이름 | 주요 기여 | GitHub |
 |------|-----------|--------|
-| **강지윤** | - 보관소 상태 변경 기능<br>- 필터 기능 동시성 제어<br>- 예외 처리 및 에러 메시지 개선<br>- 도메인 구조 정리<br>- Swagger 문서 구성 | <a href="https://github.com/kwiyoon"><img src="http://img.shields.io/badge/kwiyoon-green?style=social&logo=github"/></a> |
+| **강지윤** | - 보관소 상태 변경 기능<br>- 필터 기능 동시성 제어<br>- 예외 처리 및 에러 메시지 개선<br>- 도메인 구조 정리<br>- Swagger 문서 구성<br>- 스프링 부트로 마이그레이션 | <a href="https://github.com/kwiyoon"><img src="http://img.shields.io/badge/kwiyoon-green?style=social&logo=github"/></a> |
 | **김서하** | - 예약 알림 기능<br>- 예약 내역 조회 기능<br>- 이용방법 페이지 구현<br>- 보관소 상세 API | <a href="https://github.com/standha"><img src="http://img.shields.io/badge/standha-green?style=social&logo=github"/></a> |
-| **문현준** | - 예약 도메인 및 클래스 설계<br>- 예약 상세 조회 및 취소 기능<br>- 인기 보관 지역 API | <a href="https://github.com/Mouon"><img src="http://img.shields.io/badge/Mouon-green?style=social&logo=github"/></a> |
+| **문현준** | - 예약 도메인 및 클래스 설계<br>- 예약 상세 조회 및 취소 기능<br>- 인기 보관 지역 API<br>- JPA 로 마이그레이션 | <a href="https://github.com/Mouon"><img src="http://img.shields.io/badge/Mouon-green?style=social&logo=github"/></a> |
 | **박재천** | - 로그인 및 세션 처리<br>- 보관소 등록 (이미지 포함/제외)<br>- 보관소 필터링 기능 | <a href="https://github.com/cheon1217"><img src="http://img.shields.io/badge/cheon1217-green?style=social&logo=github"/></a> |
 | **장해준** | - 회원가입 기능<br>- 이메일/닉네임 중복 검사<br>- 예약 승인/거절 처리 | <a href="https://github.com/HaejunJang"><img src="http://img.shields.io/badge/HaejunJang-green?style=social&logo=github"/></a> |
 | **최윤희** | - 보관소 검색 기능<br>- 지도 연동 기능<br>- 회원 정보 수정 | <a href="https://github.com/CHYHEE"><img src="http://img.shields.io/badge/CHYHEE-green?style=social&logo=github"/></a> |
