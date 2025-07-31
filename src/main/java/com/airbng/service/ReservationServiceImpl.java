@@ -309,7 +309,7 @@ public class ReservationServiceImpl implements ReservationService {
         Reservation reservation = reservationRepository.findByReservationId(reservationId)
                 .orElseThrow(() -> new ReservationException(NOT_FOUND_RESERVATION));
 
-        if (reservation.getState().equals(ReservationState.CANCELLED) || reservation.getState().equals(ReservationState.CONFIRMED)) {
+        if (reservation.getState().equals(ReservationState.PENDING) || reservation.getState().equals(ReservationState.CONFIRMED)) {
             throw new ReservationException(FAILED_DELETE_RESERVATION);
         }
 
