@@ -12,7 +12,6 @@ import com.airbng.domain.Reservation;
 import com.airbng.domain.base.ReservationState;
 import com.airbng.domain.jimtype.JimType;
 import com.airbng.domain.jimtype.ReservationJimType;
-import com.airbng.dto.jimType.JimTypeCountResult;
 import com.airbng.dto.jimType.LockerJimTypeResult;
 import com.airbng.dto.reservation.*;
 import com.airbng.mappers.JimTypeMapper;
@@ -42,16 +41,15 @@ import static com.airbng.common.response.status.BaseResponseStatus.*;
 public class ReservationServiceImpl implements ReservationService {
 
     private final AlertScheduledTask alertScheduledTask;
+
     private final ReservationMapper reservationMapper;
-    private final JimTypeMapper jimTypeMapper;
     private final MemberMapper memberMapper;
     private final LockerMapper lockerMapper;
+
     private final ReservationRepository reservationRepository;
     private final MemberRepository memberRepository;
     private final LockerRepository lockerRepository;
     private final JimTypeRepository jimTypeRepository;
-    private final ReservationJimTypeRepository reservationJimTypeRepository;
-    private final LockerJimTypeRepository lockerJimTypeRepository;
     private static final Long LIMIT = 10L; // 페이지당 최대 예약 개수
 
     //예약 조회 + 페이징 처리
@@ -155,22 +153,23 @@ public class ReservationServiceImpl implements ReservationService {
             if (!memberMapper.findById(memberId)) throw new MemberException(NOT_FOUND_MEMBER);
 
             /** 요청 예약건의 존재여부 파악 */
-            Reservation reservation = reservationMapper.findReservationWithDropperById(reservationId);
-            if (reservation == null) throw new ReservationException(NOT_FOUND_RESERVATION);
+            Reservation reservation = reservationRepository.findReservationById(reservationId)
+                    .orElseThrow(() -> new ReservationException(NOT_FOUND_RESERVATION));
 
             /** 예약건의 주인이 맞는지 파악 */
-            if (!reservation.getDropper().getMemberId().equals(memberId))
-                throw new ReservationException(NOT_DROPPER_OF_RESERVATION);
+            if (!reservation.getDropper().getMemberId().equals(memberId)) throw new ReservationException(NOT_DROPPER_OF_RESERVATION);
 
             ChargeType chargeType = ChargeType.from(reservation.getStartTime());
             ReservationState state = reservation.getState();
             /** 취소, 완료상태는 상태 변경 불가 */
             state.isAvailableUpdate(state);
-            reservationMapper.updateReservationState(reservationId,
-                    ReservationState.CANCELLED);
+            /** 더티 체킹으로 대체 */
+            reservation.updateState(ReservationState.CANCELLED);
 
-            // 예약 거절 알림 발송
-            alertScheduledTask.sendToOne(reservation.getDropper().getMemberId(), reservationId, reservation.getDropper().getNickname(), "DROPPER", NotificationType.CANCEL_NOTICE, "예약이 취소되었습니다.");
+            /** 예약 거절 알림 발송 */
+            alertScheduledTask.sendToOne(reservation.getDropper().getMemberId(),
+                    reservationId, reservation.getDropper().getNickname(),
+                    "DROPPER", NotificationType.CANCEL_NOTICE, "예약이 취소되었습니다.");
 
             return ReservationCancelResponse.of(reservation,
                     chargeType.discountAmount(), ReservationState.CANCELLED);
@@ -192,8 +191,8 @@ public class ReservationServiceImpl implements ReservationService {
             if (!memberMapper.findById(memberId)) throw new MemberException(NOT_FOUND_MEMBER);
 
             //예약건의 존재 여부 파악
-            Reservation reservation = reservationMapper.findReservationWithKeeperById(reservationId);
-            if (reservation == null) throw new ReservationException(NOT_FOUND_RESERVATION);
+            Reservation reservation = reservationRepository.findReservationById(reservationId)
+                    .orElseThrow(() -> new ReservationException(NOT_FOUND_RESERVATION));
 
             //짐을 맡아주는 사람인지 확인
             if (!reservation.getKeeper().getMemberId().equals(memberId))
@@ -219,23 +218,22 @@ public class ReservationServiceImpl implements ReservationService {
             } else {
                 throw new ReservationException(CANNOT_UPDATE_STATE);
             }
-            reservationMapper.updateReservationState(reservationId, newState);
+            /** 더티 체킹으로 대체 */
+            reservation.updateState(newState);
 
-            // 예약을 다시 조회해서 최신 상태의 Dropper 정보 가져오기
-            Reservation updatedReservation = reservationMapper.findReservationWithDropperById(reservationId);
 
-            if (updatedReservation != null && updatedReservation.getDropper() != null) {
+            if (reservation.getDropper() != null) {
                 NotificationType notificationType = newState == ReservationState.CONFIRMED ?
                         NotificationType.STATE_CHANGE : NotificationType.CANCEL_NOTICE;
                 log.info("알림 발송: memberId={}, reservationId={}, nickname={}, role=DROPPER, type={}, message={}",
-                        updatedReservation.getDropper().getMemberId(), reservationId,
-                        updatedReservation.getDropper().getNickname(), notificationType, notificationMessage);
+                        reservation.getDropper().getMemberId(), reservationId,
+                        reservation.getDropper().getNickname(), notificationType, notificationMessage);
                 ;
 
                 alertScheduledTask.sendToOne(
-                        updatedReservation.getDropper().getMemberId(),
+                        reservation.getDropper().getMemberId(),
                         reservationId,
-                        updatedReservation.getDropper().getNickname(),
+                        reservation.getDropper().getNickname(),
                         "DROPPER",
                         notificationType,
                         notificationMessage

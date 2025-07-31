@@ -59,4 +59,8 @@ public class Reservation extends BaseTime {
         reservationJimType.setReservation(this);
     }
 
+    public void updateState(ReservationState state){
+        this.state = state;
+    }
+
 }
