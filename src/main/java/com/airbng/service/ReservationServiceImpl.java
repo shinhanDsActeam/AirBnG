@@ -47,6 +47,7 @@ public class ReservationServiceImpl implements ReservationService {
     private final LockerMapper lockerMapper;
 
     private final ReservationRepository reservationRepository;
+    private final ReservationJimTypeRepository reservationJimTypeRepository;
     private final MemberRepository memberRepository;
     private final LockerRepository lockerRepository;
     private final JimTypeRepository jimTypeRepository;
@@ -150,10 +151,10 @@ public class ReservationServiceImpl implements ReservationService {
             lock.lock();
 
             /** 맴버 존재 유무 파악 */
-            if (!memberMapper.findById(memberId)) throw new MemberException(NOT_FOUND_MEMBER);
+            if (!memberRepository.existsByMemberId(memberId)) throw new MemberException(NOT_FOUND_MEMBER);
 
             /** 요청 예약건의 존재여부 파악 */
-            Reservation reservation = reservationRepository.findReservationById(reservationId)
+            Reservation reservation = reservationRepository.findByReservationId(reservationId)
                     .orElseThrow(() -> new ReservationException(NOT_FOUND_RESERVATION));
 
             /** 예약건의 주인이 맞는지 파악 */
@@ -163,6 +164,8 @@ public class ReservationServiceImpl implements ReservationService {
             ReservationState state = reservation.getState();
             /** 취소, 완료상태는 상태 변경 불가 */
             state.isAvailableUpdate(state);
+            /** 삭제 상태는 상태 변경 불가 */
+            reservation.isAvailableUpdateState();
             /** 더티 체킹으로 대체 */
             reservation.updateState(ReservationState.CANCELLED);
 
@@ -188,10 +191,10 @@ public class ReservationServiceImpl implements ReservationService {
             //락 걸어
             lock.lock();
             //멤버 존재 유무 파악
-            if (!memberMapper.findById(memberId)) throw new MemberException(NOT_FOUND_MEMBER);
+            if (!memberRepository.existsByMemberId(memberId)) throw new MemberException(NOT_FOUND_MEMBER);
 
             //예약건의 존재 여부 파악
-            Reservation reservation = reservationRepository.findReservationById(reservationId)
+            Reservation reservation = reservationRepository.findByReservationId(reservationId)
                     .orElseThrow(() -> new ReservationException(NOT_FOUND_RESERVATION));
 
             //짐을 맡아주는 사람인지 확인
@@ -200,7 +203,8 @@ public class ReservationServiceImpl implements ReservationService {
 
             //취소, 완료상태는 상태변경 불가
             reservation.getState().isAvailableUpdate(reservation.getState());
-
+            /** 삭제 상태는 상태 변경 불가 */
+            reservation.isAvailableUpdateState();
             //상태값 저장
             ReservationState newState;
             String notificationMessage;
@@ -248,7 +252,7 @@ public class ReservationServiceImpl implements ReservationService {
 
     @Override
     public ReservationDetailResponse findReservationDetail(Long reservationId, Long memberId) {
-        Reservation reservation = reservationRepository.findReservationById(reservationId)
+        Reservation reservation = reservationRepository.findByReservationId(reservationId)
                 .orElseThrow(() -> new ReservationException(NOT_FOUND_RESERVATION));
 
         return ReservationDetailResponse.from(reservation);
@@ -305,14 +309,15 @@ public class ReservationServiceImpl implements ReservationService {
     @Override
     @Transactional
     public void deleteReservationById(Long reservationId) {
-        ReservationState state = reservationMapper.findReservationStateById(reservationId);
+        Reservation reservation = reservationRepository.findByReservationId(reservationId)
+                .orElseThrow(() -> new ReservationException(NOT_FOUND_RESERVATION));
 
-        if (state.equals(ReservationState.PENDING) || state.equals(ReservationState.CONFIRMED)) {
+        if (reservation.getState().equals(ReservationState.CANCELLED) || reservation.getState().equals(ReservationState.CONFIRMED)) {
             throw new ReservationException(FAILED_DELETE_RESERVATION);
         }
 
-        reservationMapper.deleteReservationJimtypeByReservationId(reservationId);
-        reservationMapper.deleteReservationById(reservationId);
+        reservation.updateStatus(BaseStatus.DELETE);
+        reservationJimTypeRepository.updateStatusByReservationId(reservationId, BaseStatus.DELETE);
     }
 
     private static void validateStartTimeAndEndTime(final LocalDateTime startTime, final LocalDateTime endTime) {
