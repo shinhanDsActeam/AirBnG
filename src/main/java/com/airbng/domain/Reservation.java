@@ -1,5 +1,6 @@
 package com.airbng.domain;
 
+import com.airbng.common.exception.ReservationException;
 import com.airbng.domain.base.BaseStatus;
 import com.airbng.domain.base.BaseTime;
 import com.airbng.domain.base.ReservationState;
@@ -14,6 +15,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import static com.airbng.common.response.status.BaseResponseStatus.CANNOT_UPDATE_STATE;
 import static jakarta.persistence.FetchType.LAZY;
 
 @Getter
@@ -57,6 +59,19 @@ public class Reservation extends BaseTime {
     public void addReservationJimType(ReservationJimType reservationJimType){
         reservationJimTypes.add(reservationJimType);
         reservationJimType.setReservation(this);
+    }
+
+    public void updateState(ReservationState state){
+        this.state = state;
+    }
+
+    public void updateStatus(BaseStatus status){
+        this.status = status;
+    }
+
+    public void isAvailableUpdateState(){
+        if(status.equals(BaseStatus.DELETE))
+            throw new ReservationException(CANNOT_UPDATE_STATE);
     }
 
 }

@@ -10,6 +10,7 @@ public enum ReservationState {
     COMPLETED; //완료
 
     public void isAvailableUpdate(ReservationState state){
-        if(ReservationState.COMPLETED.equals(state)||ReservationState.CANCELLED.equals(state)) throw new ReservationException(CANNOT_UPDATE_STATE);
+        if(ReservationState.COMPLETED.equals(state)||ReservationState.CANCELLED.equals(state))
+            throw new ReservationException(CANNOT_UPDATE_STATE);
     }
 }
