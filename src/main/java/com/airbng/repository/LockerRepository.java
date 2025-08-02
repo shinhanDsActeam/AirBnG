@@ -1,10 +1,12 @@
 package com.airbng.repository;
 
 import com.airbng.domain.Locker;
+import com.airbng.domain.base.ReservationState;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -19,4 +21,14 @@ public interface LockerRepository extends JpaRepository<Locker, Long> {
             "WHERE l.lockerId = :lockerId")
     Optional<Locker> findLockerById(Long lockerId);
 
+    @Query("SELECT DISTINCT l FROM Locker l " +
+            "JOIN FETCH l.keeper k " +
+            "LEFT JOIN FETCH l.lockerImages li " +
+            "LEFT JOIN FETCH li.image i " +
+            "LEFT JOIN FETCH l.lockerJimTypes lj " +
+            "JOIN FETCH lj.jimType j " +
+            "ORDER BY (SELECT COUNT(r) FROM Reservation r " +
+            "WHERE r.keeper = l.keeper AND r.state = :state) DESC " +
+            "limit 5")
+    List<Locker> findTop5LockersByReservation(ReservationState state);
 }
