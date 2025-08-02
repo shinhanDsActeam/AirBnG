@@ -50,3 +50,7 @@ gradle-app.setting
 
 # Cache of project
 .gradletasknamecache
+
+**/*.lock
+**/*.bin.gradle/**/*.lock
+.gradle/**/*.bin
