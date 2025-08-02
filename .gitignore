@@ -39,10 +39,12 @@ src/main/webapp/js/config/
 
 ### gradle 관련 ###
 .gradle/
+.gradle/*
 .gradle
 .lock
 .lock/
 .bin/
+.bin/*
 .bin
 
 # Avoid ignoring Gradle wrapper jar file, Gradle wrappper properties
