@@ -71,4 +71,8 @@ public class Locker extends BaseTime {
                 .anyMatch(lockerJimType ->
                         Objects.equals(lockerJimType.getJimType().getJimTypeId(), jimType.getJimTypeId()));
     }
+
+    public void updateIsAvailable(){
+        isAvailable = isAvailable.equals(Available.YES)?Available.NO:Available.YES;
+    }
 }
