@@ -172,7 +172,7 @@ public class LockerServiceImpl implements LockerService {
     public void updateLockerActivation(Long lockerId) {
         Locker locker = lockerRepository.findLockerById(lockerId)
                 .orElseThrow(()->new LockerException(NOT_FOUND_LOCKER));
-        locker.updateIsAvailable();
+        locker.updateIsAvailable(); //더티체킹
     }
 
     @Override
