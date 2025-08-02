@@ -24,6 +24,11 @@ public class ReservationFormResponse {
                 .lockerName(locker.getLockerName())
                 .lockerId(locker.getLockerId())
                 .addressKr(locker.getAddress() + " " +locker.getAddressDetail())
+                .lockerJimTypes(
+                        locker.getLockerJimTypes().stream()
+                                .map(LockerJimTypeResult::from)
+                                .collect(Collectors.toList())
+                )
                 .build();
     }
 }

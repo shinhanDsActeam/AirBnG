@@ -257,13 +257,10 @@ public class ReservationServiceImpl implements ReservationService {
 
     @Override
     public ReservationFormResponse getReservationForm(Long lockerId) {
-//        validateIsAvailable(lockerId);
-        ReservationFormResponse response = lockerMapper.getLockerInfoById(lockerId);
-        if (response == null)
-            throw new LockerException(NOT_FOUND_LOCKER);
-        List<LockerJimTypeResult> jimTypes = lockerMapper.getLockerJimTypeById(lockerId);
-        response.setLockerJimTypes(jimTypes);
-        return response;
+        Locker locker = lockerRepository.findLockerById(lockerId)
+                .orElseThrow(()->new LockerException(NOT_FOUND_LOCKER));
+
+        return ReservationFormResponse.from(locker);
     }
 
     // 예약 등록
