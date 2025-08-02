@@ -12,9 +12,7 @@ import com.airbng.domain.Reservation;
 import com.airbng.domain.base.ReservationState;
 import com.airbng.domain.jimtype.JimType;
 import com.airbng.domain.jimtype.ReservationJimType;
-import com.airbng.dto.jimType.LockerJimTypeResult;
 import com.airbng.dto.reservation.*;
-import com.airbng.mappers.LockerMapper;
 import com.airbng.mappers.ReservationMapper;
 import com.airbng.repository.*;
 import com.airbng.scheduler.AlertScheduledTask;
@@ -41,7 +39,6 @@ public class ReservationServiceImpl implements ReservationService {
     private final AlertScheduledTask alertScheduledTask;
 
     private final ReservationMapper reservationMapper;
-    private final LockerMapper lockerMapper;
 
     private final ReservationRepository reservationRepository;
     private final ReservationJimTypeRepository reservationJimTypeRepository;
