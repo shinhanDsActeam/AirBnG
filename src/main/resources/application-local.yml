@@ -18,6 +18,17 @@ spring:
         default_batch_fetch_size: 100
     open-in-view: false
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+
+
 logging.level:
   org.hibernate.SQL: debug
   org.hibernate.type: trace
