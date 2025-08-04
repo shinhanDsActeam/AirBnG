@@ -73,7 +73,7 @@ public class LockerServiceImpl implements LockerService {
     @Override
     public LockerTop5Response findTop5Locker() {
         List<Locker> lockers = lockerRepository
-                .findTop5LockersByReservation(ReservationState.CONFIRMED);
+                .findTop5LockersByReservation(ReservationState.COMPLETED);
 
         return LockerTop5Response.from(lockers);
     }
