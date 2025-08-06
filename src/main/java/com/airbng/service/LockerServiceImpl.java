@@ -72,23 +72,10 @@ public class LockerServiceImpl implements LockerService {
 
     @Override
     public LockerTop5Response findTop5Locker() {
-        List<LockerPreviewResult> popularLockers = lockerMapper.findTop5Lockers(ReservationState.CONFIRMED);
+        List<Locker> lockers = lockerRepository
+                .findTop5LockersByReservation(ReservationState.COMPLETED);
 
-        if (popularLockers.isEmpty()) throw new LockerException(NOT_FOUND_LOCKER);
-
-        List<LockerPreviewResult> deduplicated = popularLockers.stream()
-                .collect(Collectors.collectingAndThen(
-                        Collectors.toMap(
-                                LockerPreviewResult::getLockerId,
-                                Function.identity(),
-                                (existing, replacement) -> existing
-                        ),
-                        map -> map.values().stream().limit(5).collect(Collectors.toList())
-                ));
-
-        return LockerTop5Response.builder()
-                .lockers(deduplicated)
-                .build();
+        return LockerTop5Response.from(lockers);
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -181,11 +168,11 @@ public class LockerServiceImpl implements LockerService {
     }
 
     @Override
+    @Transactional
     public void updateLockerActivation(Long lockerId) {
-        if (!lockerMapper.isExistLocker(lockerId))
-            throw new LockerException(NOT_FOUND_LOCKER);
-
-        lockerMapper.toggleLockerIsAvailable(lockerId);
+        Locker locker = lockerRepository.findLockerById(lockerId)
+                .orElseThrow(()->new LockerException(NOT_FOUND_LOCKER));
+        locker.updateIsAvailable(); //더티체킹
     }
 
     @Override
