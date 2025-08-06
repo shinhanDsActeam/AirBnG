@@ -12,14 +12,18 @@ import com.airbng.dto.locker.*;
 import com.airbng.mappers.LockerMapper;
 import com.airbng.repository.LockerRepository;
 import com.airbng.util.S3Utils;
+import com.github.benmanes.caffeine.cache.Cache;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -36,6 +40,7 @@ public class LockerServiceImpl implements LockerService {
     private final LockerRepository lockerRepository;
     private final S3Utils s3Utils;
 
+    private final Cache<String, LockerTop5Response> localCache;
 
     @Override
     public LockerSearchResponse findAllLockerBySearch(LockerSearchRequest request) {
@@ -72,10 +77,11 @@ public class LockerServiceImpl implements LockerService {
 
     @Override
     public LockerTop5Response findTop5Locker() {
-        List<Locker> lockers = lockerRepository
-                .findTop5LockersByReservation(ReservationState.COMPLETED);
-
-        return LockerTop5Response.from(lockers);
+        return localCache.get("lockerTop5", key -> {
+            List<Locker> lockers = lockerRepository
+                    .findTop5LockersByReservation(ReservationState.COMPLETED);
+            return LockerTop5Response.from(lockers);
+        });
     }
 
     @Transactional(rollbackFor = Exception.class)
