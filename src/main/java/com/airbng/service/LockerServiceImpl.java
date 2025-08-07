@@ -12,6 +12,7 @@ import com.airbng.dto.locker.*;
 import com.airbng.mappers.LockerMapper;
 import com.airbng.repository.LockerRepository;
 import com.airbng.util.S3Utils;
+import com.github.benmanes.caffeine.cache.Cache;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -20,8 +21,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.*;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import static com.airbng.common.response.status.BaseResponseStatus.*;
 
@@ -36,6 +35,7 @@ public class LockerServiceImpl implements LockerService {
     private final LockerRepository lockerRepository;
     private final S3Utils s3Utils;
 
+    private final Cache<String, LockerTop5Response> localCache;
 
     @Override
     public LockerSearchResponse findAllLockerBySearch(LockerSearchRequest request) {
@@ -72,10 +72,11 @@ public class LockerServiceImpl implements LockerService {
 
     @Override
     public LockerTop5Response findTop5Locker() {
-        List<Locker> lockers = lockerRepository
-                .findTop5LockersByReservation(ReservationState.COMPLETED);
-
-        return LockerTop5Response.from(lockers);
+        return localCache.get("lockerTop5", key -> {
+            List<Locker> lockers = lockerRepository
+                    .findTop5LockersByReservation(ReservationState.COMPLETED);
+            return LockerTop5Response.from(lockers);
+        });
     }
 
     @Transactional(rollbackFor = Exception.class)

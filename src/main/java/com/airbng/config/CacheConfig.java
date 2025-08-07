@@ -1,5 +1,6 @@
 package com.airbng.config;
 
+import com.airbng.dto.locker.LockerTop5Response;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.Scheduler;
@@ -20,6 +21,18 @@ public class CacheConfig {
         return Caffeine.newBuilder()
                 .expireAfterAccess(10, TimeUnit.MINUTES)
                 .scheduler(Scheduler.systemScheduler())
+                .build();
+    }
+
+    /**
+     * 1시간마다 만료
+     * 백그라운드 옵션제거
+     * 트래픽 있을 때만 lazy load하고, 없으면 그대로 놔둬도 됨
+     * */
+    @Bean
+    public Cache<String, LockerTop5Response> lockerTop5Cache() {
+        return Caffeine.newBuilder()
+                .expireAfterAccess(1, TimeUnit.HOURS)
                 .build();
     }
 }
