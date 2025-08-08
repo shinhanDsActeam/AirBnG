@@ -44,6 +44,7 @@ public class ReservationServiceImpl implements ReservationService {
     private final LockerMapper lockerMapper;
 
     private final ReservationRepository reservationRepository;
+    private final  ReservationCustomRepository reservationCustomRepository;
     private final ReservationJimTypeRepository reservationJimTypeRepository;
     private final MemberRepository memberRepository;
     private final LockerRepository lockerRepository;
@@ -51,15 +52,12 @@ public class ReservationServiceImpl implements ReservationService {
     private static final Long LIMIT = 10L; // 페이지당 최대 예약 개수
 
     //예약 조회 + 페이징 처리
-
     @Override
     public ReservationPaging findAllReservationById(Long memberId, String role, Object state, Long nextCursorId, String period) {
         log.info("Finding reservation by memberId: {}, role: {}, state: {}, nextCursorId: {}, LIMIT:{},  PERIOD: {}",
                 memberId, role, state, nextCursorId, LIMIT, period);
 
         // 초기 커서 ID 설정
-
-
         List<ReservationState> stateList = null;
 
         if (state == null) {
@@ -72,7 +70,7 @@ public class ReservationServiceImpl implements ReservationService {
         }
 
         if (nextCursorId == null) {
-            Long maxId = reservationMapper.findMaxReservationIdByMemberId(memberId, role, stateList);
+            Long maxId = reservationCustomRepository.findMaxReservationIdByMemberId(memberId, role, stateList);
             nextCursorId = (maxId != null) ? maxId + 1L : -1L;
         }
 
@@ -82,9 +80,9 @@ public class ReservationServiceImpl implements ReservationService {
         boolean isHistoryTab = stateList != null &&
                 (stateList.contains(ReservationState.COMPLETED) || stateList.contains(ReservationState.CANCELLED));
 
-        List<ReservationSearchResponse> reservations = reservationMapper.findAllReservationById(
-                memberId, role, stateList, nextCursorId, LIMIT + 1, period, isHistoryTab //다음 페이지 유무 확인
-        );
+
+        List<ReservationSearchResponse> reservations = reservationCustomRepository.findAllReservationById(
+                memberId, role, stateList, nextCursorId, LIMIT + 1, period, isHistoryTab);
 
 
         // 예외 처리: 예약이 없을 경우
@@ -99,39 +97,32 @@ public class ReservationServiceImpl implements ReservationService {
                         .totalCount(0L)
                         .build();
             }
-            // 일반 예약 조회에서 예약이 없으면 예외 발생
+            //예약 조회에서 예약이 없으면 예외 발생
             throw new ReservationException(NOT_FOUND_RESERVATION);
         }
-//        if (reservations == null || reservations.isEmpty()) {
-//            throw new ReservationException(NOT_FOUND_RESERVATION);
-//        }
 
-        //hasNextPage 값 설정 : 다음 페이지 유무
+        // 페이징 처리
         boolean hasNextPage = reservations.size() > LIMIT;
         List<ReservationSearchResponse> content = reservations.stream()
                 .limit(LIMIT)
-                .collect(Collectors.toList());
+                .peek(dto -> dto.setRole(role.toUpperCase()))
+                .toList();
 
-        // role을 응답 DTO에 표시
-        for (ReservationSearchResponse dto : content) {
-            dto.setRole(role.toUpperCase()); // KEEPER or DROPPER
-        }
+        // 다음 커서 ID
+        nextCursorId = (hasNextPage && !content.isEmpty())
+                ? content.get(content.size() - 1).getReservationId()
+                : -1L;
 
-        // 다음 커서 ID 설정
-        if (hasNextPage && !content.isEmpty()) {
-            nextCursorId = content.get(content.size() - 1).getReservationId();
-        } else {
-            nextCursorId = -1L;  // 더 이상 페이지가 없으면 -1로 설정
-        }
+        // 총 개수
+        Long totalCount = reservationRepository.findReservationByMemberIdAndRole(memberId, role);
 
-        ReservationPaging paging = ReservationPaging.builder()
+        return ReservationPaging.builder()
                 .reservations(content)
                 .nextCursorId(nextCursorId)
                 .hasNextPage(hasNextPage)
                 .period(period)
-                .totalCount(reservationMapper.findReservationByMemberId(memberId, role, stateList))
+                .totalCount(totalCount)
                 .build();
-        return paging;
     }
 
     private final Cache<Long, ReentrantLock> reservationLocks;

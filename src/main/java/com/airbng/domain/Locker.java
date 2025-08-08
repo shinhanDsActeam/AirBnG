@@ -61,6 +61,7 @@ public class Locker extends BaseTime {
     private Set<LockerImage> lockerImages;
 
     @OneToMany(mappedBy = "locker")
+    @Builder.Default
     private Set<LockerJimType> lockerJimTypes = new HashSet<>();
 
     @OneToMany(mappedBy = "locker")
