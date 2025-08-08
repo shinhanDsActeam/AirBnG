@@ -11,25 +11,26 @@ spring:
     date-format: yyyy-MM-dd HH:mm:ss
     time-zone: Asia/Seoul
   profiles:
-    active: ${PROFILE}
+#    active: ${PROFILE}
+    active: pod
   application:
     name: airbng
-  data:
-    redis:
-      host: ${REDIS_HOST}
-      port: ${REDIS_PORT}
+#  data:
+#    redis:
+#      host: ${REDIS_HOST}
+#      port: ${REDIS_PORT}
   servlet:
     multipart:
       max-file-size: 10MB
       max-request-size: 10MB
       enabled: true
-cloud:
-  aws:
-    s3:
-      bucket: ${AWS_S3_BUCKET}
-    region: ${AWS_REGION}
-    accessKey: ${AWS_ACCESSKEY}
-    secretKey: ${AWS_SECRETKEY}
+#cloud:
+#  aws:
+#    s3:
+#      bucket: ${AWS_S3_BUCKET}
+#    region: ${AWS_REGION}
+#    accessKey: ${AWS_ACCESSKEY}
+#    secretKey: ${AWS_SECRETKEY}
 springdoc:
   packages-to-scan: com.airbng
   default-consumes-media-type: application/json;charset=UTF-8

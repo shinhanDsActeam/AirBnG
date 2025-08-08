@@ -1,0 +1,50 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1:3306/airbng?characterEncoding=UTF-8&serverTimezone=UTC
+    username: root
+    password: Root123!
+  data:
+    redis:
+      host: localhost
+      port: 6379
+
+  devtools:
+    restart:
+      enabled: false
+  jpa:
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        format_sql: true
+        default_batch_fetch_size: 100
+    open-in-view: false
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  prometheus:
+    metrics:
+      export:
+        enabled: true
+
+cloud:
+  aws:
+    s3:
+      bucket: garbage-bucket-airbng
+    region: garbage-region
+    accessKey: garbage-access-key
+    secretKey: garbage-secret-key
+
+logging.level:
+  org.hibernate.SQL: debug
+  org.hibernate.type: trace
+  org.springframework.web : DEBUG
+  org.springframework.web.socket : DEBUG
+  org.apache.kafka: DEBUG
+  org.springframework.kafka:
+  org.springframework.cache: DEBUG
+
