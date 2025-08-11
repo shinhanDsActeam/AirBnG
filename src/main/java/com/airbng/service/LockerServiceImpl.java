@@ -15,12 +15,14 @@ import com.airbng.util.S3Utils;
 import com.github.benmanes.caffeine.cache.Cache;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 import static com.airbng.common.response.status.BaseResponseStatus.*;
 
@@ -35,6 +37,7 @@ public class LockerServiceImpl implements LockerService {
     private final LockerRepository lockerRepository;
     private final S3Utils s3Utils;
 
+    private final RedisTemplate<String, LockerTop5Response> top5RedisTemplate;
     private final Cache<String, LockerTop5Response> localCache;
 
     @Override
@@ -72,11 +75,24 @@ public class LockerServiceImpl implements LockerService {
 
     @Override
     public LockerTop5Response findTop5Locker() {
-        return localCache.get("lockerTop5", key -> {
-            List<Locker> lockers = lockerRepository
-                    .findTop5LockersByReservation(ReservationState.COMPLETED);
-            return LockerTop5Response.from(lockers);
-        });
+        LockerTop5Response cached = localCache.getIfPresent("lockerTop5");
+        if(cached!=null) return cached;
+
+        LockerTop5Response redisValue = top5RedisTemplate.opsForValue().get("lockerTop5");
+        if (redisValue != null) {
+            localCache.put("lockerTop5", redisValue);
+            return redisValue;
+        }
+
+        List<Locker> lockers = lockerRepository.findTop5LockersByReservation(ReservationState.COMPLETED);
+        LockerTop5Response response = LockerTop5Response.from(lockers);
+
+        top5RedisTemplate.opsForValue().set("lockerTop5", response,1, TimeUnit.HOURS);
+        localCache.put("lockerTop5", response);
+
+        top5RedisTemplate.convertAndSend("lockerTop5Updated", "invalidate");
+
+        return response;
     }
 
     @Transactional(rollbackFor = Exception.class)

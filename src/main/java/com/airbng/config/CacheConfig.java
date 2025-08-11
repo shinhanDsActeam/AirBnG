@@ -28,11 +28,12 @@ public class CacheConfig {
      * 1시간마다 만료
      * 백그라운드 옵션제거
      * 트래픽 있을 때만 lazy load하고, 없으면 그대로 놔둬도 됨
+     * 쓰기시점
      * */
     @Bean
     public Cache<String, LockerTop5Response> lockerTop5Cache() {
         return Caffeine.newBuilder()
-                .expireAfterAccess(1, TimeUnit.HOURS)
+                .expireAfterWrite(1, TimeUnit.HOURS)
                 .build();
     }
 }
