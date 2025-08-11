@@ -73,7 +73,6 @@ jobs:
             docker run -d --name airbng-container \
               --env-file /home/ubuntu/.env \
               -p 9000:9000 \
-              -p 6379:6379 \
               ${{ secrets.DOCKERHUB_USERNAME }}/airbng
 
       - name: Notify Discord on success
