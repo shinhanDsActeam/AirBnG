@@ -14,10 +14,7 @@ spring:
     active: ${PROFILE}
   application:
     name: airbng
-  data:
-    redis:
-      host: ${REDIS_HOST}
-      port: ${REDIS_PORT}
+
   servlet:
     multipart:
       max-file-size: 10MB

@@ -11,7 +11,7 @@ import java.nio.charset.StandardCharsets;
 
 @Component
 @RequiredArgsConstructor
-public class LockerTop5CacheSubscriber implements MessageListener {
+public class RedisMessageSubscriber  implements MessageListener {
 
     private final Cache<String, LockerTop5Response> localCache;
 
