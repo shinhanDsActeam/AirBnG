@@ -57,7 +57,7 @@ public class ReservationServiceImpl implements ReservationService {
         log.info("Finding reservation by memberId: {}, role: {}, state: {}, nextCursorId: {}, LIMIT:{},  PERIOD: {}",
                 memberId, role, state, nextCursorId, LIMIT, period);
 
-        // 초기 커서 ID 설정
+
         List<ReservationState> stateList = null;
 
         if (state == null) {
@@ -69,20 +69,24 @@ public class ReservationServiceImpl implements ReservationService {
             stateList = Collections.singletonList((ReservationState) state);
         }
 
-        if (nextCursorId == null) {
-            Long maxId = reservationCustomRepository.findMaxReservationIdByMemberId(memberId, role, stateList);
-            nextCursorId = (maxId != null) ? maxId + 1L : -1L;
-        }
-
-        log.info("!!! nextCursorId: {}", nextCursorId);
+//        if (nextCursorId == null) {
+//            Long maxId = reservationCustomRepository.findMaxReservationIdByMemberId(memberId, role, stateList);
+//            nextCursorId = (maxId != null) ? maxId + 1L : -1L;
+//        }
+//
+//        log.info("!!! nextCursorId: {}", nextCursorId);
 
         // isHistoryTab 여부 판단
         boolean isHistoryTab = stateList != null &&
                 (stateList.contains(ReservationState.COMPLETED) || stateList.contains(ReservationState.CANCELLED));
 
 
-        List<ReservationSearchResponse> reservations = reservationCustomRepository.findAllReservationById(
+        List<ReservationSearchResponse> reservations = reservationCustomRepository.findAllReservationByIdWithCursor(
                 memberId, role, stateList, nextCursorId, LIMIT + 1, period, isHistoryTab);
+
+        log.info("야 여기야!!!!{}",
+                reservations);
+
 
 
         // 예외 처리: 예약이 없을 경우
@@ -113,15 +117,12 @@ public class ReservationServiceImpl implements ReservationService {
                 ? content.get(content.size() - 1).getReservationId()
                 : -1L;
 
-        // 총 개수
-        Long totalCount = reservationRepository.findReservationByMemberIdAndRole(memberId, role);
 
         return ReservationPaging.builder()
                 .reservations(content)
                 .nextCursorId(nextCursorId)
                 .hasNextPage(hasNextPage)
                 .period(period)
-                .totalCount(totalCount)
                 .build();
     }
 
