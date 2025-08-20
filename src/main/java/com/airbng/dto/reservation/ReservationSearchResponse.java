@@ -2,8 +2,10 @@ package com.airbng.dto.reservation;
 
 import com.airbng.domain.base.ReservationState;
 import com.airbng.dto.jimType.JimTypeResult;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -21,8 +23,10 @@ public class ReservationSearchResponse {
     private String address;
     private String addressDetail;
     private String lockerImage;
-    private String startTime;
-    private String endTime;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime startTime;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime endTime;
     private String dateOnly;
     private Double durationHours;
 //    private String itemNames; // 예: "가방, 신발"

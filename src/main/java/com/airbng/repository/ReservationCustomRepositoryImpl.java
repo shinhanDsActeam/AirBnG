@@ -18,6 +18,7 @@ import org.springframework.stereotype.Repository;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 import java.util.List;
@@ -62,6 +63,7 @@ public class ReservationCustomRepositoryImpl implements ReservationCustomReposit
 
         // 기간 필터링
         if (isHistoryTab && period != null && !"ALL".equals(period)) {
+
             LocalDateTime after = switch (period) {
                 case "1W" -> LocalDateTime.now().minusWeeks(1);
                 case "3M" -> LocalDateTime.now().minusMonths(3);
@@ -146,8 +148,8 @@ public class ReservationCustomRepositoryImpl implements ReservationCustomReposit
                 .address(locker.getAddress())
                 .addressDetail(locker.getAddressDetail())
                 .lockerImage(getThumbnailUrl(locker))
-                .startTime(res.getStartTime().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME))
-                .endTime(res.getEndTime().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME))
+                .startTime(res.getStartTime())
+                .endTime(res.getEndTime())
                 .dateOnly(res.getStartTime().toLocalDate().toString())
                 .durationHours(Duration.between(res.getStartTime(), res.getEndTime()).toMinutes() / 60.0)
                 .jimTypeResults(res.getReservationJimTypes().stream()
