@@ -324,7 +324,7 @@
             d.member_id AS dropper_id,
             d.email AS dropper_email,
             d.name AS dropper_name,
-            d.phone AS dropper_phone,
+            d.phone AS dropper_phone
             d.nickname AS dropper_nickname,
             d.password AS dropper_password,
             d.status AS dropper_status,
