@@ -5,6 +5,7 @@ import com.airbng.domain.base.NotificationType;
 import com.airbng.dto.AlarmResponse;
 import com.airbng.dto.reservation.ReservationResponse;
 import com.airbng.mappers.ReservationMapper;
+import com.airbng.repository.ReservationRepository;
 import com.airbng.service.ReservationAlarmCacheService;
 import com.airbng.service.ReservationAlarmSseService;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +25,7 @@ import static com.airbng.common.response.status.BaseResponseStatus.*;
 @RequiredArgsConstructor
 public class AlertScheduledTask {
 
-    private final ReservationMapper reservationMapper;
+    private final ReservationRepository reservationRepository;
     private final ReservationAlarmSseService sseService;
     private final ReservationAlarmCacheService reservationAlarmCacheService;
 
@@ -36,7 +37,7 @@ public class AlertScheduledTask {
         LocalDateTime now = LocalDateTime.now();
 
         // 1. EXPIRED 알림 (24시간 지난 CONFIRMED)
-        List<ReservationResponse> expired = reservationMapper.findExpiredConfirmedReservations(now.minusHours(24),now.minusHours(1));
+        List<ReservationResponse> expired = reservationRepository.findExpiredConfirmedReservations(now.minusHours(24),now.minusHours(1));
         //예외처리
         if (expired == null) {
             throw new ReservationException(NOT_FOUND_EXPIRED_RESERVATION);
@@ -46,7 +47,7 @@ public class AlertScheduledTask {
         }
 
         // 2. REMINDER 알림 (30분 전)
-        List<ReservationResponse> remind = reservationMapper.findConfirmedNearEndTime(now);
+        List<ReservationResponse> remind = reservationRepository.findConfirmedNearEndTime(now);
         //예외처리
         if (remind == null) {
             throw new ReservationException(NOT_FOUND_REMINDER_RESERVATION);
