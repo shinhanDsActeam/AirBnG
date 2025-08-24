@@ -66,7 +66,7 @@ public class MemberServiceImpl implements MemberService {
     //이메일 중복 검사
     @Override
     public void emailCheck(String email) {
-        if (memberMapper.findByEmail(email))               throw new MemberException(DUPLICATE_EMAIL);
+        if (memberRepository.existsByEmail(email))         throw new MemberException(DUPLICATE_EMAIL);
         if (!emailValidator.isValidEmail(email))           throw new MemberException(INVALID_EMAIL);
     }
 
