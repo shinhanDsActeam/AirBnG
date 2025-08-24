@@ -7,6 +7,7 @@ import com.airbng.domain.image.Image;
 import com.airbng.dto.*;
 import com.airbng.mappers.ImageMapper;
 import com.airbng.mappers.MemberMapper;
+import com.airbng.repository.MemberRepository;
 import com.airbng.validator.EmailValidator;
 import com.airbng.validator.PasswordValidator;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +31,7 @@ public class MemberServiceImpl implements MemberService {
     private final BCryptPasswordEncoder passwordEncoder;
     private final EmailValidator emailValidator;
     private final PasswordValidator passwordValidator;
+    private final MemberRepository memberRepository;
 
     @Transactional
     @Override
@@ -88,7 +90,7 @@ public class MemberServiceImpl implements MemberService {
     }
 
     public void nicknameCheck(String nickname) {
-        if (memberMapper.findByNickname(nickname))          throw new MemberException(DUPLICATE_NICKNAME);
+        if (memberRepository.existsByNickname(nickname)) throw new MemberException(DUPLICATE_NICKNAME);
     }
 
 
