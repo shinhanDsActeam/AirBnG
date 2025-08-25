@@ -3,6 +3,7 @@ package com.airbng.domain;
 import com.airbng.domain.base.BaseStatus;
 
 import com.airbng.domain.base.BaseTime;
+import com.airbng.domain.base.Role;
 import com.airbng.domain.image.Image;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -45,6 +46,10 @@ public class Member extends BaseTime {
 
     @OneToOne(mappedBy = "keeper")
     private Locker locker;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Role role;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, columnDefinition = "VARCHAR(10)")

@@ -1,8 +1,10 @@
 package com.airbng.service;
 
 import com.airbng.common.exception.ImageException;
+import com.airbng.domain.base.BaseStatus;
 import com.airbng.domain.image.Image;
 import com.airbng.mappers.ImageMapper;
+import com.airbng.repository.ImageRepository;
 import com.airbng.util.S3Utils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,6 +18,7 @@ import static com.airbng.common.response.status.BaseResponseStatus.UPLOAD_FAILED
 @Service
 @RequiredArgsConstructor
 public class ImageServiceImpl implements ImageService {
+    private final ImageRepository imageRepository;
     private final ImageMapper imageMapper;
     private final S3Utils s3Utils;
 
@@ -36,14 +39,15 @@ public class ImageServiceImpl implements ImageService {
         Image image = Image.builder()
                 .url(url)
                 .uploadName(file.getOriginalFilename())
+                .status(BaseStatus.ACTIVE)
                 .build();
 
-        imageMapper.insertImage(image);
+        imageRepository.save(image);
         return image;
     }
 
     public Image getDefaultProfileImage() {
-        return imageMapper.findDefaultImage();
+        return imageRepository.findByImageId(1L);
     }
 
     public Image updateDefaultProfileImage(MultipartFile file, Long memberId) {

@@ -3,6 +3,7 @@ package com.airbng.service;
 import com.airbng.common.exception.MemberException;
 import com.airbng.domain.Member;
 import com.airbng.domain.base.BaseStatus;
+import com.airbng.domain.base.Role;
 import com.airbng.domain.image.Image;
 import com.airbng.dto.*;
 import com.airbng.mappers.ImageMapper;
@@ -26,7 +27,6 @@ import static com.airbng.common.response.status.BaseResponseStatus.*;
 public class MemberServiceImpl implements MemberService {
 
     private final MemberMapper memberMapper;
-    private final ImageMapper imageMapper;
     private final ImageService imageService;
     private final BCryptPasswordEncoder passwordEncoder;
     private final EmailValidator emailValidator;
@@ -37,11 +37,11 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public void signup(MemberSignupRequest dto, MultipartFile file) {
         //예외 처리
-        if (memberMapper.findByEmail(dto.getEmail()))               throw new MemberException(DUPLICATE_EMAIL);
-        if (memberMapper.findByNickname(dto.getNickname()))         throw new MemberException(DUPLICATE_NICKNAME);
-        if (memberMapper.findByPhone(dto.getPhone()))               throw new MemberException(DUPLICATE_PHONE);
-        if (!passwordValidator.isValidPassword(dto.getPassword()))  throw new MemberException(INVALID_PASSWORD);
-        if (!emailValidator.isValidEmail(dto.getEmail()))           throw new MemberException(INVALID_EMAIL);
+        if (memberRepository.existsByEmail(dto.getEmail())) throw new MemberException(DUPLICATE_EMAIL);
+        if (memberRepository.existsByNickname(dto.getNickname())) throw new MemberException(DUPLICATE_NICKNAME);
+        if (memberRepository.existsByPhone(dto.getPhone())) throw new MemberException(DUPLICATE_PHONE);
+        if (!passwordValidator.isValidPassword(dto.getPassword())) throw new MemberException(INVALID_PASSWORD);
+        if (!emailValidator.isValidEmail(dto.getEmail())) throw new MemberException(INVALID_EMAIL);
 
 
         //이미지 처리
@@ -57,10 +57,11 @@ public class MemberServiceImpl implements MemberService {
                 .phone(dto.getPhone())
                 .nickname(dto.getNickname())
                 .password(encodedPw)
+                .role(Role.USER)
                 .status(BaseStatus.ACTIVE)
                 .profileImage(profileImage)
                 .build();
-        memberMapper.insertMember(member);
+        memberRepository.save(member);
     }
 
     //이메일 중복 검사
