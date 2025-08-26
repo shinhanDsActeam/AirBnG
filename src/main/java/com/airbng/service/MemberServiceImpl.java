@@ -77,7 +77,7 @@ public class MemberServiceImpl implements MemberService {
             throw new MemberException(INVALID_EMAIL);
         }
 
-        Member member = memberMapper.findMemberByEmail(email);
+        Member member = memberRepository.findMemberByEmail(email);
         if (member == null) {
             throw new MemberException(INVALID_MEMBER);
         }
