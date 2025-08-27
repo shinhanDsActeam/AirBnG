@@ -14,7 +14,8 @@ spring:
     active: ${PROFILE}
   application:
     name: airbng
-
+  jwt:
+    secret : ${JWT_SECRET}
   servlet:
     multipart:
       max-file-size: 10MB
