@@ -1,8 +1,7 @@
 package com.airbng.service;
 
 import com.airbng.common.response.status.BaseResponseStatus;
-import com.airbng.domain.base.BaseStatus;
-import com.airbng.domain.base.Role;
+import com.airbng.domain.base.MemberRole;
 import com.airbng.dto.reservation.*;
 import org.springframework.stereotype.Service;
 
@@ -10,7 +9,7 @@ import org.springframework.stereotype.Service;
 public interface ReservationService {
 
     // 예약 조회 + 페이징 처리
-    ReservationPaging findAllReservationById(Long memberId, Role role, Object state, Long nextCursorId, String period);
+    ReservationPaging findAllReservationById(Long memberId, MemberRole role, Object state, Long nextCursorId, String period);
 
     /**
      * 예약 취소 기능

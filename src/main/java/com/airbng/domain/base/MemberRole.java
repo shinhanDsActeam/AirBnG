@@ -1,5 +1,5 @@
 package com.airbng.domain.base;
 
-public enum Role {
+public enum MemberRole {
     DROPPER, KEEPER
 }

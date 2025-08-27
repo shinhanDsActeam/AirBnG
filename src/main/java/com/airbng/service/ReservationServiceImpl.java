@@ -26,7 +26,6 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
-import java.util.stream.Collectors;
 
 import static com.airbng.common.response.status.BaseResponseStatus.*;
 
@@ -50,7 +49,7 @@ public class ReservationServiceImpl implements ReservationService {
 
     //예약 조회 + 페이징 처리
     @Override
-    public ReservationPaging findAllReservationById(Long memberId, Role role, Object state, Long nextCursorId, String period) {
+    public ReservationPaging findAllReservationById(Long memberId, MemberRole role, Object state, Long nextCursorId, String period) {
         log.info("Finding reservation by memberId: {}, role: {}, state: {}, nextCursorId: {}, LIMIT:{},  PERIOD: {}",
                 memberId, role, state, nextCursorId, LIMIT, period);
 
