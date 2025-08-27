@@ -4,10 +4,15 @@ spring:
     url: jdbc:mysql://${DB_DEV_HOST}:3306/airbng?useSSL=false&useUnicode=true&serverTimezone=Asia/Seoul
     username: ${DB_DEV_USERNAME}
     password: ${DB_DEV_PASSWD}
-
+  data:
+    redis:
+      host: ${REDIS_HOST}
+      username: ${REDIS_USERNAME}
+      port: ${REDIS_PORT}
+      password: ${REDIS_PASSWORD}
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: create
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQLDialect

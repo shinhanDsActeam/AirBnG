@@ -12,16 +12,17 @@ import com.airbng.dto.locker.*;
 import com.airbng.mappers.LockerMapper;
 import com.airbng.repository.LockerRepository;
 import com.airbng.util.S3Utils;
+import com.github.benmanes.caffeine.cache.Cache;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.*;
-import java.util.function.Function;
-import java.util.stream.Collectors;
+import java.util.concurrent.TimeUnit;
 
 import static com.airbng.common.response.status.BaseResponseStatus.*;
 
@@ -36,6 +37,8 @@ public class LockerServiceImpl implements LockerService {
     private final LockerRepository lockerRepository;
     private final S3Utils s3Utils;
 
+    private final RedisTemplate<String, LockerTop5Response> top5RedisTemplate;
+    private final Cache<String, LockerTop5Response> localCache;
 
     @Override
     public LockerSearchResponse findAllLockerBySearch(LockerSearchRequest request) {
@@ -72,23 +75,24 @@ public class LockerServiceImpl implements LockerService {
 
     @Override
     public LockerTop5Response findTop5Locker() {
-        List<LockerPreviewResult> popularLockers = lockerMapper.findTop5Lockers(ReservationState.CONFIRMED);
+        LockerTop5Response cached = localCache.getIfPresent("lockerTop5");
+        if(cached!=null) return cached;
 
-        if (popularLockers.isEmpty()) throw new LockerException(NOT_FOUND_LOCKER);
+        LockerTop5Response redisValue = top5RedisTemplate.opsForValue().get("lockerTop5");
+        if (redisValue != null) {
+            localCache.put("lockerTop5", redisValue);
+            return redisValue;
+        }
 
-        List<LockerPreviewResult> deduplicated = popularLockers.stream()
-                .collect(Collectors.collectingAndThen(
-                        Collectors.toMap(
-                                LockerPreviewResult::getLockerId,
-                                Function.identity(),
-                                (existing, replacement) -> existing
-                        ),
-                        map -> map.values().stream().limit(5).collect(Collectors.toList())
-                ));
+        List<Locker> lockers = lockerRepository.findTop5LockersByReservation(ReservationState.COMPLETED);
+        LockerTop5Response response = LockerTop5Response.from(lockers);
 
-        return LockerTop5Response.builder()
-                .lockers(deduplicated)
-                .build();
+        top5RedisTemplate.opsForValue().set("lockerTop5", response,1, TimeUnit.HOURS);
+        localCache.put("lockerTop5", response);
+
+        top5RedisTemplate.convertAndSend("lockerTop5Updated", "invalidate");
+
+        return response;
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -181,11 +185,11 @@ public class LockerServiceImpl implements LockerService {
     }
 
     @Override
+    @Transactional
     public void updateLockerActivation(Long lockerId) {
-        if (!lockerMapper.isExistLocker(lockerId))
-            throw new LockerException(NOT_FOUND_LOCKER);
-
-        lockerMapper.toggleLockerIsAvailable(lockerId);
+        Locker locker = lockerRepository.findLockerById(lockerId)
+                .orElseThrow(()->new LockerException(NOT_FOUND_LOCKER));
+        locker.updateIsAvailable(); //더티체킹
     }
 
     @Override

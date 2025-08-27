@@ -8,6 +8,7 @@ import com.airbng.domain.jimtype.JimType;
 import com.airbng.domain.jimtype.LockerJimType;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 import org.springframework.lang.NonNull;
 
 import java.util.HashSet;
@@ -67,9 +68,17 @@ public class Locker extends BaseTime {
     @OneToMany(mappedBy = "locker")
     private Set<Zzim> zzims;
 
+    @Column(nullable = false)
+    @ColumnDefault("0")
+    private Long reservationCount;
+
     public boolean validateLockerJimtype(JimType jimType){
         return lockerJimTypes.stream()
                 .anyMatch(lockerJimType ->
                         Objects.equals(lockerJimType.getJimType().getJimTypeId(), jimType.getJimTypeId()));
+    }
+
+    public void updateIsAvailable(){
+        isAvailable = isAvailable.equals(Available.YES)?Available.NO:Available.YES;
     }
 }

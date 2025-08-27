@@ -4,7 +4,12 @@ spring:
     url: jdbc:mysql://127.0.0.1:3307/airbng?characterEncoding=UTF-8&serverTimezone=UTC
     username: root
     password: ${DB_LOCAL_PASSWD}
-
+  data:
+    redis:
+      host: ${REDIS_HOST}
+      username: ${REDIS_USERNAME}
+      port: ${REDIS_PORT}
+      password: ${REDIS_PASSWORD}
 
   devtools:
     restart:

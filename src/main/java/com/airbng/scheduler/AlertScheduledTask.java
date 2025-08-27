@@ -28,7 +28,7 @@ public class AlertScheduledTask {
     private final ReservationAlarmSseService sseService;
     private final ReservationAlarmCacheService reservationAlarmCacheService;
 
-    @Scheduled(initialDelay = 10000, fixedRate = 1000 * 60) //대기시간 10초, 1분 주기로 스케줄러 실행
+    @Scheduled(initialDelay = 10000, fixedRate = 1000 * 60 * 60 * 24)
     public void processReservationAlarms() {
 
         log.info("스케줄러 실행 - 현재 시간: {}", LocalDateTime.now());
