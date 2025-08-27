@@ -44,8 +44,6 @@ public class Member extends BaseTime {
     @Column(nullable = false)
     private String password;
 
-    @OneToOne(mappedBy = "keeper")
-    private Locker locker;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -76,4 +74,8 @@ public class Member extends BaseTime {
                 .build();
     }
 
+    public Member(Long memberId, String role) {
+        this.memberId = memberId;
+        this.role = Role.valueOf(role);
+    }
 }
