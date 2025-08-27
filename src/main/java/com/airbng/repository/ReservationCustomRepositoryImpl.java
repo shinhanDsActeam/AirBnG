@@ -2,6 +2,7 @@ package com.airbng.repository;
 
 import com.airbng.domain.*;
 import com.airbng.domain.base.ReservationState;
+import com.airbng.domain.base.Role;
 import com.airbng.domain.image.Image;
 import com.airbng.domain.image.LockerImage;
 import com.airbng.domain.image.QImage;
@@ -31,7 +32,7 @@ public class ReservationCustomRepositoryImpl implements ReservationCustomReposit
     private final JPAQueryFactory query;
 
     @Override
-    public List<ReservationSearchResponse> findAllReservationByMemberIdWithCursor(Long memberId, String role, List<ReservationState> states, Long nextCursorId,
+    public List<ReservationSearchResponse> findAllReservationByMemberIdWithCursor(Long memberId, Role role, List<ReservationState> states, Long nextCursorId,
                                                                   Long limit, String period, boolean isHistoryTab) {
         QReservation r = QReservation.reservation;
         QLocker l = QLocker.locker;
@@ -46,9 +47,9 @@ public class ReservationCustomRepositoryImpl implements ReservationCustomReposit
 
         // 역할에 따른 조건 설정
         BooleanExpression roleCondition = null;
-        if ("KEEPER".equals(role)) {
+        if (Role.KEEPER.equals(role)) {
             roleCondition = r.keeper.memberId.eq(memberId);
-        } else if ("DROPPER".equals(role)) {
+        } else if (Role.DROPPER.equals(role)) {
             roleCondition = r.dropper.memberId.eq(memberId);
         }
         // 역할에 따른 조건 where 절에 추가
@@ -93,7 +94,7 @@ public class ReservationCustomRepositoryImpl implements ReservationCustomReposit
         // 쿼리 실행 및 DTO 매핑
         List<Reservation> reservations;
 
-        if ("KEEPER".equals(role)) {
+        if (Role.KEEPER.equals(role)) {
             reservations = query
                     .selectFrom(r)
                     .leftJoin(r.keeper, keeper).fetchJoin()
@@ -106,7 +107,7 @@ public class ReservationCustomRepositoryImpl implements ReservationCustomReposit
                     .orderBy(r.reservationId.desc())
                     .limit(limit)
                     .fetch();
-        } else if ("DROPPER".equals(role)) {
+        } else if (Role.DROPPER.equals(role)) {
             reservations = query
                     .selectFrom(r)
                     .leftJoin(r.dropper, dropper).fetchJoin()
@@ -128,13 +129,13 @@ public class ReservationCustomRepositoryImpl implements ReservationCustomReposit
                 .toList();
     }
 
-    private ReservationSearchResponse toReservationSearchResponse(Reservation res, String role) {
+    private ReservationSearchResponse toReservationSearchResponse(Reservation res, Role role) {
 
-        Locker locker;
+        Locker locker = null;
 
-        if ("KEEPER".equals(role)) {
+        if (Role.KEEPER.equals(role)) {
             locker = res.getKeeper().getLocker();
-        } else {
+        } else if (Role.DROPPER.equals(role))  {
             locker = res.getDropper().getLocker();
         }
 

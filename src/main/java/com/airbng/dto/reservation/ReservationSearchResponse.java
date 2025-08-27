@@ -1,6 +1,7 @@
 package com.airbng.dto.reservation;
 
 import com.airbng.domain.base.ReservationState;
+import com.airbng.domain.base.Role;
 import com.airbng.dto.jimType.JimTypeResult;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
@@ -18,7 +19,7 @@ public class ReservationSearchResponse {
     private Long keeperId;
     private Long dropperId;
     private String state;
-    private String role;   // "KEEPER" or "DROPPER"
+    private Role role;   // "KEEPER" or "DROPPER"
     private String lockerName;
     private String address;
     private String addressDetail;

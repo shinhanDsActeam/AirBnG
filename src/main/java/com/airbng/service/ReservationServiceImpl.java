@@ -50,7 +50,7 @@ public class ReservationServiceImpl implements ReservationService {
 
     //예약 조회 + 페이징 처리
     @Override
-    public ReservationPaging findAllReservationById(Long memberId, String role, Object state, Long nextCursorId, String period) {
+    public ReservationPaging findAllReservationById(Long memberId, Role role, Object state, Long nextCursorId, String period) {
         log.info("Finding reservation by memberId: {}, role: {}, state: {}, nextCursorId: {}, LIMIT:{},  PERIOD: {}",
                 memberId, role, state, nextCursorId, LIMIT, period);
 
@@ -93,7 +93,7 @@ public class ReservationServiceImpl implements ReservationService {
         boolean hasNextPage = reservations.size() > LIMIT;
         List<ReservationSearchResponse> content = reservations.stream()
                 .limit(LIMIT)
-                .peek(dto -> dto.setRole(role.toUpperCase()))
+                .peek(dto -> dto.setRole(role))
                 .toList();
 
         // 다음 커서 ID

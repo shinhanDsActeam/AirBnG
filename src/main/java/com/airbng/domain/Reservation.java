@@ -48,9 +48,6 @@ public class Reservation extends BaseTime {
     @Column(nullable = false)
     private ReservationState state;
 
-    @Column(nullable = false)
-    private LocalDateTime updatedAt;
-
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, columnDefinition = "VARCHAR(10)")
     private BaseStatus status;

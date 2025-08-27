@@ -3,6 +3,7 @@ package com.airbng.controller;
 import com.airbng.common.response.BaseResponse;
 import com.airbng.domain.base.BaseStatus;
 import com.airbng.domain.base.ReservationState;
+import com.airbng.domain.base.Role;
 import com.airbng.dto.reservation.*;
 import com.airbng.service.ReservationService;
 import jakarta.validation.Valid;
@@ -73,7 +74,7 @@ public class ReservationController {
             @RequestParam(value = "period", required = false, defaultValue = "ALL") String period // 예: "1W", "3M", "6M", "1Y", "2Y"
     ) {
 
-        String role = isDropper ? "DROPPER" : "KEEPER";
+        Role role = isDropper ? Role.DROPPER : Role.KEEPER;
         ReservationPaging response = reservationService.findAllReservationById(memberId, role, state, nextCursorId, period );
 
         return new BaseResponse<>(response); // 이렇게 객체로 감싼 채로 반환
