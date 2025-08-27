@@ -76,9 +76,6 @@ public class ReservationServiceImpl implements ReservationService {
         List<ReservationSearchResponse> reservations = reservationCustomRepository.findAllReservationByMemberIdWithCursor(
                 memberId, role, stateList, nextCursorId, LIMIT + 1, period, isHistoryTab);
 
-        log.info("야 여기야!!!!{}",
-                reservations);
-
         // 예외 처리: 예약이 없을 경우
         if (reservations == null || reservations.isEmpty()) {
             // 만약 isHistoryTab이 true라면, 예약이 없더라도 빈 페이지를 반환

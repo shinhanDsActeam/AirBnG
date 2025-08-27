@@ -166,23 +166,4 @@ public class ReservationCustomRepositoryImpl implements ReservationCustomReposit
                 .findFirst()
                 .orElse(null);
     }
-//
-//
-//    @Override
-//    public Long findMaxReservationIdByMemberId(Long memberId, String role, List<ReservationState> state) {
-//        QReservation r = QReservation.reservation;
-//        BooleanBuilder where = new BooleanBuilder();
-//        if ("KEEPER".equals(role)) {
-//            where.and(r.keeper.memberId.eq(memberId));
-//        } else {
-//            where.and(r.dropper.memberId.eq(memberId));
-//        }
-//        if (state != null && !state.isEmpty()) {
-//            where.and(r.state.in(state));
-//        }
-//        return query.select(r.reservationId.max())
-//                .from(r)
-//                .where(where)
-//                .fetchOne();
-//    }
 }
