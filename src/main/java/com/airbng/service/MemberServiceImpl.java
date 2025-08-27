@@ -71,24 +71,6 @@ public class MemberServiceImpl implements MemberService {
         if (!emailValidator.isValidEmail(email))           throw new MemberException(INVALID_EMAIL);
     }
 
-    @Override
-    public MemberLoginResponse login(String email, String password) {
-        if (!emailValidator.isValidEmail(email)) {
-            throw new MemberException(INVALID_EMAIL);
-        }
-
-        Member member = memberRepository.findMemberByEmail(email);
-        if (member == null) {
-            throw new MemberException(INVALID_MEMBER);
-        }
-
-        // 비밀번호 비교
-        if (!passwordEncoder.matches(password, member.getPassword())) {
-            throw new MemberException(INVALID_MEMBER);
-        }
-        log.info("Member id found: {}", member.getMemberId());
-        return MemberLoginResponse.from(member);
-    }
 
     public void nicknameCheck(String nickname) {
         if (memberRepository.existsByNickname(nickname)) throw new MemberException(DUPLICATE_NICKNAME);

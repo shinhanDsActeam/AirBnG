@@ -73,25 +73,4 @@ public class MemberController {
         session.setAttribute("nickname", response.getNickname());
         return new BaseResponse<>(response);
     }
-
-    @PostMapping("/login")
-    public BaseResponse<MemberLoginResponse> login(@RequestBody MemberLoginRequest request,
-                                                   HttpSession session,
-                                                   HttpServletRequest httpRequest) {
-        // Interceptor에서 참조 가능하게 세팅
-        httpRequest.setAttribute("loginEmail", request.getEmail());
-        MemberLoginResponse response = memberService.login(request.getEmail(), request.getPassword());
-        session.setAttribute("memberId", response.getMemberId());
-        session.setAttribute(("nickname"), response.getNickname());
-
-        return new BaseResponse<>(SUCCESS_LOGIN, response);
-    }
-
-    @PostMapping("/logout")
-    public BaseResponse<String> logout(HttpSession session) {
-        // 세션 무효화
-        session.invalidate();
-
-        return new BaseResponse<>(SUCCESS_LOGOUT);
-    }
 }
