@@ -94,13 +94,20 @@ public enum BaseResponseStatus implements ResponseStatus{
     LOGIN_RATE_LIMIT_EXCEEDED(8003, HttpStatus.TOO_MANY_REQUESTS.value(), "로그인 시도 횟수를 초과했습니다. 잠시 후 다시 시도해주세요."),
 
     /**
-     * 9000: sesssion
+     * 9000: sesssion / token
      */
     SESSION_MISMATCH(9001, HttpStatus.UNAUTHORIZED.value(), "세션의 사용자와 요청된 사용자 ID가 일치하지 않습니다."),
     SESSION_NOT_FOUND(9002, HttpStatus.UNAUTHORIZED.value(), "세션이 존재하지 않습니다. 다시 로그인해주세요."),
     SESSION_INVALID_TYPE(9003, HttpStatus.UNAUTHORIZED.value(), "세션 정보가 올바르지 않습니다."),
     SESSION_EXPIRED(9004, HttpStatus.UNAUTHORIZED.value(), "세션이 만료되었습니다."),
 
+    REFRESH_TOKEN_NOT_FOUND(9005, HttpStatus.BAD_REQUEST.value(), "리프레시 토큰이 존재하지 않습니다."),
+    EXPIRED_TOKEN(9006, HttpStatus.UNAUTHORIZED.value(), "리프레시 토큰이 만료되었습니다."),
+    INVALID_TOKEN(9007, HttpStatus.UNAUTHORIZED.value(),"유효하지 않는 토큰입니다."),
+    INVALID_USERNAME_OR_PASSWORD(9008, HttpStatus.BAD_REQUEST.value(), "아이디 혹은 비밀번호가 올바르지 않습니다."),
+    UNAUTHORIZED(9009, HttpStatus.UNAUTHORIZED.value(), "인증되지 않는 사용자입니다."),
+    ACCESS_DENIED(9010, HttpStatus.FORBIDDEN.value(), "접근 권한이 없습니다."),
+    INVALID_SIGNATURE(9011, HttpStatus.UNAUTHORIZED.value(), "잘못된 토큰 서명입니다."),
     ;
 
     private final int code;
