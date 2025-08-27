@@ -8,6 +8,6 @@ import java.util.Map;
 
 public interface ReservationCustomRepository {
 
-    List<ReservationSearchResponse> findAllReservationByIdWithCursor(Long memberId, String role, List<ReservationState> states, Long nextCursorId, Long limit, String period, boolean isHistoryTab);
+    List<ReservationSearchResponse> findAllReservationByMemberIdWithCursor(Long memberId, String role, List<ReservationState> states, Long nextCursorId, Long limit, String period, boolean isHistoryTab);
 //    Long findMaxReservationIdByMemberId(Long memberId, String role, List<ReservationState> state);
 }

@@ -31,7 +31,7 @@ public class ReservationCustomRepositoryImpl implements ReservationCustomReposit
     private final JPAQueryFactory query;
 
     @Override
-    public List<ReservationSearchResponse> findAllReservationByIdWithCursor(Long memberId, String role, List<ReservationState> states, Long nextCursorId,
+    public List<ReservationSearchResponse> findAllReservationByMemberIdWithCursor(Long memberId, String role, List<ReservationState> states, Long nextCursorId,
                                                                   Long limit, String period, boolean isHistoryTab) {
         QReservation r = QReservation.reservation;
         QLocker l = QLocker.locker;
@@ -51,7 +51,7 @@ public class ReservationCustomRepositoryImpl implements ReservationCustomReposit
         } else if ("DROPPER".equals(role)) {
             roleCondition = r.dropper.memberId.eq(memberId);
         }
-        // 역할에 따른 조건을 where 절에 추가
+        // 역할에 따른 조건 where 절에 추가
         if (roleCondition != null) {
             where.and(roleCondition);
         }
@@ -81,7 +81,7 @@ public class ReservationCustomRepositoryImpl implements ReservationCustomReposit
         if (nextCursorId == null) {
             Long maxId = query.select(r.reservationId.max())
                     .from(r)
-                    .where(where)
+                    .where(where) //roleCondition 포함됨
                     .fetchOne();
             nextCursorId = (maxId != null) ? maxId + 1L : -1L;
         }
@@ -147,7 +147,7 @@ public class ReservationCustomRepositoryImpl implements ReservationCustomReposit
                 .lockerName(locker.getLockerName())
                 .address(locker.getAddress())
                 .addressDetail(locker.getAddressDetail())
-                .lockerImage(getThumbnailUrl(locker))
+                .lockerImage(getLockerUrl(locker))
                 .startTime(res.getStartTime())
                 .endTime(res.getEndTime())
                 .dateOnly(res.getStartTime().toLocalDate().toString())
@@ -158,7 +158,7 @@ public class ReservationCustomRepositoryImpl implements ReservationCustomReposit
                 .build();
     }
 
-    private String getThumbnailUrl(Locker locker) {
+    private String getLockerUrl(Locker locker) {
         return locker.getLockerImages().stream()
                 .map(LockerImage::getImage)
                 .sorted(Comparator.comparing(Image::getImageId))

@@ -69,25 +69,15 @@ public class ReservationServiceImpl implements ReservationService {
             stateList = Collections.singletonList((ReservationState) state);
         }
 
-//        if (nextCursorId == null) {
-//            Long maxId = reservationCustomRepository.findMaxReservationIdByMemberId(memberId, role, stateList);
-//            nextCursorId = (maxId != null) ? maxId + 1L : -1L;
-//        }
-//
-//        log.info("!!! nextCursorId: {}", nextCursorId);
-
         // isHistoryTab 여부 판단
         boolean isHistoryTab = stateList != null &&
                 (stateList.contains(ReservationState.COMPLETED) || stateList.contains(ReservationState.CANCELLED));
 
-
-        List<ReservationSearchResponse> reservations = reservationCustomRepository.findAllReservationByIdWithCursor(
+        List<ReservationSearchResponse> reservations = reservationCustomRepository.findAllReservationByMemberIdWithCursor(
                 memberId, role, stateList, nextCursorId, LIMIT + 1, period, isHistoryTab);
 
         log.info("야 여기야!!!!{}",
                 reservations);
-
-
 
         // 예외 처리: 예약이 없을 경우
         if (reservations == null || reservations.isEmpty()) {
@@ -95,7 +85,7 @@ public class ReservationServiceImpl implements ReservationService {
             if (isHistoryTab) {
                 return ReservationPaging.builder()
                         .reservations(Collections.emptyList())
-                        .nextCursorId(-1L) // 더 이상 페이지가 없음을 나타냄
+                        .nextCursorId(-1L) // 더 이상 페이지가 없음
                         .hasNextPage(false)
                         .period(period)
                         .totalCount(0L)
