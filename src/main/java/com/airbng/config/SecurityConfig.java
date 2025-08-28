@@ -5,9 +5,9 @@ import com.airbng.security.filter.CustomAuthenticationFilter;
 import com.airbng.security.filter.CustomLogoutFilter;
 import com.airbng.security.filter.JwtFilter;
 import com.airbng.security.handler.*;
-import com.airbng.security.repository.JwtTokenRepository;
 import com.airbng.security.service.CustomUserDetailsService;
 import com.airbng.security.service.JwtService;
+import com.airbng.security.service.RefreshTokenStore;
 import com.airbng.security.util.JwtUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -41,11 +41,9 @@ public class SecurityConfig {
     private final JwtUtil jwtUtil;
     private final JwtService jwtService;
     private final ObjectMapper objectMapper;
-    private final CustomUserDetailsService userDetailsService;
-    private final MemberRepository memberRepository;
     private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
     private final CustomAccessDeniedHandler accessDeniedHandler;
-    private final JwtTokenRepository jwtTokenRepository;
+    private final RefreshTokenStore refreshTokenStore;
     private final SecurityErrorResponder securityErrorResponder;
 
     @Bean
@@ -119,7 +117,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    public CustomLogoutFilter customLogoutFilter() { return new CustomLogoutFilter(jwtUtil, jwtTokenRepository); }
+    public CustomLogoutFilter customLogoutFilter() { return new CustomLogoutFilter(jwtUtil, refreshTokenStore); }
 
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
@@ -131,6 +129,7 @@ public class SecurityConfig {
         CorsConfiguration corsConfiguration = new CorsConfiguration();
         corsConfiguration.setAllowedOrigins(Arrays.asList(
                 "http://localhost:3000",
+                "http://localhost:3001",
                 "https://www.airbng.store",
                 "https://airbng.store"
         ));

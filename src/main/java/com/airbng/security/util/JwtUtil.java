@@ -1,6 +1,6 @@
 package com.airbng.security.util;
 
-import com.airbng.security.repository.JwtTokenRepository;
+import com.airbng.security.service.RefreshTokenStore;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,7 +24,7 @@ public class JwtUtil {
 
     private SecretKey secretKey;
 
-    public JwtUtil(@Value("${spring.jwt.secret}") String secret, JwtTokenRepository jwtTokenRepository) {
+    public JwtUtil(@Value("${spring.jwt.secret}") String secret, RefreshTokenStore refreshTokenStore) {
         this.secretKey = new SecretKeySpec(
                 secret.getBytes(StandardCharsets.UTF_8),
                 Jwts.SIG.HS512.key().build().getAlgorithm()

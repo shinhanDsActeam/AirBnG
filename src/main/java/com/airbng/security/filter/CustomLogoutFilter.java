@@ -1,6 +1,6 @@
 package com.airbng.security.filter;
 
-import com.airbng.security.repository.JwtTokenRepository;
+import com.airbng.security.service.RefreshTokenStore;
 import com.airbng.security.util.JwtUtil;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
@@ -22,7 +22,7 @@ import static com.airbng.security.util.JwtUtil.*;
 @RequiredArgsConstructor
 public class CustomLogoutFilter extends GenericFilterBean {
     private final JwtUtil jwtUtil;
-    private final JwtTokenRepository jwtTokenRepository;
+    private final RefreshTokenStore refreshTokenStore;
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain)
@@ -80,14 +80,16 @@ public class CustomLogoutFilter extends GenericFilterBean {
             return;
         }
 
-        Boolean isRefreshTokenExist = jwtTokenRepository.existsByRefreshToken(refreshToken);
+//        Boolean isRefreshTokenExist = jwtTokenRepository.existsByRefreshToken(refreshToken);
+        Long userId = jwtUtil.getUserId(refreshToken);
+        Boolean isRefreshTokenExist = refreshTokenStore.matches(userId,refreshToken );
         if (!isRefreshTokenExist) {
             log.error("[로그아웃 요청] 리프레시 토큰이 존재하지 않습니다.");
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return;
         }
 
-        jwtTokenRepository.deleteByRefreshToken(refreshToken);
+        refreshTokenStore.delete(userId);
 
         Cookie cookie = new Cookie(TOKEN_TYPE_REFRESH, null);
         cookie.setMaxAge(0);
