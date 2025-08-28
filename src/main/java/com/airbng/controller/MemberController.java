@@ -15,6 +15,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+
 import static com.airbng.common.response.status.BaseResponseStatus.SUCCESS_LOGIN;
 import static com.airbng.common.response.status.BaseResponseStatus.SUCCESS_LOGOUT;
 
@@ -61,16 +62,13 @@ public class MemberController {
 
     @PostMapping("/my-page/update")
     public BaseResponse<MemberMyPageResponse> updateUserById(
-            @Valid @RequestPart ("memberUpdateRequest") MemberUpdateRequest memberUpdateRequest,
-            @RequestPart(value = "profileImage", required = false) MultipartFile profileImage,
-            HttpSession session) {
+            @Valid @RequestPart("memberUpdateRequest") MemberUpdateRequest memberUpdateRequest,
+            @RequestPart(value = "profileImage", required = false) MultipartFile profileImage) {
 
         log.info("회원 정보 수정 요청: {}", memberUpdateRequest);
         log.info("프로필 이미지: {}", profileImage != null ? profileImage.getOriginalFilename() : "없음");
 
         MemberMyPageResponse response = memberService.updateUserById(memberUpdateRequest, profileImage);
-        session.setAttribute("memberId", response.getMemberId());
-        session.setAttribute("nickname", response.getNickname());
         return new BaseResponse<>(response);
     }
 
