@@ -231,7 +231,7 @@ public class ReservationServiceImpl implements ReservationService {
 
     @Override
     public ReservationDetailResponse findReservationDetail(Long reservationId, Long memberId) {
-        Reservation reservation = reservationRepository.findByReservationId(reservationId)
+        Reservation reservation = reservationRepository.findReservationDetailById(reservationId)
                 .orElseThrow(() -> new ReservationException(NOT_FOUND_RESERVATION));
 
         return ReservationDetailResponse.from(reservation);
