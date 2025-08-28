@@ -95,18 +95,12 @@ public class ReservationServiceImpl implements ReservationService {
                 .peek(dto -> dto.setRole(role))
                 .toList();
 
-        // 다음 커서 ID
-//        nextCursorId = (hasNextPage && !content.isEmpty())
-//                ? content.get(content.size() - 1).getReservationId()
-//                : -1L;
-
         // 다음 커서 ID 설정
         if (hasNextPage && !content.isEmpty()) {
             nextCursorId = content.get(content.size() - 1).getReservationId();
         } else {
             nextCursorId = -1L;  // 더 이상 페이지가 없으면 -1로 설정
         }
-
 
         return ReservationPaging.builder()
                 .reservations(content)
