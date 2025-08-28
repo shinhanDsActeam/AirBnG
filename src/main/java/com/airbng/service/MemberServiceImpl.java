@@ -24,6 +24,7 @@ import static com.airbng.common.response.status.BaseResponseStatus.*;
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@Transactional(readOnly = true)
 public class MemberServiceImpl implements MemberService {
 
     private final MemberMapper memberMapper;
@@ -76,64 +77,38 @@ public class MemberServiceImpl implements MemberService {
         if (memberRepository.existsByNickname(nickname)) throw new MemberException(DUPLICATE_NICKNAME);
     }
 
-
     @Override
     public MemberMyPageResponse findUserById(Long memberId) {
-        //Long memberId = request.getMemberId();
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new MemberException(NOT_FOUND_MEMBER));
 
-        MemberMyPageResponse response = memberMapper.findUserById(memberId);
-
-        if (response == null) throw new MemberException(NOT_FOUND_MEMBER);
-
-        return  MemberMyPageResponse.builder()
-                .memberId(response.getMemberId())
-                .email(response.getEmail())
-                .name(response.getName())
-                .phone(response.getPhone())
-                .nickname(response.getNickname())
-                .profileImageId(response.getProfileImageId())
-                .url(response.getUrl())
-                .build();
-
+        return MemberMyPageResponse.from(member);
     }
 
     @Transactional
     @Override
     public MemberMyPageResponse updateUserById(MemberUpdateRequest request, MultipartFile profileImage) {
-        MemberMyPageResponse existing = memberMapper.findUserById(request.getMemberId());
-
-        // 기존 값이 null이면 현재 값으로 설정
-        if (request.getEmail() == null || request.getEmail().isEmpty()) {
-            request.setEmail(existing.getEmail());
-        }
-        if (request.getName() == null || request.getName().isEmpty()) {
-            request.setName(existing.getName());
-        }
-        if (request.getPhone() == null || request.getPhone().isEmpty()) {
-            request.setPhone(existing.getPhone());
-        }
-        if (request.getNickname() == null || request.getNickname().isEmpty()) {
-            request.setNickname(existing.getNickname());
-        }
+        Member member = memberRepository.findById(request.getMemberId())
+                .orElseThrow(() -> new MemberException(NOT_FOUND_MEMBER));
 
         // 이메일 검증 및 중복 체크 (기존 이메일과 다른 경우에만)
         if (!emailValidator.isValidEmail(request.getEmail())) {
             throw new MemberException(INVALID_EMAIL);
         }
-        if (!request.getEmail().equals(existing.getEmail()) &&
-                memberMapper.findByEmail(request.getEmail())) {
+        if (!member.getMemberId().equals(request.getMemberId()) &&
+                memberRepository.existsByEmail(request.getEmail())) {
             throw new MemberException(DUPLICATE_EMAIL);
         }
 
-        // 닉네임 중복 체크 (기존 닉네임과 다른 경우에만)
-        if (!request.getNickname().equals(existing.getNickname()) &&
-                memberMapper.findByNickname(request.getNickname())) {
+        // 닉네임 중복 체크
+        if(!member.getMemberId().equals(request.getMemberId()) &&
+                memberRepository.existsByNickname(request.getNickname())) {
             throw new MemberException(DUPLICATE_NICKNAME);
         }
 
-        // 전화번호 중복 체크 (기존 전화번호와 다른 경우에만)
-        if (!request.getPhone().equals(existing.getPhone()) &&
-                memberMapper.findByPhone(request.getPhone())) {
+        // 휴대폰 중복 체크
+        if(!member.getMemberId().equals(request.getMemberId()) &&
+                memberRepository.existsByPhone(request.getPhone())) {
             throw new MemberException(DUPLICATE_PHONE);
         }
 
@@ -141,12 +116,8 @@ public class MemberServiceImpl implements MemberService {
                 ? imageService.uploadProfileImage(profileImage)
                 : imageService.updateDefaultProfileImage(profileImage, request.getMemberId());
 
-        request.setProfileImageId(image.getImageId());
+        member.updateInfo(request.getEmail(), request.getName(), request.getPhone(), request.getNickname(), image);
 
-        int updateCount = memberMapper.updateUserById(request);
-
-        if (updateCount == 0) throw new MemberException(NOT_UPDATE_MEMBER);
-
-        return memberMapper.findUserById(request.getMemberId());
+        return MemberMyPageResponse.from(member);
     }
 }
