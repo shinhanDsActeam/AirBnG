@@ -36,14 +36,6 @@ public class WebConfig implements WebMvcConfigurer {
     private final LoginRateLimitInterceptor loginRateLimitInterceptor;
 
     @Override
-    public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**")
-                .allowedOriginPatterns("*")
-                .allowedMethods("GET", "POST")
-                .allowCredentials(true);
-    }
-
-    @Override
     public void addInterceptors(InterceptorRegistry registry) {
         // 기존 메모리 기반 인터셉터
         registry.addInterceptor(rateLimitInterceptor)
