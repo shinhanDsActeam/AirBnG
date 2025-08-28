@@ -59,7 +59,13 @@ public class SecurityConfig {
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests((auth) -> auth
                         .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
-                        .requestMatchers("/login", "/members/signup", "/reissue").permitAll()
+                        //스웨거 추가해야함
+                        .requestMatchers(
+                                "/login", "/members/signup", "/reissue",
+                                "/members/check-email","/members/check-nickname",
+                                "/swagger-ui/**","/swagger-resources/**", "/v3/api-docs/**",
+                                "swagger-ui.html","/webjars/**")
+                        .permitAll()
                         .anyRequest().authenticated()
                 )
 
