@@ -69,6 +69,11 @@ public class LockerController {
         return new BaseResponse<>(lockerService.findUpdateUserById(lockerId));
     }
 
+    @GetMapping("/my/{memberId}")
+    public BaseResponse<LockerDetailResponse> findLockerByMemberId(@PathVariable Long memberId){
+        return new BaseResponse<>(lockerService.findMyLocker(memberId));
+    }
+
 
     @PostMapping(value = "/update/{lockerId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public BaseResponse<String> updateLocker(

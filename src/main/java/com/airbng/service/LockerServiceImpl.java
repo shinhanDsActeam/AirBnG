@@ -64,13 +64,8 @@ public class LockerServiceImpl implements LockerService {
 
     @Override
     public LockerDetailResponse findMyLocker(Long memberId) {
-        LockerDetailResponse result = lockerMapper.findLockerDetailByMemberId(memberId);
-        if (result == null) {
-            throw new LockerException(NOT_FOUND_LOCKERDETAILS);
-        }
-
-        result.setImages(lockerMapper.findImageById(result.getLockerId()));
-        return result;
+        return LockerDetailResponse.from(lockerRepository.findLockerByMemberId(memberId)
+                .orElseThrow(() -> new LockerException(NOT_FOUND_LOCKERDETAILS)));
     }
 
     @Override
@@ -304,5 +299,7 @@ public class LockerServiceImpl implements LockerService {
         // 3. 보관소 자체 삭제
         lockerMapper.deleteLocker(lockerId);
     }
+
+
 
 }
