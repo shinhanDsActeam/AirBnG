@@ -85,7 +85,7 @@ public class ReservationServiceImpl implements ReservationService {
                         .build();
             }
             //예약 조회에서 예약이 없으면 예외 발생
-            throw new ReservationException(NOT_FOUND_RESERVATION);
+//            throw new ReservationException(NOT_FOUND_RESERVATION);
         }
 
         // 페이징 처리
@@ -96,9 +96,16 @@ public class ReservationServiceImpl implements ReservationService {
                 .toList();
 
         // 다음 커서 ID
-        nextCursorId = (hasNextPage && !content.isEmpty())
-                ? content.get(content.size() - 1).getReservationId()
-                : -1L;
+//        nextCursorId = (hasNextPage && !content.isEmpty())
+//                ? content.get(content.size() - 1).getReservationId()
+//                : -1L;
+
+        // 다음 커서 ID 설정
+        if (hasNextPage && !content.isEmpty()) {
+            nextCursorId = content.get(content.size() - 1).getReservationId();
+        } else {
+            nextCursorId = -1L;  // 더 이상 페이지가 없으면 -1로 설정
+        }
 
 
         return ReservationPaging.builder()

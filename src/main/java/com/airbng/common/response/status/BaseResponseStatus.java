@@ -17,7 +17,7 @@ public enum BaseResponseStatus implements ResponseStatus{
     TYPE_MISMATCH_PARAMETER(1005, HttpStatus.BAD_REQUEST.value(), "요청한 파라미터 값이 타입에 맞지 않습니다."),
     INVALID_DATETIME_FORMAT(1006, HttpStatus.BAD_REQUEST.value(), "날짜 형식이 올바르지 않습니다. (yyyy-MM-dd HH:mm:ss)"),
     INVALID_PARAMETER(1007, HttpStatus.BAD_REQUEST.value(), "요청한 파라미터 값의 유효성 검사 조건을 만족하지 않습니다."),
-
+    NO_CONTNET(1008,HttpStatus.NO_CONTENT.value(), "예약 내역이 없습니다."),
 
     /**
      * 2000 맴버 관련 코드

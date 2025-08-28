@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static com.airbng.common.response.status.BaseResponseStatus.NO_CONTNET;
 import static com.airbng.common.response.status.BaseResponseStatus.SUCCESS;
 
 @RestController
@@ -77,7 +78,10 @@ public class ReservationController {
         MemberRole role = isDropper ? MemberRole.DROPPER : MemberRole.KEEPER;
         ReservationPaging response = reservationService.findAllReservationById(memberId, role, state, nextCursorId, period );
 
-        return new BaseResponse<>(response); // 이렇게 객체로 감싼 채로 반환
+        if(response == null || response.getReservations().isEmpty()){
+            return new BaseResponse<>(NO_CONTNET); // 정상응답하지만 값이 없을때
+        }
+        return new BaseResponse<>(response); // 값이 있을 때
     }
 
     @PostMapping("/delete")
