@@ -10,6 +10,7 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,6 +28,7 @@ public class ReservationController {
 
     //예약 승인 취소
     @PatchMapping("/{reservation-id}/members/{member-id}/confirm")
+    @PreAuthorize("hasAnyAuthority('USER')")
     public BaseResponse<ReservationConfirmResponse> confirmResponse(
             @PathVariable("reservation-id") @NotNull @Min(1) Long reservationId,
             @PathVariable("member-id") Long memberId,
@@ -35,6 +37,7 @@ public class ReservationController {
     }
 
     @PostMapping("/{reservation-id}/members/{member-id}/cancel")
+    @PreAuthorize("hasAnyAuthority('USER')")
     public BaseResponse<ReservationCancelResponse> updateResponse(@PathVariable("reservation-id") Long reservationId, @PathVariable("member-id") Long memberId) {
         log.info("ReservationController.updateResponse");
         return new BaseResponse<>(reservationService.updateReservationState(reservationId, memberId));
@@ -42,12 +45,14 @@ public class ReservationController {
 
     // 예약 폼 받아오기
     @GetMapping("/form")
+    @PreAuthorize("hasAnyAuthority('USER')")
     public BaseResponse<ReservationFormResponse> getReservationForm(@RequestParam("lockerId") @Min(1) @NotNull Long lockerId) {
         return new BaseResponse<>(reservationService.getReservationForm(lockerId));
     }
 
     // 예약 등록
     @PostMapping
+    @PreAuthorize("hasAnyAuthority('USER')")
     public BaseResponse<BaseStatus> insertReservation(@RequestBody @Valid ReservationInsertRequest request) {
 //        BaseStatus status = reservationService.insertReservation(request);
 
@@ -57,6 +62,7 @@ public class ReservationController {
     }
 
     @GetMapping("{reservation-id}/members/{member-id}/detail")
+    @PreAuthorize("hasAnyAuthority('USER')")
     public BaseResponse<ReservationDetailResponse> getReservationDetail(
             @PathVariable("reservation-id")  @NotNull @Min(1) Long reservationId,
             @PathVariable("member-id") @NotNull @Min(1) Long memberId){
@@ -65,6 +71,7 @@ public class ReservationController {
 
     // 예약 조회 + 페이징 처리
     @GetMapping
+    @PreAuthorize("hasAnyAuthority('USER')")
     public BaseResponse<ReservationPaging> findAllReservationById(
             @RequestParam(value = "isDropper") @NotNull Boolean isDropper,
             @RequestParam(value = "memberId") @Min(1) @NotNull Long memberId,
@@ -80,6 +87,7 @@ public class ReservationController {
     }
 
     @PostMapping("/delete")
+    @PreAuthorize("hasAnyAuthority('USER')")
     public BaseResponse<Void> deleteReservation(Long reservationId){
         reservationService.deleteReservationById(reservationId);
         return new BaseResponse<>(SUCCESS);

@@ -11,6 +11,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -48,6 +49,7 @@ public class MemberController {
     }
 
     @GetMapping("/my-page/{memberId}")
+    @PreAuthorize("hasAnyAuthority('USER')")
     public BaseResponse<MemberMyPageResponse> findUserById(
             @PathVariable("memberId") @NotNull @Min(1) Long memberId
     ) {
@@ -60,6 +62,7 @@ public class MemberController {
     }
 
     @PostMapping("/my-page/update")
+    @PreAuthorize("hasAnyAuthority('USER')")
     public BaseResponse<MemberMyPageResponse> updateUserById(
             @Valid @RequestPart ("memberUpdateRequest") MemberUpdateRequest memberUpdateRequest,
             @RequestPart(value = "profileImage", required = false) MultipartFile profileImage,
