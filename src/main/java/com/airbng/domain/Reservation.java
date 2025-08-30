@@ -56,6 +56,10 @@ public class Reservation extends BaseTime {
     @OneToMany(mappedBy = "reservation", cascade = CascadeType.ALL)
     private Set<ReservationJimType> reservationJimTypes = new LinkedHashSet<>();
 
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "locker_id", nullable = false)
+    private Locker locker;
+
     public void addReservationJimType(ReservationJimType reservationJimType){
         reservationJimTypes.add(reservationJimType);
         reservationJimType.setReservation(this);
