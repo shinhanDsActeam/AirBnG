@@ -8,6 +8,6 @@ public class AlarmPageTestController {
 
     @GetMapping("/alarms/sse-test")
     public String redirectToStaticHtml() {
-        return "redirect:/alarm.html";
+        return "alarm";
     }
 }

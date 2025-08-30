@@ -1,6 +1,7 @@
 package com.airbng.scheduler;
 
 import com.airbng.common.exception.ReservationException;
+import com.airbng.domain.Reservation;
 import com.airbng.domain.base.NotificationType;
 import com.airbng.dto.AlarmResponse;
 import com.airbng.dto.reservation.ReservationResponse;
@@ -28,8 +29,8 @@ public class AlertScheduledTask {
     private final ReservationRepository reservationRepository;
     private final ReservationAlarmSseService sseService;
     private final ReservationAlarmCacheService reservationAlarmCacheService;
-
-    @Scheduled(initialDelay = 10000, fixedRate = 1000 * 60 * 60 * 24)
+    @Scheduled(initialDelay = 10000, fixedRate = 1000 *30)
+//    @Scheduled(initialDelay = 10000, fixedRate = 1000 * 60 * 60 * 24)
     public void processReservationAlarms() {
 
         log.info("스케줄러 실행 - 현재 시간: {}", LocalDateTime.now());
@@ -37,21 +38,34 @@ public class AlertScheduledTask {
         LocalDateTime now = LocalDateTime.now();
 
         // 1. EXPIRED 알림 (24시간 지난 CONFIRMED)
-        List<ReservationResponse> expired = reservationRepository.findExpiredConfirmedReservations(now.minusHours(24),now.minusHours(1));
+        List<Reservation> reservationExpired = reservationRepository.findExpiredConfirmedReservations(now.minusHours(24),now.minusHours(1));
+        List<ReservationResponse> expired;
         //예외처리
-        if (expired == null) {
+        if (reservationExpired == null) {
             throw new ReservationException(NOT_FOUND_EXPIRED_RESERVATION);
+        }else{
+            expired = reservationExpired.stream()
+                    .map(ReservationResponse::from)
+                    .toList();
         }
+
         for (ReservationResponse r : expired) {
             sendToBoth(r, NotificationType.EXPIRED, "짐 보관이 아직 완료되지 않았어요.", "고객 짐 보관 상태가 아직 완료되지 않았습니다.");
         }
 
         // 2. REMINDER 알림 (30분 전)
-        List<ReservationResponse> remind = reservationRepository.findConfirmedNearEndTime(now);
+        List<Reservation> reservationRemind = reservationRepository.findConfirmedNearEndTime(now);
+        List<ReservationResponse> remind;
         //예외처리
-        if (remind == null) {
+        if (reservationRemind == null) {
             throw new ReservationException(NOT_FOUND_REMINDER_RESERVATION);
+        }else{
+            remind = reservationExpired.stream()
+                    .map(ReservationResponse::from)
+                    .toList();
+
         }
+
         for (ReservationResponse r : remind) {
             sendToOne(r.getDropper().getMemberId(), r.getReservationId(), r.getDropper().getNickname(), "DROPPER", NotificationType.REMINDER, "곧 짐을 찾아가셔야 해요.");
         }

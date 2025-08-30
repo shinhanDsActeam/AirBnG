@@ -3,10 +3,7 @@ package com.airbng.controller;
 import com.airbng.service.ReservationAlarmSseService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 @RequestMapping("/alarms")
@@ -22,8 +19,13 @@ public class ReservationAlarmSseController {
             @RequestHeader(value = "Last-Event-ID", required = false) String lastEventId
     ) {
 
-        // 세션에서 로그인한 사용자 정보 가져오기
-        Long memberId = (Long) session.getAttribute("memberId");
+//테스트용 코드
+        Long memberId = 1L; //keeper의 경우 1L로 고정
+//        Long memberId = 3L; //dropper의 경우 3L로 고정
+
+
+        // 세션에서 로그인한 사용자 정보 가져오기 - 실제 코드
+//        Long memberId = (Long) session.getAttribute("memberId");
         if (memberId == null) {
             throw new IllegalStateException("로그인 정보가 없습니다.");
         }
