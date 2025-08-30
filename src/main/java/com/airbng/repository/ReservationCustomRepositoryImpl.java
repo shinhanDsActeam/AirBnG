@@ -95,7 +95,7 @@ public class ReservationCustomRepositoryImpl implements ReservationCustomReposit
             reservations = query
                     .selectFrom(r)
                     .leftJoin(r.keeper, keeper).fetchJoin()
-                    .leftJoin(keeper.locker, l).fetchJoin()
+                    .leftJoin(r.locker, l).fetchJoin()
                     .leftJoin(l.lockerImages, li).fetchJoin()
                     .leftJoin(li.image, image).fetchJoin()
                     .leftJoin(r.reservationJimTypes, rjt).fetchJoin()
@@ -108,7 +108,7 @@ public class ReservationCustomRepositoryImpl implements ReservationCustomReposit
             reservations = query
                     .selectFrom(r)
                     .leftJoin(r.dropper, dropper).fetchJoin()
-                    .leftJoin(dropper.locker, l).fetchJoin()
+                    .leftJoin(r.locker, l).fetchJoin()
                     .leftJoin(l.lockerImages, li).fetchJoin()
                     .leftJoin(li.image, image).fetchJoin()
                     .leftJoin(r.reservationJimTypes, rjt).fetchJoin()
@@ -131,9 +131,9 @@ public class ReservationCustomRepositoryImpl implements ReservationCustomReposit
         Locker locker = null;
 
         if (MemberRole.KEEPER.equals(role)) {
-            locker = res.getKeeper().getLocker();
+            locker = res.getLocker();
         } else if (MemberRole.DROPPER.equals(role))  {
-            locker = res.getDropper().getLocker();
+            locker = res.getLocker();
         }
 
         return ReservationSearchResponse.builder()
