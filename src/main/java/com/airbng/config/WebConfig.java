@@ -17,6 +17,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.validation.beanvalidation.MethodValidationPostProcessor;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -33,6 +34,14 @@ public class WebConfig implements WebMvcConfigurer {
     private final RequestRateLimitInterceptor rateLimitInterceptor;
     private final RedisRateLimitInterceptor redisRateLimitInterceptor;
     private final LoginRateLimitInterceptor loginRateLimitInterceptor;
+
+    @Override
+    public void addCorsMappings(CorsRegistry registry) {
+        registry.addMapping("/**")
+                .allowedOriginPatterns("*")
+                .allowedMethods("GET", "POST")
+                .allowCredentials(true);
+    }
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
