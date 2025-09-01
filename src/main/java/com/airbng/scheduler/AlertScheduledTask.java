@@ -54,13 +54,13 @@ public class AlertScheduledTask {
         }
 
         // 2. REMINDER 알림 (30분 전)
-        List<Reservation> reservationRemind = reservationRepository.findConfirmedNearEndTime(now);
+        List<Reservation> reservationRemind = reservationRepository.findConfirmedNearEndTime(now, now.plusMinutes(30));
         List<ReservationResponse> remind;
         //예외처리
         if (reservationRemind == null) {
             throw new ReservationException(NOT_FOUND_REMINDER_RESERVATION);
         }else{
-            remind = reservationExpired.stream()
+            remind = reservationRemind.stream()
                     .map(ReservationResponse::from)
                     .toList();
 
@@ -95,7 +95,8 @@ public class AlertScheduledTask {
         LocalDateTime now = LocalDateTime.now();
         // DROPPER
         //레디스 캐시에 해당 내용의 알림 없으면 알림 발송
-        if (!reservationAlarmCacheService.isSent(r.getReservationId(), r.getDropper().getMemberId(), type)) {
+        if (reservationAlarmCacheService.tryMarkSent(r.getReservationId(), r.getDropper().getMemberId(), type)) {
+//        if (!reservationAlarmCacheService.isSent(r.getReservationId(), r.getDropper().getMemberId(), type)) {
             if (sseService.hasConnected(r.getDropper().getMemberId())) {
                 AlarmResponse d = AlarmResponse.builder()
                         .reservationId(r.getReservationId())
@@ -117,7 +118,8 @@ public class AlertScheduledTask {
 
         // KEEPER
         //레디스 캐시에 해당 내용의 알림 없으면 알림 발송
-        if (!reservationAlarmCacheService.isSent(r.getReservationId(), r.getKeeper().getMemberId(), type)) {
+        if (reservationAlarmCacheService.tryMarkSent(r.getReservationId(), r.getDropper().getMemberId(), type)) {
+//        if (!reservationAlarmCacheService.isSent(r.getReservationId(), r.getKeeper().getMemberId(), type)) {
             if (sseService.hasConnected(r.getKeeper().getMemberId())) {
                 AlarmResponse k = AlarmResponse.builder()
                         .reservationId(r.getReservationId())

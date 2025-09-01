@@ -9,5 +9,6 @@ public interface ReservationAlarmCacheService {
     void markAllAsRead(Long memberId);
     void markUnread (Long memberId);
     boolean hasUnreadAlarm(Long memberId);
+    public boolean tryMarkSent(Long reservationId, Long receiverId, NotificationType type);
 
 }

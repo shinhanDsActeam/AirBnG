@@ -33,19 +33,23 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
             FROM Reservation r
             JOIN FETCH r.dropper d
             JOIN FETCH r.keeper k
-            WHERE r.state = 'CONFIRMED' AND r.endTime < :deadline
-            AND r.updatedAt < :updatedAt
+            WHERE r.state = 'CONFIRMED'
+            AND r.endTime < :deadline AND r.updatedAt < :endTime
             """)
     List<Reservation> findExpiredConfirmedReservations(@Param("deadline") LocalDateTime deadline,
-                                                               @Param("updatedAt") LocalDateTime updatedAt);
+                                                       @Param("endTime") LocalDateTime endTime);
 
     @Query(""" 
             SELECT  r
             FROM Reservation r
             JOIN FETCH r.dropper d
             JOIN FETCH r.keeper k
-            WHERE r.state = 'CONFIRMED' AND FUNCTION('TIMESTAMPDIFF', MINUTE, :now, r.endTime) BETWEEN 0 AND 30
+            WHERE r.state = 'CONFIRMED'
+            AND r.endTime BETWEEN :now AND :deadline
+            
+            
             """)
-    List<Reservation> findConfirmedNearEndTime(@Param("now") LocalDateTime now);
+    List<Reservation> findConfirmedNearEndTime(@Param("now") LocalDateTime now,
+                                               @Param("deadline") LocalDateTime deadline);
 
 }

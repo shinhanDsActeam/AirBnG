@@ -30,6 +30,17 @@ public class ReservationAlarmCacheServiceImpl implements ReservationAlarmCacheSe
         return result;
     }
 
+
+    @Override
+    public boolean tryMarkSent(Long reservationId, Long receiverId, NotificationType type) {
+        String key = buildKey(reservationId, receiverId, type);
+        // 처음 SET하는 경우에만 true 리턴됨
+        Boolean success = redisTemplate.opsForValue()
+                .setIfAbsent(key, "true", EXPIRE_SECONDS, TimeUnit.SECONDS);
+        return Boolean.TRUE.equals(success);
+    }
+
+
     //알림 발송된 것 레디스에 저장
     @Override
     public void markSent(Long reservationId, Long receiverId, NotificationType type) {
@@ -68,3 +79,4 @@ public class ReservationAlarmCacheServiceImpl implements ReservationAlarmCacheSe
     }
 
 }
+

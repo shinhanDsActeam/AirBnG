@@ -20,7 +20,7 @@ public class ReservationAlarmSseController {
     ) {
 
 //테스트용 코드
-        Long memberId = 1L; //keeper의 경우 1L로 고정
+        Long memberId = 3L; //keeper의 경우 1L로 고정
 //        Long memberId = 3L; //dropper의 경우 3L로 고정
 
 
