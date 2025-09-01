@@ -7,6 +7,8 @@ import com.airbng.mappers.ImageMapper;
 import com.airbng.repository.ImageRepository;
 import com.airbng.util.S3Utils;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -21,6 +23,9 @@ public class ImageServiceImpl implements ImageService {
     private final ImageRepository imageRepository;
     private final ImageMapper imageMapper;
     private final S3Utils s3Utils;
+
+    @Value("${image.default-url}")
+    private String defaultImageUrl;
 
     @Override
     public Image uploadProfileImage(MultipartFile file) {
@@ -47,7 +52,13 @@ public class ImageServiceImpl implements ImageService {
     }
 
     public Image getDefaultProfileImage() {
-        return imageRepository.findByImageId(1L);
+        Image image = Image.builder()
+                .url(defaultImageUrl)
+                .uploadName("default.jpg")
+                .status(BaseStatus.ACTIVE)
+                .build();
+        imageRepository.save(image);
+        return image;
     }
 
     public Image updateDefaultProfileImage(MultipartFile file, Long memberId) {

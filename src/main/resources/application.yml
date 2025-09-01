@@ -44,3 +44,5 @@ springdoc:
     enabled: true
     tags-sorter: alpha
     operations-sorter: alpha
+image :
+  default-url: ${DEFAULT_IMAGE_URL}
