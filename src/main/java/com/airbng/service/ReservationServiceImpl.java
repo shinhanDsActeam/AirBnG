@@ -92,7 +92,6 @@ public class ReservationServiceImpl implements ReservationService {
         boolean hasNextPage = reservations.size() > LIMIT;
         List<ReservationSearchResponse> content = reservations.stream()
                 .limit(LIMIT)
-                .peek(dto -> dto.setRole(role))
                 .toList();
 
         // 다음 커서 ID 설정
