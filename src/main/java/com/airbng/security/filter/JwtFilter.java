@@ -13,7 +13,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -48,7 +47,6 @@ public class JwtFilter extends OncePerRequestFilter {
             validateToken(accessToken);
             setAuthentication(accessToken);
 
-            filterChain.doFilter(request, response);
         } catch (MalformedJwtException e) {
             log.error("[JWT 필터] 토큰 검증 실패 : 잘못된 토큰 형식");
             request.setAttribute("JWT_ERROR_CODE", BaseResponseStatus.INVALID_TOKEN);
@@ -61,11 +59,8 @@ public class JwtFilter extends OncePerRequestFilter {
             log.error("[JWT 필터] 토큰 검증 실패 : 잘못된 서명");
             request.setAttribute("JWT_ERROR_CODE", BaseResponseStatus.INVALID_SIGNATURE);
             throw new SignatureException("잘못된 서명");
-        } catch (Exception e) {
-            log.error("[JWT 필터] 토큰 검증 실패 : 인증 실패");
-            request.setAttribute("JWT_ERROR_CODE", BaseResponseStatus.FAILURE);
-            throw new InsufficientAuthenticationException("인증실패");
         }
+        filterChain.doFilter(request, response);
     }
 
     private void validateToken(String token) {
