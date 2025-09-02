@@ -3,6 +3,7 @@ package com.airbng.controller;
 import com.airbng.common.response.BaseResponse;
 import com.airbng.domain.base.BaseStatus;
 import com.airbng.domain.base.ReservationState;
+import com.airbng.domain.base.MemberRole;
 import com.airbng.dto.reservation.*;
 import com.airbng.service.ReservationService;
 import jakarta.validation.Valid;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static com.airbng.common.response.status.BaseResponseStatus.NO_RESERVATION_CONTNET;
 import static com.airbng.common.response.status.BaseResponseStatus.SUCCESS;
 
 @RestController
@@ -73,10 +75,13 @@ public class ReservationController {
             @RequestParam(value = "period", required = false, defaultValue = "ALL") String period // 예: "1W", "3M", "6M", "1Y", "2Y"
     ) {
 
-        String role = isDropper ? "DROPPER" : "KEEPER";
+        MemberRole role = isDropper ? MemberRole.DROPPER : MemberRole.KEEPER;
         ReservationPaging response = reservationService.findAllReservationById(memberId, role, state, nextCursorId, period );
 
-        return new BaseResponse<>(response); // 이렇게 객체로 감싼 채로 반환
+        if(response == null || response.getReservations().isEmpty()){
+            return new BaseResponse<>(NO_RESERVATION_CONTNET); // 정상응답하지만 값이 없을때
+        }
+        return new BaseResponse<>(response); // 값이 있을 때
     }
 
     @PostMapping("/delete")
