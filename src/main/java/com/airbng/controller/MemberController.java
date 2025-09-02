@@ -11,6 +11,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -48,6 +49,7 @@ public class MemberController {
     }
 
     @GetMapping("/my-page/{memberId}")
+    @PreAuthorize("hasAnyAuthority('USER')")
     public BaseResponse<MemberMyPageResponse> findUserById(
             @PathVariable("memberId") @NotNull @Min(1) Long memberId
     ) {
@@ -60,6 +62,7 @@ public class MemberController {
     }
 
     @PostMapping("/my-page/update")
+    @PreAuthorize("hasAnyAuthority('USER')")
     public BaseResponse<MemberMyPageResponse> updateUserById(
             @Valid @RequestPart ("memberUpdateRequest") MemberUpdateRequest memberUpdateRequest,
             @RequestPart(value = "profileImage", required = false) MultipartFile profileImage,
@@ -72,26 +75,5 @@ public class MemberController {
         session.setAttribute("memberId", response.getMemberId());
         session.setAttribute("nickname", response.getNickname());
         return new BaseResponse<>(response);
-    }
-
-    @PostMapping("/login")
-    public BaseResponse<MemberLoginResponse> login(@RequestBody MemberLoginRequest request,
-                                                   HttpSession session,
-                                                   HttpServletRequest httpRequest) {
-        // Interceptor에서 참조 가능하게 세팅
-        httpRequest.setAttribute("loginEmail", request.getEmail());
-        MemberLoginResponse response = memberService.login(request.getEmail(), request.getPassword());
-        session.setAttribute("memberId", response.getMemberId());
-        session.setAttribute(("nickname"), response.getNickname());
-
-        return new BaseResponse<>(SUCCESS_LOGIN, response);
-    }
-
-    @PostMapping("/logout")
-    public BaseResponse<String> logout(HttpSession session) {
-        // 세션 무효화
-        session.invalidate();
-
-        return new BaseResponse<>(SUCCESS_LOGOUT);
     }
 }

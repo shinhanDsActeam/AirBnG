@@ -3,10 +3,12 @@ package com.airbng.service;
 import com.airbng.common.exception.MemberException;
 import com.airbng.domain.Member;
 import com.airbng.domain.base.BaseStatus;
+import com.airbng.domain.base.Role;
 import com.airbng.domain.image.Image;
 import com.airbng.dto.*;
 import com.airbng.mappers.ImageMapper;
 import com.airbng.mappers.MemberMapper;
+import com.airbng.repository.MemberRepository;
 import com.airbng.validator.EmailValidator;
 import com.airbng.validator.PasswordValidator;
 import lombok.RequiredArgsConstructor;
@@ -25,21 +27,21 @@ import static com.airbng.common.response.status.BaseResponseStatus.*;
 public class MemberServiceImpl implements MemberService {
 
     private final MemberMapper memberMapper;
-    private final ImageMapper imageMapper;
     private final ImageService imageService;
     private final BCryptPasswordEncoder passwordEncoder;
     private final EmailValidator emailValidator;
     private final PasswordValidator passwordValidator;
+    private final MemberRepository memberRepository;
 
     @Transactional
     @Override
     public void signup(MemberSignupRequest dto, MultipartFile file) {
         //예외 처리
-        if (memberMapper.findByEmail(dto.getEmail()))               throw new MemberException(DUPLICATE_EMAIL);
-        if (memberMapper.findByNickname(dto.getNickname()))         throw new MemberException(DUPLICATE_NICKNAME);
-        if (memberMapper.findByPhone(dto.getPhone()))               throw new MemberException(DUPLICATE_PHONE);
-        if (!passwordValidator.isValidPassword(dto.getPassword()))  throw new MemberException(INVALID_PASSWORD);
-        if (!emailValidator.isValidEmail(dto.getEmail()))           throw new MemberException(INVALID_EMAIL);
+        if (memberRepository.existsByEmail(dto.getEmail())) throw new MemberException(DUPLICATE_EMAIL);
+        if (memberRepository.existsByNickname(dto.getNickname())) throw new MemberException(DUPLICATE_NICKNAME);
+        if (memberRepository.existsByPhone(dto.getPhone())) throw new MemberException(DUPLICATE_PHONE);
+        if (!passwordValidator.isValidPassword(dto.getPassword())) throw new MemberException(INVALID_PASSWORD);
+        if (!emailValidator.isValidEmail(dto.getEmail())) throw new MemberException(INVALID_EMAIL);
 
 
         //이미지 처리
@@ -55,40 +57,23 @@ public class MemberServiceImpl implements MemberService {
                 .phone(dto.getPhone())
                 .nickname(dto.getNickname())
                 .password(encodedPw)
+                .role(Role.USER)
                 .status(BaseStatus.ACTIVE)
                 .profileImage(profileImage)
                 .build();
-        memberMapper.insertMember(member);
+        memberRepository.save(member);
     }
 
     //이메일 중복 검사
     @Override
     public void emailCheck(String email) {
-        if (memberMapper.findByEmail(email))               throw new MemberException(DUPLICATE_EMAIL);
+        if (memberRepository.existsByEmail(email))         throw new MemberException(DUPLICATE_EMAIL);
         if (!emailValidator.isValidEmail(email))           throw new MemberException(INVALID_EMAIL);
     }
 
-    @Override
-    public MemberLoginResponse login(String email, String password) {
-        if (!emailValidator.isValidEmail(email)) {
-            throw new MemberException(INVALID_EMAIL);
-        }
-
-        Member member = memberMapper.findMemberByEmail(email);
-        if (member == null) {
-            throw new MemberException(INVALID_MEMBER);
-        }
-
-        // 비밀번호 비교
-        if (!passwordEncoder.matches(password, member.getPassword())) {
-            throw new MemberException(INVALID_MEMBER);
-        }
-        log.info("Member id found: {}", member.getMemberId());
-        return MemberLoginResponse.from(member);
-    }
 
     public void nicknameCheck(String nickname) {
-        if (memberMapper.findByNickname(nickname))          throw new MemberException(DUPLICATE_NICKNAME);
+        if (memberRepository.existsByNickname(nickname)) throw new MemberException(DUPLICATE_NICKNAME);
     }
 
 

@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -30,24 +31,28 @@ public class LockerController {
 
 
     @GetMapping("/{lockerId}")
+    @PreAuthorize("hasAnyAuthority('USER')")
     public BaseResponse<LockerDetailResponse> findLockerById(@PathVariable Long lockerId) {
 
         return new BaseResponse<>(lockerService.findLockerById(lockerId));
     }
 
     @PatchMapping("/{lockerId}")
+    @PreAuthorize("hasAnyAuthority('USER')")
     public BaseResponse<BaseResponseStatus> updateLockerActivation(@PathVariable("lockerId") @NotNull @Min(1) Long lockerId) {
         lockerService.updateLockerActivation(lockerId);
         return new BaseResponse<>(SUCCESS);
     }
 
     @DeleteMapping("/{lockerId}")
+    @PreAuthorize("hasAnyAuthority('USER')")
     public BaseResponse<String> deleteLocker(@PathVariable Long lockerId) {
         lockerService.deleteLocker(lockerId);
         return new BaseResponse<>("보관소 삭제 완료");
     }
 
     @PostMapping(value = "/register", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PreAuthorize("hasAnyAuthority('USER')")
     public ResponseEntity<BaseResponse<String>> registerLocker(
             @RequestPart("locker") LockerInsertRequest dto,
             @RequestPart(value = "images", required = false) List<MultipartFile> images) throws IOException {
@@ -59,18 +64,21 @@ public class LockerController {
 
 
     @GetMapping("/popular")
+    @PreAuthorize("hasAnyAuthority('USER')")
     public BaseResponse<LockerTop5Response> selectTop5Lockers() {
         log.info("LockerController.selectTop5Lockers");
         return new BaseResponse<>(lockerService.findTop5Locker());
     }
 
     @GetMapping("/update/{lockerId}")
+    @PreAuthorize("hasAnyAuthority('USER')")
     public BaseResponse<LockerUpdateResponse> findLockerForUpdate(@PathVariable Long lockerId) {
         return new BaseResponse<>(lockerService.findUpdateUserById(lockerId));
     }
 
 
     @PostMapping(value = "/update/{lockerId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PreAuthorize("hasAnyAuthority('USER')")
     public BaseResponse<String> updateLocker(
             @PathVariable Long lockerId,
             @RequestPart("locker") LockerUpdateRequest request,
