@@ -60,20 +60,6 @@ public class Member extends BaseTime {
     @OneToMany(mappedBy = "member")
     private Set<Zzim> zzims;
 
-    //   테스트용
-    public static Member withId(Long memberId) {
-        return Member.builder()
-                .memberId(memberId)
-                .email("owner@airbng.com")
-                .name("홍길동")
-                .phone("010-1234-5678")
-                .nickname("lockerKing")
-                .password("encoded_password")
-                .status(BaseStatus.ACTIVE)
-                .profileImage(Image.withId(101L))
-                .build();
-    }
-
     public Member(Long memberId, String role) {
         this.memberId = memberId;
         this.role = Role.valueOf(role);

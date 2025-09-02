@@ -18,7 +18,6 @@ import com.airbng.util.S3Utils;
 import com.github.benmanes.caffeine.cache.Cache;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -142,6 +141,9 @@ public class LockerServiceImpl implements LockerService {
             throw new MemberException(NOT_FOUND_MEMBER);
         }
 
+        Member keeper = memberRepository.findById(dto.getKeeperId())
+                .orElseThrow(() -> new MemberException(NOT_FOUND_MEMBER));
+
         Locker locker = Locker.builder()
                 .lockerName(dto.getLockerName())
                 .isAvailable(dto.getIsAvailable())
@@ -150,7 +152,7 @@ public class LockerServiceImpl implements LockerService {
                 .addressDetail(dto.getAddressDetail())
                 .latitude(dto.getLatitude())
                 .longitude(dto.getLongitude())
-                .keeper(Member.withId(dto.getKeeperId()))
+                .keeper(keeper)
                 .reservationCount(0L)
                 .status(BaseStatus.ACTIVE)
                 .build();
@@ -259,6 +261,9 @@ public class LockerServiceImpl implements LockerService {
         Locker locker = lockerRepository.findById(dto.getLockerId())
                 .orElseThrow(() -> new LockerException(NOT_FOUND_LOCKER));
 
+        Member keeper = memberRepository.findById(dto.getKeeperId())
+                .orElseThrow(() -> new MemberException(NOT_FOUND_MEMBER));
+
         locker.setLockerName(dto.getLockerName());
         locker.setIsAvailable(dto.getIsAvailable());
         locker.setAddress(dto.getAddress());
@@ -266,7 +271,7 @@ public class LockerServiceImpl implements LockerService {
         locker.setAddressDetail(dto.getAddressDetail());
         locker.setLatitude(dto.getLatitude());
         locker.setLongitude(dto.getLongitude());
-        locker.setKeeper(Member.withId(dto.getKeeperId()));
+        locker.setKeeper(keeper);
 
         // 이미지 재연결
         if (dto.getImages() != null && !dto.getImages().isEmpty()) {
