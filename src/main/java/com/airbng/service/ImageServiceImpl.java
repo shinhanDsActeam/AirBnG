@@ -1,10 +1,14 @@
 package com.airbng.service;
 
 import com.airbng.common.exception.ImageException;
+import com.airbng.domain.base.BaseStatus;
 import com.airbng.domain.image.Image;
 import com.airbng.mappers.ImageMapper;
+import com.airbng.repository.ImageRepository;
 import com.airbng.util.S3Utils;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -16,8 +20,12 @@ import static com.airbng.common.response.status.BaseResponseStatus.UPLOAD_FAILED
 @Service
 @RequiredArgsConstructor
 public class ImageServiceImpl implements ImageService {
+    private final ImageRepository imageRepository;
     private final ImageMapper imageMapper;
     private final S3Utils s3Utils;
+
+    @Value("${image.default-url}")
+    private String defaultImageUrl;
 
     @Override
     public Image uploadProfileImage(MultipartFile file) {
@@ -36,14 +44,21 @@ public class ImageServiceImpl implements ImageService {
         Image image = Image.builder()
                 .url(url)
                 .uploadName(file.getOriginalFilename())
+                .status(BaseStatus.ACTIVE)
                 .build();
 
-        imageMapper.insertImage(image);
+        imageRepository.save(image);
         return image;
     }
 
     public Image getDefaultProfileImage() {
-        return imageMapper.findDefaultImage();
+        Image image = Image.builder()
+                .url(defaultImageUrl)
+                .uploadName("default.jpg")
+                .status(BaseStatus.ACTIVE)
+                .build();
+        imageRepository.save(image);
+        return image;
     }
 
     public Image updateDefaultProfileImage(MultipartFile file, Long memberId) {

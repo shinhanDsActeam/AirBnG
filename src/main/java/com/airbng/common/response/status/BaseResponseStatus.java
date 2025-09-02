@@ -17,6 +17,7 @@ public enum BaseResponseStatus implements ResponseStatus{
     TYPE_MISMATCH_PARAMETER(1005, HttpStatus.BAD_REQUEST.value(), "요청한 파라미터 값이 타입에 맞지 않습니다."),
     INVALID_DATETIME_FORMAT(1006, HttpStatus.BAD_REQUEST.value(), "날짜 형식이 올바르지 않습니다. (yyyy-MM-dd HH:mm:ss)"),
     INVALID_PARAMETER(1007, HttpStatus.BAD_REQUEST.value(), "요청한 파라미터 값의 유효성 검사 조건을 만족하지 않습니다."),
+    UNSUPPORTED_MEDIA_TYPE(1008, HttpStatus.UNSUPPORTED_MEDIA_TYPE.value(), "지원하지 않는 요청 형식입니다."),
 
     /**
      * 2000 맴버 관련 코드
@@ -60,6 +61,7 @@ public enum BaseResponseStatus implements ResponseStatus{
     NOT_FOUND_CANCEL_NOTICE_RESERVATION(4013,HttpStatus.NOT_FOUND.value(), "상태 변경(CANCELLED)된 예약 데이터를 조회할 수 없습니다."),
     FAILED_DELETE_RESERVATION(4014, HttpStatus.BAD_REQUEST.value(), "예약 삭제 실패"),
     NO_RESERVATION_CONTNET(4015,HttpStatus.NO_CONTENT.value(), "예약 내역이 없습니다."),
+
     /**
      * 5000 짐 타입 관련 코드
      */
@@ -93,13 +95,20 @@ public enum BaseResponseStatus implements ResponseStatus{
     LOGIN_RATE_LIMIT_EXCEEDED(8003, HttpStatus.TOO_MANY_REQUESTS.value(), "로그인 시도 횟수를 초과했습니다. 잠시 후 다시 시도해주세요."),
 
     /**
-     * 9000: sesssion
+     * 9000: sesssion / token
      */
     SESSION_MISMATCH(9001, HttpStatus.UNAUTHORIZED.value(), "세션의 사용자와 요청된 사용자 ID가 일치하지 않습니다."),
     SESSION_NOT_FOUND(9002, HttpStatus.UNAUTHORIZED.value(), "세션이 존재하지 않습니다. 다시 로그인해주세요."),
     SESSION_INVALID_TYPE(9003, HttpStatus.UNAUTHORIZED.value(), "세션 정보가 올바르지 않습니다."),
     SESSION_EXPIRED(9004, HttpStatus.UNAUTHORIZED.value(), "세션이 만료되었습니다."),
 
+    REFRESH_TOKEN_NOT_FOUND(9005, HttpStatus.BAD_REQUEST.value(), "리프레시 토큰이 존재하지 않습니다."),
+    EXPIRED_TOKEN(9006, HttpStatus.UNAUTHORIZED.value(), "리프레시 토큰이 만료되었습니다."),
+    INVALID_TOKEN(9007, HttpStatus.UNAUTHORIZED.value(),"유효하지 않는 토큰입니다."),
+    INVALID_USERNAME_OR_PASSWORD(9008, HttpStatus.BAD_REQUEST.value(), "아이디 혹은 비밀번호가 올바르지 않습니다."),
+    UNAUTHORIZED(9009, HttpStatus.UNAUTHORIZED.value(), "인증되지 않는 사용자입니다."),
+    ACCESS_DENIED(9010, HttpStatus.FORBIDDEN.value(), "접근 권한이 없습니다."),
+    INVALID_SIGNATURE(9011, HttpStatus.UNAUTHORIZED.value(), "잘못된 토큰 서명입니다."),
     ;
 
     private final int code;

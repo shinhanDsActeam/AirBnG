@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,6 +25,7 @@ public class ZzimController {
      * 찜 등록 또는 취소 (토글 방식)
      */
     @PostMapping("/lockers/{lockerId}/members/{memberId}/zzim")
+    @PreAuthorize("hasAnyAuthority('USER')")
     public ResponseEntity<BaseResponse<BaseResponseStatus>> toggleZzim(
             @PathVariable Long lockerId,
             @PathVariable Long memberId,
@@ -40,6 +42,7 @@ public class ZzimController {
      * 찜 여부 확인
      */
     @GetMapping("/lockers/{lockerId}/members/{memberId}/zzim/exists")
+    @PreAuthorize("hasAnyAuthority('USER')")
     public ResponseEntity<BaseResponse<Boolean>> existsZzim(@PathVariable Long memberId,
                                                             @PathVariable Long lockerId) {
         boolean exists = zzimService.isExistZzim(memberId, lockerId);

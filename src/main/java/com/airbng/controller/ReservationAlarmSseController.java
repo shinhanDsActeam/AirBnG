@@ -3,6 +3,7 @@ package com.airbng.controller;
 import com.airbng.service.ReservationAlarmSseService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,6 +18,7 @@ public class ReservationAlarmSseController {
     private final ReservationAlarmSseService reservationAlarmSseService;
 
     @GetMapping("/reservations/alarms")
+    @PreAuthorize("hasAnyAuthority('USER')")
     public SseEmitter subscribe(
             HttpSession session,
             @RequestHeader(value = "Last-Event-ID", required = false) String lastEventId

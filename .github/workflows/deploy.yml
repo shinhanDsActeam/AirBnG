@@ -66,6 +66,8 @@ jobs:
             echo "REDIS_PORT=${{ secrets.REDIS_PORT }}" >> /home/ubuntu/.env
             echo "REDIS_USERNAME=${{ secrets.REDIS_USERNAME }}" >> /home/ubuntu/.env
             echo "REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }}" >> /home/ubuntu/.env
+            echo "JWT_SECRET"=${{ secrets.JWT_SECRET }}" >> /home/ubuntu/.env
+            echo "DEFAULT_IMAGE_URL"=${{ secrets.DEFAULT_IMAGE_URL }}" >> //home/ubuntu/.env
             echo "PROFILE=dev" >> /home/ubuntu/.env
 
             docker pull ${{ secrets.DOCKERHUB_USERNAME }}/airbng
