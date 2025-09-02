@@ -3,13 +3,16 @@ package com.airbng.common.exception_handler;
 import com.airbng.common.exception.DomainException;
 import com.airbng.common.response.BaseErrorResponse;
 import com.airbng.common.response.FieldValidationError;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.time.format.DateTimeParseException;
 
 import static com.airbng.common.response.status.BaseResponseStatus.INVALID_DATETIME_FORMAT;
+import static com.airbng.common.response.status.BaseResponseStatus.UNSUPPORTED_MEDIA_TYPE;
 
 @RestControllerAdvice
 public class GlobalExceptionControllerAdvice {
@@ -32,5 +35,12 @@ public class GlobalExceptionControllerAdvice {
         return ResponseEntity
                 .status(INVALID_DATETIME_FORMAT.getHttpStatus())
                 .body(new BaseErrorResponse<>(INVALID_DATETIME_FORMAT, error));
+    }
+
+    @ExceptionHandler(HttpMediaTypeNotSupportedException.class)
+    public ResponseEntity<BaseErrorResponse<Object>> handleHttpMediaTypeNotSupportedException(HttpMediaTypeNotSupportedException ex) {
+        return ResponseEntity
+                .status(HttpStatus.UNSUPPORTED_MEDIA_TYPE)
+                .body(new BaseErrorResponse<>(UNSUPPORTED_MEDIA_TYPE, ex.getMessage()));
     }
 }

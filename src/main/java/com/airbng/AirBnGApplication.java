@@ -6,7 +6,6 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @SpringBootApplication
-@EnableJpaAuditing
 public class AirBnGApplication {
     public static void main(String[] args) {
         SpringApplication.run(AirBnGApplication.class, args);

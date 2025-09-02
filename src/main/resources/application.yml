@@ -14,7 +14,8 @@ spring:
     active: ${PROFILE}
   application:
     name: airbng
-
+  jwt:
+    secret : ${JWT_SECRET}
   servlet:
     multipart:
       max-file-size: 10MB
@@ -43,3 +44,5 @@ springdoc:
     enabled: true
     tags-sorter: alpha
     operations-sorter: alpha
+image :
+  default-url: ${DEFAULT_IMAGE_URL}
