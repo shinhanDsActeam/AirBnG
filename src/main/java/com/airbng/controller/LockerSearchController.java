@@ -14,7 +14,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/lockers")
-@PreAuthorize("hasAnyAuthority('USER')")
+//@PreAuthorize("hasAnyAuthority('USER')")
 public class LockerSearchController {
 
     private final LockerService lockerService;
