@@ -60,6 +60,7 @@ public enum BaseResponseStatus implements ResponseStatus{
     NOT_FOUND_STATE_CHANGE_RESERVATION(4012,HttpStatus.NOT_FOUND.value(), "상태 변경(CONFIRMED)된 예약 데이터를 조회할 수 없습니다."),
     NOT_FOUND_CANCEL_NOTICE_RESERVATION(4013,HttpStatus.NOT_FOUND.value(), "상태 변경(CANCELLED)된 예약 데이터를 조회할 수 없습니다."),
     FAILED_DELETE_RESERVATION(4014, HttpStatus.BAD_REQUEST.value(), "예약 삭제 실패"),
+    NO_RESERVATION_CONTNET(4015,HttpStatus.NO_CONTENT.value(), "예약 내역이 없습니다."),
 
     /**
      * 5000 짐 타입 관련 코드
