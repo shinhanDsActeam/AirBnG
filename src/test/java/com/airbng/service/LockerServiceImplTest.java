@@ -58,6 +58,12 @@ class LockerServiceImplTest {
 
     // ---------- helpers ----------
     private Locker dummyLocker(Long id, Long keeperId) {
+        Member keeper = memberRepository.findById(keeperId)
+            .orElseGet(() -> {
+                Member m = new Member();
+                m.setMemberId(keeperId);
+                return m;
+            });
         return Locker.builder()
                 .lockerId(id)
                 .lockerName("Locker-" + id)
@@ -67,7 +73,7 @@ class LockerServiceImplTest {
                 .addressDetail("Detail")
                 .latitude(37.0)
                 .longitude(127.0)
-                .keeper(Member.withId(keeperId))
+                .keeper(keeper)
                 .reservationCount(3L)
                 .lockerJimTypes(Collections.emptySet()) // NPE 방지
                 .lockerImages(Collections.emptySet())   // NPE 방지
