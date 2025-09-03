@@ -118,7 +118,7 @@ public class AlertScheduledTask {
 
         // KEEPER
         //레디스 캐시에 해당 내용의 알림 없으면 알림 발송
-        if (reservationAlarmCacheService.tryMarkSent(r.getReservationId(), r.getDropper().getMemberId(), type)) {
+        if (reservationAlarmCacheService.tryMarkSent(r.getReservationId(), r.getKeeper().getMemberId(), type)) {
 //        if (!reservationAlarmCacheService.isSent(r.getReservationId(), r.getKeeper().getMemberId(), type)) {
             if (sseService.hasConnected(r.getKeeper().getMemberId())) {
                 AlarmResponse k = AlarmResponse.builder()

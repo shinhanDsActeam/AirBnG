@@ -1,5 +1,6 @@
 package com.airbng.service;
 
+import com.airbng.security.domain.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -32,6 +33,8 @@ public class ReservationAlarmSseServiceImpl implements ReservationAlarmSseServic
     // 클라이언트가 SSE 연결을 요청할 때 호출되는 메서드
     @Override
     public SseEmitter connect(Long memberId, String lastEventId) {
+
+//        Long memberId = userDetails.getId();
         log.info("SSE 연결 요청: memberId={}, 현재 연결 수={}", memberId, emitterMap.size());
 
         SseEmitter emitter = new SseEmitter(TIMEOUT);

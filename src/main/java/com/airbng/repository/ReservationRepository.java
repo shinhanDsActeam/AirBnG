@@ -48,8 +48,6 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
             JOIN FETCH r.keeper k
             WHERE r.state = 'CONFIRMED'
             AND r.endTime BETWEEN :now AND :deadline
-            
-            
             """)
     List<Reservation> findConfirmedNearEndTime(@Param("now") LocalDateTime now,
                                                @Param("deadline") LocalDateTime deadline);

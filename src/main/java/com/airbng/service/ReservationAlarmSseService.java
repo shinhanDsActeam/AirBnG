@@ -1,5 +1,6 @@
 package com.airbng.service;
 
+import com.airbng.security.domain.CustomUserDetails;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 public interface ReservationAlarmSseService {
