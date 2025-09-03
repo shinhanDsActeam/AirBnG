@@ -46,6 +46,7 @@ src/main/webapp/js/config/
 .bin/
 .bin/*
 .bin
+out
 
 # Avoid ignoring Gradle wrapper jar file, Gradle wrappper properties
 !gradle-wrapper.jar
