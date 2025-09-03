@@ -5,8 +5,9 @@ import com.airbng.domain.Member;
 import com.airbng.domain.base.BaseStatus;
 import com.airbng.domain.base.Role;
 import com.airbng.domain.image.Image;
-import com.airbng.dto.*;
-import com.airbng.mappers.ImageMapper;
+import com.airbng.dto.MemberMyPageResponse;
+import com.airbng.dto.MemberSignupRequest;
+import com.airbng.dto.MemberUpdateRequest;
 import com.airbng.mappers.MemberMapper;
 import com.airbng.repository.MemberRepository;
 import com.airbng.validator.EmailValidator;
@@ -17,7 +18,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-
 
 import static com.airbng.common.response.status.BaseResponseStatus.*;
 
