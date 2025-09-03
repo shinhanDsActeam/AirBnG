@@ -90,15 +90,6 @@ public class MemberServiceImpl implements MemberService {
         Member member = memberRepository.findById(request.getMemberId())
                 .orElseThrow(() -> new MemberException(NOT_FOUND_MEMBER));
 
-        // 이메일 검증 및 중복 체크 (기존 이메일과 다른 경우에만)
-        if (!emailValidator.isValidEmail(request.getEmail())) {
-            throw new MemberException(INVALID_EMAIL);
-        }
-        if (!member.getMemberId().equals(request.getMemberId()) &&
-                memberRepository.existsByEmail(request.getEmail())) {
-            throw new MemberException(DUPLICATE_EMAIL);
-        }
-
         // 닉네임 중복 체크
         if(!member.getMemberId().equals(request.getMemberId()) &&
                 memberRepository.existsByNickname(request.getNickname())) {
@@ -120,7 +111,7 @@ public class MemberServiceImpl implements MemberService {
                     : imageService.getDefaultProfileImage();
         }
 
-        member.updateInfo(request.getEmail(), request.getName(), request.getPhone(), request.getNickname(), image);
+        member.updateInfo(member.getEmail(), request.getName(), request.getPhone(), request.getNickname(), image);
         return MemberMyPageResponse.from(member);
     }
 }
