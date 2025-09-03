@@ -61,3 +61,5 @@ gradle-app.setting
 **/*.lock
 **/*.bin.gradle/**/*.lock
 .gradle/**/*.bin
+
+src/main/generated/
