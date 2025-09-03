@@ -11,6 +11,7 @@ import com.airbng.domain.image.Image;
 import com.airbng.domain.image.LockerImage;
 import com.airbng.domain.jimtype.JimType;
 import com.airbng.domain.jimtype.LockerJimType;
+import com.airbng.dto.jimType.JimTypeResult;
 import com.airbng.dto.jimType.LockerJimTypeUpdateResult;
 import com.airbng.dto.locker.*;
 import com.airbng.repository.*;
@@ -79,7 +80,7 @@ public class LockerServiceImpl implements LockerService {
                     .jimTypeResults(
                             l.getLockerJimTypes() == null ? List.of() :
                                     l.getLockerJimTypes().stream()
-                                            .map(x -> new com.airbng.dto.jimType.JimTypeResult(
+                                            .map(x -> new JimTypeResult(
                                                     x.getJimType().getJimTypeId(),
                                                     x.getJimType().getTypeName()))
                                             .toList()
