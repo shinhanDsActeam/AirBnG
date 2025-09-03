@@ -64,7 +64,6 @@ public class LockerController {
 
 
     @GetMapping("/popular")
-    @PreAuthorize("hasAnyAuthority('USER')")
     public BaseResponse<LockerTop5Response> selectTop5Lockers() {
         log.info("LockerController.selectTop5Lockers");
         return new BaseResponse<>(lockerService.findTop5Locker());
