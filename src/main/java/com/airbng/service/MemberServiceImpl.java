@@ -72,7 +72,6 @@ public class MemberServiceImpl implements MemberService {
         if (!emailValidator.isValidEmail(email))           throw new MemberException(INVALID_EMAIL);
     }
 
-
     public void nicknameCheck(String nickname) {
         if (memberRepository.existsByNickname(nickname)) throw new MemberException(DUPLICATE_NICKNAME);
     }
@@ -112,12 +111,16 @@ public class MemberServiceImpl implements MemberService {
             throw new MemberException(DUPLICATE_PHONE);
         }
 
-        Image image = (profileImage != null && !profileImage.isEmpty())
-                ? imageService.uploadProfileImage(profileImage)
-                : imageService.updateDefaultProfileImage(profileImage, request.getMemberId());
+        Image image;
+        if (profileImage != null && !profileImage.isEmpty()) {
+            image = imageService.updateProfileImage(profileImage, member.getMemberId());
+        } else {
+            image = (member.getProfileImage() != null)
+                    ? member.getProfileImage()
+                    : imageService.getDefaultProfileImage();
+        }
 
         member.updateInfo(request.getEmail(), request.getName(), request.getPhone(), request.getNickname(), image);
-
         return MemberMyPageResponse.from(member);
     }
 }
