@@ -55,7 +55,7 @@ public interface LockerRepository extends JpaRepository<Locker, Long> {
                      @Param("jimTypeIds") List<Long> jimTypeIds,
                      @Param("emptyJimTypes") boolean emptyJimTypes);
 
-    // Top5 (예약 수 기준 정렬) — Pageable로 limit 대체
+    // Top5 (예약 수 기준 정렬) - limit 5
     @Query("""
         SELECT DISTINCT l FROM Locker l
         JOIN FETCH l.keeper k
