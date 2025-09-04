@@ -55,23 +55,6 @@ public interface LockerRepository extends JpaRepository<Locker, Long> {
                      @Param("jimTypeIds") List<Long> jimTypeIds,
                      @Param("emptyJimTypes") boolean emptyJimTypes);
 
-    // Top5 (예약 수 기준 정렬) - limit 5
-    @Query("""
-        SELECT DISTINCT l FROM Locker l
-        JOIN FETCH l.keeper k
-        LEFT JOIN FETCH l.lockerImages li
-        LEFT JOIN FETCH li.image i
-        LEFT JOIN FETCH l.lockerJimTypes lj
-        JOIN FETCH lj.jimType j
-        WHERE EXISTS (
-            SELECT r FROM Reservation r
-            WHERE r.keeper = k AND r.state = :state
-        )
-        ORDER BY l.reservationCount DESC
-        limit 5
-    """)
-    List<Locker> findTop5LockersByReservation(@Param("state") ReservationState state);
-
     // keeper가 보관소 보유 여부
     boolean existsByKeeper_MemberId(Long memberId);
 
@@ -83,4 +66,16 @@ public interface LockerRepository extends JpaRepository<Locker, Long> {
     @Modifying
     @Query("delete from LockerJimType lj where lj.locker.lockerId = :lockerId")
     int deleteLockerJimTypesByLockerId(@Param("lockerId") Long lockerId);
+
+
+    @Query("SELECT DISTINCT l FROM Locker l " +
+            "JOIN FETCH l.keeper k " +
+            "LEFT JOIN FETCH l.lockerImages li " +
+            "LEFT JOIN FETCH li.image i " +
+            "LEFT JOIN FETCH l.lockerJimTypes lj " +
+            "JOIN FETCH lj.jimType j " +
+            "ORDER BY l.reservationCount DESC " +
+            "limit 5")
+    List<Locker> findTop5LockersByReservation(ReservationState state);
+
 }
