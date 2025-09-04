@@ -1,10 +1,8 @@
 package com.airbng.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.Builder;
+import com.airbng.domain.Member;
+import jakarta.validation.constraints.Min;
+import lombok.*;
 
 
 @Getter
@@ -20,4 +18,17 @@ public class MemberMyPageResponse {
     private String nickname;
     private Long profileImageId;
     private String url;
+
+
+    public static MemberMyPageResponse from(Member member) {
+        return MemberMyPageResponse.builder()
+                .memberId(member.getMemberId())
+                .email(member.getEmail())
+                .name(member.getName())
+                .phone(member.getPhone())
+                .nickname(member.getNickname())
+                .profileImageId(member.getProfileImage() != null ? member.getProfileImage().getImageId() : null)
+                .url(member.getProfileImage() != null ? member.getProfileImage().getUrl() : null)
+                .build();
+    }
 }
