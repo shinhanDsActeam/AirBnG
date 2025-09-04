@@ -10,6 +10,7 @@ import com.airbng.dto.MemberSignupRequest;
 import com.airbng.dto.MemberUpdateRequest;
 import com.airbng.mappers.MemberMapper;
 import com.airbng.repository.MemberRepository;
+import com.airbng.security.domain.CustomUserDetails;
 import com.airbng.validator.EmailValidator;
 import com.airbng.validator.PasswordValidator;
 import lombok.RequiredArgsConstructor;
@@ -86,25 +87,28 @@ public class MemberServiceImpl implements MemberService {
 
     @Transactional
     @Override
-    public MemberMyPageResponse updateUserById(MemberUpdateRequest request, MultipartFile profileImage) {
-        Member member = memberRepository.findById(request.getMemberId())
+    public MemberMyPageResponse updateUserById(MemberUpdateRequest request, MultipartFile profileImage, CustomUserDetails userDetails) {
+        Long userId = userDetails.getId();
+        Member member = memberRepository.findById(userId)
                 .orElseThrow(() -> new MemberException(NOT_FOUND_MEMBER));
 
-        // 닉네임 중복 체크
-        if(!member.getMemberId().equals(request.getMemberId()) &&
-                memberRepository.existsByNickname(request.getNickname())) {
-            throw new MemberException(DUPLICATE_NICKNAME);
-        }
+        if (!userId.equals(request.getMemberId())) {
+            throw new MemberException(FAILED_UPDATE_MEMBER);
+        } else {
+            // 닉네임 중복 체크
+            if (memberRepository.existsByNickname(request.getNickname())) {
+                throw new MemberException(DUPLICATE_NICKNAME);
+            }
 
-        // 휴대폰 중복 체크
-        if(!member.getMemberId().equals(request.getMemberId()) &&
-                memberRepository.existsByPhone(request.getPhone())) {
-            throw new MemberException(DUPLICATE_PHONE);
+            // 휴대폰 중복 체크
+            if (memberRepository.existsByPhone(request.getPhone())) {
+                throw new MemberException(DUPLICATE_PHONE);
+            }
         }
 
         Image image;
         if (profileImage != null && !profileImage.isEmpty()) {
-            image = imageService.updateProfileImage(profileImage, member.getMemberId());
+            image = imageService.updateProfileImage(profileImage, userId);
         } else {
             image = (member.getProfileImage() != null)
                     ? member.getProfileImage()

@@ -2,6 +2,7 @@ package com.airbng.controller;
 
 import com.airbng.common.response.BaseResponse;
 import com.airbng.dto.*;
+import com.airbng.security.domain.CustomUserDetails;
 import com.airbng.service.MemberService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -12,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -66,12 +68,13 @@ public class MemberController {
     @PreAuthorize("hasAnyAuthority('USER')")
     public BaseResponse<MemberMyPageResponse> updateUserById(
             @Valid @RequestPart("memberUpdateRequest") MemberUpdateRequest memberUpdateRequest,
-            @RequestPart(value = "profileImage", required = false) MultipartFile profileImage) {
+            @RequestPart(value = "profileImage", required = false) MultipartFile profileImage,
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
 
         log.info("회원 정보 수정 요청: {}", memberUpdateRequest);
         log.info("프로필 이미지: {}", profileImage != null ? profileImage.getOriginalFilename() : "없음");
 
-        MemberMyPageResponse response = memberService.updateUserById(memberUpdateRequest, profileImage);
+        MemberMyPageResponse response = memberService.updateUserById(memberUpdateRequest, profileImage, userDetails);
         return new BaseResponse<>(response);
     }
 }
