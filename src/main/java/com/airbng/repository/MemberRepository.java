@@ -9,13 +9,13 @@ import java.util.Optional;
 @Repository
 public interface MemberRepository extends JpaRepository<Member, Long> {
 
-    boolean existsByMemberId(Long memberId);
+    boolean existsByEmail(String email);
 
     boolean existsByNickname(String nickname);
 
-    boolean existsByEmail(String email);
-
     boolean existsByPhone(String phone);
+
+    boolean existsByMemberId(Long memberId);
 
     Member findMemberByEmail(String email);
 
