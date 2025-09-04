@@ -3,6 +3,7 @@ package com.airbng.controller;
 import com.airbng.common.response.BaseResponse;
 import com.airbng.common.response.status.BaseResponseStatus;
 import com.airbng.dto.locker.*;
+import com.airbng.security.domain.CustomUserDetails;
 import com.airbng.service.LockerService;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
@@ -11,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -33,8 +35,8 @@ public class LockerController {
     @GetMapping("/{lockerId}")
     @PreAuthorize("hasAnyAuthority('USER')")
     public BaseResponse<LockerDetailResponse> findLockerById(@PathVariable Long lockerId) {
-
-        return new BaseResponse<>(lockerService.findLockerById(lockerId));
+        lockerService.findLockerById(lockerId);
+        return new BaseResponse<>(SUCCESS);
     }
 
     @PatchMapping("/{lockerId}")
@@ -66,13 +68,15 @@ public class LockerController {
     @GetMapping("/popular")
     public BaseResponse<LockerTop5Response> selectTop5Lockers() {
         log.info("LockerController.selectTop5Lockers");
-        return new BaseResponse<>(lockerService.findTop5Locker());
+        lockerService.findTop5Locker();
+        return new BaseResponse<>(SUCCESS);
     }
 
     @GetMapping("/update/{lockerId}")
     @PreAuthorize("hasAnyAuthority('USER')")
     public BaseResponse<LockerUpdateResponse> findLockerForUpdate(@PathVariable Long lockerId) {
-        return new BaseResponse<>(lockerService.findUpdateUserById(lockerId));
+        lockerService.findUpdateUserById(lockerId);
+        return new BaseResponse<>(SUCCESS);
     }
 
 
@@ -87,6 +91,33 @@ public class LockerController {
         request.setImages(images);
         lockerService.updateLocker(request);
         return new BaseResponse<>("보관소 수정 완료");
+    }
+
+    /** 내 보관소 보유 여부 (true/false) */
+    @GetMapping("/me/exist")
+    @PreAuthorize("hasAnyAuthority('USER')")
+    public BaseResponse<Boolean> hasMyLocker(@AuthenticationPrincipal CustomUserDetails principal) {
+        Long memberId = principal.getId();
+        lockerService.isExistLocker(memberId);
+        return new BaseResponse<>(SUCCESS);
+    }
+
+    /** 내 보관소 상세(뷰 용) */
+    @GetMapping("/me")
+    @PreAuthorize("hasAnyAuthority('USER')")
+    public BaseResponse<LockerDetailResponse> myLocker(@AuthenticationPrincipal CustomUserDetails principal) {
+        Long memberId = principal.getId();
+        lockerService.findMyLocker(memberId);
+        return new BaseResponse<>(SUCCESS);
+    }
+
+    /** 내 보관소 수정 화면용 데이터 */
+    @GetMapping("/me/update")
+    @PreAuthorize("hasAnyAuthority('USER')")
+    public BaseResponse<LockerUpdateResponse> myLockerForUpdate(@AuthenticationPrincipal CustomUserDetails principal) {
+        Long memberId = principal.getId();
+        lockerService.findUpdateMyLocker(memberId);
+        return new BaseResponse<>(SUCCESS);
     }
 
 }
