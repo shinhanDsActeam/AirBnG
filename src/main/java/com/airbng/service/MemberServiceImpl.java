@@ -95,14 +95,17 @@ public class MemberServiceImpl implements MemberService {
         if (!userId.equals(request.getMemberId())) {
             throw new MemberException(FAILED_UPDATE_MEMBER);
         }
+
+        String phone = request.getPhone().replace("-", "");
+
         // 닉네임 중복 체크
         if (!member.getNickname().equals(request.getNickname()) &&
                 memberRepository.existsByNickname(request.getNickname())) {
             throw new MemberException(DUPLICATE_NICKNAME);
         }
         // 휴대폰 중복 체크
-        if (member.getPhone().equals(request.getPhone()) &&
-                memberRepository.existsByPhone(request.getPhone())) {
+        if (!member.getPhone().equals(phone) &&
+                memberRepository.existsByPhone(phone)) {
             throw new MemberException(DUPLICATE_PHONE);
         }
 
