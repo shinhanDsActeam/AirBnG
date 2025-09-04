@@ -33,6 +33,7 @@ public class LockerDetailResponse {
                 .lockerId(locker.getLockerId())
                 .lockerName(locker.getLockerName())
                 .address(locker.getAddress())
+                .addressDetail(locker.getAddressDetail())
                 .addressEnglish(locker.getAddressEnglish())
                 .isAvailable(locker.getIsAvailable())
                 .keeperId(locker.getKeeper().getMemberId())
