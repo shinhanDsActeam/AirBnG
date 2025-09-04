@@ -35,8 +35,7 @@ public class LockerController {
     @GetMapping("/{lockerId}")
     @PreAuthorize("hasAnyAuthority('USER')")
     public BaseResponse<LockerDetailResponse> findLockerById(@PathVariable Long lockerId) {
-        lockerService.findLockerById(lockerId);
-        return new BaseResponse<>(SUCCESS);
+        return new BaseResponse<>(lockerService.findLockerById(lockerId));
     }
 
     @PatchMapping("/{lockerId}")
@@ -68,15 +67,13 @@ public class LockerController {
     @GetMapping("/popular")
     public BaseResponse<LockerTop5Response> selectTop5Lockers() {
         log.info("LockerController.selectTop5Lockers");
-        lockerService.findTop5Locker();
-        return new BaseResponse<>(SUCCESS);
+        return new BaseResponse<>(lockerService.findTop5Locker());
     }
 
     @GetMapping("/update/{lockerId}")
     @PreAuthorize("hasAnyAuthority('USER')")
     public BaseResponse<LockerUpdateResponse> findLockerForUpdate(@PathVariable Long lockerId) {
-        lockerService.findUpdateUserById(lockerId);
-        return new BaseResponse<>(SUCCESS);
+        return new BaseResponse<>(lockerService.findUpdateUserById(lockerId));
     }
 
 
@@ -98,8 +95,7 @@ public class LockerController {
     @PreAuthorize("hasAnyAuthority('USER')")
     public BaseResponse<Boolean> hasMyLocker(@AuthenticationPrincipal CustomUserDetails principal) {
         Long memberId = principal.getId();
-        lockerService.isExistLocker(memberId);
-        return new BaseResponse<>(SUCCESS);
+        return new BaseResponse<>(lockerService.isExistLocker(memberId));
     }
 
     /** 내 보관소 상세(뷰 용) */
@@ -107,8 +103,7 @@ public class LockerController {
     @PreAuthorize("hasAnyAuthority('USER')")
     public BaseResponse<LockerDetailResponse> myLocker(@AuthenticationPrincipal CustomUserDetails principal) {
         Long memberId = principal.getId();
-        lockerService.findMyLocker(memberId);
-        return new BaseResponse<>(SUCCESS);
+        return new BaseResponse<>(lockerService.findMyLocker(memberId));
     }
 
     /** 내 보관소 수정 화면용 데이터 */
@@ -116,8 +111,7 @@ public class LockerController {
     @PreAuthorize("hasAnyAuthority('USER')")
     public BaseResponse<LockerUpdateResponse> myLockerForUpdate(@AuthenticationPrincipal CustomUserDetails principal) {
         Long memberId = principal.getId();
-        lockerService.findUpdateMyLocker(memberId);
-        return new BaseResponse<>(SUCCESS);
+        return new BaseResponse<>(lockerService.findUpdateMyLocker(memberId));
     }
 
 }
