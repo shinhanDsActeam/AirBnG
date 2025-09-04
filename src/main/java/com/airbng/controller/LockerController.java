@@ -87,11 +87,11 @@ public class LockerController {
     public BaseResponse<String> updateLocker(
             @PathVariable Long lockerId,
             @RequestPart("locker") LockerUpdateRequest request,
-            @RequestPart(value = "images", required = false) List<MultipartFile> images
+            @RequestPart(value = "images", required = false) List<MultipartFile> images,
+            @AuthenticationPrincipal CustomUserDetails principal
     ) throws IOException {
         request.setLockerId(lockerId);
-        request.setImages(images);
-        lockerService.updateLocker(request);
+        lockerService.updateLocker(principal.getId(), request, images);
         return new BaseResponse<>("보관소 수정 완료");
     }
 

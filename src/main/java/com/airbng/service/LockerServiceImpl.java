@@ -258,13 +258,18 @@ public class LockerServiceImpl implements LockerService {
     // ================= 업데이트 =================
     @Transactional
     @Override
-    public void updateLocker(LockerUpdateRequest dto) throws IOException {
+    public void updateLocker(Long keeperId, LockerUpdateRequest dto, List<MultipartFile> images) throws IOException {
+
         Locker locker = lockerRepository.findById(dto.getLockerId())
                 .orElseThrow(() -> new LockerException(NOT_FOUND_LOCKER));
 
-        Member keeper = memberRepository.findById(dto.getKeeperId())
-                .orElseThrow(() -> new MemberException(NOT_FOUND_MEMBER));
+        // 권한 체크: 현재 로그인한 사용자(keeperId)가 이 락커의 소유자인지 확인
+        Long ownerId = locker.getKeeper().getMemberId();
+        if (!Objects.equals(ownerId, keeperId)) {
+            throw new MemberException(NOT_FOUND_MEMBER); // 적절한 에러코드 사용
+        }
 
+        // 기본 정보 업데이트
         locker.setLockerName(dto.getLockerName());
         locker.setIsAvailable(dto.getIsAvailable());
         locker.setAddress(dto.getAddress());
@@ -272,14 +277,13 @@ public class LockerServiceImpl implements LockerService {
         locker.setAddressDetail(dto.getAddressDetail());
         locker.setLatitude(dto.getLatitude());
         locker.setLongitude(dto.getLongitude());
-        locker.setKeeper(keeper);
 
-        // 이미지 재연결
-        if (dto.getImages() != null && !dto.getImages().isEmpty()) {
-            lockerRepository.deleteLockerImagesByLockerId(dto.getLockerId());
+        // 이미지 교체(이미지 전달된 경우에만 모두 교체)
+        if (images != null && !images.isEmpty()) {
+            lockerRepository.deleteLockerImagesByLockerId(locker.getLockerId());
 
-            for (MultipartFile file : dto.getImages()) {
-                if (file.isEmpty()) continue;
+            for (MultipartFile file : images) {
+                if (file == null || file.isEmpty()) continue;
 
                 String fileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
                 String path = "lockers/" + fileName;
@@ -288,23 +292,29 @@ public class LockerServiceImpl implements LockerService {
                 Image image = Image.builder()
                         .url(url)
                         .uploadName(file.getOriginalFilename())
+                        .status(BaseStatus.ACTIVE)
                         .build();
                 imageRepository.save(image);
 
                 lockerImageRepository.save(
-                        LockerImage.builder().locker(locker).image(image).build()
+                        LockerImage.builder().locker(locker).image(image).status(BaseStatus.ACTIVE).build()
                 );
             }
         }
 
-        // 짐타입 재연결
-        if (dto.getJimTypeIds() != null && !dto.getJimTypeIds().isEmpty()) {
-            lockerRepository.deleteLockerJimTypesByLockerId(dto.getLockerId());
+        // 짐타입 재연결(리스트가 넘어온 경우에만)
+        if (dto.getJimTypeIds() != null) {
+            lockerRepository.deleteLockerJimTypesByLockerId(locker.getLockerId());
 
-            List<JimType> types = jimTypeRepository.findAllById(dto.getJimTypeIds());
+            List<JimType> types = dto.getJimTypeIds().stream()
+                    .filter(Objects::nonNull)
+                    .map(id -> jimTypeRepository.findById(id)
+                            .orElseThrow(() -> new LockerException(INVALID_JIMTYPE)))
+                    .toList();
+
             for (JimType t : types) {
                 lockerJimTypeRepository.save(
-                        LockerJimType.builder().locker(locker).jimType(t).build()
+                        LockerJimType.builder().locker(locker).jimType(t).status(BaseStatus.ACTIVE).build()
                 );
             }
         }

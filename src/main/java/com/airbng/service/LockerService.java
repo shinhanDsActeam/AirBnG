@@ -2,8 +2,10 @@ package com.airbng.service;
 
 import com.airbng.dto.locker.*;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 
 @Service
 public interface LockerService {
@@ -27,7 +29,7 @@ public interface LockerService {
 
     boolean isExistLocker(Long memberId);
 
-    void updateLocker(LockerUpdateRequest request) throws IOException;
+    void updateLocker(Long keeperId, LockerUpdateRequest request, List<MultipartFile> images) throws IOException;
 
     LockerUpdateResponse findUpdateUserById(Long lockerId);
 

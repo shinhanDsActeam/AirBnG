@@ -343,22 +343,19 @@ class LockerServiceImplTest {
         MultipartFile f1 = mock(MultipartFile.class);
         when(f1.isEmpty()).thenReturn(false);
         when(f1.getOriginalFilename()).thenReturn("x.jpg");
-        dto.setImages(List.of(f1));
+        List<MultipartFile> images = List.of(f1);
 
         Locker l = dummyLocker(9L, 1L);
         when(lockerRepository.findById(9L)).thenReturn(Optional.of(l));
         when(s3Utils.upload(eq(f1), anyString())).thenReturn("https://s3/x.jpg");
-        when(jimTypeRepository.findAllById(List.of(1L,2L))).thenReturn(
-                List.of(JimType.builder().jimTypeId(1L).typeName("A").pricePerHour(100L).build(),
-                        JimType.builder().jimTypeId(2L).typeName("B").pricePerHour(200L).build())
-        );
+        when(jimTypeRepository.findById(1L)).thenReturn(Optional.of(JimType.builder().jimTypeId(1L).typeName("A").pricePerHour(100L).build()));
+        when(jimTypeRepository.findById(2L)).thenReturn(Optional.of(JimType.builder().jimTypeId(2L).typeName("B").pricePerHour(200L).build()));
 
-        service.updateLocker(dto);
+        service.updateLocker(1L, dto, images);
 
         verify(lockerRepository).deleteLockerImagesByLockerId(9L);
         verify(imageRepository).save(any(Image.class));
         verify(lockerImageRepository).save(any(LockerImage.class));
-
         verify(lockerRepository).deleteLockerJimTypesByLockerId(9L);
         verify(lockerJimTypeRepository, times(2)).save(any(LockerJimType.class));
     }
