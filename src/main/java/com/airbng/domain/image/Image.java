@@ -22,15 +22,15 @@ public class Image extends BaseTime {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long imageId;
 
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "VARCHAR(1000)")
     private String url;
 
     @Column(nullable = false)
     private String uploadName;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, columnDefinition = "VARCHAR(10)")
-    private BaseStatus status;
+    @Column(nullable = false, columnDefinition = "VARCHAR(10) DEFAULT 'ACTIVE'" )
+    private BaseStatus status = BaseStatus.ACTIVE;
 
     // com.airbng.domain.image.Image
     public static Image withId(Long imageId) {
@@ -38,6 +38,7 @@ public class Image extends BaseTime {
                 .imageId(imageId)
                 .url("https://example.com/images/profile" + imageId + ".jpg")
                 .uploadName("profile" + imageId + ".jpg")
+                .status(BaseStatus.ACTIVE)
                 .build();
     }
 

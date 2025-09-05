@@ -64,13 +64,8 @@ public class LockerServiceImpl implements LockerService {
 
     @Override
     public LockerDetailResponse findMyLocker(Long memberId) {
-        LockerDetailResponse result = lockerMapper.findLockerDetailByMemberId(memberId);
-        if (result == null) {
-            throw new LockerException(NOT_FOUND_LOCKERDETAILS);
-        }
-
-        result.setImages(lockerMapper.findImageById(result.getLockerId()));
-        return result;
+        return LockerDetailResponse.from(lockerRepository.findLockerByMemberId(memberId)
+                .orElseThrow(() -> new LockerException(NOT_FOUND_LOCKERDETAILS)));
     }
 
     @Override
@@ -137,22 +132,11 @@ public class LockerServiceImpl implements LockerService {
                     throw new ImageException(EMPTY_FILE);
                 }
 
-                // 1. 파일명 + 경로 지정
-                String uuid = UUID.randomUUID().toString();
-                String fileName = uuid + "_" + file.getOriginalFilename();
-                String path = "lockers/" + fileName;
+                s3Utils.createFileName(file.getOriginalFilename());
 
-                // 2. 업로드 및 예외 처리
-                String imageUrl;
-                try {
-                    imageUrl = s3Utils.upload(file, path); // 확장자 검사 포함됨
-                } catch (IOException e) {
-                    throw new ImageException(UPLOAD_FAILED); // 필요 시 추가 정의
-                }
-
-                // 3. DB 저장
+//                 3. DB 저장
                 Image image = Image.builder()
-                        .url(imageUrl)
+                        .url(s3Utils.upload(file))
                         .uploadName(file.getOriginalFilename())
                         .build();
 
@@ -268,7 +252,7 @@ public class LockerServiceImpl implements LockerService {
                 String uuid = UUID.randomUUID().toString();
                 String fileName = uuid + "_" + file.getOriginalFilename();
                 String path = "lockers/" + fileName;
-                String url = s3Utils.upload(file, path);
+                String url = s3Utils.upload(file);
 
                 Image image = Image.builder()
                         .url(url)
@@ -304,5 +288,7 @@ public class LockerServiceImpl implements LockerService {
         // 3. 보관소 자체 삭제
         lockerMapper.deleteLocker(lockerId);
     }
+
+
 
 }
