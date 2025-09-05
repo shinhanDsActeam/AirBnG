@@ -56,13 +56,4 @@ public interface LockerRepository extends JpaRepository<Locker, Long> {
     List<Locker> findAllLockerBySearch(@Param("address") String address,
                                        @Param("lockerName") String lockerName,
                                        @Param("jimTypeIds") List<Long> jimTypeIds);
-
-    @Query("SELECT COUNT(DISTINCT l.lockerId)" +
-            "FROM Locker l " +
-            "LEFT JOIN l.lockerJimTypes lj " +
-            "LEFT JOIN lj.jimType j " +
-            "WHERE (:address IS NULL OR :address = '' OR l.address LIKE CONCAT('%', :address, '%'))" +
-            "AND (:lockerName IS NULL OR :lockerName = '' OR l.lockerName LIKE CONCAT('%', :lockerName, '%'))" +
-            "AND ((:jimTypeIds) IS NULL OR j.jimTypeId IN (:jimTypeIds))")
-    Long findLockerCount(LockerSearchRequest condition);
 }
