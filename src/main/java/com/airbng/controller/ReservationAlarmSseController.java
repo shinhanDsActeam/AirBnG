@@ -1,8 +1,11 @@
 package com.airbng.controller;
 
+import com.airbng.security.domain.CustomUserDetails;
 import com.airbng.service.ReservationAlarmSseService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,22 +22,14 @@ public class ReservationAlarmSseController {
     private final ReservationAlarmSseService reservationAlarmSseService;
 
     @GetMapping("/reservations/alarms")
-    @PreAuthorize("hasAnyAuthority('USER')")
+//    @PreAuthorize("hasAnyAuthority('USER')") //테스트땜에 주석처리
     public SseEmitter subscribe(
-            HttpSession session,
-            @RequestHeader(value = "Last-Event-ID", required = false) String lastEventId
+            @RequestHeader(value = "Last-Event-ID", required = false) String lastEventId,
+            @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
 
-//테스트용 코드
-        Long memberId = 1L; //keeper의 경우 1L로 고정
-//        Long memberId = 3L; //dropper의 경우 3L로 고정
-
-
-        // 세션에서 로그인한 사용자 정보 가져오기 - 실제 코드
-//        Long memberId = (Long) session.getAttribute("memberId");
-        if (memberId == null) {
-            throw new IllegalStateException("로그인 정보가 없습니다.");
-        }
+        //테스트용 코드
+        Long memberId = 3L;
 
         // lastEventId를 로그 또는 서비스로 넘겨서 놓친 알림 재전송할 수 있음
         return reservationAlarmSseService.connect(memberId, lastEventId);

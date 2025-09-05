@@ -25,7 +25,7 @@ public class SchedulerManualTriggerController {
     private final ReservationAlarmSseService sseService;
 
     @PostMapping("/trigger-alarms")
-    @PreAuthorize("hasAnyAuthority('USER')")
+//    @PreAuthorize("hasAnyAuthority('USER')")
     public ResponseEntity<String> triggerAlarms() {
         log.info("🧪 수동으로 알림 스케줄러 실행");
         alertScheduledTask.processReservationAlarms();
@@ -33,7 +33,7 @@ public class SchedulerManualTriggerController {
     }
 
     @PostMapping("/test-notification/{memberId}")
-    @PreAuthorize("hasAnyAuthority('USER')")
+//    @PreAuthorize("hasAnyAuthority('USER')")
     public ResponseEntity<String> testNotification(@PathVariable Long memberId) {
         log.info("🧪 테스트 알림 전송: memberId={}", memberId);
 

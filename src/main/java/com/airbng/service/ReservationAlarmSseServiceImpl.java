@@ -1,5 +1,6 @@
 package com.airbng.service;
 
+import com.airbng.security.domain.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -10,6 +11,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -32,6 +34,8 @@ public class ReservationAlarmSseServiceImpl implements ReservationAlarmSseServic
     // 클라이언트가 SSE 연결을 요청할 때 호출되는 메서드
     @Override
     public SseEmitter connect(Long memberId, String lastEventId) {
+
+//        Long memberId = userDetails.getId(); -> 실제 코드
         log.info("SSE 연결 요청: memberId={}, 현재 연결 수={}", memberId, emitterMap.size());
 
         SseEmitter emitter = new SseEmitter(TIMEOUT);
@@ -54,6 +58,20 @@ public class ReservationAlarmSseServiceImpl implements ReservationAlarmSseServic
 
         try {
             emitter.send(SseEmitter.event().name("connect").data("SSE SUCCESS - memberId: " + memberId));
+
+            // lastEventId가 있으면 클라이언트가 놓친 알림 재전송
+            if (lastEventId != null) {
+                List<String> missedAlarms = reservationAlarmCacheService.getMissedAlarms(memberId, lastEventId);
+                for (String payload : missedAlarms) {
+                    String alarmEventId = UUID.randomUUID().toString(); // 고유 이벤트 ID 생성
+                    emitter.send(SseEmitter.event()
+                            .id(alarmEventId)
+                            .name("alarm")
+                            .data(payload));
+                }
+            }
+
+
         } catch (IOException e) {
             log.error("초기 연결 메시지 전송 실패", e);
         }
@@ -65,31 +83,40 @@ public class ReservationAlarmSseServiceImpl implements ReservationAlarmSseServic
 
     // 클라이언트에게 메시지를 전송하는 메서드
     @Override
-    public void sendMessage(Long memberId, Object data) {
+    public void sendMessage(Long memberId, Object payload) {
         List<SseEmitter> emitters = emitterMap.get(memberId);
 
-        if (emitters != null && !emitters.isEmpty()) {
-            log.info("알림 전송 시도: memberId={}, data={}", memberId, data);
+        try {
+            // 알림을 Redis에 저장하고 안읽음 표시
+            String eventId = reservationAlarmCacheService.saveAlarm(memberId, payload);
+            reservationAlarmCacheService.markUnread(memberId);
 
-            List<SseEmitter> deadEmitters = new ArrayList<>();
+            // 각 emitter에 메시지 전송 시도 (존재 시 바로 전송)
+            if (emitters != null && !emitters.isEmpty()) {
+                log.info("알림 전송 시도: memberId={}, data={}", memberId, payload);
 
-            for (SseEmitter emitter : emitters) {
-                try {
-                    emitter.send(SseEmitter.event().name("alarm").data(data));
-                    reservationAlarmCacheService.markUnread(memberId);
-                } catch (IOException e) {
-                    log.warn("SSE 메시지 전송 실패: memberId={}, error={}", memberId, e.getMessage());
-                    deadEmitters.add(emitter);
-                    emitter.completeWithError(e);
+                List<SseEmitter> deadEmitters = new ArrayList<>();
+
+                for (SseEmitter emitter : emitters) {
+                    try {
+                        emitter.send(SseEmitter.event().id(eventId).name("alarm").data(payload));
+                    } catch (IOException e) {
+                        log.warn("SSE 메시지 전송 실패: memberId={}, error={}", memberId, e.getMessage());
+                        deadEmitters.add(emitter);
+                        emitter.completeWithError(e);
+                    }
                 }
+                // 연결 끊긴 emitter 정리
+                emitters.removeAll(deadEmitters);
+                if (emitters.isEmpty()) {
+                    emitterMap.remove(memberId);
+                }
+
+            } else {
+                log.info("SSE 연결 없음: memberId={}", memberId);
             }
-            // 연결 끊긴 emitter 정리
-            emitters.removeAll(deadEmitters);
-            if (emitters.isEmpty()) {
-                emitterMap.remove(memberId);
-            }
-        } else {
-            log.info("⚠️ SSE 연결 없음: memberId={}", memberId);
+        }catch(Exception e){
+            log.error("알림 저장/전송 실패: memberId={}, error={}", memberId, e.getMessage());
         }
     }
 
