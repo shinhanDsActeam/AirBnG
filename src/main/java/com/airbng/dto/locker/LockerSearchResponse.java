@@ -1,5 +1,6 @@
 package com.airbng.dto.locker;
 
+import com.airbng.domain.Locker;
 import lombok.*;
 
 import java.util.List;
@@ -12,4 +13,13 @@ import java.util.List;
 public class LockerSearchResponse {
     private Long count;
     private List<LockerPreviewResult> lockers;
+
+    public static LockerSearchResponse from(List<Locker> lockers){
+        return LockerSearchResponse.builder()
+                .count((long) lockers.size())
+                .lockers(lockers.stream()
+                        .map(LockerPreviewResult::from)
+                        .toList())
+                .build();
+    }
 }

@@ -42,16 +42,16 @@ public class LockerServiceImpl implements LockerService {
 
     @Override
     public LockerSearchResponse findAllLockerBySearch(LockerSearchRequest request) {
-        log.info("LockerServiceImpl.findAllLockerBySearch");
-        List<LockerPreviewResult> lockers = lockerMapper.findAllLockerBySearch(request);
-        if (lockers.isEmpty()) throw new LockerException(NOT_FOUND_LOCKER);
+        List<Locker> lockers = lockerRepository.findAllLockerBySearch(
+                request.getAddress(),
+                request.getLockerName(),
+                request.getJimTypeId());
 
-        LockerSearchResponse response = LockerSearchResponse.builder()
-                .count(lockerMapper.findLockerCount(request))
-                .lockers(lockers)
-                .build();
+        if (lockers.isEmpty()) {
+            throw new LockerException(NOT_FOUND_LOCKER);
+        }
 
-        return response;
+        return LockerSearchResponse.from(lockers);
     }
 
     @Override

@@ -8,7 +8,8 @@ import java.io.IOException;
 @Service
 public interface LockerService {
 
-    LockerSearchResponse findAllLockerBySearch(LockerSearchRequest condition);
+    LockerSearchResponse findAllLockerBySearch(LockerSearchRequest request);
+
 
     void registerLocker(LockerInsertRequest dto) throws IOException;
 
