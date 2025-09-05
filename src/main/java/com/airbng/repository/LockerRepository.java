@@ -2,8 +2,6 @@ package com.airbng.repository;
 
 import com.airbng.domain.Locker;
 import com.airbng.domain.base.ReservationState;
-import com.airbng.dto.locker.LockerPreviewResult;
-import com.airbng.dto.locker.LockerSearchRequest;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
