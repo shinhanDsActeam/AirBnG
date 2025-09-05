@@ -28,7 +28,7 @@ public class ReservationAlarmSseController {
     ) {
 
         //테스트용 코드
-        Long memberId = 3L; // 1L로 고정
+        Long memberId = 3L;
 
         // lastEventId를 로그 또는 서비스로 넘겨서 놓친 알림 재전송할 수 있음
         return reservationAlarmSseService.connect(memberId, lastEventId);

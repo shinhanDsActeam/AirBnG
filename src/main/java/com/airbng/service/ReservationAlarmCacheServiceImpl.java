@@ -38,7 +38,7 @@ public class ReservationAlarmCacheServiceImpl implements ReservationAlarmCacheSe
     @Override
     public boolean tryMarkSent(Long reservationId, Long receiverId, NotificationType type) {
         String key = buildKey(reservationId, receiverId, type);
-        // 처음 SET하는 경우에만 true 리턴됨
+        // 처음 SET하는 경우에만 true 리턴
         Boolean success = redisTemplate.opsForValue()
                 .setIfAbsent(key, "true", EXPIRE_SECONDS, TimeUnit.SECONDS);
         return Boolean.TRUE.equals(success);
@@ -86,21 +86,29 @@ public class ReservationAlarmCacheServiceImpl implements ReservationAlarmCacheSe
     @Override
     public List<String> getMissedAlarms(Long memberId, String lastEventId) {
         String redisKey = buildAlarmListKey(memberId);
-        List<String> all = redisTemplate.opsForList().range(redisKey, 0, -1);
+
+        List<String> all = redisTemplate.opsForList().range(redisKey, 0, -1); // 전체 리스트 조회
         if (all == null) return List.of();
 
+        long lastId;
+        if (lastEventId != null) {
+            lastId = Long.parseLong(lastEventId); // String을 Long으로 변환
+        } else {
+            lastId = 0;
+        }
+
         return all.stream()
-                .map(s -> s.split("\\|", 2))        // [eventId, payload]
-                .filter(arr -> arr[0].compareTo(lastEventId) > 0) // lastEventId 이후 알림만 전송
-                .map(arr -> arr[1])                  // payload만 반환
+                .map(s -> s.split("\\|", 2))          // [eventId, payload]
+                .filter(arr -> Long.parseLong(arr[0]) > lastId) // lastEventId 이후 것만 가져옴
+                .map(arr -> arr[1])                    // payload만 추출
                 .collect(Collectors.toList());
     }
 
 
-    @Override
     //알림 저장(value값으로 쌓임) -> sse 연결 시 놓친 알림 전송용
+    @Override
     public String saveAlarm(Long memberId, Object payload) {
-        String eventId = UUID.randomUUID().toString();
+        Long eventId = redisTemplate.opsForValue().increment("alarm:seq:" + memberId);
         String redisKey = buildAlarmListKey(memberId);
         String value;
 
@@ -113,7 +121,7 @@ public class ReservationAlarmCacheServiceImpl implements ReservationAlarmCacheSe
 
         redisTemplate.opsForList().rightPush(redisKey, value);
         redisTemplate.expire(redisKey, 24, TimeUnit.HOURS);
-        return eventId;
+        return eventId.toString();
     }
 
     //회원별 알림 리스트 키

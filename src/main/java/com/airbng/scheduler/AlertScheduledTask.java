@@ -52,7 +52,7 @@ public class AlertScheduledTask {
         }
 
         for (ReservationResponse r : expired) {
-            sendToBoth(r, NotificationType.EXPIRED, "짐 보관이 아직 완료되지 않았어요.", "고객 짐 보관 상태가 아직 완료되지 않았습니다.");
+            sendToBoth(r, NotificationType.EXPIRED, "짐 보관이 아직 완료되지 않았어요.", "고객 짐 보관 상태가 아직 완료되지 않았어요.");
         }
 
         // 2. REMINDER 알림 (30분 전)
@@ -85,20 +85,11 @@ public class AlertScheduledTask {
                         .type(type)
                         .message(dropperMsg)
                         .sendTime(now.toString()).build();
-            // SSE 연결이 있으면 바로 전송
-            if (sseService.hasConnected(r.getDropper().getMemberId())) {
-                sseService.sendMessage(r.getDropper().getMemberId(), d);
-            } else {
-                // 접속 없으면 Redis에 저장, 안읽음 표시
-                reservationAlarmCacheService.saveAlarm(r.getDropper().getMemberId(), d);
-                reservationAlarmCacheService.markUnread(r.getDropper().getMemberId());
-            }
 
-            // 발송 완료 표시
-            reservationAlarmCacheService.markSent(r.getReservationId(), r.getDropper().getMemberId(), type);
+            sseService.sendMessage(r.getDropper().getMemberId(), d);
+
             log.info("EXPIRED 발송 완료 (dropper)");
         }
-
 
         // KEEPER
         //레디스 캐시에 해당 내용의 알림 없으면 알림 발송
@@ -112,27 +103,13 @@ public class AlertScheduledTask {
                         .message(keeperMsg)
                         .sendTime(now.toString()).build();
 
-            // SSE 연결이 있으면 바로 전송
-            if (sseService.hasConnected(r.getKeeper().getMemberId())) {
-                sseService.sendMessage(r.getKeeper().getMemberId(), k);
-            } else {
-                // 접속 없으면 Redis에 저장, 안읽음 표시
-                reservationAlarmCacheService.saveAlarm(r.getKeeper().getMemberId(), k);
-                reservationAlarmCacheService.markUnread(r.getKeeper().getMemberId());
-            }
-
-            // 발송 완료 표시
-//            reservationAlarmCacheService.markSent(r.getReservationId(), r.getKeeper().getMemberId(), type);
+            sseService.sendMessage(r.getDropper().getMemberId(), k);
             log.info("EXPIRED 발송 완료 (keeper)");
-
             }
     }
 
 
-
     public void sendToOne(Long id, Long resId, String name, String role, NotificationType type, String message) {
-
-        ObjectMapper mapper = new ObjectMapper();
 
         if (!reservationAlarmCacheService.tryMarkSent(resId, id, type)) {
             log.debug("이미 Redis에 발송됨 표시가 있어 재발송 안함 (reservationId={}, memberId={}, type={})", resId, id, type);
@@ -148,25 +125,7 @@ public class AlertScheduledTask {
                 .sendTime(String.valueOf(LocalDateTime.now()))
                 .build();
 
-        String jsonpayload; // JSON 직렬화된 문자열
-
-        try {
-            jsonpayload = mapper.writeValueAsString(dto);
-        } catch (JsonProcessingException e) {
-            log.error("AlarmResponse JSON 직렬화 실패", e);
-            jsonpayload = dto.toString(); // fallback
-        }
-
-        // SSE 연결이 있으면 바로 전송
-        if (sseService.hasConnected(id)) {
-            sseService.sendMessage(id, dto);
-        } else {
-            reservationAlarmCacheService.saveAlarm(id, jsonpayload);
-            reservationAlarmCacheService.markUnread(id);
-        }
-
-//        reservationAlarmCacheService.markSent(resId, id, type);
+        sseService.sendMessage(id, dto);
         log.info("REMINDER 발송 완료 (memberId={})", id);
-
     }
 }
