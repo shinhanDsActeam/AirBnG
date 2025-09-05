@@ -103,7 +103,7 @@ public class AlertScheduledTask {
                         .message(keeperMsg)
                         .sendTime(now.toString()).build();
 
-            sseService.sendMessage(r.getDropper().getMemberId(), k);
+            sseService.sendMessage(r.getKeeper().getMemberId(), k);
             log.info("EXPIRED 발송 완료 (keeper)");
             }
     }
