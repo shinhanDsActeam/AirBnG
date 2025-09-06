@@ -1,5 +1,6 @@
 package com.airbng.service;
 
+import com.airbng.dto.AlarmPayloadResponse;
 import com.airbng.security.domain.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -57,20 +58,20 @@ public class ReservationAlarmSseServiceImpl implements ReservationAlarmSseServic
         });
 
         try {
-            emitter.send(SseEmitter.event().name("connect").data("SSE SUCCESS - memberId: " + memberId));
+            emitter.send(SseEmitter.event().id("0").name("connect").data("SSE SUCCESS - memberId: " + memberId));
 
-            // lastEventId가 있으면 클라이언트가 놓친 알림 재전송
             if (lastEventId != null) {
-                List<String> missedAlarms = reservationAlarmCacheService.getMissedAlarms(memberId, lastEventId);
-                for (String payload : missedAlarms) {
-                    String alarmEventId = UUID.randomUUID().toString(); // 고유 이벤트 ID 생성
+                List<AlarmPayloadResponse> missedAlarms = reservationAlarmCacheService.getMissedAlarms(memberId, lastEventId);
+                for (AlarmPayloadResponse alarm : missedAlarms) {
+                    // Redis 시퀀스 ID 그대로 사용
+                    log.info("놓친 알림 재전송: memberId={}, eventId={}, data={}", memberId, alarm.getEventId().toString(), alarm.getData());
+                    // 놓친 알림 재전송
                     emitter.send(SseEmitter.event()
-                            .id(alarmEventId)
+                            .id(alarm.getEventId().toString())
                             .name("alarm")
-                            .data(payload));
+                            .data(alarm.getData()));
                 }
             }
-
 
         } catch (IOException e) {
             log.error("초기 연결 메시지 전송 실패", e);

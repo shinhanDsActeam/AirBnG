@@ -1,6 +1,7 @@
 package com.airbng.service;
 
 import com.airbng.domain.base.NotificationType;
+import com.airbng.dto.AlarmPayloadResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -84,7 +85,7 @@ public class ReservationAlarmCacheServiceImpl implements ReservationAlarmCacheSe
 
     //sse 재연결 시 놓친 알림 가져오기
     @Override
-    public List<String> getMissedAlarms(Long memberId, String lastEventId) {
+    public List<AlarmPayloadResponse> getMissedAlarms(Long memberId, String lastEventId) {
         String redisKey = buildAlarmListKey(memberId);
 
         List<String> all = redisTemplate.opsForList().range(redisKey, 0, -1); // 전체 리스트 조회
@@ -100,7 +101,7 @@ public class ReservationAlarmCacheServiceImpl implements ReservationAlarmCacheSe
         return all.stream()
                 .map(s -> s.split("\\|", 2))          // [eventId, payload]
                 .filter(arr -> Long.parseLong(arr[0]) > lastId) // lastEventId 이후 것만 가져옴
-                .map(arr -> arr[1])                    // payload만 추출
+                .map(arr -> new AlarmPayloadResponse(Long.parseLong(arr[0]), arr[1]))                    // payload만 추출
                 .collect(Collectors.toList());
     }
 
