@@ -2,30 +2,23 @@ package com.airbng.controller;
 
 import com.airbng.security.domain.CustomUserDetails;
 import com.airbng.service.ReservationAlarmSseService;
-import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
+
+@RestController
 @RequiredArgsConstructor
-@Controller
-@RequestMapping("/page")
-public class AlarmPageController {
+@RequestMapping("/api/alarms")
+public class AlarmReadCheckController {
 
     private final ReservationAlarmSseService reservationAlarmSseService;
 
-    @GetMapping("/notification")
-    public String notificationPage(@AuthenticationPrincipal CustomUserDetails userDetails) {
-
+    @GetMapping("/unread")
+    public boolean hasUnread(@AuthenticationPrincipal CustomUserDetails userDetails) {
         Long memberId = userDetails != null ? userDetails.getId() : null;
-
-        if (memberId != null) {
-            reservationAlarmSseService.markAllAsRead(memberId);   //알림 읽음 처리
-        }
-
-        return "notification";
+        return memberId != null && reservationAlarmSseService.hasUnreadAlarm(memberId);
     }
-
 }
