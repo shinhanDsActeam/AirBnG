@@ -60,6 +60,14 @@ public class Member extends BaseTime {
     @OneToMany(mappedBy = "member")
     private Set<Zzim> zzims;
 
+    public void updateInfo(String email, String name, String phone, String nickname, Image profileImage) {
+        this.email = email;
+        this.name = name;
+        this.phone = phone;
+        this.nickname = nickname;
+        this.profileImage = profileImage;
+    }
+
     public Member(Long memberId, String role) {
         this.memberId = memberId;
         this.role = Role.valueOf(role);

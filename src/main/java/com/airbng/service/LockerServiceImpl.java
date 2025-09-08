@@ -165,17 +165,26 @@ public class LockerServiceImpl implements LockerService {
             if (dto.getImages().size() > 5) throw new ImageException(EXCEED_IMAGE_COUNT);
 
             for (MultipartFile file : dto.getImages()) {
-                if (file.isEmpty()) throw new ImageException(EMPTY_FILE);
+//                 if (file.isEmpty()) throw new ImageException(EMPTY_FILE);
 
-                String fileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
-                String path = "lockers/" + fileName;
+//                 String fileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
+//                 String path = "lockers/" + fileName;
 
-                String url;
-                try { url = s3Utils.upload(file, path); }
-                catch (IOException e) { throw new ImageException(UPLOAD_FAILED); }
+//                 String url;
+//                 try { url = s3Utils.upload(file, path); }
+//                 catch (IOException e) { throw new ImageException(UPLOAD_FAILED); }
+
+//                 Image image = Image.builder()
+//                         .url(url)
+
+                if (file.isEmpty()) {
+                    throw new ImageException(EMPTY_FILE);
+                }
+
+                s3Utils.createFileName(file.getOriginalFilename());
 
                 Image image = Image.builder()
-                        .url(url)
+                        .url(s3Utils.upload(file))
                         .uploadName(file.getOriginalFilename())
                         .status(BaseStatus.ACTIVE)
                         .build();
@@ -287,7 +296,7 @@ public class LockerServiceImpl implements LockerService {
 
                 String fileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
                 String path = "lockers/" + fileName;
-                String url = s3Utils.upload(file, path);
+                String url = s3Utils.upload(file);
 
                 Image image = Image.builder()
                         .url(url)

@@ -1,54 +1,46 @@
 package com.airbng.service;
 
-import com.airbng.common.exception.ImageException;
+import com.airbng.common.exception.MemberException;
+import com.airbng.domain.Member;
 import com.airbng.domain.base.BaseStatus;
 import com.airbng.domain.image.Image;
-import com.airbng.mappers.ImageMapper;
 import com.airbng.repository.ImageRepository;
+import com.airbng.repository.MemberRepository;
 import com.airbng.util.S3Utils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-import java.util.UUID;
+import static com.airbng.common.response.status.BaseResponseStatus.NOT_FOUND_MEMBER;
 
-import static com.airbng.common.response.status.BaseResponseStatus.UPLOAD_FAILED;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
+@Slf4j
 public class ImageServiceImpl implements ImageService {
     private final ImageRepository imageRepository;
-    private final ImageMapper imageMapper;
     private final S3Utils s3Utils;
+    private final MemberRepository memberRepository;
+
 
     @Value("${image.default-url}")
     private String defaultImageUrl;
 
     @Override
     public Image uploadProfileImage(MultipartFile file) {
-
-        String uuid = UUID.randomUUID().toString();
-        String fileName = uuid + "_" + file.getOriginalFilename();
-        String path = "profiles/" + fileName;
-
-        String url = null;
-        try {
-            url = s3Utils.upload(file, path);
-        } catch (IOException e) {
-            throw new ImageException(UPLOAD_FAILED);
-        }
+        s3Utils.createFileName(file.getOriginalFilename());
 
         Image image = Image.builder()
-                .url(url)
+                .url(s3Utils.upload(file))
                 .uploadName(file.getOriginalFilename())
                 .status(BaseStatus.ACTIVE)
                 .build();
 
-        imageRepository.save(image);
-        return image;
+        return imageRepository.save(image);
     }
 
     public Image getDefaultProfileImage() {
@@ -61,10 +53,21 @@ public class ImageServiceImpl implements ImageService {
         return image;
     }
 
-    public Image updateDefaultProfileImage(MultipartFile file, Long memberId) {
-        if (file != null && !file.isEmpty()) {
-            return this.uploadProfileImage(file);
+    @Transactional
+    public Image updateProfileImage(MultipartFile file, Long memberId) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new MemberException(NOT_FOUND_MEMBER));
+
+        Image image = member.getProfileImage();
+
+        if (!image.getUploadName().equals("default.jpg")) {
+            s3Utils.delete(image.getUrl());
         }
-        return imageMapper.findImageIdByMemberId(memberId); // 기존 이미지 유지
+
+        String newUrl = s3Utils.upload(file);
+        image.setUrl(newUrl);
+        image.setUploadName(file.getOriginalFilename());
+
+        return image;
     }
 }
