@@ -1,10 +1,13 @@
 package com.airbng.dto.locker;
 
+import com.airbng.domain.Locker;
 import com.airbng.domain.base.Available;
+import com.airbng.dto.jimType.LockerJimTypeResult;
 import com.airbng.dto.jimType.LockerJimTypeUpdateResult;
 import lombok.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -27,4 +30,29 @@ public class LockerUpdateResponse {
     private List<LockerJimTypeUpdateResult> jimTypeResults;
     private List<String> images; // 이미지 리스트
 
+    public static LockerUpdateResponse from(Locker locker){
+        return LockerUpdateResponse.builder()
+                .lockerId(locker.getLockerId())
+                .lockerName(locker.getLockerName())
+                .address(locker.getAddress())
+                .addressEnglish(locker.getAddressEnglish())
+                .addressDetail(locker.getAddressDetail())
+                .latitude(locker.getLatitude())
+                .longitude(locker.getLongitude())
+                .isAvailable(locker.getIsAvailable())
+                .keeperId(locker.getKeeper().getMemberId())
+                .keeperName(locker.getKeeper().getName())
+                .keeperPhone(locker.getKeeper().getPhone())
+                .jimTypeResults(
+                        locker.getLockerJimTypes().stream()
+                                .map(jt -> LockerJimTypeUpdateResult.of(jt, true))
+                                .collect(Collectors.toList())
+                )
+                .images(
+                        locker.getLockerImages().stream()
+                                .map(lockerImage -> lockerImage.getImage().getUrl())
+                                .collect(Collectors.toList())
+                )
+                .build();
+    }
 }

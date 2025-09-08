@@ -32,14 +32,4 @@ public class Image extends BaseTime {
     @Column(nullable = false, columnDefinition = "VARCHAR(10) DEFAULT 'ACTIVE'" )
     private BaseStatus status = BaseStatus.ACTIVE;
 
-    // com.airbng.domain.image.Image
-    public static Image withId(Long imageId) {
-        return Image.builder()
-                .imageId(imageId)
-                .url("https://example.com/images/profile" + imageId + ".jpg")
-                .uploadName("profile" + imageId + ".jpg")
-                .status(BaseStatus.ACTIVE)
-                .build();
-    }
-
 }
