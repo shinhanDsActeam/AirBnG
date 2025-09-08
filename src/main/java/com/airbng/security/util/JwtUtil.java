@@ -19,6 +19,7 @@ public class JwtUtil {
     public static final String TOKEN_PREFIX = "Bearer ";
     public static final String TOKEN_TYPE_ACCESS = "access";
     public static final String TOKEN_TYPE_REFRESH = "refresh";
+    public static final String TOKEN_TYPE_SSE = "sse";
     public static final Long ACCESS_TOKEN_EXPIRATION = 3600000L;
     public static final Long REFRESH_TOKEN_EXPIRATION = 86400000L;
 
@@ -69,6 +70,19 @@ public class JwtUtil {
                 .sameSite("None")
                 .maxAge(60 * 60 * 10)
                 .path("/")
+                .build();
+    }
+
+    /**
+     * SSE 전용 쿠키를 설정
+     */
+    public ResponseCookie createSseCookie(String key, String value) {
+        return ResponseCookie.from(key,value)
+                .httpOnly(true)
+                .secure(true)
+                .sameSite("None")
+                .maxAge(60*60*10)
+                .path("/alarms")
                 .build();
     }
 }
