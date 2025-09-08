@@ -21,10 +21,8 @@ public class ReservationAlarmCacheServiceImpl implements ReservationAlarmCacheSe
     private final RedisTemplate<String, String> redisTemplate;
     private final ObjectMapper objectMapper = new ObjectMapper(); // JSON 변환용
 
-    private static final long EXPIRE_SECONDS =  60; // 테스트용 1분
-
-    //알림이 발송된 후 24시간 동안 중복 발송 방지 -> 실제 코드
-//    private static final long EXPIRE_SECONDS = 24 * 60 * 60;
+    //알림이 발송된 후 24시간 동안 중복 발송 방지
+    private static final long EXPIRE_SECONDS = 24 * 60 * 60;
 
     @Override
     public boolean tryMarkSent(Long reservationId, Long receiverId, NotificationType type) {
