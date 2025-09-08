@@ -15,13 +15,7 @@ public class HomePageController {
     private final ReservationAlarmSseService reservationAlarmSseService;
 
     @GetMapping("/home")
-    public String home(HttpSession session) {
-        Long memberId = (Long) session.getAttribute("memberId");
-
-        if (memberId != null) {
-            boolean hasUnread = reservationAlarmSseService.hasUnreadAlarm(memberId);
-            session.setAttribute("hasUnreadAlarm", hasUnread);
-        }
+    public String home() {
 
         return "home";
     }

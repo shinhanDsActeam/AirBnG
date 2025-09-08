@@ -22,14 +22,13 @@ public class ReservationAlarmSseController {
     private final ReservationAlarmSseService reservationAlarmSseService;
 
     @GetMapping("/reservations/alarms")
-//    @PreAuthorize("hasAnyAuthority('USER')") //테스트땜에 주석처리
+    @PreAuthorize("hasAnyAuthority('USER')") //테스트땜에 주석처리
     public SseEmitter subscribe(
             @RequestHeader(value = "Last-Event-ID", required = false) String lastEventId,
             @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
 
-        //테스트용 코드
-        Long memberId = 3L;
+        Long memberId = userDetails != null ? userDetails.getId() : null;
 
         // lastEventId를 로그 또는 서비스로 넘겨서 놓친 알림 재전송할 수 있음
         return reservationAlarmSseService.connect(memberId, lastEventId);
