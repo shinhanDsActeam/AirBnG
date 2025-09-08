@@ -3,6 +3,7 @@ package com.airbng.controller;
 import com.airbng.common.response.BaseResponse;
 import com.airbng.common.response.status.BaseResponseStatus;
 import com.airbng.dto.locker.*;
+import com.airbng.security.domain.CustomUserDetails;
 import com.airbng.service.LockerService;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
@@ -11,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -33,7 +35,6 @@ public class LockerController {
     @GetMapping("/{lockerId}")
     @PreAuthorize("hasAnyAuthority('USER')")
     public BaseResponse<LockerDetailResponse> findLockerById(@PathVariable Long lockerId) {
-
         return new BaseResponse<>(lockerService.findLockerById(lockerId));
     }
 
@@ -46,8 +47,9 @@ public class LockerController {
 
     @DeleteMapping("/{lockerId}")
     @PreAuthorize("hasAnyAuthority('USER')")
-    public BaseResponse<String> deleteLocker(@PathVariable Long lockerId) {
-        lockerService.deleteLocker(lockerId);
+    public BaseResponse<String> deleteLocker(@PathVariable Long lockerId,
+                                             @AuthenticationPrincipal CustomUserDetails userDetails) {
+        lockerService.deleteLocker(lockerId, userDetails);
         return new BaseResponse<>("보관소 삭제 완료");
     }
 
@@ -64,7 +66,6 @@ public class LockerController {
 
 
     @GetMapping("/popular")
-    @PreAuthorize("hasAnyAuthority('USER')")
     public BaseResponse<LockerTop5Response> selectTop5Lockers() {
         log.info("LockerController.selectTop5Lockers");
         return new BaseResponse<>(lockerService.findTop5Locker());
@@ -87,12 +88,36 @@ public class LockerController {
     public BaseResponse<String> updateLocker(
             @PathVariable Long lockerId,
             @RequestPart("locker") LockerUpdateRequest request,
-            @RequestPart(value = "images", required = false) List<MultipartFile> images
+            @RequestPart(value = "images", required = false) List<MultipartFile> images,
+            @AuthenticationPrincipal CustomUserDetails principal
     ) throws IOException {
         request.setLockerId(lockerId);
-        request.setImages(images);
-        lockerService.updateLocker(request);
+        lockerService.updateLocker(principal.getId(), request, images);
         return new BaseResponse<>("보관소 수정 완료");
+    }
+
+    /** 내 보관소 보유 여부 (true/false) */
+    @GetMapping("/me/exist")
+    @PreAuthorize("hasAnyAuthority('USER')")
+    public BaseResponse<Boolean> hasMyLocker(@AuthenticationPrincipal CustomUserDetails principal) {
+        Long memberId = principal.getId();
+        return new BaseResponse<>(lockerService.isExistLocker(memberId));
+    }
+
+    /** 내 보관소 상세(뷰 용) */
+    @GetMapping("/me")
+    @PreAuthorize("hasAnyAuthority('USER')")
+    public BaseResponse<LockerDetailResponse> myLocker(@AuthenticationPrincipal CustomUserDetails principal) {
+        Long memberId = principal.getId();
+        return new BaseResponse<>(lockerService.findMyLocker(memberId));
+    }
+
+    /** 내 보관소 수정 화면용 데이터 */
+    @GetMapping("/me/update")
+    @PreAuthorize("hasAnyAuthority('USER')")
+    public BaseResponse<LockerUpdateResponse> myLockerForUpdate(@AuthenticationPrincipal CustomUserDetails principal) {
+        Long memberId = principal.getId();
+        return new BaseResponse<>(lockerService.findUpdateMyLocker(memberId));
     }
 
 }
