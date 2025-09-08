@@ -121,12 +121,6 @@ public class ReservationAlarmSseServiceImpl implements ReservationAlarmSseServic
         }
     }
 
-    // 클라이언트가 연결되어 있는지 확인하는 메서드
-    @Override
-    public boolean hasConnected(Long memberId) {
-        return emitterMap.containsKey(memberId);
-    }
-
     // 알림 읽음 처리
     @Override
     public void markAllAsRead(Long memberId) {

@@ -82,7 +82,7 @@ public class JwtUtil {
                 .secure(true)
                 .sameSite("None")
                 .maxAge(60*60*10)
-                .path("/alarms")
+                .path("/")
                 .build();
     }
 }

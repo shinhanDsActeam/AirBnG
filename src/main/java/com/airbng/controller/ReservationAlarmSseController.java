@@ -31,10 +31,9 @@ public class ReservationAlarmSseController {
             @CookieValue(value = "sse", required = false) String sseToken
     ) {
 
-//        Long memberId = userDetails != null ? userDetails.getId() : null;
         Long memberId = jwtUtil.getUserId(sseToken);
         log.info("memberId: {}", memberId);
-        // lastEventId를 로그 또는 서비스로 넘겨서 놓친 알림 재전송할 수 있음
+
         return reservationAlarmSseService.connect(memberId, lastEventId);
     }
 }
