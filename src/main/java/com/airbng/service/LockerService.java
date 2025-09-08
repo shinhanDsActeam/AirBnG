@@ -1,6 +1,7 @@
 package com.airbng.service;
 
 import com.airbng.dto.locker.*;
+import com.airbng.security.domain.CustomUserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -35,7 +36,7 @@ public interface LockerService {
 
     LockerUpdateResponse findUpdateMyLocker(Long memberId);
 
-    void deleteLocker(Long lockerId);
+    void deleteLocker(Long lockerId, CustomUserDetails userDetails);
 
 
 

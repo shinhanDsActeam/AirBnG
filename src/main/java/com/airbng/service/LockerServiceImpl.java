@@ -15,6 +15,7 @@ import com.airbng.dto.jimType.JimTypeResult;
 import com.airbng.dto.jimType.LockerJimTypeUpdateResult;
 import com.airbng.dto.locker.*;
 import com.airbng.repository.*;
+import com.airbng.security.domain.CustomUserDetails;
 import com.airbng.util.S3Utils;
 import com.github.benmanes.caffeine.cache.Cache;
 import lombok.RequiredArgsConstructor;
@@ -332,9 +333,16 @@ public class LockerServiceImpl implements LockerService {
     // ================= 삭제 =================
     @Transactional
     @Override
-    public void deleteLocker(Long lockerId) {
-        if (!lockerRepository.existsById(lockerId))
+    public void deleteLocker(Long lockerId, CustomUserDetails userDetails) {
+        Long userId = userDetails.getId();
+
+        Optional<Locker> locker = lockerRepository.findLockerById(lockerId);
+        if (!locker.isPresent()) {
             throw new LockerException(NOT_FOUND_LOCKER);
+        }
+        if (!locker.get().getKeeper().getMemberId().equals(userId)) {
+            throw new LockerException(LOCKER_KEEPER_MISMATCH);
+        }
 
         lockerRepository.deleteLockerImagesByLockerId(lockerId);
         lockerRepository.deleteLockerJimTypesByLockerId(lockerId);

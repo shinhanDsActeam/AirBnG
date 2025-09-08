@@ -47,8 +47,9 @@ public class LockerController {
 
     @DeleteMapping("/{lockerId}")
     @PreAuthorize("hasAnyAuthority('USER')")
-    public BaseResponse<String> deleteLocker(@PathVariable Long lockerId) {
-        lockerService.deleteLocker(lockerId);
+    public BaseResponse<String> deleteLocker(@PathVariable Long lockerId,
+                                             @AuthenticationPrincipal CustomUserDetails userDetails) {
+        lockerService.deleteLocker(lockerId, userDetails);
         return new BaseResponse<>("보관소 삭제 완료");
     }
 

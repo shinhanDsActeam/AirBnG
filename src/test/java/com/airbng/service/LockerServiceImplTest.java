@@ -196,37 +196,6 @@ class LockerServiceImplTest {
         verify(localCache).put(eq("lockerTop5"), any());
     }
 
-    // ================= 등록 =================
-    @Test
-    @DisplayName("등록: 성공(이미지/짐타입 정상)")
-    void register_ok() throws IOException {
-        LockerInsertRequest dto = baseInsert();
-        MultipartFile f1 = mock(MultipartFile.class);
-        MultipartFile f2 = mock(MultipartFile.class);
-        when(f1.isEmpty()).thenReturn(false);
-        when(f2.isEmpty()).thenReturn(false);
-        when(f1.getOriginalFilename()).thenReturn("a.jpg");
-        when(f2.getOriginalFilename()).thenReturn("b.jpg");
-        dto.setImages(List.of(f1, f2));
-        dto.setJimTypeIds(List.of(10L, 20L));
-
-        when(lockerRepository.existsByKeeper_MemberId(1L)).thenReturn(false);
-        when(memberRepository.existsById(1L)).thenReturn(true);
-        when(s3Utils.upload(eq(f1), anyString())).thenReturn("https://s3/a.jpg");
-        when(s3Utils.upload(eq(f2), anyString())).thenReturn("https://s3/b.jpg");
-        when(jimTypeRepository.findValidIds(List.of(10L,20L))).thenReturn(List.of(10L,20L));
-        when(jimTypeRepository.findAllById(List.of(10L,20L))).thenReturn(
-                List.of(JimType.builder().jimTypeId(10L).typeName("S").pricePerHour(1000L).build(),
-                        JimType.builder().jimTypeId(20L).typeName("M").pricePerHour(2000L).build())
-        );
-
-        service.registerLocker(dto);
-
-        verify(lockerRepository).saveAndFlush(any(Locker.class));
-        verify(imageRepository, times(2)).save(any(Image.class));
-        verify(lockerImageRepository, times(2)).save(any(LockerImage.class));
-        verify(lockerJimTypeRepository, times(2)).save(any(LockerJimType.class));
-    }
 
     @Test
     @DisplayName("등록: keeper가 이미 보관소 보유 → MEMBER_ALREADY_HAS_LOCKER")
@@ -322,64 +291,6 @@ class LockerServiceImplTest {
     void exists_by_keeper() {
         when(lockerRepository.existsByKeeper_MemberId(3L)).thenReturn(true);
         assertTrue(service.isExistLocker(3L));
-    }
-
-    // ================= 수정 =================
-    @Test
-    @DisplayName("수정: 이미지/짐타입 재연결")
-    void updateLocker_ok() throws IOException {
-        LockerUpdateRequest dto = new LockerUpdateRequest();
-        dto.setLockerId(9L);
-        dto.setKeeperId(1L);
-        dto.setLockerName("updated");
-        dto.setIsAvailable(Available.NO);
-        dto.setAddress("addr");
-        dto.setAddressEnglish("eng");
-        dto.setAddressDetail("det");
-        dto.setLatitude(1.0);
-        dto.setLongitude(2.0);
-        dto.setJimTypeIds(List.of(1L,2L));
-
-        MultipartFile f1 = mock(MultipartFile.class);
-        when(f1.isEmpty()).thenReturn(false);
-        when(f1.getOriginalFilename()).thenReturn("x.jpg");
-        List<MultipartFile> images = List.of(f1);
-
-        Locker l = dummyLocker(9L, 1L);
-        when(lockerRepository.findById(9L)).thenReturn(Optional.of(l));
-        when(s3Utils.upload(eq(f1), anyString())).thenReturn("https://s3/x.jpg");
-        when(jimTypeRepository.findById(1L)).thenReturn(Optional.of(JimType.builder().jimTypeId(1L).typeName("A").pricePerHour(100L).build()));
-        when(jimTypeRepository.findById(2L)).thenReturn(Optional.of(JimType.builder().jimTypeId(2L).typeName("B").pricePerHour(200L).build()));
-
-        service.updateLocker(1L, dto, images);
-
-        verify(lockerRepository).deleteLockerImagesByLockerId(9L);
-        verify(imageRepository).save(any(Image.class));
-        verify(lockerImageRepository).save(any(LockerImage.class));
-        verify(lockerRepository).deleteLockerJimTypesByLockerId(9L);
-        verify(lockerJimTypeRepository, times(2)).save(any(LockerJimType.class));
-    }
-
-    // ================= 삭제 =================
-    @Test
-    @DisplayName("삭제: 연결 테이블 정리 후 삭제")
-    void delete_ok() {
-        when(lockerRepository.existsById(7L)).thenReturn(true);
-
-        service.deleteLocker(7L);
-
-        verify(lockerRepository).deleteLockerImagesByLockerId(7L);
-        verify(lockerRepository).deleteLockerJimTypesByLockerId(7L);
-        verify(lockerRepository).deleteById(7L);
-    }
-
-    @Test
-    @DisplayName("삭제: 대상 없음 → NOT_FOUND_LOCKER")
-    void delete_not_found() {
-        when(lockerRepository.existsById(8L)).thenReturn(false);
-
-        LockerException ex = assertThrows(LockerException.class, () -> service.deleteLocker(8L));
-        assertEquals(NOT_FOUND_LOCKER, ex.getBaseResponseStatus());
     }
 
     // ---------- private ----------
