@@ -31,8 +31,8 @@ public class AlertScheduledTask {
     private final ReservationRepository reservationRepository;
     private final ReservationAlarmSseService sseService;
     private final ReservationAlarmCacheService reservationAlarmCacheService;
-    @Scheduled(initialDelay = 10000, fixedRate = 1000 *30) //30초마다 실행 (테스트용)
-//    @Scheduled(initialDelay = 10000, fixedRate = 1000 * 60 * 60 * 24)
+    @Scheduled(initialDelay = 10000, fixedRate = 1000 * 60 * 60 * 24)
+
     public void processReservationAlarms() {
 
         log.info("스케줄러 실행 - 현재 시간: {}", LocalDateTime.now());
