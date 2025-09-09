@@ -51,48 +51,16 @@ public class LockerServiceImpl implements LockerService {
     // ================= 검색 =================
     @Override
     public LockerSearchResponse findAllLockerBySearch(LockerSearchRequest request) {
-        var ids = request.getJimTypeId();
-        boolean emptyJimTypes = (ids == null || ids.isEmpty());
+        List<Locker> lockers = lockerRepository.findAllLockerBySearch(
+                request.getAddress(),
+                request.getLockerName(),
+                request.getJimTypeId());
 
-        var lockers = lockerRepository.searchForList(
-                request.getAddress(), request.getLockerName(), ids, emptyJimTypes
-        );
-        if (lockers.isEmpty()) throw new LockerException(NOT_FOUND_LOCKER);
+        if (lockers.isEmpty()) {
+            throw new LockerException(NOT_FOUND_LOCKER);
+        }
 
-        long count = lockerRepository.searchCount(
-                request.getAddress(), request.getLockerName(), ids, emptyJimTypes
-        );
-
-        var previews = lockers.stream().map(l -> {
-            String url = l.getLockerImages() == null ? null :
-                    l.getLockerImages().stream()
-                            .sorted(Comparator.comparing(li -> li.getImage().getImageId()))
-                            .map(li -> li.getImage().getUrl())
-                            .findFirst().orElse(null);
-
-            return LockerPreviewResult.builder()
-                    .lockerId(l.getLockerId())
-                    .lockerName(l.getLockerName())
-                    .address(l.getAddress())
-                    .latitude(l.getLatitude())
-                    .longitude(l.getLongitude())
-                    .isAvailable(String.valueOf(l.getIsAvailable()))
-                    .url(url)
-                    .jimTypeResults(
-                            l.getLockerJimTypes() == null ? List.of() :
-                                    l.getLockerJimTypes().stream()
-                                            .map(x -> new JimTypeResult(
-                                                    x.getJimType().getJimTypeId(),
-                                                    x.getJimType().getTypeName()))
-                                            .toList()
-                    )
-                    .build();
-        }).toList();
-
-        return LockerSearchResponse.builder()
-                .count(count)
-                .lockers(previews)
-                .build();
+        return LockerSearchResponse.from(lockers);
     }
 
     // ================= 상세 =================

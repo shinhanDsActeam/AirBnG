@@ -2,6 +2,7 @@ package com.airbng.repository;
 
 import com.airbng.domain.Locker;
 import com.airbng.domain.base.ReservationState;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.*;
 import org.springframework.data.repository.query.Param;
@@ -77,5 +78,29 @@ public interface LockerRepository extends JpaRepository<Locker, Long> {
             "ORDER BY l.reservationCount DESC " +
             "limit 5")
     List<Locker> findTop5LockersByReservation(ReservationState state);
+
+
+    @Query("SELECT l FROM Locker l " +
+            "JOIN FETCH l.keeper k " +
+            "LEFT JOIN FETCH l.lockerImages li " +
+            "LEFT JOIN FETCH li.image i " +
+            "LEFT JOIN FETCH l.lockerJimTypes lj " +
+            "LEFT JOIN FETCH lj.jimType j " +
+            "WHERE k.memberId = :memberId")
+    Optional<Locker> findLockerByMemberId(Long memberId);
+
+    @Query("SELECT DISTINCT l FROM Locker l " +
+            "JOIN FETCH l.keeper k " +
+            "LEFT JOIN FETCH l.lockerImages li " +
+            "LEFT JOIN FETCH li.image i " +
+            "LEFT JOIN FETCH l.lockerJimTypes lj " +
+            "LEFT JOIN FETCH lj.jimType j " +
+            "WHERE (:address IS NULL OR :address = '' OR l.address LIKE CONCAT('%', :address, '%'))" +
+            "AND (:lockerName IS NULL OR :lockerName = '' OR l.lockerName LIKE CONCAT('%', :lockerName, '%'))" +
+            "AND ((:jimTypeIds) IS NULL OR j.jimTypeId IN (:jimTypeIds))" +
+            "ORDER BY l.lockerId")
+    List<Locker> findAllLockerBySearch(@Param("address") String address,
+                                       @Param("lockerName") String lockerName,
+                                       @Param("jimTypeIds") List<Long> jimTypeIds);
 
 }
