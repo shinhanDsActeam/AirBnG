@@ -5,16 +5,16 @@ import com.airbng.dto.locker.LockerSearchRequest;
 import com.airbng.dto.locker.LockerSearchResponse;
 import com.airbng.service.LockerService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.access.prepost.PreAuthorize;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/lockers")
-//@PreAuthorize("hasAnyAuthority('USER')")
 public class LockerSearchController {
 
     private final LockerService lockerService;
@@ -34,6 +34,7 @@ public class LockerSearchController {
                 .build();
 
         LockerSearchResponse result = lockerService.findAllLockerBySearch(request);
+
         return new BaseResponse<>(result);
     }
 
