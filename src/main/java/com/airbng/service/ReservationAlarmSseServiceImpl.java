@@ -36,7 +36,6 @@ public class ReservationAlarmSseServiceImpl implements ReservationAlarmSseServic
     @Override
     public SseEmitter connect(Long memberId, String lastEventId) {
 
-//        Long memberId = userDetails.getId(); -> 실제 코드
         log.info("SSE 연결 요청: memberId={}, 현재 연결 수={}", memberId, emitterMap.size());
 
         SseEmitter emitter = new SseEmitter(TIMEOUT);
