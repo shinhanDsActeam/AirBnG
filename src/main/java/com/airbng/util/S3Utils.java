@@ -29,6 +29,10 @@ public class S3Utils {
     private final AmazonS3Client amazonS3Client;
     private static final List<String> ALLOWED_EXTENSIONS = List.of("jpeg", "jpg", "png");
 
+    // 채팅 전용 허용 확장자
+    private static final List<String> ALLOWED_IMAGE_EXT = List.of("jpeg","jpg","png","gif","webp");
+    private static final List<String> ALLOWED_FILE_EXT  = List.of("pdf","txt","zip","doc","docx","xls","xlsx","ppt","pptx");
+
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
@@ -87,5 +91,51 @@ public class S3Utils {
         String path = "profiles/" + newFileName;
 
         return path;
+    }
+
+    /** 채팅 전용: prefix(예: chat/{convId}/images)와 kind(image|file) 기준으로 업로드 */
+    public String uploadForChat(MultipartFile file, String prefix, String kind) {
+        List<String> allowed = "image".equalsIgnoreCase(kind) ? ALLOWED_IMAGE_EXT : ALLOWED_FILE_EXT;
+        validateFileExtension(file, allowed);
+
+        String key = createFileName(file.getOriginalFilename(), prefix);
+        ObjectMetadata metadata = new ObjectMetadata();
+        metadata.setContentLength(file.getSize());
+        metadata.setContentType(file.getContentType());
+
+        try (InputStream inputStream = file.getInputStream()) {
+            amazonS3Client.putObject(new PutObjectRequest(bucket, key, inputStream, metadata));
+        } catch (IOException e) {
+            throw new ImageException(UPLOAD_FAILED);
+        }
+        return amazonS3Client.getUrl(bucket, key).toString(); // 공개 URL
+    }
+
+    /** prefix를 받는 새 createFileName (기존 메서드는 그대로 유지) */
+    public String createFileName(String fileName, String prefix) {
+        String uuid = UUID.randomUUID().toString();
+        return prefix + "/" + uuid + "_" + fileName;
+    }
+
+    // 오버로드된 확장자 검사
+    private void validateFileExtension(MultipartFile file, List<String> allowed) {
+        String originalFilename = file.getOriginalFilename();
+        if (originalFilename == null || !originalFilename.contains(".")) {
+            throw new ImageException(INVALID_EXTENSIONS);
+        }
+        String extension = originalFilename.substring(originalFilename.lastIndexOf(".") + 1).toLowerCase();
+        if (!allowed.contains(extension)) {
+            throw new ImageException(INVALID_EXTENSIONS);
+        }
+    }
+
+    // URL → Key 추출 (삭제/저장 시 활용)
+    public String extractKeyFromUrl(String imageUrl) {
+        String splitStr = ".com/";
+        return imageUrl.substring(imageUrl.lastIndexOf(splitStr) + splitStr.length());
+    }
+
+    public void deleteByKey(String key) {
+        amazonS3Client.deleteObject(bucket, key);
     }
 }
