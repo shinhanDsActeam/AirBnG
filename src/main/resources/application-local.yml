@@ -33,7 +33,8 @@ websocket:
     endpoint: /ws-chat
     app-destination-prefix: /app
     broker-destination-prefixes: /topic,/queue
-    allowed-origins: "localhost:3000"
+    allowed-origins: http://localhost:3000,http://localhost:3001,https://www.airbng.store,https://airbng.store
+
 
 management:
   endpoints:
