@@ -31,6 +31,7 @@ public class AlertScheduledTask {
     private final ReservationRepository reservationRepository;
     private final ReservationAlarmSseService sseService;
     private final ReservationAlarmCacheService reservationAlarmCacheService;
+
     @Scheduled(initialDelay = 10000, fixedRate = 1000 * 60 * 60 * 24)
 
     public void processReservationAlarms() {
