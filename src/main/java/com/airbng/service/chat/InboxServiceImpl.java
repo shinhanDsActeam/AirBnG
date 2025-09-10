@@ -35,10 +35,13 @@ public class InboxServiceImpl implements InboxService {
                 .set("peerId", peerId)
                 .set("lastMessage", last)
                 .set("lastMessageAt", at)
-                .setOnInsert("lastReadSeq", 0L)
-                .setOnInsert("cachedUnread", 0L);
+                .setOnInsert("lastReadSeq", 0L);
 
-        if (userId != senderId) {
+        if (userId == senderId) {
+            // 보낸 사람: 항상 0으로 유지 (읽음)
+            u.set("cachedUnread", 0L);
+        } else {
+            // 상대방: 미읽음 +1
             u.inc("cachedUnread", 1L);
         }
         mongo.upsert(q, u, Inbox.class);
@@ -66,5 +69,10 @@ public class InboxServiceImpl implements InboxService {
     @Override
     public List<Inbox> getInbox(long userId, Pageable pageable) {
         return inboxRepo.findByUserIdOrderByLastMessageAtDesc(userId, pageable);
+    }
+
+    @Override
+    public Inbox getOne(long userId, String convId) {
+        return inboxRepo.findByUserIdAndConvId(userId, convId).orElse(null);
     }
 }

@@ -17,4 +17,7 @@ public interface InboxService {
 
     /** 인박스 목록(정렬: lastMessageAt desc) */
     List<Inbox> getInbox(long userId, Pageable pageable);
+
+    /** 인박스 단건(convId 기준) */
+    Inbox getOne(long userId, String convId);
 }
