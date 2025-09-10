@@ -22,7 +22,8 @@ public class ReservationAlarmCacheServiceImpl implements ReservationAlarmCacheSe
     private final ObjectMapper objectMapper = new ObjectMapper(); // JSON 변환용
 
     //알림이 발송된 후 24시간 동안 중복 발송 방지
-    private static final long EXPIRE_SECONDS = 24 * 60 * 60;
+//    private static final long EXPIRE_SECONDS = 24 * 60 * 60;
+    private static final long EXPIRE_SECONDS =  60;
 
     @Override
     public boolean tryMarkSent(Long reservationId, Long receiverId, NotificationType type) {
