@@ -22,4 +22,11 @@ public class CustomUserDetailsService implements UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException("해당 회원이 존재하지 않습니다."));
         return new CustomUserDetails(member);
     }
+
+    public UserDetails loadUserById(Long memberId) throws UsernameNotFoundException {
+        // id가 memberId라면 findById로 충분. 아니면 findByMemberId 사용
+        Member m = memberRepository.findById(memberId)
+                .orElseThrow(() -> new UsernameNotFoundException("해당 회원이 존재하지 않습니다."));
+        return new CustomUserDetails(m);
+    }
 }
