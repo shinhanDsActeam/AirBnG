@@ -2,6 +2,7 @@ package com.airbng.core.auth;
 
 import com.airbng.core.domain.Member;
 import com.airbng.core.domain.base.BaseStatus;
+import com.airbng.platform.security.principal.AirbngPrincipal;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
@@ -12,7 +13,7 @@ import java.util.Collection;
 
 @Getter
 @RequiredArgsConstructor
-public class CustomUserDetails implements UserDetails {
+public class CustomUserDetails implements UserDetails, AirbngPrincipal {
 
     private final Member member;
 
