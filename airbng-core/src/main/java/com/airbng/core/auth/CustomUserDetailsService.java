@@ -1,6 +1,5 @@
 package com.airbng.core.auth;
 
-import com.airbng.security.domain.CustomUserDetails;
 import com.airbng.core.domain.Member;
 import com.airbng.core.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;

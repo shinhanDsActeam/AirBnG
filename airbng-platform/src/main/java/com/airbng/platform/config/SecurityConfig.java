@@ -83,7 +83,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(CustomUserDetailsService uds,
+    public AuthenticationManager authenticationManager(UserDetailsService uds, // airbng-core에 CustomUserDetailsService 구현
                                                        BCryptPasswordEncoder encoder) {
         DaoAuthenticationProvider provider = new org.springframework.security.authentication.dao.DaoAuthenticationProvider();
         provider.setUserDetailsService(uds);
