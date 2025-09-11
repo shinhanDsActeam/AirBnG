@@ -1,15 +1,16 @@
 package com.airbng.service;
 
-import com.airbng.common.exception.MemberException;
-import com.airbng.common.exception.ReservationException;
-import com.airbng.domain.Member;
-import com.airbng.domain.Reservation;
-import com.airbng.domain.base.BaseStatus;
-import com.airbng.domain.base.ReservationState;
-import com.airbng.domain.image.Image;
-import com.airbng.dto.reservation.ReservationCancelResponse;
-import com.airbng.mappers.MemberMapper;
-import com.airbng.mappers.ReservationMapper;
+import com.airbng.core.exception.MemberException;
+import com.airbng.core.exception.ReservationException;
+import com.airbng.core.domain.Member;
+import com.airbng.core.domain.Reservation;
+import com.airbng.core.domain.base.BaseStatus;
+import com.airbng.core.domain.base.ReservationState;
+import com.airbng.core.domain.image.Image;
+import com.airbng.core.dto.reservation.ReservationCancelResponse;
+import com.airbng.core.mappers.MemberMapper;
+import com.airbng.core.mappers.ReservationMapper;
+import com.airbng.core.service.ReservationServiceImpl;
 import com.github.benmanes.caffeine.cache.Cache;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -25,7 +26,7 @@ import org.mockito.quality.Strictness;
 import java.time.LocalDateTime;
 import java.util.concurrent.locks.ReentrantLock;
 
-import static com.airbng.common.response.status.BaseResponseStatus.*;
+import static com.airbng.platform.common.response.status.BaseResponseStatus.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;

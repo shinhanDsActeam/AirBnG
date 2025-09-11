@@ -1,5 +1,6 @@
 package com.airbng.interceptor;
 
+import com.airbng.platform.interceptor.RequestRateLimitInterceptor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -12,7 +13,7 @@ import java.time.Clock;
 import java.time.Instant;
 import java.time.ZoneId;
 
-import static com.airbng.common.response.status.BaseResponseStatus.DDOS_PREVENTION;
+import static com.airbng.platform.common.response.status.BaseResponseStatus.DDOS_PREVENTION;
 import static org.junit.jupiter.api.Assertions.*;
 
 class RequestRateLimitInterceptorTest {

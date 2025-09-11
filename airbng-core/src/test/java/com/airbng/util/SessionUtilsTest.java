@@ -1,5 +1,6 @@
 package com.airbng.util;
 
+import com.airbng.platform.util.SessionUtils;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

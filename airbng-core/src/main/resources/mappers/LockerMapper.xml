@@ -3,9 +3,9 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.airbng.mappers.LockerMapper">
+<mapper namespace="com.airbng.core.mappers.LockerMapper">
 
-    <resultMap id="LockerDetails" type="com.airbng.dto.locker.LockerDetailResponse">
+    <resultMap id="LockerDetails" type="com.airbng.core.dto.locker.LockerDetailResponse">
         <result property="lockerId" column="locker_id" />
         <result property="lockerName" column="locker_name" />
         <result property="address" column="address" />
@@ -16,7 +16,7 @@
         <result property="keeperPhone" column="phone" />
         <result property="isAvailable" column="is_available" />
         <!-- 중첩 짐타입 매핑 -->
-        <collection property="jimTypeResults" ofType="com.airbng.dto.jimType.LockerJimTypeResult">
+        <collection property="jimTypeResults" ofType="com.airbng.core.dto.jimType.LockerJimTypeResult">
             <id     column="jimtype_id"    property="jimTypeId" />
             <result column="type_name"     property="typeName" />
             <result column="price_per_hour"     property="pricePerHour" />
@@ -66,7 +66,7 @@
         WHERE l.locker_id = #{lockerId}
     </select>
 
-    <resultMap id="LockerUpdateDetails" type="com.airbng.dto.locker.LockerUpdateResponse">
+    <resultMap id="LockerUpdateDetails" type="com.airbng.core.dto.locker.LockerUpdateResponse">
         <result property="lockerId" column="locker_id" />
         <result property="lockerName" column="locker_name" />
         <result property="address" column="address" />
@@ -80,7 +80,7 @@
         <result property="isAvailable" column="is_available" />
         <!-- 중첩 짐타입 매핑 -->
         <collection property="jimTypeResults"
-                    ofType="com.airbng.dto.jimType.LockerJimTypeUpdateResult"
+                    ofType="com.airbng.core.dto.jimType.LockerJimTypeUpdateResult"
                     javaType="java.util.ArrayList">
             <id     column="jimtype_id"    property="jimTypeId" />
             <result column="type_name"     property="typeName" />
@@ -150,7 +150,7 @@
     </select>
   
     <!-- 인기 보관소 resultMap -->
-    <resultMap id="PopularLockerMap" type="com.airbng.dto.locker.LockerPreviewResult">
+    <resultMap id="PopularLockerMap" type="com.airbng.core.dto.locker.LockerPreviewResult">
         <id     column="locker_id"      property="lockerId" />
         <result column="address"        property="address" />
         <result column="locker_name"    property="lockerName" />
@@ -158,14 +158,14 @@
         <result column="url"            property="url" />
 
         <!-- 중첩 짐타입 매핑 -->
-        <collection property="jimTypeResults" ofType="com.airbng.dto.jimType.JimTypeResult">
+        <collection property="jimTypeResults" ofType="com.airbng.core.dto.jimType.JimTypeResult">
             <id     column="jimtype_id"    property="jimTypeId" />
             <result column="type_name"     property="typeName" />
         </collection>
     </resultMap>
 
     <!-- 인기 락커 5개 조회 -->
-    <select id="findTop5Lockers" resultMap="PopularLockerMap" parameterType="com.airbng.domain.base.ReservationState">
+    <select id="findTop5Lockers" resultMap="PopularLockerMap" parameterType="com.airbng.core.domain.base.ReservationState">
         SELECT
             l.locker_id,
             l.is_available,
@@ -202,7 +202,7 @@
     </select>
 
     <!-- 1. 보관소 등록 -->
-    <insert id="insertLocker" parameterType="com.airbng.domain.Locker"
+    <insert id="insertLocker" parameterType="com.airbng.core.domain.Locker"
             useGeneratedKeys="true" keyProperty="lockerId" keyColumn="locker_id">
         INSERT INTO Locker (
             is_available, locker_name, member_id,
@@ -216,7 +216,7 @@
     </insert>
 
     <!-- 2. 단일 이미지 등록 (1장씩 등록하며 imageId를 반환 받음) -->
-    <insert id="insertImage" parameterType="com.airbng.domain.image.Image"
+    <insert id="insertImage" parameterType="com.airbng.core.domain.image.Image"
             useGeneratedKeys="true" keyProperty="imageId" keyColumn="image_id">
         INSERT INTO Image (
             url, upload_name
@@ -249,7 +249,7 @@
         WHERE member_id = #{memberId}
     </select>
 
-    <resultMap id="LockerJimTypeUpdateResultMap" type="com.airbng.dto.jimType.LockerJimTypeUpdateResult">
+    <resultMap id="LockerJimTypeUpdateResultMap" type="com.airbng.core.dto.jimType.LockerJimTypeUpdateResult">
         <id     column="jimtype_id"    property="jimTypeId" />
         <result column="type_name"     property="typeName" />
         <result column="price_per_hour" property="pricePerHour" />
@@ -278,7 +278,7 @@
 
 
     <!-- ResultMap for Locker + JimType -->
-    <resultMap id="LockerResultMap" type="com.airbng.dto.locker.LockerPreviewResult">
+    <resultMap id="LockerResultMap" type="com.airbng.core.dto.locker.LockerPreviewResult">
         <id column="locker_id" property="lockerId"/>
         <result column="locker_name" property="lockerName"/>
         <result column="is_available" property="isAvailable"/>
@@ -286,7 +286,7 @@
         <result column="address" property="address"/>
         <result column="latitude" property="latitude"/>
         <result column="longitude" property="longitude"/>
-        <collection property="jimTypeResults" ofType="com.airbng.dto.jimType.JimTypeResult">
+        <collection property="jimTypeResults" ofType="com.airbng.core.dto.jimType.JimTypeResult">
             <id column="jimtype_id" property="jimTypeId"/>
             <result column="type_name" property="typeName"/>
         </collection>
@@ -402,13 +402,13 @@
         WHERE locker_id = #{lockerId}
     </update>
 
-    <select id="getIsAvailableById" resultType="com.airbng.domain.base.Available">
+    <select id="getIsAvailableById" resultType="com.airbng.core.domain.base.Available">
         SELECT is_available
         FROM Locker
         WHERE locker_id = #{lockerId};
     </select>
 
-    <resultMap id="ReservationFormResponse" type="com.airbng.dto.reservation.ReservationFormResponse">
+    <resultMap id="ReservationFormResponse" type="com.airbng.core.dto.reservation.ReservationFormResponse">
         <result property="lockerId" column="locker_id"/>
         <result property="lockerName" column="locker_name"/>
         <result property="addressKr" column="address_kr"/>
@@ -425,7 +425,7 @@
         WHERE l.locker_id = #{lockerId}
     </select>
 
-    <resultMap id="LockerJimTypeResult" type="com.airbng.dto.jimType.LockerJimTypeResult">
+    <resultMap id="LockerJimTypeResult" type="com.airbng.core.dto.jimType.LockerJimTypeResult">
         <result property="jimTypeId" column="jimtype_id"/>
         <result property="typeName" column="type_name"/>
         <result property="pricePerHour" column="price_per_hour"/>
@@ -440,7 +440,7 @@
         WHERE ljt.locker_id = #{lockerId}
     </select>
 
-    <update id="updateLockerInfo" parameterType="com.airbng.domain.Locker">
+    <update id="updateLockerInfo" parameterType="com.airbng.core.domain.Locker">
         UPDATE Locker
         SET
             locker_name = #{lockerName},

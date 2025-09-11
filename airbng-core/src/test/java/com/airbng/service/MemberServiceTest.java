@@ -1,7 +1,7 @@
 //package com.airbng.service;
 //
 //import com.airbng.common.exception.ImageException;
-//import com.airbng.common.exception.MemberException;
+//import com.airbng.exception.MemberException;
 //import com.airbng.domain.Member;
 //import com.airbng.domain.base.BaseStatus;
 //import com.airbng.domain.image.Image;

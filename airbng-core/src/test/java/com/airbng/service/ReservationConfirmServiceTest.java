@@ -1,14 +1,15 @@
 package com.airbng.service;
 
-import com.airbng.common.exception.ReservationException;
-import com.airbng.domain.Member;
-import com.airbng.domain.Reservation;
-import com.airbng.domain.base.BaseStatus;
-import com.airbng.domain.base.ReservationState;
-import com.airbng.domain.image.Image;
-import com.airbng.dto.reservation.ReservationConfirmResponse;
-import com.airbng.mappers.MemberMapper;
-import com.airbng.mappers.ReservationMapper;
+import com.airbng.core.exception.ReservationException;
+import com.airbng.core.domain.Member;
+import com.airbng.core.domain.Reservation;
+import com.airbng.core.domain.base.BaseStatus;
+import com.airbng.core.domain.base.ReservationState;
+import com.airbng.core.domain.image.Image;
+import com.airbng.core.dto.reservation.ReservationConfirmResponse;
+import com.airbng.core.mappers.MemberMapper;
+import com.airbng.core.mappers.ReservationMapper;
+import com.airbng.core.service.ReservationServiceImpl;
 import com.github.benmanes.caffeine.cache.Cache;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,8 +27,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 
-import static com.airbng.common.response.status.BaseResponseStatus.ALREADY_CANCELLED_RESERVATION;
-import static com.airbng.common.response.status.BaseResponseStatus.CANNOT_UPDATE_STATE;
+import static com.airbng.platform.common.response.status.BaseResponseStatus.CANNOT_UPDATE_STATE;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;

@@ -1,0 +1,7 @@
+// 실행 목적을 가진 하위 모듈은 bootJar만 활성화. jar는 비활
+bootJar.enabled = true
+jar.enabled = false
+dependencies {
+    implementation project(':airbng-core')
+    implementation project(':airbng-platform')
+}

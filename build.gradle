@@ -23,8 +23,8 @@ allprojects {
     repositories {
         mavenCentral()
     }
-//    bootJar.enabled = false
-//    jar.enabled = true
+    bootJar.enabled = false
+    jar.enabled = true
 }
 
 subprojects {
@@ -33,15 +33,6 @@ subprojects {
         plugin 'org.springframework.boot'
         plugin 'io.spring.dependency-management'
         plugin 'application'
-    }
-
-    // 실행 목적을 가진 하위 모듈은 bootJar만 활성화. jar는 비활
-    project(':airbng-app') {
-        bootJar.enabled = true
-        jar.enabled = false
-        dependencies {
-            implementation project(':airbng-core')
-        }
     }
 
 

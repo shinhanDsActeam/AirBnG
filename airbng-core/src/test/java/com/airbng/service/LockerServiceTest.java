@@ -1,13 +1,14 @@
 package com.airbng.service;
 
-import com.airbng.common.exception.LockerException;
-import com.airbng.mappers.LockerMapper;
-import com.airbng.util.S3Utils;
-import com.airbng.common.exception.ImageException;
-import com.airbng.common.exception.MemberException;
-import com.airbng.domain.base.Available;
-import com.airbng.dto.jimType.JimTypeResult;
-import com.airbng.dto.locker.*;
+import com.airbng.core.dto.locker.*;
+import com.airbng.core.exception.LockerException;
+import com.airbng.core.mappers.LockerMapper;
+import com.airbng.core.service.LockerServiceImpl;
+import com.airbng.platform.util.S3Utils;
+import com.airbng.platform.common.exception.ImageException;
+import com.airbng.core.exception.MemberException;
+import com.airbng.core.domain.base.Available;
+import com.airbng.core.dto.jimType.JimTypeResult;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -23,7 +24,7 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
-import static com.airbng.common.response.status.BaseResponseStatus.*;
+import static com.airbng.platform.common.response.status.BaseResponseStatus.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;

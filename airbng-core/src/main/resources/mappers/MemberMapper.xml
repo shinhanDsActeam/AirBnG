@@ -3,9 +3,9 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.airbng.mappers.MemberMapper">
+<mapper namespace="com.airbng.core.mappers.MemberMapper">
     <!-- 회원가입 -->
-    <insert id="insertMember" parameterType="com.airbng.domain.Member">
+    <insert id="insertMember" parameterType="com.airbng.core.domain.Member">
         INSERT INTO Member (
             email, name, phone, nickname,
             password, status, profile_image_id, created_at, updated_at)
@@ -32,7 +32,7 @@
     </select>
 
 
-    <resultMap id="MemberResultMap" type="com.airbng.dto.MemberMyPageResponse">
+    <resultMap id="MemberResultMap" type="com.airbng.core.dto.MemberMyPageResponse">
         <id property="memberId" column="member_id"/>
         <result property="email" column="email"/>
         <result property="name" column="name"/>
@@ -58,7 +58,7 @@
     </select>
 
     <!-- 회원 정보 수정 -->
-    <update id="updateUserById" parameterType="com.airbng.dto.MemberUpdateRequest">
+    <update id="updateUserById" parameterType="com.airbng.core.dto.MemberUpdateRequest">
         UPDATE Member
         <set>
             <if test="email != null and email != ''"> email = #{email}, </if>
@@ -73,7 +73,7 @@
     </update>
 
 
-    <resultMap id="memberResultMap" type="com.airbng.domain.Member">
+    <resultMap id="memberResultMap" type="com.airbng.core.domain.Member">
         <id property="memberId" column="member_id" />
         <result property="email" column="email" />
         <result property="password" column="password" />

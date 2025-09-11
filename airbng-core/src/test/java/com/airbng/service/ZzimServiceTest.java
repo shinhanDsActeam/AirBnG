@@ -1,12 +1,13 @@
 package com.airbng.service;
 
-import com.airbng.common.exception.MemberException;
-import com.airbng.common.exception.LockerException;
-import com.airbng.common.exception.ZzimException;
-import com.airbng.common.response.status.BaseResponseStatus;
-import com.airbng.mappers.LockerMapper;
-import com.airbng.mappers.MemberMapper;
-import com.airbng.mappers.ZzimMapper;
+import com.airbng.core.exception.MemberException;
+import com.airbng.core.exception.LockerException;
+import com.airbng.core.exception.ZzimException;
+import com.airbng.platform.common.response.status.BaseResponseStatus;
+import com.airbng.core.mappers.LockerMapper;
+import com.airbng.core.mappers.MemberMapper;
+import com.airbng.core.mappers.ZzimMapper;
+import com.airbng.core.service.ZzimServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -17,7 +18,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.dao.DuplicateKeyException;
 
-import static com.airbng.common.response.status.BaseResponseStatus.*;
+import static com.airbng.platform.common.response.status.BaseResponseStatus.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -36,13 +37,11 @@ class ZzimServiceTest {
     @InjectMocks
     private ZzimServiceImpl zzimService;
 
-    private Long sessionMemberId;
     private Long memberId;
     private Long lockerId;
 
     @BeforeEach
     void setUp() {
-        sessionMemberId = 1L;
         memberId = 1L;
         lockerId = 100L;
     }
@@ -59,7 +58,7 @@ class ZzimServiceTest {
             when(lockerMapper.isLockerKeeper(lockerId, memberId)).thenReturn(false);
             when(zzimMapper.isExistZzim(memberId, lockerId)).thenReturn(0);
 
-            BaseResponseStatus result = zzimService.toggleZzim(sessionMemberId, memberId, lockerId);
+            BaseResponseStatus result = zzimService.toggleZzim(memberId, lockerId);
 
             verify(zzimMapper).insertZzim(memberId, lockerId);
             assertEquals(SUCCESS_INSERT_ZZIM, result);
@@ -73,7 +72,7 @@ class ZzimServiceTest {
             when(lockerMapper.isLockerKeeper(lockerId, memberId)).thenReturn(false);
             when(zzimMapper.isExistZzim(memberId, lockerId)).thenReturn(1);
 
-            BaseResponseStatus result = zzimService.toggleZzim(sessionMemberId, memberId, lockerId);
+            BaseResponseStatus result = zzimService.toggleZzim(memberId, lockerId);
 
             verify(zzimMapper).deleteZzim(memberId, lockerId);
             assertEquals(SUCCESS_DELETE_ZZIM, result);
@@ -85,7 +84,7 @@ class ZzimServiceTest {
             when(memberMapper.isExistMember(memberId)).thenReturn(false);
 
             MemberException ex = assertThrows(MemberException.class,
-                    () -> zzimService.toggleZzim(sessionMemberId, memberId, lockerId));
+                    () -> zzimService.toggleZzim(memberId, lockerId));
 
             assertEquals(NOT_FOUND_MEMBER, ex.getBaseResponseStatus());
         }
@@ -97,7 +96,7 @@ class ZzimServiceTest {
             when(lockerMapper.isExistLocker(lockerId)).thenReturn(false);
 
             LockerException ex = assertThrows(LockerException.class,
-                    () -> zzimService.toggleZzim(sessionMemberId, memberId, lockerId));
+                    () -> zzimService.toggleZzim(memberId, lockerId));
 
             assertEquals(NOT_FOUND_LOCKER, ex.getBaseResponseStatus());
         }
@@ -110,7 +109,7 @@ class ZzimServiceTest {
             when(lockerMapper.isLockerKeeper(lockerId, memberId)).thenReturn(true);
 
             ZzimException ex = assertThrows(ZzimException.class,
-                    () -> zzimService.toggleZzim(sessionMemberId, memberId, lockerId));
+                    () -> zzimService.toggleZzim(memberId, lockerId));
 
             assertEquals(SELF_LOCKER_ZZIM, ex.getBaseResponseStatus());
         }
@@ -125,7 +124,7 @@ class ZzimServiceTest {
             doThrow(new DuplicateKeyException("중복")).when(zzimMapper).insertZzim(memberId, lockerId);
 
             ZzimException ex = assertThrows(ZzimException.class,
-                    () -> zzimService.toggleZzim(sessionMemberId, memberId, lockerId));
+                    () -> zzimService.toggleZzim(memberId, lockerId));
 
             assertEquals(DUPLICATE_ZZIM, ex.getBaseResponseStatus());
         }

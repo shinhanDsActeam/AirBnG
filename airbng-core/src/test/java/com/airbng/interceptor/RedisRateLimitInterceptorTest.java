@@ -1,9 +1,8 @@
 // 테스트용 인터셉터 테스트 클래스 예시
 package com.airbng.interceptor;
 
-import com.airbng.common.response.BaseResponse;
+import com.airbng.platform.interceptor.RedisRateLimitInterceptor;
 import com.airbng.interceptor.dto.SimpleBaseResponse;
-import com.airbng.util.SessionUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -15,11 +14,10 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.mock.web.MockHttpSession;
 
 import java.util.concurrent.TimeUnit;
 
-import static com.airbng.common.response.status.BaseResponseStatus.REQUEST_RATE_LIMIT_EXCEEDED;
+import static com.airbng.platform.common.response.status.BaseResponseStatus.REQUEST_RATE_LIMIT_EXCEEDED;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
