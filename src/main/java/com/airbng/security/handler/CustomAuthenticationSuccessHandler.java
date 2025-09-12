@@ -55,7 +55,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 
         response.addHeader(TOKEN_HEADER, TOKEN_PREFIX + accessToken);
         response.addHeader("Set-Cookie", jwtUtil.createCookie(TOKEN_TYPE_REFRESH, refreshToken).toString());
-
+        response.addHeader("Set-Cookie", jwtUtil.createSseCookie(TOKEN_TYPE_SSE, accessToken).toString());
         Map<String, Object> responseData = new HashMap<>();
         responseData.put("memberId", userId);
         responseData.put("role", role);
