@@ -25,6 +25,7 @@ public class TokenController {
 
         response.setHeader(TOKEN_HEADER, TOKEN_PREFIX + newTokens.getAccessToken());
         response.addHeader("Set-Cookie", jwtUtil.createCookie(TOKEN_TYPE_REFRESH, newTokens.getRefreshToken()).toString());
+        response.addHeader("Set-Cookie", jwtUtil.createSseCookie(TOKEN_TYPE_SSE, newTokens.getAccessToken()).toString());
         return new BaseResponse<>("토큰이 재발급 되었습니다.");
     }
 }
