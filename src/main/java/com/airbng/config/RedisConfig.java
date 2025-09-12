@@ -16,6 +16,8 @@ import org.springframework.data.redis.listener.adapter.MessageListenerAdapter;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
+import java.nio.charset.StandardCharsets;
+
 @Configuration
 public class RedisConfig {
     @Value("${spring.data.redis.host}")
@@ -42,6 +44,13 @@ public class RedisConfig {
     public StringRedisTemplate stringRedisTemplate(LettuceConnectionFactory connectionFactory) {
         StringRedisTemplate template = new StringRedisTemplate();
         template.setConnectionFactory(connectionFactory);
+
+        StringRedisSerializer serializer = new StringRedisSerializer(StandardCharsets.UTF_8);
+        template.setKeySerializer(serializer);
+        template.setValueSerializer(serializer);
+        template.setHashKeySerializer(serializer);
+        template.setHashValueSerializer(serializer);
+
         return template;
     }
 
