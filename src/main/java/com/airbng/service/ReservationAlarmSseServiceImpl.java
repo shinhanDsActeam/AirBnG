@@ -69,7 +69,7 @@ public class ReservationAlarmSseServiceImpl implements ReservationAlarmSseServic
                     emitter.send(SseEmitter.event()
                             .id(alarm.getEventId().toString())
                             .name("alarm")
-                            .data(alarm.getData(), MediaType.APPLICATION_JSON));
+                            .data(alarm.getData()));
                 }
             }
 
@@ -100,7 +100,7 @@ public class ReservationAlarmSseServiceImpl implements ReservationAlarmSseServic
 
                 for (SseEmitter emitter : emitters) {
                     try {
-                        emitter.send(SseEmitter.event().id(eventId).name("alarm").data(payload, MediaType.APPLICATION_JSON));
+                        emitter.send(SseEmitter.event().id(eventId).name("alarm").data(payload));
                     } catch (IOException e) {
                         log.warn("SSE 메시지 전송 실패: memberId={}, error={}", memberId, e.getMessage());
                         deadEmitters.add(emitter);

@@ -2,11 +2,14 @@ package com.airbng.service;
 
 import com.airbng.domain.base.NotificationType;
 import com.airbng.dto.AlarmPayloadResponse;
+import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
+import com.fasterxml.jackson.core.JsonGenerator;
+
 
 import java.util.List;
 import java.util.UUID;
@@ -19,7 +22,7 @@ import java.util.stream.Collectors;
 public class ReservationAlarmCacheServiceImpl implements ReservationAlarmCacheService{
 
     private final RedisTemplate<String, String> redisTemplate;
-    private final ObjectMapper objectMapper = new ObjectMapper(); // JSON 변환용
+    private final ObjectMapper objectMapper;
 
     //알림이 발송된 후 24시간 동안 중복 발송 방지
     private static final long EXPIRE_SECONDS = 24 * 60 * 60;
@@ -67,7 +70,7 @@ public class ReservationAlarmCacheServiceImpl implements ReservationAlarmCacheSe
     public List<AlarmPayloadResponse> getMissedAlarms(Long memberId, String lastEventId) {
         String redisKey = buildAlarmListKey(memberId);
 
-        List<String> all = redisTemplate.opsForList().range(redisKey, 0, -1); // 전체 리스트 조회
+        List<String> all = redisTemplate.opsForList().range(redisKey, -20, -1); //최근 20개만
         if (all == null) return List.of();
 
         long lastId;
@@ -101,6 +104,7 @@ public class ReservationAlarmCacheServiceImpl implements ReservationAlarmCacheSe
 
         redisTemplate.opsForList().rightPush(redisKey, value);
         redisTemplate.expire(redisKey, 24, TimeUnit.HOURS);
+        redisTemplate.opsForList().trim(redisKey, -20, -1); // 최근 20개만 유지
         return eventId.toString();
     }
 
