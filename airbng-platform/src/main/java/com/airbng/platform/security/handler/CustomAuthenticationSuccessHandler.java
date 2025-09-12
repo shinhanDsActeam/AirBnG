@@ -35,10 +35,21 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
     public void onAuthenticationSuccess(HttpServletRequest request,
                                         HttpServletResponse response,
                                         Authentication authentication) throws IOException, ServletException {
-        CustomUserDetails principal = (CustomUserDetails) authentication.getPrincipal();
+        Object principal = authentication.getPrincipal();
+        Long userId = null;
+        String nickname = null;
+        Collection<? extends GrantedAuthority> authorities = List.of();
 
-        Long userId = ((CustomUserDetails) authentication.getPrincipal()).getId();
-        Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
+        if (principal instanceof AirbngPrincipal ap) {
+            userId = ap.getId();
+            nickname = ap.getNickname();
+            authorities = ap.getAuthorities();
+        }
+
+        log.info("[CustomAuthenticationSuccessHandler] userId: {}, nickname: {}", userId, nickname);
+        log.info("[CustomAuthenticationSuccessHandler] authorities: {}", authorities);
+
+
         Iterator<? extends GrantedAuthority> iterator = authorities.iterator();
         String role = iterator.next().getAuthority();
 
@@ -56,7 +67,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
         Map<String, Object> responseData = new HashMap<>();
         responseData.put("memberId", userId);
         responseData.put("role", role);
-        responseData.put("nickname", principal.getNickname());
+        responseData.put("nickname", nickname);
 
         BaseResponse<Map<String, Object>> body = new BaseResponse<>(responseData);
 
