@@ -2,10 +2,7 @@ package com.airbng.websocket;
 
 import com.airbng.domain.chat.Message;
 import com.airbng.dto.chat.SendTextRequest;
-import com.airbng.dto.ws.ReadPayload;
-import com.airbng.dto.ws.SendAck;
-import com.airbng.dto.ws.TypingEvent;
-import com.airbng.dto.ws.TypingPayload;
+import com.airbng.dto.ws.*;
 import com.airbng.security.domain.CustomUserDetails;
 import com.airbng.service.chat.ConversationService;
 import com.airbng.service.chat.InboxService;
@@ -36,10 +33,15 @@ public class MessageWsController {
     private final SimpMessagingTemplate broker;
 
     private CustomUserDetails currentUser(Principal principal) {
-        if (!(principal instanceof Authentication a)) throw new AccessDeniedException("Unauthenticated");
-        Object p = a.getPrincipal();
-        if (!(p instanceof CustomUserDetails cud)) throw new AccessDeniedException("Unauthenticated");
-        return cud;
+        if (principal instanceof Authentication a && a.getPrincipal() instanceof CustomUserDetails cud) {
+            return cud;
+        }
+        // SecurityContext에서 시도
+        var ctxAuth = org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication();
+        if (ctxAuth != null && ctxAuth.getPrincipal() instanceof CustomUserDetails cud2) {
+            return cud2;
+        }
+        throw new AccessDeniedException("Unauthenticated");
     }
 
     /**
@@ -57,16 +59,48 @@ public class MessageWsController {
         CustomUserDetails me = currentUser(principal);
         conversationService.assertMember(convId, me.getId());
 
+        log.info("[WS TEXT IN] from={} convId={} msgId={}", me.getId(), convId, payload.getMsgId());
         Message saved = messageService.sendText(
                 convId, me.getId(), me.getNickname(),
                 payload.getText(), payload.getMsgId()
         );
+        log.info("[WS TEXT OUT] to=/topic/conversations.{} seq={} id={}", convId, saved.getSeq(), saved.getId());
 
         broker.convertAndSend("/topic/conversations." + convId, saved);
 
         broker.convertAndSendToUser(String.valueOf(me.getId()),
                 "/queue/acks",
                 new SendAck(saved.getMsgId(), saved.getSeq(), saved.getSentAt()));
+
+        // ===== 인박스 힌트: 리스트 실시간 갱신 =====
+        long peerId = conversationService.peerIdOf(convId, me.getId());
+        Integer peerUnreadTotal = null;
+        var peerInbox = inboxService.getOne(peerId, convId);
+        if (peerInbox != null && peerInbox.getCachedUnread() != null) {
+            peerUnreadTotal = peerInbox.getCachedUnread().intValue();
+        }
+
+        // 보낸 사람(나): 미확인은 0
+        broker.convertAndSendToUser(String.valueOf(me.getId()),
+                "/queue/inbox",
+                InboxHint.builder()
+                        .convId(convId)
+                        .preview(saved.getText())
+                        .sentAt(saved.getSentAt())
+                        .senderId(me.getId())
+                        .unreadTotal(0)
+                        .build());
+
+        // 상대방: 미확인 총합 포함
+        broker.convertAndSendToUser(String.valueOf(peerId),
+                "/queue/inbox",
+                InboxHint.builder()
+                        .convId(convId)
+                        .preview(saved.getText())
+                        .sentAt(saved.getSentAt())
+                        .senderId(me.getId())
+                        .unreadTotal(peerUnreadTotal) // null이어도 OK(클라가 +1만 해도 됨)
+                        .build());
     }
 
     /**
@@ -88,6 +122,14 @@ public class MessageWsController {
         broker.convertAndSendToUser(String.valueOf(peer),
                 "/queue/read." + convId,
                 payload.getLastSeenSeq());
+
+        // ===== 인박스 힌트: 내 리스트 즉시 0 처리 =====
+        broker.convertAndSendToUser(String.valueOf(me.getId()),
+                "/queue/inbox",
+                InboxHint.builder()
+                        .convId(convId)
+                        .unreadTotal(0)
+                        .build());
     }
 
     /**

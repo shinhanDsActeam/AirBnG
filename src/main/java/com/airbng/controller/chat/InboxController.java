@@ -88,4 +88,11 @@ public class InboxController {
         }
         return new BaseResponse<>(inbox);
     }
+
+    @GetMapping("/unread-total")
+    @PreAuthorize("hasAnyAuthority('USER')")
+    public BaseResponse<Integer> unreadTotal(Authentication auth) {
+        long me = ((CustomUserDetails) auth.getPrincipal()).getId();
+        return new BaseResponse<>(inboxService.totalUnread(me));
+    }
 }

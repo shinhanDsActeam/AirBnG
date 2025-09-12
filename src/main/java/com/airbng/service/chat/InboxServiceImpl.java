@@ -6,11 +6,13 @@ import com.airbng.domain.chat.model.LastMessage;
 import com.airbng.repository.chat.ConversationRepository;
 import com.airbng.repository.chat.InboxRepository;
 import lombok.RequiredArgsConstructor;
+import org.bson.Document;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.FindAndModifyOptions;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.*;
 import org.springframework.stereotype.Service;
+import org.springframework.data.mongodb.core.aggregation.Aggregation;
 
 import java.time.Instant;
 import java.util.List;
@@ -74,5 +76,47 @@ public class InboxServiceImpl implements InboxService {
     @Override
     public Inbox getOne(long userId, String convId) {
         return inboxRepo.findByUserIdAndConvId(userId, convId).orElse(null);
+    }
+
+    @Override
+    public int increaseUnreadAndGet(long userId, String convId) {
+        final String inboxId = userId + ":" + convId;
+
+        Query q = Query.query(Criteria.where("_id").is(inboxId));
+
+        // upsert + inc 를 한 번에: 문서가 없으면 생성하고, 있으면 cachedUnread 만 +1
+        Update u = new Update()
+                .setOnInsert("id", inboxId)
+                .setOnInsert("userId", userId)
+                .setOnInsert("convId", convId)
+                .setOnInsert("lastReadSeq", 0L)
+                .inc("cachedUnread", 1L);
+
+        Inbox updated = mongo.findAndModify(
+                q,
+                u,
+                FindAndModifyOptions.options().returnNew(true).upsert(true),
+                Inbox.class
+        );
+
+        long unread = (updated != null && updated.getCachedUnread() != null)
+                ? updated.getCachedUnread()
+                : 0L;
+
+        return (int) unread;
+    }
+
+    @Override
+    public int totalUnread(long userId) {
+        var agg = Aggregation.newAggregation(
+                Aggregation.match(
+                        Criteria.where("userId").is(userId)
+                ),
+                Aggregation.group()
+                        .sum("cachedUnread").as("total")
+        );
+        var doc = mongo.aggregate(agg, Inbox.class, Document.class)
+                .getUniqueMappedResult();
+        return doc != null ? doc.getInteger("total", 0) : 0;
     }
 }

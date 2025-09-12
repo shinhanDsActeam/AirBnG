@@ -10,6 +10,7 @@ import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.simp.stomp.StompCommand;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.ChannelInterceptor;
+import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -26,15 +27,17 @@ public class StompAuthChannelInterceptor implements ChannelInterceptor {
 
     @Override
     public Message<?> preSend(Message<?> message, MessageChannel channel) {
-        var acc = StompHeaderAccessor.wrap(message);
+        StompHeaderAccessor acc = StompHeaderAccessor.wrap(message);
         if (acc == null) return message;
+
+        // 중요: 변경사항 유지
+        acc.setLeaveMutable(true);
 
         if (StompCommand.CONNECT.equals(acc.getCommand())) {
             String token = resolveBearer(acc);
             if (token == null) {
-                throw new BadCredentialsException("Missing Authorization"); // ← 예전엔 return message; 였음
+                throw new BadCredentialsException("Missing Authorization");
             }
-
             if (jwtUtil.isExpired(token)) throw new BadCredentialsException("Expired token");
             if (!JwtUtil.TOKEN_TYPE_ACCESS.equals(jwtUtil.getType(token)))
                 throw new BadCredentialsException("Invalid token type");
@@ -44,17 +47,20 @@ public class StompAuthChannelInterceptor implements ChannelInterceptor {
             Authentication auth = new StompAuthToken(principal);
 
             acc.setUser(auth);
-            acc.getSessionAttributes().put(SESSION_AUTH_KEY, auth); // 세션에 저장
-        } else if (StompCommand.SEND.equals(acc.getCommand()) ||
-                StompCommand.SUBSCRIBE.equals(acc.getCommand())) {
+            acc.getSessionAttributes().put(SESSION_AUTH_KEY, auth);
+        }
+        else if (StompCommand.SEND.equals(acc.getCommand())
+                || StompCommand.SUBSCRIBE.equals(acc.getCommand())) {
+
             Authentication auth = null;
             if (acc.getUser() instanceof Authentication a) {
                 auth = a;
             } else {
-                Object saved = acc.getSessionAttributes().get(SESSION_AUTH_KEY);
+                Object saved = acc.getSessionAttributes() != null
+                        ? acc.getSessionAttributes().get(SESSION_AUTH_KEY) : null;
                 if (saved instanceof Authentication a) {
                     auth = a;
-                    acc.setUser(a); // 컨트롤러 Principal 주입용
+                    acc.setUser(a); // Principal 주입 원천
                 }
             }
             if (auth != null) {
@@ -63,7 +69,10 @@ public class StompAuthChannelInterceptor implements ChannelInterceptor {
                 SecurityContextHolder.setContext(ctx);
             }
         }
-        return message;
+
+        // 중요: 변경된 헤더로 새 메시지 리턴 (leaveMutable만으로도 되지만 안전빵)
+        return MessageBuilder
+                .createMessage(message.getPayload(), acc.getMessageHeaders());
     }
 
     private String resolveBearer(StompHeaderAccessor acc) {

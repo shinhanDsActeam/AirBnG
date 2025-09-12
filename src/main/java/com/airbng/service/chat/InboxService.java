@@ -20,4 +20,9 @@ public interface InboxService {
 
     /** 인박스 단건(convId 기준) */
     Inbox getOne(long userId, String convId);
+
+    /** cachedUnread 를 +1 하고 증가된 총합을 반환 */
+    int increaseUnreadAndGet(long userId, String convId);
+
+    int totalUnread(long userId);
 }
