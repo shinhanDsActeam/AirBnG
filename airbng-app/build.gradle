@@ -3,5 +3,10 @@ bootJar.enabled = true
 jar.enabled = false
 dependencies {
     implementation project(':airbng-platform')
+    implementation project(':airbng-common')
     implementation project(':airbng-consumer')
+    implementation project(':airbng-admin')
+    // TODO : chat, pay 모듈 구현 후 주석 해제
+//    implementation project(':airbng-chat')
+//    implementation project(':airbng-pay')
 }
