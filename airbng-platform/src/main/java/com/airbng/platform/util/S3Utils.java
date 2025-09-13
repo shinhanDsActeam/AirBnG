@@ -1,6 +1,6 @@
 package com.airbng.platform.util;
 
-import com.airbng.platform.common.exception.ImageException;
+import com.airbng.platform.common.exception.S3Exception;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
@@ -45,7 +45,7 @@ public class S3Utils {
         try (InputStream inputStream = file.getInputStream()) {
             amazonS3Client.putObject (new PutObjectRequest(bucket, fileName, inputStream, metadata));
         } catch (IOException e) {
-            throw new ImageException(UPLOAD_FAILED);
+            throw new S3Exception(UPLOAD_FAILED);
         }
 
         return amazonS3Client.getUrl(bucket, fileName).toString();
@@ -54,12 +54,12 @@ public class S3Utils {
     private void validateFileExtension(MultipartFile file) {
         String originalFilename = file.getOriginalFilename();
         if (originalFilename == null || !originalFilename.contains(".")) {
-            throw new ImageException(INVALID_EXTENSIONS);
+            throw new S3Exception(INVALID_EXTENSIONS);
         }
 
         String extension = originalFilename.substring(originalFilename.lastIndexOf(".") + 1).toLowerCase();
         if (!ALLOWED_EXTENSIONS.contains(extension)) {
-            throw new ImageException(INVALID_EXTENSIONS);
+            throw new S3Exception(INVALID_EXTENSIONS);
         }
     }
 
