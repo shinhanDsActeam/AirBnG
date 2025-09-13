@@ -5,4 +5,5 @@ include 'airbng-common'
 include 'airbng-consumer'
 include 'airbng-admin'
 include 'airbng-chat'
+include 'airbng-pay'
 
