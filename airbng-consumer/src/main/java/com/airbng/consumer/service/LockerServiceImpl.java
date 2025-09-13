@@ -1,5 +1,6 @@
 package com.airbng.consumer.service;
 
+import com.airbng.admin.api.LockerReviewApi;
 import com.airbng.consumer.domain.Locker;
 import com.airbng.consumer.domain.Member;
 import com.airbng.consumer.domain.base.ReservationState;
@@ -46,6 +47,9 @@ public class LockerServiceImpl implements LockerService {
 
     private final RedisTemplate<String, LockerTop5Response> top5RedisTemplate;
     private final Cache<String, LockerTop5Response> localCache;
+
+    // Admin API
+    private final LockerReviewApi reviewApi;
 
     // ================= 검색 =================
     @Override
