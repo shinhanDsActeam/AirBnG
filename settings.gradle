@@ -1,5 +1,6 @@
 rootProject.name='AirBnG'
-include 'airbng-core'
 include 'airbng-app'
 include 'airbng-platform'
 include 'airbng-common'
+include 'airbng-consumer'
+

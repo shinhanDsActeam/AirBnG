@@ -13,8 +13,6 @@ configurations {
 
 bootJar.enabled = false
 jar.enabled = true
-//tasks.bootJar.enabled = false
-//tasks.jar.enabled = true
 
 allprojects {
     group = 'com.airbng'

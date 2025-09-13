@@ -1,9 +1,0 @@
-dependencies {
-    implementation project(':airbng-platform')
-}
-bootJar.enabled = false
-jar.enabled = true
-
-tasks.named('test') {
-    ignoreFailures = true
-}
