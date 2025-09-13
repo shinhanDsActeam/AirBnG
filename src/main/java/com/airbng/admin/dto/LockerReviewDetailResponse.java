@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class LockerReviewDetailResponse {
 
-    private Long lockerId;
+    private Long lockerReviewId;
     private String lockerName;
     private String address;
     private String addressEnglish;
@@ -24,28 +24,37 @@ public class LockerReviewDetailResponse {
     private Long memberId;
     private LockerType lockerType;
     private ReviewStatus reviewStatus;
+    private String reviewComment;
+
     //TODO
     private List<LockerJimTypeResult> jimTypeResults; // 짐 타입 목록; // 종류
     private List<String> images; // 이미지 리스트
 
     public static LockerReviewDetailResponse from(PendingLocker pendingLocker){
         return LockerReviewDetailResponse.builder()
-                .lockerId(pendingLocker.getPendingLockerId())
+                .lockerReviewId(pendingLocker.getPendingLockerId())
                 .lockerName(pendingLocker.getLockerName())
                 .address(pendingLocker.getAddress())
                 .addressDetail(pendingLocker.getAddressDetail())
                 .addressEnglish(pendingLocker.getAddressEnglish())
                 .memberId(pendingLocker.getMemberId())
+                .reviewStatus(pendingLocker.getReviewComment() != null ? pendingLocker.getReviewComment().getReviewStatus() : null)
+                .reviewComment(
+                        pendingLocker.getReviewComment() != null && pendingLocker.getReviewComment().getReviewStatus() == ReviewStatus.REJECTED
+                                ? pendingLocker.getReviewComment().getReviewComment()
+                                : null
+                )
                 .jimTypeResults(
                         pendingLocker.getPendingLockerJimtypes().stream()
-                                .map(LockerJimTypeResult::from)
+                                .map(LockerJimTypeResult.from(LockerJimTypeResult.getJimType()))
                                 .collect(Collectors.toList())
                 )
-                .images(pendingLocker.getPendingLockerImages().stream()
-                        .map(lockerImage -> lockerImage.getImage().getUrl())
-                        .collect(Collectors.toList()))
+                .images(
+                        pendingLocker.getPendingLockerImages().stream()
+                                .map(img -> img.getImage().getUrl())
+                                .collect(Collectors.toList())
+                )
                 .build();
-
-
     }
+
 }

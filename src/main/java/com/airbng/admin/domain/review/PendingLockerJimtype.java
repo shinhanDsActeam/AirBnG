@@ -23,6 +23,7 @@ public class PendingLockerJimtype extends BaseTime {
     @JoinColumn(name = "pending_locker_id", nullable = false)
     private PendingLocker pendingLocker;
 
+    //관계매핑 오류..?
     @Column(nullable = false)
     private Long jimtypeId;
 

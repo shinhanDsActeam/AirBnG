@@ -26,6 +26,7 @@ public class PendingLockerImage extends BaseTime {
     @JoinColumn(name = "pending_locker_id", nullable = false)
     private PendingLocker pendingLocker;
 
+    //관계매핑ㅇ오류..?
     @Column(nullable = false)
     private List<Long> image;
 

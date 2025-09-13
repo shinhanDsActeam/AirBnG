@@ -1,18 +1,22 @@
 package com.airbng.admin.controller;
 
+import com.airbng.admin.domain.review.PendingLocker;
+import com.airbng.admin.dto.LockerReviewConfirmResponse;
 import com.airbng.admin.dto.LockerReviewDetailResponse;
 import com.airbng.admin.service.LockerReviewService;
-
 import com.airbng.admin.common.response.BaseResponse;
-import com.airbng.dto.locker.LockerDetailResponse;
-import com.airbng.dto.locker.LockerTop5Response;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.ui.Model;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -24,15 +28,24 @@ public class LockerReviewController {
     private final LockerReviewService lockerReviewService;
 
     //상세보기
-    @GetMapping("/{lockerId}")
+    @GetMapping("/{lockerReviewId}")
     public BaseResponse<LockerReviewDetailResponse> findLockerById(@PathVariable Long lockerReviewId) {
         return new BaseResponse<>(lockerReviewService.findLockerReviewById(lockerReviewId));
     }
 
+    //보관소 승인 거절
+    @PatchMapping("/{lockerReview-id}/members/{member-id}/confirm")
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
+    public BaseResponse<LockerReviewConfirmResponse> confirmResponse(
+            @PathVariable("lockerReview-id") @NotNull @Min(1) Long lockerReviewId,
+            @PathVariable("member-id") Long memberId,
+            @RequestParam("approve") String approve) {
+        return new BaseResponse<>(lockerReviewService.confirmLockerReviewState(lockerReviewId, approve, memberId));
+    }
 
-//    @GetMapping("/popular")
-//    public BaseResponse<LockerTop5Response> selectTop5Lockers() {
-//        log.info("LockerController.selectTop5Lockers");
-//        return new BaseResponse<>(lockerReviewService.findTop5Locker());
-//    }
+    //목록 + 페이징
+    @GetMapping
+    public Page<PendingLocker> list(@RequestParam(value = "page", defaultValue = "0") int page) {
+        return lockerReviewService.findAll(page);
+    }
 }
