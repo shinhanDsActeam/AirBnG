@@ -33,7 +33,6 @@ public class LockerController {
 
 
     @GetMapping("/{lockerId}")
-    @PreAuthorize("hasAnyAuthority('USER')")
     public BaseResponse<LockerDetailResponse> findLockerById(@PathVariable Long lockerId) {
         return new BaseResponse<>(lockerService.findLockerById(lockerId));
     }

@@ -1,5 +1,6 @@
 package com.airbng.consumer.service;
 
+import com.airbng.consumer.auth.CustomUserDetails;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 public interface ReservationAlarmSseService {
@@ -16,7 +17,6 @@ public interface ReservationAlarmSseService {
 
     SseEmitter connect(Long memberId, String lastEventId);
     void sendMessage(Long memberId, Object data);
-    boolean hasConnected(Long memberId);
 
     void markAllAsRead(Long memberId);
     boolean hasUnreadAlarm(Long memberId);
