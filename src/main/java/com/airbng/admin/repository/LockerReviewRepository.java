@@ -16,10 +16,23 @@ public interface LockerReviewRepository extends JpaRepository<PendingLocker, Lon
     Optional<Reservation> findByLockerReviewId(Long lockerReviewId);
 
 
-    // 상세 조회 (N+1 방지용 fetch join)
+    // 상세 조회 (waiting 상태인 리뷰만)
     @EntityGraph(attributePaths = {"lockerReview", "memberId", "lockerImages.image", "lockerJimtypes.jimType"})
-    @Query("select pl from PendingLocker pl join fetch pl.lockerReview lr where lr.lockerReviewId = :lockerReviewId")
-    Optional<PendingLocker> findLockerReviewById(@Param("lockerReviewId") Long lockerReviewId);
+    @Query("select pl from PendingLocker pl join fetch pl.lockerReview lr where lr.reviewStatus = WAITING and lr.lockerReviewId = :lockerReviewId")
+    Optional<PendingLocker> findPendingLockerReviewById(@Param("lockerReviewId") Long lockerReviewId);
+
+
+    // 상세 조회 (approved 상태인 리뷰만)
+    @EntityGraph(attributePaths = {"lockerReview", "memberId", "lockerImages.image", "lockerJimtypes.jimType"})
+    @Query("select pl from PendingLocker pl join fetch pl.lockerReview lr where lr.reviewStatus = APPROVED and lr.lockerReviewId = :lockerReviewId")
+    Optional<PendingLocker> findApprovedLockerReviewById(@Param("lockerReviewId") Long lockerReviewId);
+
+    // 상세 조회 (rejected 상태인 리뷰만)
+    @EntityGraph(attributePaths = {"lockerReview", "memberId", "lockerImages.image", "lockerJimtypes.jimType"})
+    @Query("select pl from PendingLocker pl join fetch pl.lockerReview lr where lr.reviewStatus = REJECTED and lr.lockerReviewId = :lockerReviewId")
+    Optional<PendingLocker> findRejectedLockerReviewById(@Param("lockerReviewId") Long lockerReviewId);
+
+
 
 
     //목록+페이징
