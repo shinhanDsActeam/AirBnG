@@ -1,6 +1,6 @@
 package com.airbng.consumer.usecase;
 
-import com.airbng.consumer.api.LockerApi;
+import com.airbng.api.consumer.LockerApi;
 import org.springframework.stereotype.Service;
 
 @Service

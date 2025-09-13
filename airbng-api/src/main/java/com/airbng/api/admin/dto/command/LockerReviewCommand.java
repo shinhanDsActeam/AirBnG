@@ -1,4 +1,4 @@
-package com.airbng.admin.api.dto.command;
+package com.airbng.api.admin.dto.command;
 
 import lombok.AllArgsConstructor;
 

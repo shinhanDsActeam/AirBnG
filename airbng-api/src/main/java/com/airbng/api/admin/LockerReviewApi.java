@@ -1,6 +1,6 @@
-package com.airbng.admin.api;
+package com.airbng.api.admin;
 
-import com.airbng.admin.api.dto.command.LockerReviewCommand;
+import com.airbng.api.admin.dto.command.LockerReviewCommand;
 
 // 보관소 심사 전반을 다루는 API 인터페이스
 public interface LockerReviewApi {

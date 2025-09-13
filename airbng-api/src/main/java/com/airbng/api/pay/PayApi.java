@@ -1,4 +1,4 @@
-package com.airbng.pay.api;
+package com.airbng.api.pay;
 
 public interface PayApi {
 }

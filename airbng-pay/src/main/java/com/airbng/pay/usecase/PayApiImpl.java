@@ -1,6 +1,6 @@
 package com.airbng.pay.usecase;
 
-import com.airbng.pay.api.PayApi;
+import com.airbng.api.pay.PayApi;
 import org.springframework.stereotype.Service;
 
 @Service

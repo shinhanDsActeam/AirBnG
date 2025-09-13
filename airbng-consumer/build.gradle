@@ -3,7 +3,7 @@ jar.enabled = true
 dependencies {
     implementation project(':airbng-common')
     implementation project(':airbng-platform')
-    implementation project(':airbng-admin')
+    implementation project(':airbng-api')
 }
 tasks.named('test') {
     ignoreFailures = true

@@ -1,6 +1,6 @@
 package com.airbng.consumer.service;
 
-import com.airbng.admin.api.LockerReviewApi;
+import com.airbng.api.admin.LockerReviewApi;
 import com.airbng.consumer.domain.Locker;
 import com.airbng.consumer.domain.Member;
 import com.airbng.consumer.domain.base.ReservationState;
