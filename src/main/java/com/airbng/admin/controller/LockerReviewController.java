@@ -28,20 +28,25 @@ public class LockerReviewController {
     private final LockerReviewService lockerReviewService;
 
     //상세보기
-    @GetMapping("pendingLockers/{lockerReviewId}")
-    public BaseResponse<LockerReviewDetailResponse> findPendingLockerReviewById(@PathVariable Long lockerReviewId) {
-        return new BaseResponse<>(lockerReviewService.findPendingLockerReviewById(lockerReviewId));
+    @GetMapping("/{lockerReviewId}")
+    public BaseResponse<LockerReviewDetailResponse> findLockerReviewById(@PathVariable Long lockerReviewId) {
+        return new BaseResponse<>(lockerReviewService.findLockerReviewById(lockerReviewId));
     }
 
-    @GetMapping("approvedLockers/{lockerReviewId}")
-    public BaseResponse<LockerReviewDetailResponse> findApprovedLockerReviewById(@PathVariable Long lockerReviewId) {
-        return new BaseResponse<>(lockerReviewService.findApprovedLockerReviewById(lockerReviewId));
-    }
-
-    @GetMapping("rejectedLockers/{lockerReviewId}")
-    public BaseResponse<LockerReviewDetailResponse> findRejectedLockerReviewById(@PathVariable Long lockerReviewId) {
-        return new BaseResponse<>(lockerReviewService.findRejectedLockerReviewById(lockerReviewId));
-    }
+//    @GetMapping("pendingLockers/{lockerReviewId}")
+//    public BaseResponse<LockerReviewDetailResponse> findPendingLockerReviewById(@PathVariable Long lockerReviewId) {
+//        return new BaseResponse<>(lockerReviewService.findPendingLockerReviewById(lockerReviewId));
+//    }
+//
+//    @GetMapping("approvedLockers/{lockerReviewId}")
+//    public BaseResponse<LockerReviewDetailResponse> findApprovedLockerReviewById(@PathVariable Long lockerReviewId) {
+//        return new BaseResponse<>(lockerReviewService.findApprovedLockerReviewById(lockerReviewId));
+//    }
+//
+//    @GetMapping("rejectedLockers/{lockerReviewId}")
+//    public BaseResponse<LockerReviewDetailResponse> findRejectedLockerReviewById(@PathVariable Long lockerReviewId) {
+//        return new BaseResponse<>(lockerReviewService.findRejectedLockerReviewById(lockerReviewId));
+//    }
 
     //보관소 승인 거절
     @PatchMapping("/{lockerReview-id}/members/{member-id}/confirm")

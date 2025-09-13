@@ -31,8 +31,8 @@ public class LockerReviewServiceImpl implements LockerReviewService{
 
     // ================= 상세 =================
     @Override
-    public LockerReviewDetailResponse findPendingLockerReviewById(Long lockerReviewId) {
-        PendingLocker pendingLocker = lockerReviewRepository.findPendingLockerReviewById(lockerReviewId)
+    public LockerReviewDetailResponse findLockerReviewById(Long lockerReviewId) {
+        PendingLocker pendingLocker = lockerReviewRepository.findLockerReviewById(lockerReviewId)
                 .orElseThrow(() -> new LockerException(NOT_FOUND_LOCKERDETAILS));
 
         LockerReview lr = pendingLocker.getReviewComment();
@@ -40,25 +40,36 @@ public class LockerReviewServiceImpl implements LockerReviewService{
         return LockerReviewDetailResponse.from(pendingLocker);
     }
 
-    @Override
-    public LockerReviewDetailResponse findApprovedLockerReviewById(Long lockerReviewId) {
-        PendingLocker pendingLocker = lockerReviewRepository.findApprovedLockerReviewById(lockerReviewId)
-                .orElseThrow(() -> new LockerException(NOT_FOUND_LOCKERDETAILS));
 
-        LockerReview lr = pendingLocker.getReviewComment();
-
-        return LockerReviewDetailResponse.from(pendingLocker);
-    }
-
-    @Override
-    public LockerReviewDetailResponse findRejectedLockerReviewById(Long lockerReviewId) {
-        PendingLocker pendingLocker = lockerReviewRepository.findRejectedLockerReviewById(lockerReviewId)
-                .orElseThrow(() -> new LockerException(NOT_FOUND_LOCKERDETAILS));
-
-        LockerReview lr = pendingLocker.getReviewComment();
-
-        return LockerReviewDetailResponse.from(pendingLocker);
-    }
+//    @Override
+//    public LockerReviewDetailResponse findPendingLockerReviewById(Long lockerReviewId) {
+//        PendingLocker pendingLocker = lockerReviewRepository.findPendingLockerReviewById(lockerReviewId)
+//                .orElseThrow(() -> new LockerException(NOT_FOUND_LOCKERDETAILS));
+//
+//        LockerReview lr = pendingLocker.getReviewComment();
+//
+//        return LockerReviewDetailResponse.from(pendingLocker);
+//    }
+//
+//    @Override
+//    public LockerReviewDetailResponse findApprovedLockerReviewById(Long lockerReviewId) {
+//        PendingLocker pendingLocker = lockerReviewRepository.findApprovedLockerReviewById(lockerReviewId)
+//                .orElseThrow(() -> new LockerException(NOT_FOUND_LOCKERDETAILS));
+//
+//        LockerReview lr = pendingLocker.getReviewComment();
+//
+//        return LockerReviewDetailResponse.from(pendingLocker);
+//    }
+//
+//    @Override
+//    public LockerReviewDetailResponse findRejectedLockerReviewById(Long lockerReviewId) {
+//        PendingLocker pendingLocker = lockerReviewRepository.findRejectedLockerReviewById(lockerReviewId)
+//                .orElseThrow(() -> new LockerException(NOT_FOUND_LOCKERDETAILS));
+//
+//        LockerReview lr = pendingLocker.getReviewComment();
+//
+//        return LockerReviewDetailResponse.from(pendingLocker);
+//    }
 
 
     private final Cache<Long, ReentrantLock> LockerReviewLocks;
