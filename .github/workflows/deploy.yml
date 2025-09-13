@@ -23,7 +23,7 @@ jobs:
       - name: Run ArchUnit tests
         run: |
           chmod +x gradlew
-          ./gradlew test --tests "*ArchRulesTest"
+          ./gradlew :airbng-app:test --tests "*ArchRules*"
 
   build:
     name: Build and Push Docker Image
