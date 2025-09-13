@@ -1,4 +1,4 @@
-package com.airbng.core.domain.base;
+package com.airbng.common.base;
 
 public enum BaseStatus {
 

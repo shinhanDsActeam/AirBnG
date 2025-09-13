@@ -1,4 +1,4 @@
-package com.airbng.core.domain.base;
+package com.airbng.common.base;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;

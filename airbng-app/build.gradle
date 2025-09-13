@@ -2,6 +2,6 @@
 bootJar.enabled = true
 jar.enabled = false
 dependencies {
-    implementation project(':airbng-core')
     implementation project(':airbng-platform')
+    implementation project(':airbng-consumer')
 }
