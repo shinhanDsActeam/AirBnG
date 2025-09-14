@@ -58,14 +58,14 @@ public class PendingLocker extends BaseTime {  //memberName 어떻게 가져오�
     @OneToOne(mappedBy="pendingLocker")
     private LockerReview reviewComment;
 
-    //TODO: LockerType 추가
-    @OneToMany(mappedBy = "pendingLocker")
-    private Set<LockerImage> lockerImages;
-
-    //TODO: LockerJimType 추가
-    @OneToMany(mappedBy = "pendingLocker")
-    @Builder.Default
-    private Set<LockerJimType> lockerJimTypes = new HashSet<>();
+//    //TODO: LockerType 추가
+//    @OneToMany(mappedBy = "pendingLocker")
+//    private Set<LockerImage> lockerImages;
+//
+//    //TODO: LockerJimType 추가
+//    @OneToMany(mappedBy = "pendingLocker")
+//    @Builder.Default
+//    private Set<LockerJimType> lockerJimTypes = new HashSet<>();
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, columnDefinition = "VARCHAR(10)")
@@ -90,7 +90,7 @@ public class PendingLocker extends BaseTime {  //memberName 어떻게 가져오�
     }
 
 
-    public void updateState(ReviewStatus reviewStatus){
+    public void updateReviewStatus(ReviewStatus reviewStatus){
         this.reviewStatus = reviewStatus;
     }
 

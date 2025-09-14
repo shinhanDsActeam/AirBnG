@@ -31,8 +31,6 @@ public enum BaseResponseStatus implements ResponseStatus {
     NOT_FOUND_LOCKERDETAILS(3002,HttpStatus.BAD_REQUEST.value(), "락커를 찾을 수 없습니다."),
     CANNOT_UPDATE_STATE(3003,HttpStatus.BAD_REQUEST.value(), "상태를 변경할 수 없습니다."),
     NOT_FOUND_LOCKER(3004,HttpStatus.BAD_REQUEST.value(), "보관소를 찾을 수 없습니다."),
-    NOT_MEMBER_OF_LOCKER(3005,HttpStatus.BAD_REQUEST.value(), "해당 보관소의 작성자가 아닙니다."),
-
     ;
 
     private final int code;

@@ -1,5 +1,6 @@
 package com.airbng.admin.repository;
 
+import com.airbng.admin.domain.base.ReviewStatus;
 import com.airbng.admin.domain.review.PendingLocker;
 import com.airbng.domain.Reservation;
 import org.springframework.data.domain.Page;
@@ -38,6 +39,6 @@ public interface LockerReviewRepository extends JpaRepository<PendingLocker, Lon
 //    Optional<PendingLocker> findRejectedLockerReviewById(@Param("lockerReviewId") Long lockerReviewId);
 
     //목록+페이징
-    Page<PendingLocker> findAll(Pageable pageable);
+    Page<PendingLocker> findAllByStatus(ReviewStatus status, Pageable pageable);
 
 }
