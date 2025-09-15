@@ -11,6 +11,9 @@ configurations {
     }
 }
 
+bootJar.enabled = false
+jar.enabled = true
+
 allprojects {
     group = 'com.airbng'
     version = '1.0-SNAPSHOT'
