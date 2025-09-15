@@ -1,7 +1,10 @@
 package com.airbng.service.chat;
 
+import com.airbng.domain.Member;
 import com.airbng.domain.chat.Conversation;
 import com.airbng.domain.chat.model.LastMessage;
+import com.airbng.dto.chat.PeerProfileDto;
+import com.airbng.repository.MemberRepository;
 import com.airbng.repository.chat.ConversationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -18,6 +21,7 @@ public class ConversationServiceImpl implements ConversationService {
 
     private final ConversationRepository conversationRepo;
     private final MongoTemplate mongo;
+    private final MemberRepository memberRepo;
 
     @Override
     public String makeConvId(long userA, long userB) {
@@ -72,4 +76,35 @@ public class ConversationServiceImpl implements ConversationService {
                 .set("lastMessage", last);
         mongo.updateFirst(q, u, Conversation.class);
     }
+
+    @Override
+    public PeerProfileDto getPeerProfile(String convId, long requesterId) {
+        assertMember(convId, requesterId);
+        long peerId = peerIdOf(convId, requesterId);
+
+        Member m = memberRepo.findById(peerId).orElse(null);
+
+        if (m == null) {
+            // 최소한 id 만 제공
+            return new PeerProfileDto(peerId, null, null, null);
+        }
+
+        // 프로필 URL 안전 추출
+        String profileUrl = null;
+        if (m.getProfileImage() != null) {
+            profileUrl = m.getProfileImage().getUrl();
+        }
+        // Member 엔티티에 profileUrl 필드가 따로 있다면 fallback 처리
+        if ((profileUrl == null || profileUrl.isBlank()) && m.getProfileImage() != null) {
+            profileUrl = m.getProfileImage().getUrl();
+        }
+
+        return new PeerProfileDto(
+                m.getMemberId(),
+                m.getName(),
+                m.getNickname(),
+                profileUrl
+        );
+    }
+
 }

@@ -2,6 +2,7 @@ package com.airbng.service.chat;
 
 import com.airbng.domain.chat.Conversation;
 import com.airbng.domain.chat.model.LastMessage;
+import com.airbng.dto.chat.PeerProfileDto;
 
 public interface ConversationService {
 
@@ -22,4 +23,6 @@ public interface ConversationService {
 
     /** 새 메시지 저장 이후 lastMessage/highestSeq 갱신 */
     void updateOnNewMessage(String convId, LastMessage last, long seq);
+
+    PeerProfileDto getPeerProfile(String convId, long requesterId);
 }
