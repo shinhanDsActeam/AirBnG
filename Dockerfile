@@ -2,7 +2,7 @@
 FROM openjdk:17-slim
 
 # 2. JAR 파일 복사
-ARG JAR_PATH=build/libs/*.jar
+ARG JAR_PATH=airbng-app/build/libs/*.jar
 COPY ${JAR_PATH} /app/server.jar
 
 # 3. 포트 오픈 (Spring Boot: 9000, Redis: 6379)
