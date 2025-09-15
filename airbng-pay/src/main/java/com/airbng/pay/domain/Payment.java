@@ -4,6 +4,8 @@ import com.airbng.common.base.BaseTime;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
+
 @Getter
 @Entity
 @NoArgsConstructor
@@ -27,7 +29,7 @@ public class Payment extends BaseTime {
     private PaymentStatus paymentStatus; // 결제상태
 
     @Column(nullable = false)
-    private String paymentAmount; // 결제 금액
+    private BigDecimal paymentAmount; // 결제 금액
 
     @Column(nullable = false)
     private String payIdemKey; // 멱등키
