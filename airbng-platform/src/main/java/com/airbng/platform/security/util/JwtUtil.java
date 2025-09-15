@@ -85,5 +85,11 @@ public class JwtUtil {
                 .path("/")
                 .build();
     }
+
+    // TODO : 채팅 - 온라인 유저 세션 남은 시간 게산용
+    public long remainingSeconds(String token) {
+        long remainMs = parseClaims(token).getExpiration().getTime() - System.currentTimeMillis();
+        return Math.max(1L, remainMs / 1000L);
+    }
 }
 

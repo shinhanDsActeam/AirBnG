@@ -2,6 +2,9 @@ package com.airbng.controller.chat;
 
 import com.airbng.common.response.BaseResponse;
 import com.airbng.domain.chat.Inbox;
+import com.airbng.dto.chat.InboxItemDto;
+import com.airbng.repository.MemberRepository;
+import com.airbng.repository.chat.MemberCardView;
 import com.airbng.security.domain.CustomUserDetails;
 import com.airbng.service.chat.ConversationService;
 import com.airbng.service.chat.InboxService;
@@ -9,12 +12,18 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/chat/inbox")
@@ -24,6 +33,8 @@ public class InboxController {
 
     private final InboxService inboxService;
     private final ConversationService conversationService;
+    // TODO: MemberRepository 사용
+    private final MemberRepository memberRepository;
 
     /**
      * 내 인박스 목록 조회 (최신순)
@@ -31,11 +42,43 @@ public class InboxController {
      */
     @GetMapping
     @PreAuthorize("hasAnyAuthority('USER')")
-    public BaseResponse<List<Inbox>> list(@RequestParam(defaultValue = "0") @Min(0) int page,
-                                          @RequestParam(defaultValue = "30") @Min(1) int size,
-                                          Authentication auth) {
+    public BaseResponse<List<InboxItemDto>> list(@RequestParam(defaultValue = "0") @Min(0) int page,
+                                                 @RequestParam(defaultValue = "30") @Min(1) int size,
+                                                 Authentication auth) {
         long me = ((CustomUserDetails) auth.getPrincipal()).getId();
-        return new BaseResponse<>(inboxService.getInbox(me, PageRequest.of(page, size)));
+        List<Inbox> rows = inboxService.getInbox(me, PageRequest.of(page, size));
+
+        // 1) peerIds 배치 조회
+        Set<Long> peerIds = rows.stream()
+                .map(Inbox::getPeerId)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toSet());
+
+        Map<Long, MemberCardView> cardMap = memberRepository.findCardsByIds(peerIds).stream()
+                .collect(Collectors.toMap(MemberCardView::getMemberId, v -> v));
+
+        // 2) Inbox → InboxItemDto 매핑 (denorm 값 우선, 없으면 card로 보강)
+        List<InboxItemDto> dto = rows.stream().map(in -> {
+            MemberCardView card = cardMap.get(in.getPeerId());
+            String name = in.getPeerName(); // denorm 우선
+            if ((name == null || name.isBlank()) && card != null) name = card.getName();
+
+            String nickname = (card != null) ? card.getNickname() : null;
+            String profileUrl = (card != null) ? card.getImageUrl() : null;
+
+            return new InboxItemDto(
+                    in.getConvId(),
+                    in.getPeerId(),
+                    name,
+                    nickname,
+                    profileUrl,
+                    in.getLastMessage(),
+                    in.getLastMessageAt(),
+                    in.getCachedUnread()
+            );
+        }).toList();
+
+        return new BaseResponse<>(dto);
     }
 
     /**
@@ -75,18 +118,38 @@ public class InboxController {
 
     @GetMapping("/{convId}")
     @PreAuthorize("hasAnyAuthority('USER')")
-    public BaseResponse<Inbox> getOne(@PathVariable String convId, Authentication auth) {
+    public BaseResponse<InboxItemDto> getOne(@PathVariable String convId, Authentication auth) {
         long me = ((CustomUserDetails) auth.getPrincipal()).getId();
-        // 내가 속한 방만 허용
         conversationService.assertMember(convId, me);
 
-        Inbox inbox = inboxService.getOne(me, convId);
-        if (inbox == null) {
-            // 처음 대화 시작 전일 수 있으니 404로 명확히 응답
-            throw new org.springframework.web.server.ResponseStatusException(
-                    org.springframework.http.HttpStatus.NOT_FOUND, "inbox not found");
+        Inbox in = inboxService.getOne(me, convId);
+        if (in == null) {
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND, "inbox not found");
         }
-        return new BaseResponse<>(inbox);
+
+        // 보강용 card 한 건 조회
+        MemberCardView card = null;
+        var cards = memberRepository.findCardsByIds(List.of(in.getPeerId()));
+        if (!cards.isEmpty()) card = cards.get(0);
+
+        String name = in.getPeerName();
+        if ((name == null || name.isBlank()) && card != null) name = card.getName();
+
+        String nickname = (card != null) ? card.getNickname() : null;
+        String profileUrl = (card != null) ? card.getImageUrl() : null;
+
+        InboxItemDto dto = new InboxItemDto(
+                in.getConvId(),
+                in.getPeerId(),
+                name,
+                nickname,
+                profileUrl,
+                in.getLastMessage(),
+                in.getLastMessageAt(),
+                in.getCachedUnread()
+        );
+        return new BaseResponse<>(dto);
     }
 
     @GetMapping("/unread-total")

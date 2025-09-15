@@ -2,6 +2,7 @@ package com.airbng.controller.chat;
 
 import com.airbng.common.response.BaseResponse;
 import com.airbng.domain.chat.Conversation;
+import com.airbng.dto.chat.PeerProfileDto;
 import com.airbng.security.domain.CustomUserDetails;
 import com.airbng.service.chat.ConversationService;
 import lombok.RequiredArgsConstructor;
@@ -64,9 +65,9 @@ public class ConversationController {
      * GET /chat/conversations/{convId}/peer
      */
     @GetMapping("/{convId}/peer")
-    public BaseResponse<Long> getPeer(@PathVariable String convId, Authentication auth) {
+    public BaseResponse<PeerProfileDto> getPeer(@PathVariable String convId, Authentication auth) {
         long me = ((CustomUserDetails) auth.getPrincipal()).getId();
         conversationService.assertMember(convId, me);
-        return new BaseResponse<>(conversationService.peerIdOf(convId, me));
+        return new BaseResponse<>(conversationService.getPeerProfile(convId, me));
     }
 }

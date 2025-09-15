@@ -21,6 +21,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         return new CustomUserDetails(member);
     }
 
+    // TODO: 채팅에서 사용중
     public UserDetails loadUserById(Long memberId) throws UsernameNotFoundException {
         // id가 memberId라면 findById로 충분. 아니면 findByMemberId 사용
         Member m = memberRepository.findById(memberId)
