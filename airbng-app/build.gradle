@@ -1,0 +1,12 @@
+// 실행 목적을 가진 하위 모듈은 bootJar만 활성화. jar는 비활
+bootJar.enabled = true
+jar.enabled = false
+dependencies {
+    implementation project(':airbng-platform')
+    implementation project(':airbng-common')
+    implementation project(':airbng-consumer')
+    implementation project(':airbng-admin')
+    // TODO : chat, pay 모듈 구현 후 주석 해제
+//    implementation project(':airbng-chat')
+//    implementation project(':airbng-pay')
+}

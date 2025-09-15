@@ -1,0 +1,1 @@
+window.KAKAO_APP_KEY = "8d0dac47c03a64f131db8fd1f98fcd21";
