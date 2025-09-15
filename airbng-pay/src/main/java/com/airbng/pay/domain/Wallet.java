@@ -12,6 +12,9 @@ import java.util.List;
 
 @Getter
 @Entity
+@Table(uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"memberId"})
+})
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
