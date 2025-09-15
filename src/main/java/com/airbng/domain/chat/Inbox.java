@@ -22,7 +22,10 @@ public class Inbox {
     @Indexed private String convId;
 
     private Long peerId;           // string
-    private String peerName;         // nullable
+
+    private String peerName;         // 실명
+    private String peerNickname;     // 닉네임
+    private String peerProfileUrl;   // 프로필 이미지 URL
 
     private LastMessage lastMessage; // nullable (미러)
 
