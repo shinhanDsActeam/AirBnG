@@ -2,11 +2,8 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '3.4.4'
     id 'io.spring.dependency-management' version '1.1.4'
+    id 'application'
 }
-
-group = 'com.airbng'
-version = '1.0-SNAPSHOT'
-java.sourceCompatibility = JavaVersion.VERSION_17
 
 configurations {
     compileOnly {
@@ -14,90 +11,112 @@ configurations {
     }
 }
 
+bootJar.enabled = false
+jar.enabled = true
 
-repositories {
-    mavenCentral()
+allprojects {
+    group = 'com.airbng'
+    version = '1.0-SNAPSHOT'
+    java.sourceCompatibility = JavaVersion.VERSION_17
+    repositories {
+        mavenCentral()
+    }
+    bootJar.enabled = false
+    jar.enabled = true
 }
 
-dependencies {
-    // Spring Boot
-    implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
-    implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
-    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
-    implementation 'org.springframework.boot:spring-boot-starter-validation'
-    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
+subprojects {
+    apply {
+        plugin 'java'
+        plugin 'org.springframework.boot'
+        plugin 'io.spring.dependency-management'
+        plugin 'application'
+    }
 
 
-    // Spring Session
-    implementation 'org.springframework.session:spring-session-data-redis'
+    dependencies {
+        // Spring Boot
+        implementation 'org.springframework.boot:spring-boot-starter-web'
+        implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+        implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+        implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
+        implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+        implementation 'org.springframework.boot:spring-boot-starter-validation'
+        implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
 
-    // Lombok
-    compileOnly 'org.projectlombok:lombok'
-    annotationProcessor 'org.projectlombok:lombok'
-    testCompileOnly 'org.projectlombok:lombok'
-    testAnnotationProcessor 'org.projectlombok:lombok'
 
-    // MyBatis
-    implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.4'
+        // Spring Session
+        implementation 'org.springframework.session:spring-session-data-redis'
 
-    // Database
-    implementation 'org.apache.commons:commons-dbcp2:2.9.0'
-    runtimeOnly 'com.mysql:mysql-connector-j'
+        // Lombok
+        compileOnly 'org.projectlombok:lombok'
+        annotationProcessor 'org.projectlombok:lombok'
+        testCompileOnly 'org.projectlombok:lombok'
+        testAnnotationProcessor 'org.projectlombok:lombok'
 
-    // MongoDB
-    implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
+        // MyBatis
+        implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.4'
 
-    // WebSocket + STOMP
-    implementation 'org.springframework.boot:spring-boot-starter-websocket'
-    implementation 'org.springframework:spring-messaging'
+        // Database
+        implementation 'org.apache.commons:commons-dbcp2:2.9.0'
+        runtimeOnly 'com.mysql:mysql-connector-j'
 
-    // 보안(메시징까지)
-    implementation 'org.springframework.security:spring-security-messaging'
+        // MongoDB
+        implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
 
-    // AWS SDK
-    implementation 'com.amazonaws:aws-java-sdk-s3:1.12.695'
+        // WebSocket + STOMP
+        implementation 'org.springframework.boot:spring-boot-starter-websocket'
+        implementation 'org.springframework:spring-messaging'
 
-    // File Upload
-    implementation 'commons-fileupload:commons-fileupload:1.5'
-    implementation 'commons-io:commons-io:2.11.0'
+        // 보안(메시징까지)
+        implementation 'org.springframework.security:spring-security-messaging'
 
-    // Security (crypto only)
-    implementation 'org.springframework.boot:spring-boot-starter-security'
+        // AWS SDK
+        implementation 'com.amazonaws:aws-java-sdk-s3:1.12.695'
 
-    // JWT
-    implementation 'io.jsonwebtoken:jjwt-api:0.12.6'
-    implementation 'io.jsonwebtoken:jjwt-impl:0.12.6'
-    implementation 'io.jsonwebtoken:jjwt-jackson:0.12.6'
+        // File Upload
+        implementation 'commons-fileupload:commons-fileupload:1.5'
+        implementation 'commons-io:commons-io:2.11.0'
 
-    // Cache
-    implementation 'com.github.ben-manes.caffeine:caffeine:3.1.8'
+        // Security (crypto only)
+        implementation 'org.springframework.boot:spring-boot-starter-security'
 
-    // EL
-    implementation 'org.glassfish:jakarta.el:3.0.4'
+        // JWT
+        implementation 'io.jsonwebtoken:jjwt-api:0.12.6'
+        implementation 'io.jsonwebtoken:jjwt-impl:0.12.6'
+        implementation 'io.jsonwebtoken:jjwt-jackson:0.12.6'
 
-    // Swagger
-    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.7.0'
+        // Cache
+        implementation 'com.github.ben-manes.caffeine:caffeine:3.1.8'
 
-    // Test
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testImplementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter-test:3.0.4'
-    testImplementation 'org.springframework.security:spring-security-test'
+        // EL
+        implementation 'org.glassfish:jakarta.el:3.0.4'
 
-    implementation 'org.springframework.boot:spring-boot-starter-actuator'
-    runtimeOnly 'io.micrometer:micrometer-registry-prometheus'
+        // Swagger
+        implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.7.0'
 
-    //QueryDsl
-    implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
-    annotationProcessor(
-            "jakarta.persistence:jakarta.persistence-api",
-            "jakarta.annotation:jakarta.annotation-api",
-            "com.querydsl:querydsl-apt:5.0.0:jakarta"
-    )
+        // Test
+        testImplementation 'org.springframework.boot:spring-boot-starter-test'
+        testImplementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter-test:3.0.4'
+        testImplementation 'org.springframework.security:spring-security-test'
 
-}
+        implementation 'org.springframework.boot:spring-boot-starter-actuator'
+        runtimeOnly 'io.micrometer:micrometer-registry-prometheus'
 
-tasks.named('test') {
-    useJUnitPlatform()
+        //QueryDsl
+        implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
+        annotationProcessor(
+                "jakarta.persistence:jakarta.persistence-api",
+                "jakarta.annotation:jakarta.annotation-api",
+                "com.querydsl:querydsl-apt:5.0.0:jakarta"
+        )
+
+        // ArchUnit
+        testImplementation "com.tngtech.archunit:archunit-junit5:1.3.0"
+    }
+
+
+    tasks.named('test') {
+        useJUnitPlatform()
+    }
 }

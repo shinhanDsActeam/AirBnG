@@ -1,0 +1,10 @@
+rootProject.name='AirBnG'
+include 'airbng-app'
+include 'airbng-platform'
+include 'airbng-common'
+include 'airbng-consumer'
+include 'airbng-admin'
+include 'airbng-chat'
+include 'airbng-pay'
+include 'airbng-api'
+
