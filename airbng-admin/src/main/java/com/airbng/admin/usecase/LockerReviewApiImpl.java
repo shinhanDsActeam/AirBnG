@@ -82,9 +82,6 @@ public class LockerReviewApiImpl implements LockerReviewApi {
             }
         }
 
-//        // 4) PendingLocker 상태 업데이트
-//        pendingLocker.getLockerReview().setReviewStatus(ReviewStatus.WAITING);
-//        lockerReviewRepository.save(pendingLocker);
         return true;
     }
 }

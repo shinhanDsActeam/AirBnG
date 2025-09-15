@@ -68,10 +68,11 @@ public class LockerController {
     @PreAuthorize("hasAnyAuthority('USER')")
     public ResponseEntity<BaseResponse<String>> requestLockerReview(
             @RequestPart("locker") LockerInsertRequest dto,
-            @RequestPart(value = "images", required = false) List<MultipartFile> images) throws IOException {
+            @RequestPart(value = "images", required = false) List<MultipartFile> images,
+            @AuthenticationPrincipal CustomUserDetails userDetails) throws IOException {
 
         dto.setImages(images); // DTO에 파일들 세팅
-        lockerService.requestLockerReview(dto);
+        lockerService.requestLockerReview(dto,userDetails);
         return ResponseEntity.ok(new BaseResponse<>("보관소 심사 요청 완료"));
     }
 

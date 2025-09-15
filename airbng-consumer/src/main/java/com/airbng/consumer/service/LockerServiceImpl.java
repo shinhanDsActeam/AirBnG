@@ -198,14 +198,16 @@ public class LockerServiceImpl implements LockerService {
 // ================= 심사 요청 =================
 @Transactional(rollbackFor = Exception.class)
 @Override
-public BaseResponseStatus requestLockerReview(LockerInsertRequest dto) throws IOException {
+public BaseResponseStatus requestLockerReview(LockerInsertRequest dto, CustomUserDetails userDetails) throws IOException {
+
+    Long memberId = userDetails.getId(); // 로그인한 회원 ID 사용
 
     // 기본 회원/중복 검증
-    if (!memberRepository.existsById(dto.getKeeperId())) {
+    if (!memberRepository.existsById(memberId)) {
         throw new MemberException(NOT_FOUND_MEMBER);
     }
 
-    if (lockerRepository.existsByKeeper_MemberId(dto.getKeeperId())) {
+    if (lockerRepository.existsByKeeper_MemberId(memberId)) {
         throw new LockerException(MEMBER_ALREADY_HAS_LOCKER);
     }
 
@@ -250,7 +252,7 @@ public BaseResponseStatus requestLockerReview(LockerInsertRequest dto) throws IO
             .addressDetail(dto.getAddressDetail())
             .latitude(dto.getLatitude())
             .longitude(dto.getLongitude())
-            .memberId(dto.getKeeperId())
+            .memberId(memberId)
             .lockerType(LockerType.PERSONAL.toString())
             .jimTypeId(jimTypeIds)
             .imageId(dto.getImagesId())

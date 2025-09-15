@@ -40,7 +40,7 @@ public interface LockerService {
 
     void deleteLocker(Long lockerId, CustomUserDetails userDetails);
 
-    BaseResponseStatus requestLockerReview(LockerInsertRequest dto) throws IOException;
+    BaseResponseStatus requestLockerReview(LockerInsertRequest dto, CustomUserDetails userDetails) throws IOException;
 
 }
 
