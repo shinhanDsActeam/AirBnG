@@ -24,8 +24,8 @@ public class LockerReviewController {
     }
 
     @PostMapping("/reject")
-    public ResponseEntity<?> reject(@RequestParam Long pendingLockerId, @RequestParam String reason) {
-        LockerReviewRejectCommand result = lockerReviewService.rejectLockerReview(pendingLockerId, reason);
+    public ResponseEntity<BaseResponse<String>> reject(@RequestParam Long pendingLockerId,  @RequestParam Long memberId, @RequestParam String reason) {
+        boolean result = lockerReviewService.rejectLockerReview(pendingLockerId, memberId, reason);
         return ResponseEntity.ok(new BaseResponse<>("보관소 반려"));
     }
 }

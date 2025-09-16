@@ -6,6 +6,8 @@ import com.airbng.api.consumer.dto.command.LockerReviewRejectCommand;
 import com.airbng.common.base.BaseStatus;
 import com.airbng.consumer.domain.Locker;
 import com.airbng.consumer.domain.Member;
+import com.airbng.consumer.domain.base.NotificationType;
+import com.airbng.consumer.domain.base.ReservationState;
 import com.airbng.consumer.domain.image.Image;
 import com.airbng.consumer.domain.image.LockerImage;
 import com.airbng.consumer.domain.jimtype.JimType;
@@ -14,10 +16,12 @@ import com.airbng.consumer.exception.ImageException;
 import com.airbng.consumer.exception.LockerException;
 import com.airbng.consumer.exception.MemberException;
 import com.airbng.consumer.repository.*;
+import com.airbng.consumer.scheduler.AlertScheduledTask;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.management.Notification;
 import java.util.List;
 
 import static com.airbng.platform.common.response.status.BaseResponseStatus.*;
@@ -26,6 +30,7 @@ import static com.airbng.platform.common.response.status.BaseResponseStatus.*;
 @RequiredArgsConstructor
 public class LockerApiImpl implements LockerApi {
 
+    private final AlertScheduledTask alertScheduledTask;
     private final LockerRepository lockerRepository;
     private final LockerImageRepository lockerImageRepository;
     private final LockerJimTypeRepository lockerJimTypeRepository;
@@ -37,11 +42,11 @@ public class LockerApiImpl implements LockerApi {
     @Transactional
     public boolean createLockerFromPending(LockerReviewApproveCommand command) {
 
-        // 1. 회원 조회
+        // 회원 조회
         Member keeper = memberRepository.findById(command.getMemberId())
                 .orElseThrow(() -> new MemberException(NOT_FOUND_MEMBER));
 
-        // 2. 실제 Locker 엔티티 생성
+        // 실제 Locker 엔티티 생성
         Locker locker = Locker.builder()
                 .lockerName(command.getLockerName())
                 .address(command.getAddress())
@@ -55,11 +60,13 @@ public class LockerApiImpl implements LockerApi {
                 .build();
         lockerRepository.saveAndFlush(locker);
 
-        // 3. 이미지 저장/연결
+
+
+        // 이미지 저장/연결
         if (command.getImageId() != null && !command.getImageId().isEmpty()) {
             for (Long imageId : command.getImageId()) {
                 Image image = imageRepository.findById(imageId)
-                        .orElseThrow(() -> new ImageException("이미지 없음: " + imageId));
+                        .orElseThrow(() -> new ImageException(UPLOAD_FAILED));
 
                 lockerImageRepository.save(
                         LockerImage.builder()
@@ -71,7 +78,7 @@ public class LockerApiImpl implements LockerApi {
             }
         }
 
-        // 4. JimType 연결
+        // imType 연결
         if (command.getJimTypeId() != null && !command.getJimTypeId().isEmpty()) {
             List<JimType> types = jimTypeRepository.findAllById(command.getJimTypeId());
             for (JimType t : types) {
@@ -85,26 +92,35 @@ public class LockerApiImpl implements LockerApi {
             }
         }
 
+        //승인 시 알림 발송
+        alertScheduledTask.sendLockerApproved(
+                keeper.getMemberId(),
+                locker.getLockerName()
+        );
+
         return true;
     }
 
     @Override
-    public LockerReviewRejectCommand rejectLockerReview(LockerReviewRejectCommand command) {
+    public boolean rejectLockerReview(LockerReviewRejectCommand command) {
+
+        Member keeper = memberRepository.findById(command.getMemberId())
+                .orElseThrow(() -> new MemberException(NOT_FOUND_MEMBER));
 
         // 클라이언트에 보여줄 DTO 생성
-//        LockerReviewRejectCommand dto = LockerReviewRejectCommand.builder()
-//                .lockerName(command.getLockerName())
-//                .reason(command.getReason()) // command에 reason 필드가 있어야 함
-//                .build();
+        LockerReviewRejectCommand dto = LockerReviewRejectCommand.builder()
+                .lockerName(command.getLockerName())
+                .reason(command.getReason())
+                .build();
 
-        //TODO : 반려 사유를 어케 보여주지?
-//        notificationService.sendRejectedLockerNotification(command.getMemberId(), dto);
-
-
-        return new LockerReviewRejectCommand(
+        //반려 시 알림 발송
+        alertScheduledTask.sendLockerRejected(
+                keeper.getMemberId(),
                 command.getLockerName(),
-                command.getReason() // LockerReviewRejectCommand에 reason 필드 있어야 함
+                command.getReason()
         );
+
+        return true;
 
     }
 

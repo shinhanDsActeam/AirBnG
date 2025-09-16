@@ -12,6 +12,7 @@ import java.util.List;
 @NoArgsConstructor
 public class LockerReviewRejectCommand {
 
+    private Long memberId;
     private String lockerName;  // 반려된 보관소 이름
     private String reason;      // 반려 사유
 }

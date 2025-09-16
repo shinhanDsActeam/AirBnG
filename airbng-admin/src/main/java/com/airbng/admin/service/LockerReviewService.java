@@ -6,5 +6,5 @@ public interface LockerReviewService {
 
     //승인 / 반려
     boolean approveLockerReview(Long pendingLockerId, Long memberId);
-    LockerReviewRejectCommand rejectLockerReview(Long pendingLockerId, String reason);
+    boolean rejectLockerReview(Long pendingLockerId, Long memberId, String reason);
 }

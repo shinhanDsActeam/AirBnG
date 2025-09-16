@@ -60,7 +60,7 @@ public class LockerReviewServiceImpl implements LockerReviewService{
     }
 
     @Transactional
-    public LockerReviewRejectCommand rejectLockerReview(Long pendingLockerId, String reason) {
+    public boolean rejectLockerReview(Long pendingLockerId, Long memberId, String reason) {
 
         LockerReview lockerReview = lockerReviewRepository.findById(pendingLockerId)
                 .orElseThrow(() -> new DomainException(NOT_FOUND_LOCKERDETAILS));
@@ -73,6 +73,7 @@ public class LockerReviewServiceImpl implements LockerReviewService{
 
         // PendingLocker -> DTO 변환
         LockerReviewRejectCommand command = LockerReviewRejectCommand.builder()
+                .memberId(memberId)
                 .lockerName(lockerReview.getPendingLocker().getLockerName())
                 .reason(lockerReview.getReviewComment())
                 .build();
