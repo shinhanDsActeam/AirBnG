@@ -1,7 +1,8 @@
 package com.airbng.consumer.repository;
 
 import com.airbng.consumer.domain.Member;
-import com.airbng.repository.chat.MemberCardView;
+import com.airbng.api.consumer.dto.view.MemberCardView;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -37,4 +38,25 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
       where m.memberId in :ids
     """)
     List<MemberCardView> findCardsByIds(@Param("ids") Collection<Long> ids);
+
+    // TODO(modularize): 닉네임으로 회원 조회 (MemberCardView)
+    @Query("""
+      select m.memberId as memberId,
+             m.name as name,
+             m.nickname as nickname,
+             i.url as imageUrl
+      from Member m
+      left join m.profileImage i
+      where lower(m.nickname) = lower(:nickname)
+    """)
+    MemberCardView findCardByNickname(@Param("nickname") String nickname);
+
+    // TODO(modularize): 부분 일치: 닉네임 또는 이름에 포함
+    @Query("""
+      select m.memberId as memberId, m.name as name, m.nickname as nickname, i.url as imageUrl
+      from Member m left join m.profileImage i
+      where lower(m.nickname) like lower(concat('%', :kw, '%'))
+         or lower(m.name)     like lower(concat('%', :kw, '%'))
+    """)
+    List<MemberCardView> searchCards(@Param("kw") String keyword, Pageable pageable);
 }

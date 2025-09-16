@@ -106,7 +106,7 @@ public class S3Utils {
         try (InputStream inputStream = file.getInputStream()) {
             amazonS3Client.putObject(new PutObjectRequest(bucket, key, inputStream, metadata));
         } catch (IOException e) {
-            throw new ImageException(UPLOAD_FAILED);
+            throw new S3Exception(UPLOAD_FAILED);
         }
         return amazonS3Client.getUrl(bucket, key).toString(); // 공개 URL
     }
@@ -121,11 +121,11 @@ public class S3Utils {
     private void validateFileExtension(MultipartFile file, List<String> allowed) {
         String originalFilename = file.getOriginalFilename();
         if (originalFilename == null || !originalFilename.contains(".")) {
-            throw new ImageException(INVALID_EXTENSIONS);
+            throw new S3Exception(INVALID_EXTENSIONS);
         }
         String extension = originalFilename.substring(originalFilename.lastIndexOf(".") + 1).toLowerCase();
         if (!allowed.contains(extension)) {
-            throw new ImageException(INVALID_EXTENSIONS);
+            throw new S3Exception(INVALID_EXTENSIONS);
         }
     }
 
