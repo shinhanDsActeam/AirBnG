@@ -208,6 +208,7 @@ public BaseResponseStatus requestLockerReview(LockerInsertRequest dto, CustomUse
         throw new LockerException(MEMBER_ALREADY_HAS_LOCKER);
     }
 
+    List<Long> imageIds = new ArrayList<>();
     // 이미지 저장/연결
     if (dto.getImages() != null && !dto.getImages().isEmpty()) {
         if (dto.getImages().size() > 5) throw new ImageException(EXCEED_IMAGE_COUNT);
@@ -227,6 +228,8 @@ public BaseResponseStatus requestLockerReview(LockerInsertRequest dto, CustomUse
                     .build();
             imageRepository.save(image);
 
+            // 저장 후 ID 가져오기
+            imageIds.add(image.getImageId());
         }
     }
 
@@ -252,7 +255,7 @@ public BaseResponseStatus requestLockerReview(LockerInsertRequest dto, CustomUse
             .memberId(memberId)
             .lockerType(LockerType.PERSONAL.toString())
             .jimTypeId(jimTypeIds)
-            .imageId(dto.getImagesId())
+            .imageId(imageIds)
             .status(BaseStatus.ACTIVE)
             .build();
 

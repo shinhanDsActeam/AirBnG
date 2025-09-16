@@ -6,10 +6,6 @@ import com.airbng.common.base.BaseTime;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Set;
-
 import static jakarta.persistence.FetchType.LAZY;
 
 @Getter
@@ -28,7 +24,7 @@ public class LockerReview extends BaseTime {
     @Column(nullable = false)
     private ReviewStatus reviewStatus;
 
-    @Column(nullable = true)
+    @Column
     private String reviewComment;
 
     @OneToOne(fetch = LAZY)

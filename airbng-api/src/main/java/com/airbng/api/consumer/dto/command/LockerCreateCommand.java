@@ -1,4 +1,4 @@
-package com.airbng.consumer.api.dto.command;
+package com.airbng.api.consumer.dto.command;
 
 public class LockerCreateCommand {
 }

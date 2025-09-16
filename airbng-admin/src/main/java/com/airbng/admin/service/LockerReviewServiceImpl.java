@@ -4,8 +4,6 @@ import com.airbng.admin.domain.PendingLocker;
 import com.airbng.admin.domain.PendingLockerImage;
 import com.airbng.admin.domain.PendingLockerJimtype;
 import com.airbng.admin.dto.response.LockerReviewDetailResponse;
-import com.airbng.admin.repository.LockerReviewImageRepository;
-import com.airbng.admin.repository.LockerReviewJimTypeRepository;
 import com.airbng.admin.repository.LockerReviewRepository;
 import com.airbng.api.consumer.dto.command.LockerReviewDetailCommand;
 import com.airbng.api.consumer.dto.view.LockerReviewDetailView;
@@ -15,7 +13,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.stream.Collectors;
 
 import static com.airbng.platform.common.response.status.BaseResponseStatus.*;
@@ -27,8 +24,6 @@ import static com.airbng.platform.common.response.status.BaseResponseStatus.*;
 public class LockerReviewServiceImpl implements LockerReviewService {
 
     private final LockerReviewRepository lockerReviewRepository;
-    private final LockerReviewImageRepository lockerReviewImageRepository;
-    private final LockerReviewJimTypeRepository lockerReviewJimTypeRepository;
     private final LockerApi lockerApi;
 
     // ================= 상세 =================
@@ -47,6 +42,8 @@ public class LockerReviewServiceImpl implements LockerReviewService {
                         .map(PendingLockerImage::getImageId)
                         .collect(Collectors.toList()))
                 .build();
+
+        log.info("images count = {}",command.getImageIds());
 
         LockerReviewDetailView userData = lockerApi.getLockerReviewDetail(command);
 

@@ -9,9 +9,11 @@ import java.util.Optional;
 
 public interface LockerReviewRepository extends JpaRepository<PendingLocker, Long> {
 
-    // 상세 조회 (waiting 상태인 리뷰만)
-    @EntityGraph(attributePaths = {"lockerReview", "pendingLockerImages", "pendingLockerJimtypes"})
-    @Query("select pl from PendingLocker pl join pl.lockerReview lr where lr.lockerReviewId = :lockerReviewId")
+    //심사보관소 상세조회
+    @Query("select pl from PendingLocker pl " +
+            "left join fetch pl.pendingLockerImages pli " +
+            "left join fetch pl.pendingLockerJimtypes pj " +
+            "where pl.pendingLockerId = :lockerReviewId")
     Optional<PendingLocker> findLockerReviewById(@Param("lockerReviewId") Long lockerReviewId);
 
 }

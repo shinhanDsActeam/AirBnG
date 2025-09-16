@@ -5,28 +5,33 @@ import com.airbng.api.consumer.dto.view.LockerReviewDetailView;
 import com.airbng.api.consumer.LockerApi;
 import com.airbng.consumer.domain.Member;
 import com.airbng.api.consumer.dto.view.LockerJimTypeResult;
-import com.airbng.consumer.repository.LockerImageRepository;
+import com.airbng.consumer.domain.image.Image;
+import com.airbng.consumer.exception.MemberException;
+import com.airbng.consumer.repository.ImageRepository;
 import com.airbng.consumer.repository.LockerJimTypeRepository;
 import com.airbng.consumer.repository.MemberRepository;
+import com.airbng.platform.common.response.status.BaseResponseStatus;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class LockerApiImpl implements LockerApi {
 
     private final MemberRepository memberRepository;
     private final LockerJimTypeRepository jimTypeRepository;
-    private final LockerImageRepository lockerImageRepository;
+    private final ImageRepository ImageRepository;
 
 
     @Override
     public LockerReviewDetailView getLockerReviewDetail(LockerReviewDetailCommand command) {
         // Member 조회
         Member member = memberRepository.findById(command.getMemberId())
-                .orElseThrow(() -> new RuntimeException("회원 없음"));
+                .orElseThrow(() -> new MemberException(BaseResponseStatus.NOT_FOUND_MEMBER));
 
         // JimType 조회
         List<LockerJimTypeResult> jimTypes = jimTypeRepository.findAllById(command.getJimTypeIds())
@@ -39,9 +44,9 @@ public class LockerApiImpl implements LockerApi {
                 .toList();
 
         // 이미지 조회
-        List<String> imageUrls = lockerImageRepository.findAllById(command.getImageIds())
+        List<String> imageUrls = ImageRepository.findAllById(command.getImageIds())
                 .stream()
-                .map(t -> t.getImage().getUrl())
+                .map(Image::getUrl)
                 .toList();
 
         // DTO 반환
