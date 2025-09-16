@@ -2,6 +2,7 @@ package com.airbng.pay.usecase;
 
 import com.airbng.api.pay.PayApi;
 import com.airbng.api.pay.dto.command.WalletCreateCommand;
+import com.airbng.common.base.BaseStatus;
 import com.airbng.pay.domain.Wallet;
 import com.airbng.pay.repository.WalletRepository;
 import lombok.RequiredArgsConstructor;
