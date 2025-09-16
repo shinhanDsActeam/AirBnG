@@ -109,7 +109,24 @@ public enum BaseResponseStatus implements ResponseStatus{
     UNAUTHORIZED(9009, HttpStatus.UNAUTHORIZED.value(), "인증되지 않는 사용자입니다."),
     ACCESS_DENIED(9010, HttpStatus.FORBIDDEN.value(), "접근 권한이 없습니다."),
     INVALID_SIGNATURE(9011, HttpStatus.UNAUTHORIZED.value(), "잘못된 토큰 서명입니다."),
-    ;
+
+
+    /**
+     * 10000 : wallet
+     */
+    INVALID_WALLET(10001, HttpStatus.BAD_REQUEST.value(),"지갑이 존재하지 않습니다."),
+
+    /**
+     * 11000 : account
+     */
+    DUPLICATE_ACCOUNT(11001, HttpStatus.BAD_REQUEST.value(), "이미 계좌가 존재합니다."),
+
+
+    /**
+     * 12000 : bankinfo
+     */
+    UNSUPPORTED_BANK(12001, HttpStatus.BAD_REQUEST.value(), "지원하지 않는 은행입니다."),
+    INVALID_ACCOUNT(12002, HttpStatus.BAD_REQUEST.value(), "유효하지 않는 계좌번호입니다.");
 
     private final int code;
     private final int httpStatus;

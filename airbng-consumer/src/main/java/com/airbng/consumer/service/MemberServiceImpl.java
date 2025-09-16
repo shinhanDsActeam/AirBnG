@@ -1,5 +1,7 @@
 package com.airbng.consumer.service;
 
+import com.airbng.api.pay.PayApi;
+import com.airbng.api.pay.dto.command.WalletCreateCommand;
 import com.airbng.consumer.auth.CustomUserDetails;
 import com.airbng.consumer.domain.Member;
 import com.airbng.consumer.domain.base.Role;
@@ -33,6 +35,7 @@ public class MemberServiceImpl implements MemberService {
     private final EmailValidator emailValidator;
     private final PasswordValidator passwordValidator;
     private final MemberRepository memberRepository;
+    private final PayApi payApi;
 
     @Transactional
     @Override
@@ -63,6 +66,8 @@ public class MemberServiceImpl implements MemberService {
                 .profileImage(profileImage)
                 .build();
         memberRepository.save(member);
+
+        payApi.createWallet(new WalletCreateCommand(member.getMemberId()));
     }
 
     //이메일 중복 검사
