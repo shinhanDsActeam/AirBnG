@@ -12,9 +12,6 @@ import java.util.List;
 
 @Getter
 @Entity
-@Table(uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"memberId"})
-})
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -23,7 +20,7 @@ public class Wallet extends BaseTime {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long walletId;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private Long memberId;
 
     @Column(nullable = false)
