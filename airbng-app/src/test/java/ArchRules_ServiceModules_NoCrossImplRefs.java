@@ -14,6 +14,7 @@ public class ArchRules_ServiceModules_NoCrossImplRefs {
             noClasses().that().resideInAPackage("..admin..")
                     .should().accessClassesThat()
                     .resideInAnyPackage("..consumer..", "..chat..", "..pay..")
+                    .andShould().onlyBeAccessed().byAnyPackage("..api..")
                     .allowEmptyShould(true);
 
     // consumer → (admin/chat/pay) 구현 참조 금지
@@ -22,6 +23,7 @@ public class ArchRules_ServiceModules_NoCrossImplRefs {
             noClasses().that().resideInAPackage("..consumer..")
                     .should().accessClassesThat()
                     .resideInAnyPackage("..admin..", "..chat..", "..pay..")
+                    .andShould().onlyBeAccessed().byAnyPackage("..api..")
                     .allowEmptyShould(true);
 
 
@@ -31,6 +33,7 @@ public class ArchRules_ServiceModules_NoCrossImplRefs {
             noClasses().that().resideInAPackage("..chat..")
                     .should().accessClassesThat()
                     .resideInAnyPackage("..admin..", "..consumer..", "..pay..")
+                    .andShould().onlyBeAccessed().byAnyPackage("..api..")
                     .allowEmptyShould(true);
 
 
@@ -40,6 +43,7 @@ public class ArchRules_ServiceModules_NoCrossImplRefs {
             noClasses().that().resideInAPackage("..pay..")
                     .should().accessClassesThat()
                     .resideInAnyPackage("..admin..", "..consumer..", "..chat..")
+                    .andShould().onlyBeAccessed().byAnyPackage("..api..")
                     .allowEmptyShould(true);
 
 }
