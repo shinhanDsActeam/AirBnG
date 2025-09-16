@@ -22,7 +22,7 @@ public class LockerReviewController {
 
     //상세보기
     @GetMapping("/{lockerReviewId}")
-//    @PreAuthorize("hasAnyAuthority('ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
     public BaseResponse<LockerReviewDetailResponse> findLockerReviewById(@PathVariable Long lockerReviewId) {
         return new BaseResponse<>(lockerReviewService.findLockerReviewById(lockerReviewId));
     }
