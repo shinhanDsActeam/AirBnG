@@ -8,6 +8,7 @@ import com.airbng.api.consumer.dto.view.LockerJimTypeResult;
 import com.airbng.consumer.domain.image.Image;
 import com.airbng.consumer.exception.MemberException;
 import com.airbng.consumer.repository.ImageRepository;
+import com.airbng.consumer.repository.JimTypeRepository;
 import com.airbng.consumer.repository.LockerJimTypeRepository;
 import com.airbng.consumer.repository.MemberRepository;
 import com.airbng.platform.common.response.status.BaseResponseStatus;
@@ -23,7 +24,7 @@ import java.util.List;
 public class LockerApiImpl implements LockerApi {
 
     private final MemberRepository memberRepository;
-    private final LockerJimTypeRepository jimTypeRepository;
+    private final JimTypeRepository jimTypeRepository;
     private final ImageRepository ImageRepository;
 
 
@@ -37,9 +38,9 @@ public class LockerApiImpl implements LockerApi {
         List<LockerJimTypeResult> jimTypes = jimTypeRepository.findAllById(command.getJimTypeIds())
                 .stream()
                 .map(j -> new LockerJimTypeResult(
-                        j.getJimType().getJimTypeId(),
-                        j.getJimType().getTypeName(),
-                        j.getJimType().getPricePerHour()
+                        j.getJimTypeId(),
+                        j.getTypeName(),
+                        j.getPricePerHour()
                 ))
                 .toList();
 

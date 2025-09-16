@@ -1,5 +1,6 @@
 package com.airbng.admin.dto.response;
 
+import com.airbng.admin.domain.LockerReview;
 import com.airbng.admin.domain.PendingLocker;
 import com.airbng.admin.domain.base.LockerType;
 import com.airbng.admin.domain.base.ReviewStatus;
@@ -33,7 +34,7 @@ public class LockerReviewDetailResponse {
     private List<LockerJimTypeResult> jimTypeResults; // 짐 타입 목록; // 종류
     private List<String> images; // 이미지 리스트
 
-    public static LockerReviewDetailResponse from(PendingLocker pendingLocker, LockerReviewDetailView userData ){
+    public static LockerReviewDetailResponse from(PendingLocker pendingLocker, LockerReview lockerReview, LockerReviewDetailView userData ){
         return LockerReviewDetailResponse.builder()
                 .lockerId(pendingLocker.getPendingLockerId())
                 .lockerName(pendingLocker.getLockerName())
@@ -44,12 +45,12 @@ public class LockerReviewDetailResponse {
                 .memberName(userData.getMemberName())
                 .memberPhone(userData.getMemberPhone())
                 .lockerType(pendingLocker.getLockerType())
-                .reviewStatus(pendingLocker.getLockerReview() != null
-                        ? pendingLocker.getLockerReview().getReviewStatus()
+                .reviewStatus(lockerReview != null
+                        ? lockerReview.getReviewStatus()
                         : null)
-                .reviewComment(pendingLocker.getLockerReview() != null
-                        && pendingLocker.getLockerReview().getReviewStatus() == ReviewStatus.REJECTED
-                        ? pendingLocker.getLockerReview().getReviewComment()
+                .reviewComment(lockerReview!= null
+                        && lockerReview.getReviewStatus() == ReviewStatus.REJECTED
+                        ? lockerReview.getReviewComment()
                         : null)
                 .jimTypeResults(userData.getJimTypes())
                 .images(userData.getImageUrls())

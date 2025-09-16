@@ -1,10 +1,12 @@
 package com.airbng.admin.service;
 
+import com.airbng.admin.domain.LockerReview;
 import com.airbng.admin.domain.PendingLocker;
 import com.airbng.admin.domain.PendingLockerImage;
 import com.airbng.admin.domain.PendingLockerJimtype;
 import com.airbng.admin.dto.response.LockerReviewDetailResponse;
 import com.airbng.admin.repository.LockerReviewRepository;
+import com.airbng.admin.repository.PendingLockerRepository;
 import com.airbng.api.consumer.dto.command.LockerReviewDetailCommand;
 import com.airbng.api.consumer.dto.view.LockerReviewDetailView;
 import com.airbng.api.consumer.LockerApi;
@@ -13,6 +15,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.airbng.platform.common.response.status.BaseResponseStatus.*;
@@ -23,14 +27,16 @@ import static com.airbng.platform.common.response.status.BaseResponseStatus.*;
 @Transactional(readOnly = true)
 public class LockerReviewServiceImpl implements LockerReviewService {
 
+    private final PendingLockerRepository pendingLockerRepository;
     private final LockerReviewRepository lockerReviewRepository;
     private final LockerApi lockerApi;
 
     // ================= 상세 =================
     @Override
     public LockerReviewDetailResponse findLockerReviewById(Long lockerReviewId) {
-        PendingLocker pendingLocker = lockerReviewRepository.findLockerReviewById(lockerReviewId)
+        LockerReview lockerReview = lockerReviewRepository.findById(lockerReviewId)
                 .orElseThrow(() -> new DomainException(NOT_FOUND_LOCKERDETAILS));
+        PendingLocker pendingLocker = lockerReview.getPendingLocker();
 
         // User 데이터 조회
         LockerReviewDetailCommand command = LockerReviewDetailCommand.builder()
@@ -43,12 +49,10 @@ public class LockerReviewServiceImpl implements LockerReviewService {
                         .collect(Collectors.toList()))
                 .build();
 
-        log.info("images count = {}",command.getImageIds());
-
         LockerReviewDetailView userData = lockerApi.getLockerReviewDetail(command);
 
-        LockerReviewDetailResponse LockerDetail = LockerReviewDetailResponse.from(pendingLocker, userData);
-        return LockerDetail;
+        LockerReviewDetailResponse lockerDetail = LockerReviewDetailResponse.from(pendingLocker, lockerReview, userData);
+        return lockerDetail;
     }
 
 }

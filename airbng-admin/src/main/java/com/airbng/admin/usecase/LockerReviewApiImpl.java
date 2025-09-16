@@ -9,11 +9,13 @@ import com.airbng.admin.domain.base.ReviewStatus;
 import com.airbng.admin.repository.LockerReviewImageRepository;
 import com.airbng.admin.repository.LockerReviewJimTypeRepository;
 import com.airbng.admin.repository.LockerReviewRepository;
+import com.airbng.admin.repository.PendingLockerRepository;
 import com.airbng.api.admin.LockerReviewApi;
 import com.airbng.api.admin.dto.command.LockerReviewCommand;
 import com.airbng.common.base.BaseStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -22,9 +24,11 @@ public class LockerReviewApiImpl implements LockerReviewApi {
     private final LockerReviewImageRepository lockerReviewImageRepository;
     private final LockerReviewJimTypeRepository lockerreviewJimTypeRepository;
     private final LockerReviewRepository lockerReviewRepository;
+    private final PendingLockerRepository pendingLockerRepository;
 
 
     @Override
+    @Transactional
     public boolean submitLockerForReview(LockerReviewCommand dto) {
         // 1) PendingLocker 생성
         PendingLocker pendingLocker = PendingLocker.builder()
@@ -39,6 +43,8 @@ public class LockerReviewApiImpl implements LockerReviewApi {
                 .status(BaseStatus.ACTIVE)
                 .build();
 
+        pendingLockerRepository.save(pendingLocker);
+
         // 2) 초기 심사 상태 (WAITING) 세팅
         LockerReview review = LockerReview.builder()
                 .reviewStatus(ReviewStatus.WAITING)
@@ -46,9 +52,8 @@ public class LockerReviewApiImpl implements LockerReviewApi {
                 .pendingLocker(pendingLocker)
                 .build();
 
-        pendingLocker.setLockerReview(review);
 
-        lockerReviewRepository.save(pendingLocker);
+        lockerReviewRepository.save(review);
 
 
         // 3) 이미지 연결
