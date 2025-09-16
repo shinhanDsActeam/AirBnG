@@ -62,7 +62,7 @@ public class SecurityConfig {
                                 "/members/check-email","/members/check-nickname",
                                 "/swagger-ui/**","/swagger-resources/**", "/v3/api-docs/**",
                                 "swagger-ui.html","/webjars/**", "lockers/{lockerId}", "/lockers",
-                                "/lockers/popular", "/error", "/alarms/**")
+                                "/lockers/popular", "/error", "/alarms/**", "/admin/lockers/**")
                                 
 
                         .permitAll()

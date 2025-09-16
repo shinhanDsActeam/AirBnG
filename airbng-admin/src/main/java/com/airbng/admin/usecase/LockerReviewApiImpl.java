@@ -14,11 +14,6 @@ import com.airbng.api.admin.dto.command.LockerReviewCommand;
 import com.airbng.common.base.BaseStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.awt.*;
-import java.time.LocalDateTime;
-import java.util.HashSet;
 
 @Service
 @RequiredArgsConstructor
