@@ -1,5 +1,6 @@
 package com.airbng.pay.service;
 
+import com.airbng.common.base.BaseStatus;
 import com.airbng.pay.domain.Account;
 import com.airbng.pay.domain.BankInfo;
 import com.airbng.pay.domain.Wallet;
