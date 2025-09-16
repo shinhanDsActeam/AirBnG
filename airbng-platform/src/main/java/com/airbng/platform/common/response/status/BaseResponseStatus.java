@@ -121,10 +121,12 @@ public enum BaseResponseStatus implements ResponseStatus{
      */
     DUPLICATE_ACCOUNT(11001, HttpStatus.BAD_REQUEST.value(), "이미 계좌가 존재합니다."),
 
+
     /**
      * 12000 : bankinfo
      */
-    UNSUPPORTED_BANK(12001, HttpStatus.BAD_REQUEST.value(), "지원하지 않는 은행입니다.");
+    UNSUPPORTED_BANK(12001, HttpStatus.BAD_REQUEST.value(), "지원하지 않는 은행입니다."),
+    INVALID_ACCOUNT(12002, HttpStatus.BAD_REQUEST.value(), "유효하지 않는 계좌번호입니다.");
 
     private final int code;
     private final int httpStatus;
