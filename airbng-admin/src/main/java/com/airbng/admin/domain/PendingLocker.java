@@ -39,10 +39,6 @@ public class PendingLocker extends BaseTime {
     @Column(nullable = false)
     private Double longitude;
 
-    // TODO : 양방향 1:1 일 경우 fetch = LAZY 설정 적용 안되는듯?
-    @OneToOne(mappedBy = "pendingLocker", cascade = CascadeType.ALL)
-    private LockerReview lockerReview;
-
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, columnDefinition = "VARCHAR(10)")
     private BaseStatus status;
