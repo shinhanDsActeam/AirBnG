@@ -14,14 +14,15 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class BankInfo{
+public class BankInfo {
     @Id
-    private Long bankCode; // 은행 코드
+    @Column(columnDefinition = "SMALLINT")
+    private Integer bankCode; // 은행 코드
 
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "VARCHAR(30)")
     private String korCode; // 은행명
 
-    @Column(nullable = false)
+    @Column(nullable = false,  columnDefinition = "VARCHAR(30)")
     private String engCode; // 은행명 (영문)
 
 }

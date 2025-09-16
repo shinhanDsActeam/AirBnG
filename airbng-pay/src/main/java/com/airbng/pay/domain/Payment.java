@@ -32,6 +32,6 @@ public class Payment extends BaseTime {
     @Column(nullable = false)
     private BigDecimal paymentAmount; // 결제 금액
 
-    @Column(columnDefinition = "BINARY(16)",nullable = false)
+    @Column(columnDefinition = "BINARY(16)", nullable = false, unique = true)
     private UUID payIdemKey; // 멱등키
 }

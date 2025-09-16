@@ -34,7 +34,7 @@ public class WalletTx extends BaseTime {
     @Column(nullable = false)
     private WalletTxRole walletTxRole;
 
-    @Column(columnDefinition = "BINARY(16)",nullable = false)
+    @Column(columnDefinition = "BINARY(16)", nullable = false, unique = true)
     private UUID walletIdemKey;
 
     @Column(nullable = false)

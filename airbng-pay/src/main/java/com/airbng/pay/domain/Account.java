@@ -29,7 +29,7 @@ public class Account extends BaseTime {
     @Column(nullable = false)
     private Boolean isPrimary;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "bank_code", nullable = false)
     private BankInfo bankInfo; // 은행 코드
 
