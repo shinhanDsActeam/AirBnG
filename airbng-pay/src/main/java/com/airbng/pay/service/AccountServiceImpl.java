@@ -41,8 +41,6 @@ public class AccountServiceImpl implements AccountService {
         Wallet wallet = walletRepository.findByMemberId(memberId);
         if (!bankInfoRepository.existsByBankCode(req.getBankCode())) throw new BankInfoException(UNSUPPORTED_BANK);
         BankInfo bankInfo = bankInfoRepository.findByBankCode((req.getBankCode()));
-        if (accountRepository.existsByWalletWalletIdAndAccountNumber(wallet.getWalletId(), req.getAccountNumber()))
-            throw new WalletException(DUPLICATE_ACCOUNT);
 
         boolean isPrimary = false;
         if (!accountRepository.existsByWallet(wallet)) {
@@ -53,6 +51,9 @@ public class AccountServiceImpl implements AccountService {
         if (!accountValidationService.isValidAccountNumber(accountNumber)) {
             throw new BankInfoException(INVALID_ACCOUNT);
         }
+        if (accountRepository.existsByWalletWalletIdAndAccountNumber(wallet.getWalletId(), accountNumber))
+            throw new WalletException(DUPLICATE_ACCOUNT);
+
         Account account = Account.builder()
                 .wallet(wallet)
                 .bankInfo(bankInfo)
