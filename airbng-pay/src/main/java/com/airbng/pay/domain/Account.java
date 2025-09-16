@@ -40,12 +40,6 @@ public class Account extends BaseTime {
     private BigDecimal balance;
 
     @Column(nullable = false)
-    private BigDecimal paymentAmount;
-
-    @Column(nullable = false)
-    private String payIdemKey;
-
-    @Column(nullable = false)
     private Available status; // 활성화 여부
 
     public void deactivate() {
