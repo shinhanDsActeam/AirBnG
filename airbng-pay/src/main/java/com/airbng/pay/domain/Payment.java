@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
 @Getter
 @Entity
@@ -31,6 +32,6 @@ public class Payment extends BaseTime {
     @Column(nullable = false)
     private BigDecimal paymentAmount; // 결제 금액
 
-    @Column(nullable = false)
-    private String payIdemKey; // 멱등키
+    @Column(columnDefinition = "BINARY(16)",nullable = false)
+    private UUID payIdemKey; // 멱등키
 }

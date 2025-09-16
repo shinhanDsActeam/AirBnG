@@ -29,7 +29,7 @@ public class Account extends BaseTime {
     @Column(nullable = false)
     private Boolean isPrimary;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "bank_code", nullable = false)
     private BankInfo bankInfo; // 은행 코드
 
@@ -38,12 +38,6 @@ public class Account extends BaseTime {
 
     @Column(nullable = false)
     private BigDecimal balance;
-
-    @Column(nullable = false)
-    private BigDecimal paymentAmount;
-
-    @Column(nullable = false)
-    private String payIdemKey;
 
     @Column(nullable = false)
     private Available status; // 활성화 여부

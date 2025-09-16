@@ -14,7 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class BankInfo extends BaseTime {
+public class BankInfo{
     @Id
     private Long bankCode; // 은행 코드
 

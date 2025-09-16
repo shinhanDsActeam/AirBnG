@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
 @Getter
 @Entity
@@ -20,9 +21,11 @@ public class WalletTx extends BaseTime {
     private Long walletTxId;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "wallet_id", nullable = false)
     private Wallet wallet;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "payment_id")
     private Payment payment;
 
     @Column(nullable = false)
@@ -31,8 +34,8 @@ public class WalletTx extends BaseTime {
     @Column(nullable = false)
     private WalletTxRole walletTxRole;
 
-    @Column(nullable = false)
-    private String walletItemKey;
+    @Column(columnDefinition = "BINARY(16)",nullable = false)
+    private UUID walletIdemKey;
 
     @Column(nullable = false)
     private BigDecimal amount; // 사용 금액
