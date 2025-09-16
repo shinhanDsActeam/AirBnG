@@ -20,7 +20,7 @@ public class LockerReviewController {
     //목록 + 페이징
     @PreAuthorize("hasAnyAuthority('ADMIN')")
     @GetMapping
-    public Page<LockerReviewListResponse> findAllByReviewStatus(@RequestParam ReviewStatus status, @RequestParam(value = "page", defaultValue = "0") int page) {
+    public Page<LockerReviewListResponse> findAllByReviewStatus(@RequestParam ReviewStatus status, @RequestParam(value = "page", defaultValue = "1") int page) {
         return lockerReviewService.findAllByReviewStatus(status, page);
     }
 

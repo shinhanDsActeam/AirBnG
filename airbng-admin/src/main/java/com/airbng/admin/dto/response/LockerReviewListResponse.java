@@ -6,6 +6,8 @@ import com.airbng.admin.domain.base.ReviewStatus;
 import com.airbng.api.consumer.dto.view.LockerReviewMemberView;
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Setter
 @Builder
@@ -15,6 +17,8 @@ public class LockerReviewListResponse {
 
     private Long lockerReviewId;
     private String lockerName;
+    private String address;
+    private LocalDateTime createdAt;
     private ReviewStatus reviewStatus;
     private Long memberId;
     private String memberName;
@@ -26,6 +30,8 @@ public class LockerReviewListResponse {
                 .reviewStatus(review.getReviewStatus())
                 .memberId(pendingLocker.getMemberId())
                 .memberName(member.getMemberName())
+                .address(pendingLocker.getAddress())
+                .createdAt(review.getCreatedAt())
                 .build();
     }
 
