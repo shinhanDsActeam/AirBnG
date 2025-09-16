@@ -1,5 +1,6 @@
 package com.airbng.pay.domain;
 
+import com.airbng.common.base.BaseStatus;
 import com.airbng.common.base.BaseTime;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -20,7 +21,7 @@ public class Wallet extends BaseTime {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long walletId;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private Long memberId;
 
     @Column(nullable = false)
@@ -31,6 +32,10 @@ public class Wallet extends BaseTime {
 
     @OneToMany(mappedBy = "wallet", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Account> accounts;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private BaseStatus status;
 
     public void addBalanceAvailable(BigDecimal amount) {
         // TODO : 예외처리
