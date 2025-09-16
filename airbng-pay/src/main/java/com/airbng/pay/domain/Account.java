@@ -1,6 +1,7 @@
 package com.airbng.pay.domain;
 
 import com.airbng.common.base.Available;
+import com.airbng.common.base.BaseStatus;
 import com.airbng.common.base.BaseTime;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -39,8 +40,13 @@ public class Account extends BaseTime {
     @Column(nullable = false)
     private BigDecimal balance;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Available status; // 활성화 여부
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private BaseStatus baseStatus;
 
     public void deactivate() {
         this.status = Available.NO;

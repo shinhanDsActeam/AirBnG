@@ -1,19 +1,12 @@
 package com.airbng.admin.domain;
 
 import com.airbng.admin.domain.base.LockerType;
-import com.airbng.admin.domain.base.ReviewStatus;
 import com.airbng.common.base.BaseStatus;
 import com.airbng.common.base.BaseTime;
-import com.airbng.platform.common.response.BaseResponse;
-import com.airbng.platform.common.response.status.BaseResponseStatus;
 import jakarta.persistence.*;
 import lombok.*;
-
 import java.util.HashSet;
-import java.util.Objects;
 import java.util.Set;
-
-import static com.airbng.platform.common.response.status.BaseResponseStatus.CANNOT_UPDATE_STATE;
 
 @Getter
 @Setter

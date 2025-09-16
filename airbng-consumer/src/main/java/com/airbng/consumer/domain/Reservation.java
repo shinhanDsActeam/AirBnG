@@ -57,6 +57,9 @@ public class Reservation extends BaseTime {
     @JoinColumn(name = "locker_id", nullable = false)
     private Locker locker;
 
+    @Column(nullable = false)
+    private Long paymentId;
+
     public void addReservationJimType(ReservationJimType reservationJimType){
         reservationJimTypes.add(reservationJimType);
         reservationJimType.setReservation(this);

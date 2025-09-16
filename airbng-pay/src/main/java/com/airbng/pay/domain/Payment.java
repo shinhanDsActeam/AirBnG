@@ -23,9 +23,11 @@ public class Payment extends BaseTime {
     @Column(nullable = false)
     private Long payeeId; // 피결제자 : keeper
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private PayMethod method; // WALLET, PG
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private PaymentStatus paymentStatus; // 결제상태
 

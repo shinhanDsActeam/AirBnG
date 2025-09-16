@@ -5,8 +5,6 @@ import com.airbng.common.base.BaseTime;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.List;
-
 import static jakarta.persistence.FetchType.LAZY;
 
 @Getter
@@ -32,4 +30,3 @@ public class PendingLockerImage extends BaseTime {
     @Column(nullable = false, columnDefinition = "VARCHAR(10)")
     private BaseStatus status;
 }
-
