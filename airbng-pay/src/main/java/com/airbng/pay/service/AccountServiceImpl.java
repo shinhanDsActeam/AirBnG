@@ -3,6 +3,7 @@ package com.airbng.pay.service;
 import com.airbng.pay.domain.Account;
 import com.airbng.pay.domain.BankInfo;
 import com.airbng.pay.domain.Wallet;
+import com.airbng.pay.dto.AccountCheckResponse;
 import com.airbng.pay.dto.AccountRegisterRequest;
 import com.airbng.pay.exception.BankInfoException;
 import com.airbng.pay.exception.WalletException;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Optional;
 
 import static com.airbng.common.base.Available.YES;
@@ -27,6 +29,7 @@ public class AccountServiceImpl implements AccountService {
     private final AccountRepository accountRepository;
     private final WalletRepository walletRepository;
     private final BankInfoRepository bankInfoRepository;
+    private final AccountValidationService accountValidationService;
 
     @Transactional
     @Override
@@ -44,10 +47,14 @@ public class AccountServiceImpl implements AccountService {
             isPrimary = true;
         }
 
+        String accountNumber = req.getAccountNumber().replace("-","");
+        if (!accountValidationService.isValidAccountNumber(accountNumber)) {
+            throw new BankInfoException(INVALID_ACCOUNT);
+        }
         Account account = Account.builder()
                 .wallet(wallet)
                 .bankInfo(bankInfo)
-                .accountNumber(req.getAccountNumber())
+                .accountNumber(accountNumber)
                 .holderName(req.getHolderName())
                 .isPrimary(isPrimary)
                 .status(YES)
@@ -56,5 +63,16 @@ public class AccountServiceImpl implements AccountService {
 
         accountRepository.save(account);
 
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public AccountCheckResponse checkAccount(AirbngPrincipal principal) {
+        long memberId = principal.getId();
+        if (!walletRepository.existsByMemberId(memberId)) throw new WalletException(INVALID_WALLET);
+        Wallet wallet = walletRepository.findByMemberId(memberId);
+        List<Account> accounts =
+                accountRepository.findAllByWalletWalletIdOrderByIsPrimaryDescAccountIdAsc(wallet.getWalletId());
+        return AccountCheckResponse.from(wallet, accounts);
     }
 }
