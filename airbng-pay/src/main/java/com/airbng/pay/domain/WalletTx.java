@@ -28,9 +28,11 @@ public class WalletTx extends BaseTime {
     @JoinColumn(name = "payment_id")
     private Payment payment;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private WalletTxType walletTxType;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private WalletTxRole walletTxRole;
 
