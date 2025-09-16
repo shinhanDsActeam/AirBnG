@@ -21,14 +21,18 @@ public class WalletTx extends BaseTime {
     private Long walletTxId;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "wallet_id", nullable = false)
     private Wallet wallet;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "payment_id")
     private Payment payment;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private WalletTxType walletTxType;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private WalletTxRole walletTxRole;
 
