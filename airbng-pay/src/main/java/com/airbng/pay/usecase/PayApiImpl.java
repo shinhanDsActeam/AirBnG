@@ -10,6 +10,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 
+import static com.airbng.common.base.BaseStatus.ACTIVE;
+
 @Service
 @RequiredArgsConstructor
 class PayApiImpl implements PayApi {
@@ -24,6 +26,7 @@ class PayApiImpl implements PayApi {
                 .memberId(memberId)
                 .balanceAvailable(BigDecimal.ZERO)
                 .balanceReserved(BigDecimal.ZERO)
+                .status(ACTIVE)
                 .build();
         walletRepository.save(wallet);
     }

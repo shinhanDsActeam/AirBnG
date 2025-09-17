@@ -4,7 +4,7 @@ import lombok.Getter;
 
 @Getter
 public class AccountRegisterRequest {
-    private Long bankCode;
+    private Integer bankCode;
     private String accountNumber;
     private String holderName;
 }

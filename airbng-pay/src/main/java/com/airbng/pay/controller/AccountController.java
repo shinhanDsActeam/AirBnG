@@ -2,6 +2,8 @@ package com.airbng.pay.controller;
 
 import com.airbng.pay.dto.AccountCheckResponse;
 import com.airbng.pay.dto.AccountRegisterRequest;
+import com.airbng.pay.dto.BankCodeResult;
+import com.airbng.pay.exception.BankInfoException;
 import com.airbng.pay.service.AccountService;
 import com.airbng.platform.common.response.BaseResponse;
 import com.airbng.platform.security.principal.AirbngPrincipal;
@@ -9,6 +11,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import static com.airbng.platform.common.response.status.BaseResponseStatus.UNSUPPORTED_BANK;
 
 @RestController
 @RequestMapping("/account")
@@ -30,5 +34,14 @@ public class AccountController {
     @PreAuthorize("hasAnyAuthority('USER')")
     public BaseResponse<AccountCheckResponse> checkAccount(@AuthenticationPrincipal AirbngPrincipal principal) {
         return new BaseResponse<>(accountService.checkAccount(principal));
+    }
+
+    @GetMapping("/banks")
+    @PreAuthorize("hasAnyAuthority('USER')")
+    public BaseResponse<BankCodeResult> findByBankCode(Integer bankCode) {
+        BankCodeResult result = accountService.findByBankCode(bankCode)
+                .orElseThrow(() -> new BankInfoException(UNSUPPORTED_BANK));
+
+        return new BaseResponse<>(result);
     }
 }
