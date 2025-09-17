@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.airbng.common.base.Available.YES;
+import static com.airbng.common.base.BaseStatus.ACTIVE;
 import static com.airbng.platform.common.response.status.BaseResponseStatus.*;
 
 @Service
@@ -58,6 +59,7 @@ public class AccountServiceImpl implements AccountService {
                 .holderName(req.getHolderName())
                 .isPrimary(isPrimary)
                 .status(YES)
+                .baseStatus(ACTIVE)
                 .balance(BigDecimal.ZERO)
                 .build();
 
