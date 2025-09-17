@@ -3,6 +3,7 @@ package com.airbng.pay.controller;
 import com.airbng.pay.dto.WalletBalanceResponse;
 import com.airbng.pay.dto.WalletOverviewResponse;
 import com.airbng.pay.dto.WalletTopupRequest;
+import com.airbng.pay.dto.WalletWithdrawRequest;
 import com.airbng.pay.service.WalletService;
 import com.airbng.platform.common.response.BaseResponse;
 import com.airbng.platform.security.principal.AirbngPrincipal;
@@ -22,8 +23,9 @@ public class WalletController {
 
     /**
      * 최종 프론트 연동후에는 지울 주석
-     * /me/balance : 포인트만 조회하는 2-1 페이지
-     * /me/overview : 포인트 + 등록계좌 조회 2-2 페이지
+     * /me/balance : 페이머니만 조회하는 2-1 페이지
+     * /me/overview : 페이머니 + 등록계좌 조회 2-2 페이지
+     * /me/topup : 페이머니 충전 2-3 페이지
      */
     @GetMapping("/me/balance")
     @PreAuthorize("hasAnyAuthority('USER')")
@@ -43,6 +45,15 @@ public class WalletController {
                                                    @RequestHeader("IdemPotency-Key") String idemPotencyKey,
                                                    @RequestBody WalletTopupRequest req) {
         walletService.topup(principal, idemPotencyKey, req);
+        return new BaseResponse<>(SUCCESS);
+    }
+
+    @PostMapping("/me/withdraw")
+    @PreAuthorize("hasAnyAuthority('USER')")
+    public BaseResponse<String> withdraw(@AuthenticationPrincipal AirbngPrincipal principal,
+                                         @RequestHeader("IdemPotency-Key") String idemPotencyKey,
+                                         @RequestBody WalletWithdrawRequest req) {
+        walletService.withdraw(principal, idemPotencyKey, req);
         return new BaseResponse<>(SUCCESS);
     }
 }

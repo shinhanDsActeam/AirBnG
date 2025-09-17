@@ -1,9 +1,11 @@
 package com.airbng.pay.service;
 
+import com.airbng.common.base.BaseStatus;
 import com.airbng.pay.domain.*;
 import com.airbng.pay.dto.WalletBalanceResponse;
 import com.airbng.pay.dto.WalletOverviewResponse;
 import com.airbng.pay.dto.WalletTopupRequest;
+import com.airbng.pay.dto.WalletWithdrawRequest;
 import com.airbng.pay.exception.AccountException;
 import com.airbng.pay.exception.WalletException;
 import com.airbng.pay.repository.AccountRepository;
@@ -21,6 +23,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import static com.airbng.common.base.BaseStatus.ACTIVE;
 import static com.airbng.platform.common.response.status.BaseResponseStatus.*;
 
 @Service
@@ -54,7 +57,7 @@ public class WalletServiceImpl implements WalletService {
 
         Optional<WalletTx> existing = walletTxRepository.findByWalletIdemKey(idemKey);
         if (existing.isPresent()) {
-            log.info("[페이머니] 이미 진행된 결과");
+            log.info("[페이머니 충전] 이미 진행된 결과");
             throw new WalletException(ALREADY_PROCESSED);
         }
         Long memberId = principal.getId();
@@ -81,6 +84,42 @@ public class WalletServiceImpl implements WalletService {
                 .payment(null)
                 .walletTxType(WalletTxType.TOPUP)
                 .walletTxRole(WalletTxRole.CREDIT)
+                .amount(balance)
+                .walletIdemKey(idemKey)
+                .build();
+        walletTxRepository.save(tx);
+    }
+
+    @Transactional
+    @Override
+    public void withdraw(AirbngPrincipal principal, String idemKeyRaw, WalletWithdrawRequest req) {
+        UUID idemKey = UUID.fromString(idemKeyRaw);
+        Optional<WalletTx> existing = walletTxRepository.findByWalletIdemKey(idemKey);
+        if (existing.isPresent()) {
+            log.info("[페이머니 출금] 이미 진행된 결과");
+            throw new WalletException(ALREADY_PROCESSED);
+        }
+
+        Long memberId = principal.getId();
+        Wallet wallet = walletRepository.findByMemberIdForUpdate(memberId)
+                .orElseThrow(() -> new WalletException(INVALID_WALLET));
+
+        BigDecimal balance = wallet.getBalanceAvailable();
+        if (balance.signum() <= 0) {
+            throw new WalletException(INSUFFICIENT_BALANCE);
+        }
+
+        Account account = accountRepository.findForUpdate(req.getAccountId(), wallet.getWalletId())
+                .orElseThrow(() -> new AccountException(WALLET_ACCOUNT_MISMATCH));
+
+        wallet.subtractBalanceAvailable(balance);
+        account.updateBalance(balance);
+
+        WalletTx tx = WalletTx.builder()
+                .wallet(wallet)
+                .payment(null)
+                .walletTxType(WalletTxType.WITHDRAW)
+                .walletTxRole(WalletTxRole.DEBIT)
                 .amount(balance)
                 .walletIdemKey(idemKey)
                 .build();
