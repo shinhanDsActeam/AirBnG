@@ -20,6 +20,7 @@ import org.springframework.security.access.AccessDeniedException;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.InputStream;
+import java.nio.file.Paths;
 import java.time.Instant;
 import java.util.List;
 import java.util.Objects;
@@ -71,8 +72,17 @@ public class AttachmentServiceImpl implements AttachmentService {
         }
 
         // 5) S3 업로드
-        String url = s3.uploadForChat(file, prefix, kind);
-        String key = s3.extractKeyFromUrl(url);
+        String key = s3.uploadForChat(file, prefix, kind);
+
+        // presigned GET (예: 1시간)
+        String signedUrl = s3.presignGetUrl(key, 60 * 60);
+
+        // 원본 파일명(경로 제거)
+        String originalName = file.getOriginalFilename();
+        if (originalName != null) {
+            try { originalName = Paths.get(originalName).getFileName().toString(); }
+            catch (Exception ignore) {}
+        }
 
         // 6) Attachment 문서 저장 (messageId = msgId 로 연결)
         Attachment att = Attachment.builder()
@@ -85,6 +95,8 @@ public class AttachmentServiceImpl implements AttachmentService {
                 .size(file.getSize())
                 .width(width)
                 .height(height)
+                .imageUrl(signedUrl)
+                .fileName(originalName)
                 .build();
         att = attachmentRepository.save(att);
 
@@ -99,6 +111,9 @@ public class AttachmentServiceImpl implements AttachmentService {
                 .size(att.getSize())
                 .width(att.getWidth())
                 .height(att.getHeight())
+                .key(att.getKey())
+                .imageUrl(att.getImageUrl())
+                .fileName(att.getFileName())
                 .build();
 
         Message toSave = Message.builder()

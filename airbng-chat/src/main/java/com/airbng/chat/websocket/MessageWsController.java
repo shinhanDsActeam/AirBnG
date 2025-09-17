@@ -1,13 +1,16 @@
 package com.airbng.chat.websocket;
 
+import com.airbng.chat.domain.Attachment;
 import com.airbng.chat.domain.Message;
 import com.airbng.chat.dto.chat.MessageDto;
 import com.airbng.chat.dto.chat.SendTextRequest;
 import com.airbng.chat.dto.ws.*;
+import com.airbng.chat.repository.AttachmentRepository;
 import com.airbng.chat.service.ConversationService;
 import com.airbng.chat.service.InboxService;
 import com.airbng.chat.service.MessageService;
 import com.airbng.platform.security.principal.AirbngPrincipal;
+import com.airbng.platform.util.S3Utils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
@@ -33,6 +36,14 @@ public class MessageWsController {
     private final ConversationService conversationService;
     private final InboxService inboxService;
     private final SimpMessagingTemplate broker;
+
+    private final S3Utils s3;
+    private final AttachmentRepository attachmentRepository;
+
+    private String sign(String key){ return s3.presignGetUrl(key, 60*60); } // 1시간 (원하면 24h)
+    private String findKey(String attId){
+        return attachmentRepository.findById(attId).map(Attachment::getKey).orElse(null);
+    }
 
     // AirPrincipal로 대체
     private AirbngPrincipal currentUser(Principal principal) {
@@ -67,7 +78,7 @@ public class MessageWsController {
                 convId, me.getId(), me.getNickname(),
                 payload.getText(), payload.getMsgId()
         );
-        var dto = MessageDto.from(saved);
+        var dto = MessageDto.from(saved, this::sign, this::findKey);
         log.info("[WS TEXT OUT] to=/topic/conversations.{} seq={} id={}", convId, saved.getSeq(), saved.getId());
 
         broker.convertAndSend("/topic/conversations." + convId, dto);
@@ -149,6 +160,12 @@ public class MessageWsController {
 
         AirbngPrincipal me = currentUser(principal);
         conversationService.assertMember(convId, me.getId());
+
+        log.info("[WS TYPING] from={} name={} convId={} typing={}",
+                me.getId(),
+                principal != null ? principal.getName() : null,
+                convId,
+                payload.isTyping());
 
         long peer = conversationService.peerIdOf(convId, me.getId());
         broker.convertAndSendToUser(String.valueOf(peer),

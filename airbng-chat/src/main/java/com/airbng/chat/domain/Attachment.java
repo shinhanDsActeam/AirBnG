@@ -24,4 +24,7 @@ public class Attachment {
     private Long   size;
     private Integer width;              // nullable
     private Integer height;             // nullable
+
+    private String imageUrl;
+    private String fileName;
 }

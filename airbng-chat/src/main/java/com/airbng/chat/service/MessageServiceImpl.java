@@ -1,10 +1,14 @@
 package com.airbng.chat.service;
 
+import com.airbng.chat.domain.Attachment;
 import com.airbng.chat.domain.Message;
+import com.airbng.chat.domain.model.AttachmentEmbedded;
 import com.airbng.chat.domain.model.LastMessage;
 import com.airbng.chat.domain.model.ReservationCard;
+import com.airbng.chat.repository.AttachmentRepository;
 import com.airbng.chat.repository.MessageRepository;
 import com.airbng.chat.util.RedisSequenceService;
+import com.airbng.platform.util.S3Utils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DuplicateKeyException;
@@ -14,8 +18,8 @@ import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -26,6 +30,8 @@ public class MessageServiceImpl implements MessageService {
     private final ConversationService conversationService;
     private final InboxService inboxService;
     private final RedisSequenceService redisSeq;
+    private final AttachmentRepository attachmentRepository;
+    private final S3Utils s3;
 
     // TODO: ReservatipnApi - 예약 조회용 JPA 레포 주입
 //    private final ReservationRepository reservationRepository;
@@ -187,8 +193,43 @@ public class MessageServiceImpl implements MessageService {
                 : messageRepo.findByConvIdAndSeqLessThanOrderBySeqDesc(convId, beforeSeq, page);
 
         var asc = new ArrayList<>(desc);
-        java.util.Collections.reverse(asc);
+        Collections.reverse(asc);
+
+        refreshSignedUrls(asc, 3600);
+
         return asc;
+    }
+
+    /** 메시지들의 임베디드 첨부를 실제 Attachment와 매핑해 presigned URL/파일명 주입 */
+    private void refreshSignedUrls(List<Message> messages, int ttlSeconds) {
+        if (messages == null || messages.isEmpty()) return;
+
+        // 필요한 attachmentId 모으기
+        Set<String> ids = messages.stream()
+                .filter(m -> m.getAttachments() != null)
+                .flatMap(m -> m.getAttachments().stream())
+                .map(AttachmentEmbedded::getAttachmentId)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toSet());
+        if (ids.isEmpty()) return;
+
+        // 배치 조회 후 map
+        Map<String, Attachment> map = attachmentRepository.findAllById(ids).stream()
+                .collect(Collectors.toMap(Attachment::getId, a -> a));
+
+        // presign 해서 주입
+        for (Message m : messages) {
+            if (m.getAttachments() == null) continue;
+            for (AttachmentEmbedded e : m.getAttachments()) {
+                Attachment att = map.get(e.getAttachmentId());
+                if (att == null) continue;
+
+                String signed = s3.presignGetUrl(att.getKey(), ttlSeconds);
+                e.setImageUrl(signed);            // 이미지/파일 공통으로 사용
+                e.setFileName(att.getFileName());
+                // 필요하면 mime/size/width/height도 보정 가능
+            }
+        }
     }
 
     private static String makeReservationPreview(ReservationCard card) {

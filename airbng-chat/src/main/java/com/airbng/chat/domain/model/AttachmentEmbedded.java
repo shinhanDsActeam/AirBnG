@@ -11,4 +11,8 @@ public class AttachmentEmbedded {
     private Long   size;             // bsonType: long
     private Integer width;           // optional
     private Integer height;          // optional
+
+    private String key;
+    private String imageUrl;
+    private String fileName;
 }

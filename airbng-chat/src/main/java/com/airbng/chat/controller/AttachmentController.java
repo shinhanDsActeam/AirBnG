@@ -2,9 +2,13 @@ package com.airbng.chat.controller;
 
 import com.airbng.chat.domain.Attachment;
 import com.airbng.chat.domain.Message;
+import com.airbng.chat.dto.chat.AttachmentDto;
+import com.airbng.chat.dto.chat.MessageDto;
+import com.airbng.chat.repository.AttachmentRepository;
 import com.airbng.chat.service.AttachmentService;
 import com.airbng.platform.common.response.BaseResponse;
 import com.airbng.platform.security.principal.AirbngPrincipal;
+import com.airbng.platform.util.S3Utils;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
@@ -26,6 +30,14 @@ public class AttachmentController {
     private final AttachmentService attachmentService;
     private final SimpMessagingTemplate messagingTemplate; // 선택: 실시간 브로드캐스트
 
+    private final S3Utils s3;
+    private final AttachmentRepository attachmentRepository;
+
+    private String sign(String key){ return s3.presignGetUrl(key, 60*60); } // 1시간 (원하면 24h)
+    private String findKey(String attId){
+        return attachmentRepository.findById(attId).map(Attachment::getKey).orElse(null);
+    }
+
     /**
      * 파일 업로드 + 메시지 생성 (image|file)
      * POST /chat/attachments/conversations/{convId}?kind=image&msgId=uuid
@@ -33,20 +45,20 @@ public class AttachmentController {
      */
     @PostMapping(path = "/conversations/{convId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasAnyAuthority('USER')")
-    public BaseResponse<Message> upload(@PathVariable String convId,
-                                        @RequestParam("file") MultipartFile file,
-                                        @RequestParam("kind") @NotBlank String kind,   // image|file
-                                        @RequestParam("msgId") @NotBlank String msgId,
-                                        Authentication auth) {
-        AirbngPrincipal p = (AirbngPrincipal) auth.getPrincipal(); // ← 공통 인터페이스로 캐스팅
+    public BaseResponse<MessageDto> upload(@PathVariable String convId,
+                                           @RequestParam("file") MultipartFile file,
+                                           @RequestParam("kind") @NotBlank String kind,   // image|file
+                                           @RequestParam("msgId") @NotBlank String msgId,
+                                           Authentication auth) {
+        AirbngPrincipal p = (AirbngPrincipal) auth.getPrincipal();
         long me = p.getId();
         String name = p.getNickname();
 
         Message saved = attachmentService.uploadAndSend(convId, me, name, file, kind, msgId);
 
-        // 방 브로드캐스트 (원한다면)
-        messagingTemplate.convertAndSend("/topic/conversations." + convId, saved);
-        return new BaseResponse<>(saved);
+        MessageDto dto = MessageDto.from(saved, this::sign, this::findKey);
+        messagingTemplate.convertAndSend("/topic/conversations." + convId, dto);
+        return new BaseResponse<>(dto);
     }
 
     /**
@@ -55,8 +67,20 @@ public class AttachmentController {
      */
     @GetMapping("/by-message/{msgId}")
     @PreAuthorize("hasAnyAuthority('USER')")
-    public BaseResponse<List<Attachment>> getByMessage(@PathVariable String msgId) {
-        return new BaseResponse<>(attachmentService.findByMessageId(msgId));
+    public BaseResponse<List<AttachmentDto>> getByMessage(@PathVariable String msgId) {
+        List<AttachmentDto> list = attachmentService.findByMessageId(msgId).stream()
+                .map(att -> new AttachmentDto(
+                        att.getId(),
+                        att.getKind(),
+                        att.getMime(),
+                        att.getSize(),
+                        att.getWidth(),
+                        att.getHeight(),
+                        att.getFileName(),
+                        att.getKey() != null ? sign(att.getKey()) : att.getImageUrl() // key 우선, 없으면 레거시 URL
+                ))
+                .toList();
+        return new BaseResponse<>(list);
     }
 
     /**
@@ -65,15 +89,15 @@ public class AttachmentController {
      */
     @DeleteMapping("/{attachmentId}")
     @PreAuthorize("hasAnyAuthority('USER')")
-    public BaseResponse<Message> deleteOne(@PathVariable String attachmentId,
-                                           Authentication auth) {
+    public BaseResponse<MessageDto> deleteOne(@PathVariable String attachmentId,
+                                              Authentication auth) {
         AirbngPrincipal p = (AirbngPrincipal) auth.getPrincipal();
         long me = p.getId();
 
         Message updated = attachmentService.deleteAttachment(attachmentId, me);
 
-        // 방에 업데이트 브로드캐스트
-        messagingTemplate.convertAndSend("/topic/conversations." + updated.getConvId(), updated);
-        return new BaseResponse<>(updated);
+        MessageDto dto = MessageDto.from(updated, this::sign, this::findKey);
+        messagingTemplate.convertAndSend("/topic/conversations." + updated.getConvId(), dto);
+        return new BaseResponse<>(dto);
     }
 }

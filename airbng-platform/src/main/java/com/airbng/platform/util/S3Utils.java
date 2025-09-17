@@ -1,10 +1,9 @@
 package com.airbng.platform.util;
 
 import com.airbng.platform.common.exception.S3Exception;
+import com.amazonaws.HttpMethod;
 import com.amazonaws.services.s3.AmazonS3Client;
-import com.amazonaws.services.s3.model.DeleteObjectRequest;
-import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.amazonaws.services.s3.model.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,6 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLDecoder;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -108,7 +108,15 @@ public class S3Utils {
         } catch (IOException e) {
             throw new S3Exception(UPLOAD_FAILED);
         }
-        return amazonS3Client.getUrl(bucket, key).toString(); // 공개 URL
+        return key;
+    }
+
+    public String presignGetUrl(String key, int expireSeconds) {
+        Date expiry = new Date(System.currentTimeMillis() + expireSeconds * 1000L);
+        GeneratePresignedUrlRequest req = new GeneratePresignedUrlRequest(bucket, key)
+                .withMethod(HttpMethod.GET)
+                .withExpiration(expiry);
+        return amazonS3Client.generatePresignedUrl(req).toString();
     }
 
     /** prefix를 받는 새 createFileName (기존 메서드는 그대로 유지) */
