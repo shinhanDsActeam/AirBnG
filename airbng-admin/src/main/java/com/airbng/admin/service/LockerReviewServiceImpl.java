@@ -25,7 +25,8 @@ public class LockerReviewServiceImpl implements LockerReviewService{
     @Override
     @Transactional(readOnly = true)
     public Page<LockerReviewListResponse> findAllByReviewStatus(ReviewStatus status, int page) {
-        Pageable pageable = PageRequest.of(page, 10, Sort.by(Sort.Order.desc("createdAt")));
+        int pageNumber = page - 1;
+        Pageable pageable = PageRequest.of(pageNumber, 5, Sort.by(Sort.Order.desc("createdAt")));
 
         Page<LockerReview> lockerReviews = lockerReviewRepository.findAllByReviewStatus(status, pageable);
 
