@@ -398,8 +398,6 @@ public BaseResponseStatus requestLockerReview(LockerInsertRequest dto, CustomUse
             throw new LockerException(LOCKER_KEEPER_MISMATCH);
         }
 
-        lockerRepository.deleteLockerImagesByLockerId(lockerId);
-        lockerRepository.deleteLockerJimTypesByLockerId(lockerId);
         lockerRepository.deleteById(lockerId);
     }
 }

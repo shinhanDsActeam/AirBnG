@@ -40,14 +40,16 @@ public class LockerReviewController {
     }
 
     @PostMapping("/approve")
-    public ResponseEntity<BaseResponse<String>> approve(@RequestParam Long pendingLockerId, @RequestParam Long memberId) {
-        boolean result = lockerReviewService.approveLockerReview(pendingLockerId, memberId);
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
+    public ResponseEntity<BaseResponse<String>> approve(@RequestParam Long lockerReviewId, @RequestParam Long memberId) {
+        boolean result = lockerReviewService.approveLockerReview(lockerReviewId, memberId);
         return ResponseEntity.ok(new BaseResponse<>("보관소 승인 완료"));
     }
 
     @PostMapping("/reject")
-    public ResponseEntity<BaseResponse<String>> reject(@RequestParam Long pendingLockerId,  @RequestParam Long memberId, @RequestParam String reason) {
-        boolean result = lockerReviewService.rejectLockerReview(pendingLockerId, memberId, reason);
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
+    public ResponseEntity<BaseResponse<String>> reject(@RequestParam Long lockerReviewId,  @RequestParam Long memberId, @RequestParam String reason) {
+        boolean result = lockerReviewService.rejectLockerReview(lockerReviewId, memberId, reason);
         return ResponseEntity.ok(new BaseResponse<>("보관소 반려"));
     }
 }

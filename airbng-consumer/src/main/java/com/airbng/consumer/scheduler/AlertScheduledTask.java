@@ -128,9 +128,10 @@ public class AlertScheduledTask {
         log.info("REMINDER 발송 완료 (memberId={})", id);
     }
 
-    public void sendLockerApproved(Long memberId, String lockerName) {
+    public void sendLockerApproved(Long memberId, String memberName, String lockerName) {
         AlarmResponse dto = AlarmResponse.builder()
                 .receiverId(memberId)
+                .nickName(memberName)
                 .type(NotificationType.LOCKER_APPROVED)
                 .message("보관소 [" + lockerName + "]가 승인되었습니다.")
                 .sendTime(String.valueOf(LocalDateTime.now()))
@@ -140,9 +141,10 @@ public class AlertScheduledTask {
         log.info("LOCKER_APPROVED 알림 발송 완료 (memberId={}, lockerName={})", memberId, lockerName);
     }
 
-    public void sendLockerRejected(Long memberId, String lockerName, String reason) {
+    public void sendLockerRejected(Long memberId, String memberName, String lockerName, String reason) {
         AlarmResponse dto = AlarmResponse.builder()
                 .receiverId(memberId)
+                .nickName(memberName)
                 .type(NotificationType.LOCKER_REJECTED)
                 .message("보관소 [" + lockerName + "]가 반려되었습니다. 사유: " + reason)
                 .sendTime(String.valueOf(LocalDateTime.now()))

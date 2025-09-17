@@ -7,7 +7,8 @@ import com.airbng.admin.domain.PendingLockerJimtype;
 import com.airbng.admin.domain.base.ReviewStatus;
 import com.airbng.admin.dto.response.LockerReviewDetailResponse;
 import com.airbng.admin.repository.LockerReviewRepository;
-import com.airbng.admin.repository.PendingLockerRepository;
+import com.airbng.api.consumer.event.LockerRejectedEvent;
+import com.airbng.api.consumer.AlarmApi;
 import com.airbng.api.consumer.dto.command.LockerReviewApproveCommand;
 import com.airbng.api.consumer.dto.command.LockerReviewDetailCommand;
 import com.airbng.api.consumer.dto.command.LockerReviewMemberCommand;
@@ -18,6 +19,7 @@ import com.airbng.api.consumer.dto.view.LockerReviewMemberView;
 import com.airbng.platform.common.exception.DomainException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.stream.Collectors;
@@ -32,9 +34,10 @@ import static com.airbng.platform.common.response.status.BaseResponseStatus.*;
 @Transactional(readOnly = true)
 public class LockerReviewServiceImpl implements LockerReviewService {
 
-    private final PendingLockerRepository pendingLockerRepository;
+    private final ApplicationEventPublisher eventPublisher;
     private final LockerReviewRepository lockerReviewRepository;
     private final LockerApi lockerApi;
+    private final AlarmApi alarmApi;
 
     // ================= 상세 =================
     @Override
@@ -85,15 +88,23 @@ public class LockerReviewServiceImpl implements LockerReviewService {
 
 
     @Transactional
-    public boolean approveLockerReview(Long pendingLockerId, Long memberId) {
+    public boolean approveLockerReview(Long lockerReviewId, Long memberId) {
 
-        LockerReview lockerReview = lockerReviewRepository.findById(pendingLockerId)
+        LockerReview lockerReview = lockerReviewRepository.findById(lockerReviewId)
                 .orElseThrow(() -> new DomainException(NOT_FOUND_LOCKERDETAILS));
 
         // 상태 업데이트
         lockerReview.updateState(ReviewStatus.APPROVED);
 
-//        lockerReviewRepository.save(review);
+        // User 데이터 조회
+        LockerReviewMemberCommand commandMember = LockerReviewMemberCommand.builder()
+                .memberId(lockerReview.getPendingLocker().getMemberId())
+                .build();
+
+        LockerReviewMemberView userData = lockerApi.getLockerReviewList(commandMember);
+        String memberName = userData.getMemberName(); // 이름 가져오기
+
+
 
         // PendingLocker -> DTO 변환
         LockerReviewApproveCommand command = LockerReviewApproveCommand.builder()
@@ -115,20 +126,35 @@ public class LockerReviewServiceImpl implements LockerReviewService {
                 .build();
 
         // 유저 서버에 전달
-        return lockerApi.createLockerFromPending(command);
+        boolean result =  lockerApi.createLockerFromPending(command);
+        // 알림 전송
+        try {
+            alarmApi.sendLockerApproved(memberId, memberName, lockerReview.getPendingLocker().getLockerName(), lockerReview.getPendingLocker().getPendingLockerId());
+        } catch (Exception e) {
+            log.error("알림 발송 실패: memberId={}, lockerName={}", memberId, lockerReview.getPendingLocker().getLockerName(), e);
+        }
+
+
+        return result;
     }
 
     @Transactional
-    public boolean rejectLockerReview(Long pendingLockerId, Long memberId, String reason) {
+    public boolean rejectLockerReview(Long lockerReviewId, Long memberId, String reason) {
 
-        LockerReview lockerReview = lockerReviewRepository.findById(pendingLockerId)
+        LockerReview lockerReview = lockerReviewRepository.findById(lockerReviewId)
                 .orElseThrow(() -> new DomainException(NOT_FOUND_LOCKERDETAILS));
 
         // 상태 업데이트
         lockerReview.updateState(ReviewStatus.REJECTED);
         lockerReview.updateComment(reason);
+        // User 데이터 조회
+        LockerReviewMemberCommand commandMember = LockerReviewMemberCommand.builder()
+                .memberId(lockerReview.getPendingLocker().getMemberId())
+                .build();
 
-//        lockerReviewRepository.save(review);
+        LockerReviewMemberView userData = lockerApi.getLockerReviewList(commandMember);
+        String memberName = userData.getMemberName(); // 이름 가져오기
+
 
         // PendingLocker -> DTO 변환
         LockerReviewRejectCommand command = LockerReviewRejectCommand.builder()
@@ -138,7 +164,15 @@ public class LockerReviewServiceImpl implements LockerReviewService {
                 .build();
 
         // 유저 서버에 전달
-        return lockerApi.rejectLockerReview(command);
+        boolean result =  lockerApi.rejectLockerReview(command);
+        // 알림 전송
+        try {
+            alarmApi.sendLockerRejected(memberId, memberName, lockerReview.getPendingLocker().getLockerName(),reason);
+        } catch (Exception e) {
+            log.error("알림 발송 실패: memberId={}, lockerName={}", memberId, lockerReview.getPendingLocker().getLockerName(), e);
+        }
+
+        return result;
     }
 
 }

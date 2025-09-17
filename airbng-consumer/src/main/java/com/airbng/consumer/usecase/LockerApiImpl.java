@@ -138,12 +138,6 @@ public class LockerApiImpl implements LockerApi {
             }
         }
 
-        //승인 시 알림 발송
-        alertScheduledTask.sendLockerApproved(
-                keeper.getMemberId(),
-                locker.getLockerName()
-        );
-
         return true;
     }
 
@@ -152,19 +146,6 @@ public class LockerApiImpl implements LockerApi {
 
         Member keeper = memberRepository.findById(command.getMemberId())
                 .orElseThrow(() -> new MemberException(NOT_FOUND_MEMBER));
-
-        // 클라이언트에 보여줄 DTO 생성
-        LockerReviewRejectCommand dto = LockerReviewRejectCommand.builder()
-                .lockerName(command.getLockerName())
-                .reason(command.getReason())
-                .build();
-
-        //반려 시 알림 발송
-        alertScheduledTask.sendLockerRejected(
-                keeper.getMemberId(),
-                command.getLockerName(),
-                command.getReason()
-        );
 
         return true;
 

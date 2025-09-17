@@ -14,8 +14,8 @@ public interface LockerReviewService {
    LockerReviewDetailResponse findLockerReviewById(Long lockerReviewId);
 
     //승인 / 반려
-    boolean approveLockerReview(Long pendingLockerId, Long memberId);
-    boolean rejectLockerReview(Long pendingLockerId, Long memberId, String reason);
+    boolean approveLockerReview(Long lockerReviewId, Long memberId);
+    boolean rejectLockerReview(Long lockerReviewId, Long memberId, String reason);
 
 
 }
