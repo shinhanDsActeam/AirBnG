@@ -2,8 +2,11 @@ package com.airbng.consumer.service;
 
 import com.airbng.api.admin.LockerReviewApi;
 import com.airbng.api.admin.dto.command.LockerReviewCommand;
+import com.airbng.api.admin.dto.command.LockerViewStatusCommand;
+import com.airbng.api.admin.dto.view.LockerViewStatusView;
 import com.airbng.consumer.domain.Locker;
 import com.airbng.consumer.domain.base.LockerType;
+import com.airbng.consumer.domain.base.LockerViewStatus;
 import com.airbng.consumer.domain.base.ReservationState;
 import com.airbng.consumer.domain.image.Image;
 import com.airbng.consumer.domain.image.LockerImage;
@@ -50,9 +53,6 @@ public class LockerServiceImpl implements LockerService {
 
     private final RedisTemplate<String, LockerTop5Response> top5RedisTemplate;
     private final Cache<String, LockerTop5Response> localCache;
-
-    // Admin API
-    private final LockerReviewApi reviewApi;
 
     // ================= 검색 =================
     @Override
@@ -400,4 +400,26 @@ public BaseResponseStatus requestLockerReview(LockerInsertRequest dto, CustomUse
 
         lockerRepository.deleteById(lockerId);
     }
+
+    //내 보관소 상태
+    @Override
+    public LockerViewStatus getLockerViewStatus(CustomUserDetails userDetails) {
+
+        Long memberId = userDetails.getId();
+
+        // 심사 기록 확인
+        LockerViewStatusView response = lockerReviewApi.getLockerStatusByMemberId(memberId);
+//        if (response == null) {
+//            return LockerViewStatus.REGISTER; // 기록 없으면 등록 가능
+//        }
+
+        // 심사 진행 중이면 등록 불가
+        if ("WAITING".equals(response.getReviewStatus())) {
+            return LockerViewStatus.WAITING;
+        }
+
+        return LockerViewStatus.REGISTER;
+
+    }
+
 }
