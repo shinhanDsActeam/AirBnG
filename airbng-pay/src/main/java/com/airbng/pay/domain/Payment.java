@@ -23,6 +23,9 @@ public class Payment extends BaseTime {
     @Column(nullable = false)
     private Long payeeId; // 피결제자 : keeper
 
+    @Column(nullable = false)
+    private Long lockerId;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private PayMethod method; // WALLET, PG
