@@ -5,6 +5,7 @@ import com.airbng.pay.domain.BankInfo;
 import com.airbng.pay.domain.Wallet;
 import com.airbng.pay.dto.AccountCheckResponse;
 import com.airbng.pay.dto.AccountRegisterRequest;
+import com.airbng.pay.dto.BankCodeResult;
 import com.airbng.pay.exception.BankInfoException;
 import com.airbng.pay.exception.WalletException;
 import com.airbng.pay.repository.AccountRepository;
@@ -76,5 +77,14 @@ public class AccountServiceImpl implements AccountService {
         List<Account> accounts =
                 accountRepository.findAllByWalletWalletIdOrderByIsPrimaryDescAccountIdAsc(wallet.getWalletId());
         return AccountCheckResponse.from(wallet, accounts);
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public Optional<BankCodeResult> findByBankCode(Integer bankCode) {
+        if (!bankInfoRepository.existsByBankCode(bankCode))
+            throw new BankInfoException(UNSUPPORTED_BANK);
+        BankInfo bankInfo = bankInfoRepository.findByBankCode(bankCode);
+        return Optional.of(BankCodeResult.from(bankInfo));
     }
 }
