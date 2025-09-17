@@ -1,29 +1,95 @@
 package com.airbng.admin.service;
 
 import com.airbng.admin.domain.LockerReview;
+import com.airbng.admin.domain.PendingLocker;
 import com.airbng.admin.domain.PendingLockerImage;
 import com.airbng.admin.domain.PendingLockerJimtype;
 import com.airbng.admin.domain.base.ReviewStatus;
+import com.airbng.admin.dto.response.LockerReviewDetailResponse;
 import com.airbng.admin.repository.LockerReviewRepository;
 import com.airbng.admin.repository.PendingLockerRepository;
+import com.airbng.api.consumer.dto.command.LockerReviewApproveCommand;
+import com.airbng.api.consumer.dto.command.LockerReviewDetailCommand;
+import com.airbng.api.consumer.dto.command.LockerReviewMemberCommand;
+import com.airbng.api.consumer.dto.command.LockerReviewRejectCommand;
+import com.airbng.api.consumer.dto.view.LockerReviewDetailView;
 import com.airbng.api.consumer.LockerApi;
+import com.airbng.api.consumer.dto.view.LockerReviewMemberView;
 import com.airbng.api.consumer.dto.command.LockerReviewApproveCommand;
 import com.airbng.api.consumer.dto.command.LockerReviewRejectCommand;
 import com.airbng.platform.common.exception.DomainException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import com.airbng.admin.domain.base.ReviewStatus;
+import com.airbng.admin.dto.response.LockerReviewListResponse;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.*;
 
 import static com.airbng.platform.common.response.status.BaseResponseStatus.*;
 
+@Slf4j
 @Log4j2
 @Service
 @RequiredArgsConstructor
-public class LockerReviewServiceImpl implements LockerReviewService{
+@Transactional(readOnly = true)
+public class LockerReviewServiceImpl implements LockerReviewService {
 
+    private final PendingLockerRepository pendingLockerRepository;
     private final LockerReviewRepository lockerReviewRepository;
-    private final LockerApi lockerApi; // 유저 내부 모듈 API
+    private final LockerApi lockerApi;
+
+    // ================= 상세 =================
+    @Override
+    public LockerReviewDetailResponse findLockerReviewById(Long lockerReviewId) {
+        LockerReview lockerReview = lockerReviewRepository.findById(lockerReviewId)
+                .orElseThrow(() -> new DomainException(NOT_FOUND_LOCKERDETAILS));
+        PendingLocker pendingLocker = lockerReview.getPendingLocker();
+
+        // User 데이터 조회
+        LockerReviewDetailCommand command = LockerReviewDetailCommand.builder()
+                .memberId(pendingLocker.getMemberId())
+                .jimTypeIds(pendingLocker.getPendingLockerJimtypes().stream()
+                        .map(PendingLockerJimtype::getJimtypeId)
+                        .collect(Collectors.toList()))
+                .imageIds(pendingLocker.getPendingLockerImages().stream()
+                        .map(PendingLockerImage::getImageId)
+                        .collect(Collectors.toList()))
+                .build();
+
+        LockerReviewDetailView userData = lockerApi.getLockerReviewDetail(command);
+
+        LockerReviewDetailResponse lockerDetail = LockerReviewDetailResponse.from(pendingLocker, lockerReview, userData);
+        return lockerDetail;
+
+    }
+
+     @Override
+    public Page<LockerReviewListResponse> findAllByReviewStatus(ReviewStatus status, int page) {
+         int pageNumber = page - 1;
+         Pageable pageable = PageRequest.of(pageNumber, 5, Sort.by(Sort.Order.desc("createdAt")));
+
+         Page<LockerReview> lockerReviews = lockerReviewRepository.findAllByReviewStatus(status, pageable);
+
+         return lockerReviews.map(lockerReview -> {
+             PendingLocker pendingLocker = lockerReview.getPendingLocker();
+
+             LockerReviewMemberCommand command = LockerReviewMemberCommand.builder()
+                     .memberId(pendingLocker.getMemberId())
+                     .build();
+
+             LockerReviewMemberView userData = lockerApi.getLockerReviewList(command);
+
+             return LockerReviewListResponse.from(lockerReview, pendingLocker, userData);
+         });
+     }
+
+
+
 
     @Transactional
     public boolean approveLockerReview(Long pendingLockerId, Long memberId) {
@@ -81,6 +147,5 @@ public class LockerReviewServiceImpl implements LockerReviewService{
         // 유저 서버에 전달
         return lockerApi.rejectLockerReview(command);
     }
-
 
 }
