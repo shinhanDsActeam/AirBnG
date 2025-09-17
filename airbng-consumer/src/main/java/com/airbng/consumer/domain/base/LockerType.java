@@ -1,4 +1,4 @@
-package com.airbng.admin.domain.base;
+package com.airbng.consumer.domain.base;
 
 public enum LockerType {
     PERSONAL,

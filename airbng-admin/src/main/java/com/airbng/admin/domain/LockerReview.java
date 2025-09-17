@@ -16,24 +16,24 @@ import static jakarta.persistence.FetchType.LAZY;
 @Builder
 public class LockerReview extends BaseTime {
 
-        @Id
-        @GeneratedValue(strategy = GenerationType.IDENTITY)
-        private Long lockerReviewId;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long lockerReviewId;
 
-        @Enumerated(EnumType.STRING)
-        @Column(nullable = false)
-        private ReviewStatus reviewStatus;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private ReviewStatus reviewStatus;
 
-        @Column
-        private String reviewComment;
+    @Column
+    private String reviewComment;
 
-        @OneToOne(fetch = LAZY)
-        @JoinColumn(name = "pending_locker_id", nullable = false)
-        private PendingLocker pendingLocker;
+    @OneToOne(fetch = LAZY)
+    @JoinColumn(name = "pending_locker_id", nullable = false)
+    private PendingLocker pendingLocker;
 
-        @Enumerated(EnumType.STRING)
-        @Column(nullable = false, columnDefinition = "VARCHAR(10)")
-        private BaseStatus status;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, columnDefinition = "VARCHAR(10)")
+    private BaseStatus status;
 
 }
 
