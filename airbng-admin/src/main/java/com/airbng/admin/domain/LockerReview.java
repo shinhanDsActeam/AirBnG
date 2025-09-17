@@ -5,6 +5,9 @@ import com.airbng.common.base.BaseStatus;
 import com.airbng.common.base.BaseTime;
 import jakarta.persistence.*;
 import lombok.*;
+import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 import static jakarta.persistence.FetchType.LAZY;
 

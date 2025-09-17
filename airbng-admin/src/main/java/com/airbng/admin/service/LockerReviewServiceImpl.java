@@ -8,16 +8,21 @@ import com.airbng.admin.dto.response.LockerReviewDetailResponse;
 import com.airbng.admin.repository.LockerReviewRepository;
 import com.airbng.admin.repository.PendingLockerRepository;
 import com.airbng.api.consumer.dto.command.LockerReviewDetailCommand;
+import com.airbng.api.consumer.dto.command.LockerReviewMemberCommand;
 import com.airbng.api.consumer.dto.view.LockerReviewDetailView;
 import com.airbng.api.consumer.LockerApi;
+import com.airbng.api.consumer.dto.view.LockerReviewMemberView;
 import com.airbng.platform.common.exception.DomainException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.Optional;
 import java.util.stream.Collectors;
+import com.airbng.admin.domain.base.ReviewStatus;
+import com.airbng.admin.dto.response.LockerReviewListResponse;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.*;
 
 import static com.airbng.platform.common.response.status.BaseResponseStatus.*;
 
@@ -53,6 +58,27 @@ public class LockerReviewServiceImpl implements LockerReviewService {
 
         LockerReviewDetailResponse lockerDetail = LockerReviewDetailResponse.from(pendingLocker, lockerReview, userData);
         return lockerDetail;
+
     }
+    
+     @Override
+    public Page<LockerReviewListResponse> findAllByReviewStatus(ReviewStatus status, int page) {
+         int pageNumber = page - 1;
+         Pageable pageable = PageRequest.of(pageNumber, 5, Sort.by(Sort.Order.desc("createdAt")));
+
+         Page<LockerReview> lockerReviews = lockerReviewRepository.findAllByReviewStatus(status, pageable);
+
+         return lockerReviews.map(lockerReview -> {
+             PendingLocker pendingLocker = lockerReview.getPendingLocker();
+
+             LockerReviewMemberCommand command = LockerReviewMemberCommand.builder()
+                     .memberId(pendingLocker.getMemberId())
+                     .build();
+
+             LockerReviewMemberView userData = lockerApi.getLockerReviewList(command);
+
+             return LockerReviewListResponse.from(lockerReview, pendingLocker, userData);
+         });
+     }
 
 }
