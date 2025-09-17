@@ -5,8 +5,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface BankInfoRepository extends JpaRepository<BankInfo, Long> {
-    boolean existsByBankCode(Long bankCode);
+public interface BankInfoRepository extends JpaRepository<BankInfo, Integer> {
+    boolean existsByBankCode(Integer bankCode);
 
-    BankInfo findByBankCode(Long bankCode);
+    BankInfo findByBankCode(Integer bankCode);
 }
