@@ -409,9 +409,6 @@ public BaseResponseStatus requestLockerReview(LockerInsertRequest dto, CustomUse
 
         // 심사 기록 확인
         LockerViewStatusView response = lockerReviewApi.getLockerStatusByMemberId(memberId);
-//        if (response == null) {
-//            return LockerViewStatus.REGISTER; // 기록 없으면 등록 가능
-//        }
 
         // 심사 진행 중이면 등록 불가
         if ("WAITING".equals(response.getReviewStatus())) {
