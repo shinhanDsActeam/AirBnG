@@ -12,6 +12,7 @@ import com.airbng.admin.repository.LockerReviewRepository;
 import com.airbng.admin.repository.PendingLockerRepository;
 import com.airbng.api.admin.LockerReviewApi;
 import com.airbng.api.admin.dto.command.LockerReviewCommand;
+import com.airbng.api.admin.dto.view.LockerViewStatusView;
 import com.airbng.common.base.BaseStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -84,4 +85,41 @@ public class LockerReviewApiImpl implements LockerReviewApi {
 
         return true;
     }
+
+
+    @Override
+    public LockerViewStatusView getLockerStatusByMemberId(Long memberId) {
+
+        // 가장 최근 심사 기록 조회 (반려/대기/승인)
+        LockerReview review = lockerReviewRepository.findTopByPendingLocker_MemberIdOrderByCreatedAtDesc(memberId)
+                .orElse(null);
+
+        if(review == null) {
+            // 심사 기록 없음 → 등록 가능
+            return LockerViewStatusView.builder()
+                    .reviewStatus("REGISTER")
+                    .build();
+        }
+
+        // 심사 상태 확인
+        String status;
+        switch(review.getReviewStatus()) {
+            case APPROVED:
+                status = "APPROVED";   // 이미 승인된 보관소 있음 → 버튼 비활성
+                break;
+            case WAITING:
+                status = "WAITING";    // 심사 중 → 버튼 비활성
+                break;
+            case REJECTED:
+                status = "REGISTER";   // 반려됨 → 다시 등록 가능
+                break;
+            default:
+                status = "REGISTER";
+        }
+
+        return LockerViewStatusView.builder()
+                .reviewStatus(status)
+                .build();
+    }
+
 }
