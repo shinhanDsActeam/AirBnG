@@ -52,16 +52,30 @@ public class LockerController {
         return new BaseResponse<>("보관소 삭제 완료");
     }
 
+//    @PostMapping(value = "/register", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+//    @PreAuthorize("hasAnyAuthority('USER')")
+//    public ResponseEntity<BaseResponse<String>> registerLocker(
+//            @RequestPart("locker") LockerInsertRequest dto,
+//            @RequestPart(value = "images", required = false) List<MultipartFile> images) throws IOException {
+//
+//        dto.setImages(images); // DTO에 파일들 세팅
+//        lockerService.registerLocker(dto);
+//        return ResponseEntity.ok(new BaseResponse<>("보관소 등록 완료"));
+//    }
+
+    //보관소 심사 요청
     @PostMapping(value = "/register", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasAnyAuthority('USER')")
-    public ResponseEntity<BaseResponse<String>> registerLocker(
+    public ResponseEntity<BaseResponse<String>> requestLockerReview(
             @RequestPart("locker") LockerInsertRequest dto,
-            @RequestPart(value = "images", required = false) List<MultipartFile> images) throws IOException {
+            @RequestPart(value = "images", required = false) List<MultipartFile> images,
+            @AuthenticationPrincipal CustomUserDetails userDetails) throws IOException {
 
         dto.setImages(images); // DTO에 파일들 세팅
-        lockerService.registerLocker(dto);
-        return ResponseEntity.ok(new BaseResponse<>("보관소 등록 완료"));
+        lockerService.requestLockerReview(dto,userDetails);
+        return ResponseEntity.ok(new BaseResponse<>("보관소 심사 요청 완료"));
     }
+
 
 
     @GetMapping("/popular")

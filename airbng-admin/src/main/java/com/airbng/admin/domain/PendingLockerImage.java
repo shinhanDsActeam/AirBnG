@@ -5,7 +5,6 @@ import com.airbng.common.base.BaseTime;
 import jakarta.persistence.*;
 import lombok.*;
 
-
 import static jakarta.persistence.FetchType.LAZY;
 
 @Getter

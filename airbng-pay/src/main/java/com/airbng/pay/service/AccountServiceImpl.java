@@ -1,11 +1,11 @@
 package com.airbng.pay.service;
 
-import com.airbng.common.base.BaseStatus;
 import com.airbng.pay.domain.Account;
 import com.airbng.pay.domain.BankInfo;
 import com.airbng.pay.domain.Wallet;
 import com.airbng.pay.dto.AccountCheckResponse;
 import com.airbng.pay.dto.AccountRegisterRequest;
+import com.airbng.pay.dto.BankCodeResult;
 import com.airbng.pay.exception.BankInfoException;
 import com.airbng.pay.exception.WalletException;
 import com.airbng.pay.repository.AccountRepository;
@@ -41,6 +41,8 @@ public class AccountServiceImpl implements AccountService {
         Wallet wallet = walletRepository.findByMemberId(memberId);
         if (!bankInfoRepository.existsByBankCode(req.getBankCode())) throw new BankInfoException(UNSUPPORTED_BANK);
         BankInfo bankInfo = bankInfoRepository.findByBankCode((req.getBankCode()));
+        if (accountRepository.existsByWalletWalletIdAndAccountNumber(wallet.getWalletId(), req.getAccountNumber()))
+            throw new WalletException(DUPLICATE_ACCOUNT);
 
         boolean isPrimary = false;
         if (!accountRepository.existsByWallet(wallet)) {
@@ -77,5 +79,14 @@ public class AccountServiceImpl implements AccountService {
         List<Account> accounts =
                 accountRepository.findAllByWalletWalletIdOrderByIsPrimaryDescAccountIdAsc(wallet.getWalletId());
         return AccountCheckResponse.from(wallet, accounts);
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public Optional<BankCodeResult> findByBankCode(Integer bankCode) {
+        if (!bankInfoRepository.existsByBankCode(bankCode))
+            throw new BankInfoException(UNSUPPORTED_BANK);
+        BankInfo bankInfo = bankInfoRepository.findByBankCode(bankCode);
+        return Optional.of(BankCodeResult.from(bankInfo));
     }
 }
