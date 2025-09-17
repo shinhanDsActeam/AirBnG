@@ -1,9 +1,7 @@
 package com.airbng.pay.service;
 
-import com.airbng.pay.dto.WalletBalanceResponse;
-import com.airbng.pay.dto.WalletOverviewResponse;
-import com.airbng.pay.dto.WalletTopupRequest;
-import com.airbng.pay.dto.WalletWithdrawRequest;
+import com.airbng.pay.domain.WalletTxType;
+import com.airbng.pay.dto.*;
 import com.airbng.platform.security.principal.AirbngPrincipal;
 
 public interface WalletService {
@@ -14,4 +12,6 @@ public interface WalletService {
     void topup(AirbngPrincipal principal, String idemPotencyKey, WalletTopupRequest req);
 
     void withdraw(AirbngPrincipal principal, String idemPotencyKey, WalletWithdrawRequest req);
+
+    WalletHistoryResponse getHistory(AirbngPrincipal principal, Long cursor, WalletTxType type);
 }
