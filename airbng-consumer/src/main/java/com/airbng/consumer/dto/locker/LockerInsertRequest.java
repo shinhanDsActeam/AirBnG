@@ -37,5 +37,7 @@ public class LockerInsertRequest {
     private List<Long> jimTypeIds;
 
     @JsonIgnore
-    private List<MultipartFile> images; // List<ImageInsertRequest> → 변경
+    private List<MultipartFile> images;
+
+    private List<Long> imagesId;// List<ImageInsertRequest> → 변경
 }
