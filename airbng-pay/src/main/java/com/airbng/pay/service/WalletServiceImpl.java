@@ -1,20 +1,16 @@
 package com.airbng.pay.service;
 
-import com.airbng.common.base.BaseStatus;
 import com.airbng.pay.domain.*;
-import com.airbng.pay.dto.WalletBalanceResponse;
-import com.airbng.pay.dto.WalletOverviewResponse;
-import com.airbng.pay.dto.WalletTopupRequest;
-import com.airbng.pay.dto.WalletWithdrawRequest;
+import com.airbng.pay.dto.*;
 import com.airbng.pay.exception.AccountException;
 import com.airbng.pay.exception.WalletException;
 import com.airbng.pay.repository.AccountRepository;
 import com.airbng.pay.repository.WalletRepository;
 import com.airbng.pay.repository.WalletTxRepository;
-import com.airbng.platform.common.response.status.BaseResponseStatus;
 import com.airbng.platform.security.principal.AirbngPrincipal;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,6 +30,7 @@ public class WalletServiceImpl implements WalletService {
     private final WalletRepository walletRepository;
     private final WalletTxRepository walletTxRepository;
     private final AccountRepository accountRepository;
+    private static final int PAGE_SIZE = 10;
 
     @Override
     public WalletBalanceResponse getBalance(AirbngPrincipal principal) {
@@ -124,5 +121,25 @@ public class WalletServiceImpl implements WalletService {
                 .walletIdemKey(idemKey)
                 .build();
         walletTxRepository.save(tx);
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public WalletHistoryResponse getHistory(AirbngPrincipal principal, Long cursor, WalletTxType type) {
+        Wallet wallet = walletRepository.findByMemberId(principal.getId());
+
+        List<WalletTx> fetched = walletTxRepository.findSliceByWalletIdAndCursorDesc(
+                wallet.getWalletId(),
+                cursor,
+                type,
+                PageRequest.of(0, PAGE_SIZE+1));
+
+        boolean hasNext = fetched.size() > PAGE_SIZE;
+        if (hasNext) {
+            fetched = fetched.subList(0, PAGE_SIZE);
+        }
+        Long nextCursor = hasNext ? fetched.get(fetched.size() -1).getWalletTxId() : null;
+
+        return WalletHistoryResponse.from(wallet, fetched, nextCursor, hasNext);
     }
 }

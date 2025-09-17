@@ -1,9 +1,7 @@
 package com.airbng.pay.controller;
 
-import com.airbng.pay.dto.WalletBalanceResponse;
-import com.airbng.pay.dto.WalletOverviewResponse;
-import com.airbng.pay.dto.WalletTopupRequest;
-import com.airbng.pay.dto.WalletWithdrawRequest;
+import com.airbng.pay.domain.WalletTxType;
+import com.airbng.pay.dto.*;
 import com.airbng.pay.service.WalletService;
 import com.airbng.platform.common.response.BaseResponse;
 import com.airbng.platform.security.principal.AirbngPrincipal;
@@ -26,6 +24,8 @@ public class WalletController {
      * /me/balance : 페이머니만 조회하는 2-1 페이지
      * /me/overview : 페이머니 + 등록계좌 조회 2-2 페이지
      * /me/topup : 페이머니 충전 2-3 페이지
+     * /me/withdraw : 페이머니 출금 2-4 페이지
+     * /me/history : 페이머니 거래내역 조회 2-5 페이지
      */
     @GetMapping("/me/balance")
     @PreAuthorize("hasAnyAuthority('USER')")
@@ -55,5 +55,13 @@ public class WalletController {
                                          @RequestBody WalletWithdrawRequest req) {
         walletService.withdraw(principal, idemPotencyKey, req);
         return new BaseResponse<>(SUCCESS);
+    }
+
+    @GetMapping("/me/history")
+    @PreAuthorize("hasAnyAuthority('USER')")
+    public BaseResponse<WalletHistoryResponse> getHistory(@AuthenticationPrincipal AirbngPrincipal principal,
+                                                          @RequestParam(required = false) Long cursor,
+                                                          @RequestParam(required = false)WalletTxType type) {
+        return new BaseResponse<>(walletService.getHistory(principal, cursor, type));
     }
 }
