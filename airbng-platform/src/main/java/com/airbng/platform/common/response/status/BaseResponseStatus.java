@@ -115,15 +115,19 @@ public enum BaseResponseStatus implements ResponseStatus{
      * 10000 : wallet
      */
     INVALID_WALLET(10001, HttpStatus.BAD_REQUEST.value(),"지갑이 존재하지 않습니다."),
+    INSUFFICIENT_BALANCE(10002, HttpStatus.BAD_REQUEST.value(), "결제 금액이 부족합니다."),
+    INSUFFICIENT_TOPUP(10003, HttpStatus.BAD_REQUEST.value(), "충전 금액이 부족합니다."),
+    ALREADY_PROCESSED(10004, HttpStatus.BAD_REQUEST.value(), "이미 진행된 결과입니다."),
 
     /**
      * 11000 : account
      */
     DUPLICATE_ACCOUNT(11001, HttpStatus.BAD_REQUEST.value(), "이미 계좌가 존재합니다."),
+    WALLET_ACCOUNT_MISMATCH(11002, HttpStatus.BAD_REQUEST.value(), "지갑주인과 계좌 주인이 일치하지 않습니다."),
 
 
     /**
-     * 12000 : bankinfo
+     * 12000 : bankInfo
      */
     UNSUPPORTED_BANK(12001, HttpStatus.BAD_REQUEST.value(), "지원하지 않는 은행입니다."),
     INVALID_ACCOUNT(12002, HttpStatus.BAD_REQUEST.value(), "유효하지 않는 계좌번호입니다.");

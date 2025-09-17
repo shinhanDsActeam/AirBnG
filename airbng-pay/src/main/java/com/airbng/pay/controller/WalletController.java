@@ -2,15 +2,16 @@ package com.airbng.pay.controller;
 
 import com.airbng.pay.dto.WalletBalanceResponse;
 import com.airbng.pay.dto.WalletOverviewResponse;
+import com.airbng.pay.dto.WalletTopupRequest;
 import com.airbng.pay.service.WalletService;
 import com.airbng.platform.common.response.BaseResponse;
 import com.airbng.platform.security.principal.AirbngPrincipal;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import static com.airbng.platform.common.response.status.BaseResponseStatus.SUCCESS;
 
 @RestController
 @RequestMapping("/wallet")
@@ -34,5 +35,14 @@ public class WalletController {
     @PreAuthorize("hasAnyAuthority('USER')")
     public BaseResponse<WalletOverviewResponse> getOverview(@AuthenticationPrincipal AirbngPrincipal principal) {
         return new BaseResponse<>(walletService.getOverview(principal));
+    }
+
+    @PostMapping("/me/topup")
+    @PreAuthorize("hasAnyAuthority('USER')")
+    public BaseResponse<String> topup(@AuthenticationPrincipal AirbngPrincipal principal,
+                                                   @RequestHeader("IdemPotency-Key") String idemPotencyKey,
+                                                   @RequestBody WalletTopupRequest req) {
+        walletService.topup(principal, idemPotencyKey, req);
+        return new BaseResponse<>(SUCCESS);
     }
 }
