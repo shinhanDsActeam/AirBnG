@@ -3,6 +3,7 @@ package com.airbng.consumer.usecase;
 import com.airbng.api.consumer.LockerApi;
 import com.airbng.api.consumer.dto.command.LockerReviewApproveCommand;
 import com.airbng.api.consumer.dto.command.LockerReviewRejectCommand;
+import com.airbng.common.base.Available;
 import com.airbng.common.base.BaseStatus;
 import com.airbng.consumer.domain.Locker;
 import com.airbng.consumer.domain.Member;
@@ -56,6 +57,7 @@ public class LockerApiImpl implements LockerApi {
                 .longitude(command.getLongitude())
                 .keeper(keeper)
                 .status(command.getStatus())
+                .isAvailable(Available.YES)
                 .reservationCount(0L)
                 .build();
         lockerRepository.saveAndFlush(locker);

@@ -1,7 +1,9 @@
 package com.airbng.api.consumer.dto.command;
 
+import com.airbng.common.base.Available;
 import com.airbng.common.base.BaseStatus;
 import lombok.*;
+import org.springframework.lang.NonNull;
 
 import java.util.List;
 
@@ -18,6 +20,7 @@ public class LockerReviewApproveCommand {
     private String addressEnglish;
     private String addressDetail;
     private Double latitude;
+    private Available isAvailable; // 'YES' or 'NO'
     private Double longitude;
     private String lockerType;
     private List<Long> jimTypeId;
