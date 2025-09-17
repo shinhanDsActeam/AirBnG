@@ -15,25 +15,18 @@ import com.airbng.api.consumer.dto.command.LockerReviewRejectCommand;
 import com.airbng.api.consumer.dto.view.LockerReviewDetailView;
 import com.airbng.api.consumer.LockerApi;
 import com.airbng.api.consumer.dto.view.LockerReviewMemberView;
-import com.airbng.api.consumer.dto.command.LockerReviewApproveCommand;
-import com.airbng.api.consumer.dto.command.LockerReviewRejectCommand;
 import com.airbng.platform.common.exception.DomainException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import java.util.Optional;
 import java.util.stream.Collectors;
-import com.airbng.admin.domain.base.ReviewStatus;
 import com.airbng.admin.dto.response.LockerReviewListResponse;
-import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
 
 import static com.airbng.platform.common.response.status.BaseResponseStatus.*;
 
 @Slf4j
-@Log4j2
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)

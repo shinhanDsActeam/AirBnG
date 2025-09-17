@@ -23,7 +23,6 @@ import com.airbng.platform.common.response.status.BaseResponseStatus;
 import com.airbng.api.consumer.dto.view.LockerJimTypeResult;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import com.airbng.consumer.repository.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
