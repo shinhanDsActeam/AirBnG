@@ -55,6 +55,7 @@ public class ReservationController {
     @PostMapping
     @PreAuthorize("hasAnyAuthority('USER')")
     public BaseResponse<Long> insertReservation(
+            @RequestHeader(value = "Idempotency-Key") String idemKey,
             @RequestBody @Valid ReservationInsertRequest request) {
         return new BaseResponse<>(
                 CREATED_RESERVATION,
