@@ -3,7 +3,6 @@ package com.airbng.consumer.dto.reservation;
 import com.airbng.consumer.domain.Locker;
 import com.airbng.consumer.domain.Member;
 import com.airbng.consumer.domain.Reservation;
-import com.airbng.consumer.domain.base.CompletionState;
 import com.airbng.consumer.dto.jimType.JimTypeCountResult;
 import com.airbng.common.base.BaseStatus;
 import com.airbng.consumer.domain.base.ReservationState;
@@ -71,7 +70,6 @@ public class ReservationInsertRequest {
                 .fee(BigDecimal.valueOf(fee))
                 .locker(locker)
                 .status(BaseStatus.ACTIVE)
-                .completionState(CompletionState.NONE)
                 .build();
     }
 

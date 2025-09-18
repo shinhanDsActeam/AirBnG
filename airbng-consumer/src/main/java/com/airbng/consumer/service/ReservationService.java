@@ -22,7 +22,7 @@ public interface ReservationService {
     ReservationFormResponse getReservationForm(Long lockerId);
 
     // 예약 등록
-    BaseResponseStatus insertReservation(ReservationInsertRequest request);
+    Long insertReservation(ReservationInsertRequest request);
     Long insertReservation(String idemKey, ReservationInsertRequest request);
 
     //예약 상새
