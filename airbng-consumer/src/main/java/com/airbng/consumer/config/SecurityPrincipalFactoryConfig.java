@@ -24,7 +24,7 @@ public class SecurityPrincipalFactoryConfig {
             String role = (String) claims.get("role");
             String profileImageUrl = (String) claims.get("profileImageUrl");
 
-            return new CustomUserDetails(new Member(userId, role),new Image(profileImageUrl));
+            return new CustomUserDetails(new Member(userId, role),profileImageUrl);
         };
     }
 }

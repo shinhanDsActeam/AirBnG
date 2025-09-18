@@ -16,7 +16,7 @@ import java.util.Collection;
 public class CustomUserDetails implements UserDetails, AirbngPrincipal {
 
     private final Member member;
-    private final Image image;
+    private final String profileImageUrl;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -38,7 +38,7 @@ public class CustomUserDetails implements UserDetails, AirbngPrincipal {
     public String getUsername() {return member.getEmail(); }
 
     @Override
-    public String getUserProfileUrl() {return image.getUrl();}
+    public String getUserProfileUrl() {return this.profileImageUrl;}
 
     @Override
     public String getPassword() {return member.getPassword(); }

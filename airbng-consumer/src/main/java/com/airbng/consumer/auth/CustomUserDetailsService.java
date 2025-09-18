@@ -23,6 +23,7 @@ public class CustomUserDetailsService implements UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException("해당 회원이 존재하지 않습니다."));
         Image image = imageRepository.findById(member.getProfileImage().getImageId())
                 .orElseThrow(() -> new IllegalArgumentException("해당 회원이 프로필이 존재하지 않습니다."));
-        return new CustomUserDetails(member,image);
+        String profileImageUrl = image.getUrl();
+        return new CustomUserDetails(member,profileImageUrl);
     }
 }
