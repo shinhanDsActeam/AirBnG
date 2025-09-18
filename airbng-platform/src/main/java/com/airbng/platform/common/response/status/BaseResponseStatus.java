@@ -126,7 +126,16 @@ public enum BaseResponseStatus implements ResponseStatus{
      * 12000 : bankinfo
      */
     UNSUPPORTED_BANK(12001, HttpStatus.BAD_REQUEST.value(), "지원하지 않는 은행입니다."),
-    INVALID_ACCOUNT(12002, HttpStatus.BAD_REQUEST.value(), "유효하지 않는 계좌번호입니다.");
+    INVALID_ACCOUNT(12002, HttpStatus.BAD_REQUEST.value(), "유효하지 않는 계좌번호입니다."),
+
+    /**
+     * 13000 : sales
+     */
+    INVALID_DATE(13001, HttpStatus.BAD_REQUEST.value(), "날짜 형식이 올바르지 않습니다."),
+    NOT_FOUND_PERIOD_SALES(13002, HttpStatus.BAD_REQUEST.value(), "해당 기간의 매출을 조회할 수 없습니다."),
+    NOT_FOUND_STORAGE_SALES(13003, HttpStatus.BAD_REQUEST.value(), "해당 보관소의 매출을 조회할 수 없습니다."),
+    ;
+
 
     private final int code;
     private final int httpStatus;
