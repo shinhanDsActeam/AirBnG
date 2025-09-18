@@ -28,8 +28,10 @@ import com.airbng.common.base.BaseStatus;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.locks.ReentrantLock;
 
+import static com.airbng.common.BusinessIds.ADMIN_MEMBER_ID;
 import static com.airbng.platform.common.response.status.BaseResponseStatus.*;
 
 @Slf4j
@@ -39,8 +41,6 @@ import static com.airbng.platform.common.response.status.BaseResponseStatus.*;
 public class ReservationServiceImpl implements ReservationService {
 
     private final AlertScheduledTask alertScheduledTask;
-
-    private final ReservationMapper reservationMapper;
 
     private final ReservationRepository reservationRepository;
     private final ReservationCustomRepository reservationCustomRepository;

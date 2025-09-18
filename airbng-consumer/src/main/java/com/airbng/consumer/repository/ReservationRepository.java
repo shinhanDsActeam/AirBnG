@@ -49,4 +49,5 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
     List<Reservation> findConfirmedNearEndTime(@Param("now") LocalDateTime now,
                                                @Param("deadline") LocalDateTime deadline);
 
+    Optional<Reservation> findByPaymentId(Long paymentId);
 }
