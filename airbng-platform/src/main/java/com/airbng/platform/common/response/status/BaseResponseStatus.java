@@ -115,8 +115,6 @@ public enum BaseResponseStatus implements ResponseStatus{
      * 10000 : wallet
      */
     INVALID_WALLET(10001, HttpStatus.BAD_REQUEST.value(),"지갑이 존재하지 않습니다."),
-
-    INVALID_WALLET(10001, HttpStatus.BAD_REQUEST.value(), "지갑이 존재하지 않습니다."),
     INSUFFICIENT_BALANCE(10002, HttpStatus.CONFLICT.value(), "잔액이 부족합니다."),
     /**
      * 11000 : account
