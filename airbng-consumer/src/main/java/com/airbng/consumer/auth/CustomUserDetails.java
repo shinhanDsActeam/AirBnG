@@ -1,6 +1,7 @@
 package com.airbng.consumer.auth;
 
 import com.airbng.consumer.domain.Member;
+import com.airbng.consumer.domain.image.Image;
 import com.airbng.platform.security.principal.AirbngPrincipal;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +16,7 @@ import java.util.Collection;
 public class CustomUserDetails implements UserDetails, AirbngPrincipal {
 
     private final Member member;
+    private final Image image;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -34,6 +36,9 @@ public class CustomUserDetails implements UserDetails, AirbngPrincipal {
 
     @Override
     public String getUsername() {return member.getEmail(); }
+
+    @Override
+    public String getUserProfileUrl() {return image.getUrl();}
 
     @Override
     public String getPassword() {return member.getPassword(); }
