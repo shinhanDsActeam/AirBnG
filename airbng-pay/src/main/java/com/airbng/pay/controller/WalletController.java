@@ -42,18 +42,18 @@ public class WalletController {
     @PostMapping("/me/topup")
     @PreAuthorize("hasAnyAuthority('USER')")
     public BaseResponse<String> topup(@AuthenticationPrincipal AirbngPrincipal principal,
-                                                   @RequestHeader("IdemPotency-Key") String idemPotencyKey,
+                                                   @RequestHeader("Idempotency-Key") String idempotencyKey,
                                                    @RequestBody WalletTopupRequest req) {
-        walletService.topup(principal, idemPotencyKey, req);
+        walletService.topup(principal, idempotencyKey, req);
         return new BaseResponse<>(SUCCESS);
     }
 
     @PostMapping("/me/withdraw")
     @PreAuthorize("hasAnyAuthority('USER')")
     public BaseResponse<String> withdraw(@AuthenticationPrincipal AirbngPrincipal principal,
-                                         @RequestHeader("IdemPotency-Key") String idemPotencyKey,
+                                         @RequestHeader("Idempotency-Key") String idempotencyKey,
                                          @RequestBody WalletWithdrawRequest req) {
-        walletService.withdraw(principal, idemPotencyKey, req);
+        walletService.withdraw(principal, idempotencyKey, req);
         return new BaseResponse<>(SUCCESS);
     }
 

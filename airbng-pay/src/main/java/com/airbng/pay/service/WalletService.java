@@ -9,9 +9,9 @@ public interface WalletService {
 
     WalletOverviewResponse getOverview(AirbngPrincipal principal);
 
-    void topup(AirbngPrincipal principal, String idemPotencyKey, WalletTopupRequest req);
+    void topup(AirbngPrincipal principal, String idempotencyKey, WalletTopupRequest req);
 
-    void withdraw(AirbngPrincipal principal, String idemPotencyKey, WalletWithdrawRequest req);
+    void withdraw(AirbngPrincipal principal, String idempotencyKey, WalletWithdrawRequest req);
 
     WalletHistoryResponse getHistory(AirbngPrincipal principal, Long cursor, WalletTxType type);
 }
