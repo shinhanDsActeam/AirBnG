@@ -17,8 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import static com.airbng.platform.common.response.status.BaseResponseStatus.NO_RESERVATION_CONTNET;
-import static com.airbng.platform.common.response.status.BaseResponseStatus.SUCCESS;
+import static com.airbng.platform.common.response.status.BaseResponseStatus.*;
 
 @RestController
 @RequestMapping("/reservations")
@@ -55,11 +54,11 @@ public class ReservationController {
     // 예약 등록
     @PostMapping
     @PreAuthorize("hasAnyAuthority('USER')")
-    public BaseResponse<BaseStatus> insertReservation(@RequestBody @Valid ReservationInsertRequest request) {
-//        BaseStatus status = reservationService.insertReservation(request);
-
+    public BaseResponse<Long> insertReservation(
+            @RequestBody @Valid ReservationInsertRequest request) {
         return new BaseResponse<>(
-                reservationService.insertReservation(request)
+                CREATED_RESERVATION,
+                reservationService.insertReservation(idemKey, request)
         );
     }
 

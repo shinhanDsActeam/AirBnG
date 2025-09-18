@@ -59,10 +59,10 @@ public class Reservation extends BaseTime {
     private Locker locker;
 
     @Column(nullable = false, precision = 19, scale = 2)
-    private BigDecimal amount;
+    private BigDecimal amount = BigDecimal.ZERO;
 
     @Column(nullable = false, precision = 19, scale = 2)
-    private BigDecimal fee;
+    private BigDecimal fee = BigDecimal.ZERO;
 
     @Column(nullable = false)
     private Long paymentId;

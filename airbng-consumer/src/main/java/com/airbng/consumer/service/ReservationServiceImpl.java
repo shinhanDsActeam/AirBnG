@@ -1,5 +1,7 @@
 package com.airbng.consumer.service;
 
+import com.airbng.api.pay.PayApi;
+import com.airbng.api.pay.dto.command.MakePaymentRequest;
 import com.airbng.consumer.domain.Locker;
 import com.airbng.consumer.domain.Member;
 import com.airbng.consumer.domain.Reservation;
@@ -46,6 +48,9 @@ public class ReservationServiceImpl implements ReservationService {
     private final MemberRepository memberRepository;
     private final LockerRepository lockerRepository;
     private final JimTypeRepository jimTypeRepository;
+
+    private final PayApi payApi;
+
     private static final Long LIMIT = 10L; // 페이지당 최대 예약 개수
 
     //예약 조회 + 페이징 처리
@@ -240,9 +245,18 @@ public class ReservationServiceImpl implements ReservationService {
     }
 
     // 예약 등록
+    /**
+     * 예약 등록
+     * 결제 실패 시 - 예약 등록까지 롤백
+     * 짐타입 등록이 실패 시 - 예약 등록까지 롤백
+     * 예약 등록 실패 시 - 결제 롤백
+     *
+     * @param request
+     * @return
+     */
     @Override
-    @Transactional // 짐타입 등록 실패한 경우 예약 등록까지 롤백
-    public BaseResponseStatus insertReservation(final ReservationInsertRequest request) {
+    @Transactional
+    public Long insertReservation(final String idemKey, final ReservationInsertRequest request) {
         log.info("insertReservation({})", request);
 
         validateStartTimeAndEndTime(request.getStartTime(), request.getEndTime());
@@ -259,7 +273,25 @@ public class ReservationServiceImpl implements ReservationService {
 
         validateMember(dropper.getMemberId(), keeper.getMemberId());
 
-        Reservation reservation = request.toEntity(dropper, keeper);
+
+        // 결제 정보 생성
+        Long paymentId = payApi.pay(
+                MakePaymentRequest.builder()
+                        .amount(request.getAmount())
+                        .fee(request.getFee())
+                        .method(request.getPaymentMethod())
+                        .idemKeyRaw(idemKey)
+                        .payeeId(keeper.getMemberId())
+                        .payerId(dropper.getMemberId())
+                        .lockerId(locker.getLockerId())
+                        .build());
+
+        Optional<Reservation> reservationOptional = reservationRepository.findByPaymentId(paymentId);
+        if (reservationOptional.isPresent()) {
+            return reservationOptional.get().getReservationId();
+        }
+
+        Reservation reservation = request.toEntity(dropper, keeper, paymentId, locker);
 
         request.getJimTypeCounts()
                 .forEach(jtc -> {
@@ -267,13 +299,13 @@ public class ReservationServiceImpl implements ReservationService {
                             .orElseThrow(() -> new JimTypeException(INVALID_JIMTYPE));
                     validateJimTypes(locker, jt);
                     ReservationJimType reservationJimType
-                            = ReservationJimType.of(reservation,jt, jtc.count);
+                            = ReservationJimType.of(reservation, jt, jtc.count);
                     reservation.addReservationJimType(reservationJimType);
                 });
 
         reservationRepository.save(reservation);
 
-        return CREATED_RESERVATION;
+        return reservation.getReservationId();
     }
 
     @Override
@@ -307,6 +339,11 @@ public class ReservationServiceImpl implements ReservationService {
         // dropper와 keeper가 동일한 경우 예외
         if (dropperId.equals(keeperId)) {
             throw new ReservationException(INVALID_RESERVATION_PARTICIPANTS);
+        }
+        // 관리자 계정이 포함된 경우 예외
+        if (dropperId == ADMIN_MEMBER_ID || keeperId == ADMIN_MEMBER_ID) {
+            log.warn("관리자 계정이 예약에 포함됨. dropperId: {}, keeperId: {}", dropperId, keeperId);
+            throw new ReservationException(INVALID_MEMBER);
         }
     }
 
