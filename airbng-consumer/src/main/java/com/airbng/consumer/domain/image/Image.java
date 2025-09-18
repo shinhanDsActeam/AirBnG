@@ -31,4 +31,7 @@ public class Image extends BaseTime {
     @Column(nullable = false, columnDefinition = "VARCHAR(10) DEFAULT 'ACTIVE'" )
     private BaseStatus status = BaseStatus.ACTIVE;
 
+    public Image(String url) {
+        this.url = url;
+    }
 }
