@@ -8,5 +8,6 @@ public interface AirbngPrincipal {
     Long getId();
     String getNickname();
     String getUsername();
+    String getUserProfileUrl();
     Collection<? extends GrantedAuthority> getAuthorities();
 }
