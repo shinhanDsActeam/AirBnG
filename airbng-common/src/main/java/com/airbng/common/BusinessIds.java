@@ -10,10 +10,10 @@ public class BusinessIds {
     public static long ADMIN_MEMBER_ID;
     public static long SYSTEM_WALLET_ID;
 
-    @Value("${airbng.admin.member-id}")
+    @Value("${business.ids.admin-member-id}")
     private long adminMemberId;
 
-    @Value("${airbng.system.wallet-id}")
+    @Value("${business.ids.system-wallet-id}")
     private long systemWalletId;
 
     @PostConstruct
