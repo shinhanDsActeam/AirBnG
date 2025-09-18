@@ -13,6 +13,7 @@ import com.airbng.pay.repository.WalletTxRepository;
 import com.airbng.pay.util.UUIDUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,6 +23,8 @@ import java.util.List;
 import java.util.UUID;
 
 import static com.airbng.common.BusinessIds.ADMIN_MEMBER_ID;
+import static com.airbng.pay.domain.WalletTxRole.DEBIT;
+import static com.airbng.pay.domain.WalletTxType.PAYMENT;
 import static com.airbng.platform.common.response.status.BaseResponseStatus.*;
 
 import static com.airbng.common.base.BaseStatus.ACTIVE;
@@ -114,7 +117,7 @@ class PayApiImpl implements PayApi {
                     .payIdemKey(payIdemKey)
                     .build();
             paymentRepository.save(payment);
-        } catch (org.springframework.dao.DataIntegrityViolationException ex) {
+        } catch (DataIntegrityViolationException ex) {
             // UNIQUE(pay_idem_key) 충돌 → 기존 엔티티로 멱등 처리
             log.info("멱등키 존재 - {}", payIdemKey);
             return paymentRepository.findByPayIdemKey(payIdemKey)
@@ -132,8 +135,8 @@ class PayApiImpl implements PayApi {
         WalletTx payerTx = WalletTx.builder()
                 .wallet(payerWallet)
                 .payment(payment)
-                .walletTxType(com.airbng.pay.domain.WalletTxType.PAYMENT)
-                .walletTxRole(com.airbng.pay.domain.WalletTxRole.DEBIT)
+                .walletTxType(PAYMENT)
+                .walletTxRole(DEBIT)
                 .walletIdemKey(UUIDUtil.generate())
                 .amount(totalAmount)
                 .build();
@@ -147,7 +150,7 @@ class PayApiImpl implements PayApi {
         WalletTx payeeTx = WalletTx.builder()
                 .wallet(payeeWallet)
                 .payment(payment)
-                .walletTxType(com.airbng.pay.domain.WalletTxType.PAYMENT)
+                .walletTxType(PAYMENT)
                 .walletTxRole(com.airbng.pay.domain.WalletTxRole.CREDIT)
                 .walletIdemKey(UUIDUtil.generate())
                 .amount(amount)
