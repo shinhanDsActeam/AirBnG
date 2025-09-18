@@ -126,7 +126,17 @@ public enum BaseResponseStatus implements ResponseStatus{
      * 12000 : bankinfo
      */
     UNSUPPORTED_BANK(12001, HttpStatus.BAD_REQUEST.value(), "지원하지 않는 은행입니다."),
-    INVALID_ACCOUNT(12002, HttpStatus.BAD_REQUEST.value(), "유효하지 않는 계좌번호입니다.");
+    INVALID_ACCOUNT(12002, HttpStatus.BAD_REQUEST.value(), "유효하지 않는 계좌번호입니다."),
+
+
+    /**
+     * 13000 : payment
+     */
+    FAILED_PAYMENT(13001, HttpStatus.INTERNAL_SERVER_ERROR.value(), "결제 처리에 실패하였습니다."),
+    UNSUPPORTED_PAY_METHOD(13002, HttpStatus.BAD_REQUEST.value(), "지원하지 않는 결제 수단입니다."),
+
+
+    ;
 
     private final int code;
     private final int httpStatus;
