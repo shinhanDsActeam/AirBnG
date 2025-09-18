@@ -16,7 +16,7 @@ public class ReservationAlarmSseController {
     private final ReservationAlarmSseService reservationAlarmSseService;
     private final JwtUtil jwtUtil;
 
-    @GetMapping("/reservations/alarms")
+    @GetMapping(value = "/reservations/alarms", produces = "text/event-stream;charset=UTF-8")
     public SseEmitter subscribe(
             @RequestHeader(value = "Last-Event-ID", required = false) String lastEventId,
             @CookieValue(value = "sse", required = false) String sseToken
