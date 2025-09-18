@@ -6,8 +6,10 @@ import com.airbng.api.pay.dto.command.WalletCreateCommand;
 import com.airbng.pay.domain.*;
 import com.airbng.pay.exception.PaymentException;
 import com.airbng.pay.exception.WalletException;
+import com.airbng.pay.repository.MasterTxRepository;
 import com.airbng.pay.repository.PaymentRepository;
 import com.airbng.pay.repository.WalletRepository;
+import com.airbng.pay.repository.WalletTxRepository;
 import com.airbng.pay.util.UUIDUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import static com.airbng.common.BusinessIds.ADMIN_MEMBER_ID;
 import static com.airbng.platform.common.response.status.BaseResponseStatus.*;
 
 import static com.airbng.common.base.BaseStatus.ACTIVE;
@@ -29,6 +32,9 @@ import static com.airbng.common.base.BaseStatus.ACTIVE;
 class PayApiImpl implements PayApi {
     private final PaymentRepository paymentRepository;
     private final WalletRepository walletRepository;
+    private final WalletTxRepository walletTxRepository;
+    private final MasterTxRepository masterTxRepository;
+
 
     @Transactional
     @Override
@@ -89,6 +95,85 @@ class PayApiImpl implements PayApi {
 
         Wallet payerWallet = walletPickByMemberIdOrThrow(wallets, request.getPayerId());
         Wallet payeeWallet = walletPickByMemberIdOrThrow(wallets, request.getPayeeId());
+
+        if (payerWallet.getBalanceAvailable().compareTo(totalAmount) < 0) {
+            throw new WalletException(INSUFFICIENT_BALANCE);
+        }
+
+        // 결제 생성
+        final Payment payment;
+        try {
+            payment = Payment.builder()
+                    .payerId(request.getPayerId())
+                    .payeeId(request.getPayeeId())
+                    .lockerId(request.getLockerId())
+                    .method(PayMethod.WALLET)
+                    .paymentStatus(PaymentStatus.PAID)
+                    .paymentAmount(amount)
+                    .paymentFee(fee)
+                    .payIdemKey(payIdemKey)
+                    .build();
+            paymentRepository.save(payment);
+        } catch (org.springframework.dao.DataIntegrityViolationException ex) {
+            // UNIQUE(pay_idem_key) 충돌 → 기존 엔티티로 멱등 처리
+            log.info("멱등키 존재 - {}", payIdemKey);
+            return paymentRepository.findByPayIdemKey(payIdemKey)
+                    .map(Payment::getPaymentId)
+                    .orElseThrow(() -> new PaymentException(FAILED_PAYMENT));
+        }
+
+        log.info("Payment transaction recorded: {}", payment.getPaymentId());
+
+        // 지갑 트랜잭션 & 지갑 잔액 업데이트
+
+        // 1. Payer 지갑(보유금)에서 금액 차감 & walletTx 기록
+        payerWallet.subtractBalanceAvailable(totalAmount);
+
+        WalletTx payerTx = WalletTx.builder()
+                .wallet(payerWallet)
+                .payment(payment)
+                .walletTxType(com.airbng.pay.domain.WalletTxType.PAYMENT)
+                .walletTxRole(com.airbng.pay.domain.WalletTxRole.DEBIT)
+                .walletIdemKey(UUIDUtil.generate())
+                .amount(totalAmount)
+                .build();
+
+        walletTxRepository.save(payerTx);
+        log.info("Payer wallet transaction recorded: {}", payerTx.getWalletTxId());
+
+        // 2. Payee 지갑(보류금)에 금액 추가 & walletTx 기록
+        payeeWallet.addBalanceReserved(amount);
+
+        WalletTx payeeTx = WalletTx.builder()
+                .wallet(payeeWallet)
+                .payment(payment)
+                .walletTxType(com.airbng.pay.domain.WalletTxType.PAYMENT)
+                .walletTxRole(com.airbng.pay.domain.WalletTxRole.CREDIT)
+                .walletIdemKey(UUIDUtil.generate())
+                .amount(amount)
+                .build();
+
+        walletTxRepository.save(payeeTx);
+        log.info("Payee wallet transaction recorded: {}", payeeTx.getWalletTxId());
+
+        // 3. 회사 지갑(보류금)에 수수료 추가 & masterTx 기록
+        if (fee.compareTo(BigDecimal.ZERO) > 0) {
+            Wallet masterWallet = walletPickByMemberIdOrThrow(wallets, ADMIN_MEMBER_ID);
+
+            masterWallet.addBalanceReserved(fee);
+
+            MasterTx masterTx = MasterTx.builder()
+                    .wallet(masterWallet)
+                    .masterTxRole(MasterTxRole.CREDIT)
+                    .amount(fee)
+                    .build();
+
+            masterTxRepository.save(masterTx);
+            log.info("Master transaction recorded: {}", masterTx.getMasterTxId());
+        }
+
+        return payment.getPaymentId();
+
     }
 
     private Wallet walletPickByMemberIdOrThrow(List<Wallet> wallets, Long memberID) {
