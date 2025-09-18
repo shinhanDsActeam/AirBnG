@@ -204,6 +204,10 @@ public BaseResponseStatus requestLockerReview(LockerInsertRequest dto, CustomUse
         throw new MemberException(NOT_FOUND_MEMBER);
     }
 
+    if(!memberId.equals(dto.getKeeperId()) ){
+        throw new MemberException(MEMBER_ID_MISMATCH);
+    }
+
     if (lockerRepository.existsByKeeper_MemberId(memberId)) {
         throw new LockerException(MEMBER_ALREADY_HAS_LOCKER);
     }
