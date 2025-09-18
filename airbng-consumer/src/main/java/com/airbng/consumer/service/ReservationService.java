@@ -1,6 +1,5 @@
 package com.airbng.consumer.service;
 
-import com.airbng.platform.common.response.status.BaseResponseStatus;
 import com.airbng.consumer.domain.base.MemberRole;
 import com.airbng.consumer.dto.reservation.*;
 import org.springframework.stereotype.Service;
@@ -24,6 +23,7 @@ public interface ReservationService {
 
     // 예약 등록
     BaseResponseStatus insertReservation(ReservationInsertRequest request);
+    Long insertReservation(String idemKey, ReservationInsertRequest request);
 
     //예약 상새
     ReservationDetailResponse findReservationDetail(Long reservationId, Long memberId);
