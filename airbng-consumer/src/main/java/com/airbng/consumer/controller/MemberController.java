@@ -50,14 +50,14 @@ public class MemberController {
 
     @GetMapping("/my-page/{memberId}")
     @PreAuthorize("hasAnyAuthority('USER')")
-    public BaseResponse<MemberMyPageResponse> findUserById(
+    public BaseResponse<MemberMyPageResponse> getMyPageInfoById(
             @PathVariable("memberId") @NotNull @Min(1) Long memberId
     ) {
         MemberMyPageRequest request = MemberMyPageRequest.builder()
                 .memberId(memberId)
                 .build();
 
-        MemberMyPageResponse response = memberService.findUserById(request.getMemberId());
+        MemberMyPageResponse response = memberService.getMyPageInfoById(request.getMemberId());
         return new BaseResponse<>(response);
     }
 

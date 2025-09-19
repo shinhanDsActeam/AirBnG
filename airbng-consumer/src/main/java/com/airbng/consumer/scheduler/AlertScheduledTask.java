@@ -146,7 +146,7 @@ public class AlertScheduledTask {
                 .receiverId(memberId)
                 .nickName(memberName)
                 .type(NotificationType.LOCKER_REJECTED)
-                .message("보관소 [" + lockerName + "]가 반려되었습니다. 사유: " + reason)
+                .message("보관소 [" + lockerName + "]가 반려되었습니다.\n사유: " + reason)
                 .sendTime(String.valueOf(LocalDateTime.now()))
                 .build();
 

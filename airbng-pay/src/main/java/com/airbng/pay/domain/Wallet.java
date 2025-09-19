@@ -2,6 +2,7 @@ package com.airbng.pay.domain;
 
 import com.airbng.common.base.BaseStatus;
 import com.airbng.common.base.BaseTime;
+import com.airbng.pay.exception.WalletException;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -10,6 +11,8 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.util.List;
+
+import static com.airbng.platform.common.response.status.BaseResponseStatus.INSUFFICIENT_BALANCE;
 
 @Getter
 @Entity
@@ -38,15 +41,26 @@ public class Wallet extends BaseTime {
     private BaseStatus status;
 
     public void addBalanceAvailable(BigDecimal amount) {
-        // TODO : 예외처리
         this.balanceAvailable = this.balanceAvailable.add(amount);
     }
 
     public void subtractBalanceAvailable(BigDecimal amount) {
-        // TODO : 예외처리
+        if(this.balanceAvailable.compareTo(amount) < 0) {
+            throw new WalletException(INSUFFICIENT_BALANCE);
+        }
+
         this.balanceAvailable = this.balanceAvailable.subtract(amount);
     }
 
+    public void addBalanceReserved(BigDecimal amount) {
+        this.balanceReserved = this.balanceReserved.add(amount);
+    }
 
+    public void subtractBalanceReserved(BigDecimal amount) {
+        if(this.balanceReserved.compareTo(amount) < 0) {
+            throw new WalletException(INSUFFICIENT_BALANCE);
+        }
+        this.balanceReserved = this.balanceReserved.subtract(amount);
+    }
 
 }

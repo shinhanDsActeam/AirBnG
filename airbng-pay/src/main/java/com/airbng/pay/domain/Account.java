@@ -42,19 +42,7 @@ public class Account extends BaseTime {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Available status; // 활성화 여부
-
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
     private BaseStatus baseStatus;
-
-    public void deactivate() {
-        this.status = Available.NO;
-    }
-
-    public void activate() {
-        this.status = Available.YES;
-    }
 
     public void updateBalance(BigDecimal amount) {
         this.balance = this.balance.add(amount);
