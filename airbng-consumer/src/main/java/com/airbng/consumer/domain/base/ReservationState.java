@@ -5,8 +5,9 @@ import com.airbng.consumer.exception.ReservationException;
 import static com.airbng.platform.common.response.status.BaseResponseStatus.CANNOT_UPDATE_STATE;
 
 public enum ReservationState {
-    CONFIRMED, //확정
-    PENDING, //대기
+    CONFIRMED, //확정 (호스트가 승인)
+    PENDING, //대기 (사용자가 신청)
+    REJECTED, //거절 (호스트가 거절)
     CANCELLED, //취소
     COMPLETED; //완료
 

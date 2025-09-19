@@ -1,5 +1,6 @@
 package com.airbng.consumer.service;
 
+import com.airbng.api.consumer.event.ReservationCreatedEvent;
 import com.airbng.consumer.domain.Locker;
 import com.airbng.consumer.domain.Member;
 import com.airbng.consumer.domain.Reservation;
@@ -18,6 +19,7 @@ import com.airbng.consumer.scheduler.AlertScheduledTask;
 import com.github.benmanes.caffeine.cache.Cache;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.airbng.common.base.BaseStatus;
@@ -47,6 +49,7 @@ public class ReservationServiceImpl implements ReservationService {
     private final LockerRepository lockerRepository;
     private final JimTypeRepository jimTypeRepository;
     private static final Long LIMIT = 10L; // 페이지당 최대 예약 개수
+    private final ApplicationEventPublisher events;
 
     //예약 조회 + 페이징 처리
     @Override
@@ -259,7 +262,7 @@ public class ReservationServiceImpl implements ReservationService {
 
         validateMember(dropper.getMemberId(), keeper.getMemberId());
 
-        Reservation reservation = request.toEntity(dropper, keeper);
+        Reservation reservation = request.toEntity(dropper, keeper, locker);
 
         request.getJimTypeCounts()
                 .forEach(jtc -> {
@@ -272,6 +275,13 @@ public class ReservationServiceImpl implements ReservationService {
                 });
 
         reservationRepository.save(reservation);
+
+        // 트랜잭션 커밋 후 카드 푸시되게 이벤트 발행
+        events.publishEvent(ReservationCreatedEvent.of(
+                reservation.getReservationId(),
+                reservation.getDropper().getMemberId(),
+                reservation.getKeeper().getMemberId()
+        ));
 
         return CREATED_RESERVATION;
     }

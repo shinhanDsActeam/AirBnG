@@ -1,7 +1,9 @@
 package com.airbng.consumer.repository;
 
 import com.airbng.consumer.domain.Reservation;
+import jakarta.persistence.LockModeType;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -48,5 +50,17 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
             """)
     List<Reservation> findConfirmedNearEndTime(@Param("now") LocalDateTime now,
                                                @Param("deadline") LocalDateTime deadline);
+
+    /** 결정(승인/거절) 시 동시성 안전을 위한 비관락 */
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("""
+           select r
+           from Reservation r
+           join fetch r.keeper k
+           join fetch r.dropper d
+           left join fetch r.locker l
+           where r.reservationId = :reservationId
+           """)
+    Optional<Reservation> findByIdForUpdate(@Param("reservationId") Long reservationId);
 
 }

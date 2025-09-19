@@ -49,6 +49,22 @@ public class Reservation extends BaseTime {
     @Column(nullable = false, columnDefinition = "VARCHAR(10)")
     private BaseStatus status;
 
+    /** 인수인계/수거 방법 메모(카드에 노출) */
+    @Column(name = "pickup_memo", length = 500)
+    private String pickupMemo;
+
+    /** 승인/거절 사유(선택) */
+    @Column(name = "decision_reason", length = 500)
+    private String decisionReason;
+
+    /** 승인/거절 시각 */
+    @Column(name = "decided_at")
+    private LocalDateTime decidedAt;
+
+    /** 승인/거절 수행자 id(보통 keeper) */
+    @Column(name = "decided_by")
+    private Long decidedBy;
+
     @Builder.Default
     @OneToMany(mappedBy = "reservation", cascade = CascadeType.ALL)
     private Set<ReservationJimType> reservationJimTypes = new LinkedHashSet<>();
@@ -73,6 +89,14 @@ public class Reservation extends BaseTime {
     public void isAvailableUpdateState(){
         if(status.equals(BaseStatus.DELETE))
             throw new ReservationException(CANNOT_UPDATE_STATE);
+    }
+
+    /** 승인/거절 도메인 편의 메서드 */
+    public void decide(ReservationState newState, long actorId, String reason, LocalDateTime at){
+        this.state = newState;
+        this.decisionReason = reason;
+        this.decidedBy = actorId;
+        this.decidedAt = at;
     }
 
 }
