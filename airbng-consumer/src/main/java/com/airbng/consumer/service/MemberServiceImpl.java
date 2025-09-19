@@ -1,7 +1,9 @@
 package com.airbng.consumer.service;
 
 import com.airbng.api.pay.PayApi;
+import com.airbng.api.pay.WalletApi;
 import com.airbng.api.pay.dto.command.WalletCreateCommand;
+import com.airbng.api.pay.dto.view.WalletInfoView;
 import com.airbng.consumer.auth.CustomUserDetails;
 import com.airbng.consumer.domain.Member;
 import com.airbng.consumer.domain.base.Role;
@@ -36,6 +38,7 @@ public class MemberServiceImpl implements MemberService {
     private final PasswordValidator passwordValidator;
     private final MemberRepository memberRepository;
     private final PayApi payApi;
+    private final WalletApi walletApi;
 
     @Transactional
     @Override
@@ -82,11 +85,12 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public MemberMyPageResponse findUserById(Long memberId) {
+    public MemberMyPageResponse getMyPageInfoById(Long memberId) {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new MemberException(NOT_FOUND_MEMBER));
 
-        return MemberMyPageResponse.from(member);
+        WalletInfoView view = walletApi.getWalletInfo(memberId);
+        return MemberMyPageResponse.of(member, view);
     }
 
     @Transactional

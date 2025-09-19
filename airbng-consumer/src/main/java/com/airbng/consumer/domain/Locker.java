@@ -56,14 +56,14 @@ public class Locker extends BaseTime {
     @JoinColumn(name = "member_id", nullable = false)
     private Member keeper;
 
-    @OneToMany(mappedBy = "locker")
+    @OneToMany(mappedBy = "locker", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private Set<LockerImage> lockerImages;
 
-    @OneToMany(mappedBy = "locker")
+    @OneToMany(mappedBy = "locker", cascade = CascadeType.REMOVE, orphanRemoval = true)
     @Builder.Default
     private Set<LockerJimType> lockerJimTypes = new HashSet<>();
 
-    @OneToMany(mappedBy = "locker")
+    @OneToMany(mappedBy = "locker", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private Set<Zzim> zzims;
 
     @Column(nullable = false)

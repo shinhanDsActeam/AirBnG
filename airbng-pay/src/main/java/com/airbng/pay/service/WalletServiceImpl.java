@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static com.airbng.common.base.BaseStatus.ACTIVE;
 import static com.airbng.platform.common.response.status.BaseResponseStatus.*;
 
 @Service
@@ -31,6 +30,7 @@ public class WalletServiceImpl implements WalletService {
     private final WalletTxRepository walletTxRepository;
     private final AccountRepository accountRepository;
     private static final int PAGE_SIZE = 10;
+    private static final BigDecimal MIN_TOPUP_AMOUNT = new BigDecimal("1000");
 
     @Override
     public WalletBalanceResponse getBalance(AirbngPrincipal principal) {
@@ -65,7 +65,7 @@ public class WalletServiceImpl implements WalletService {
                 .orElseThrow(() -> new AccountException(WALLET_ACCOUNT_MISMATCH));
 
         BigDecimal balance = req.getBalance();
-        if (balance.compareTo(BigDecimal.valueOf(1000)) < 0) {
+        if (balance.compareTo(MIN_TOPUP_AMOUNT) < 0) {
             throw new WalletException(INSUFFICIENT_TOPUP);
         }
 
@@ -102,12 +102,13 @@ public class WalletServiceImpl implements WalletService {
                 .orElseThrow(() -> new WalletException(INVALID_WALLET));
 
         BigDecimal balance = wallet.getBalanceAvailable();
+        Account account = accountRepository.findForUpdate(req.getAccountId(), wallet.getWalletId())
+                .orElseThrow(() -> new AccountException(WALLET_ACCOUNT_MISMATCH));
+
         if (balance.signum() <= 0) {
             throw new WalletException(INSUFFICIENT_BALANCE);
         }
-
-        Account account = accountRepository.findForUpdate(req.getAccountId(), wallet.getWalletId())
-                .orElseThrow(() -> new AccountException(WALLET_ACCOUNT_MISMATCH));
+        
 
         wallet.subtractBalanceAvailable(balance);
         account.updateBalance(balance);

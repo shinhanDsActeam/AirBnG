@@ -1,7 +1,6 @@
 package com.airbng.pay.dto;
 
 import com.airbng.pay.domain.WalletTx;
-import com.airbng.pay.domain.WalletTxRole;
 import com.airbng.pay.domain.WalletTxType;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Builder;

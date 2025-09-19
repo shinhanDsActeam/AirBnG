@@ -33,6 +33,7 @@ public enum BaseResponseStatus implements ResponseStatus{
     NOT_UPDATE_MEMBER(2008, HttpStatus.NO_CONTENT.value(), "멤버 정보가 변경되지 않았습니다."),
     SUCCESS_LOGOUT(2000, HttpStatus.OK.value(), "로그아웃에 성공하였습니다."),
     FAILED_UPDATE_MEMBER(2009, HttpStatus.UNAUTHORIZED.value(), "정보가 올바르지 않아 수정에 실패하였습니다."),
+    MEMBER_ID_MISMATCH (2010, HttpStatus.UNAUTHORIZED.value(), "멤버가 일치하지 않습니다."),
     /**
      * 3000 락커 관련 코드
      */

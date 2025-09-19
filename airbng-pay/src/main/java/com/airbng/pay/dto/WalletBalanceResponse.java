@@ -4,7 +4,6 @@ package com.airbng.pay.dto;
 import com.airbng.pay.domain.Wallet;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
 
 import java.math.BigDecimal;
 

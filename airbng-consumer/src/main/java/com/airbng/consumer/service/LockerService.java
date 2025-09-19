@@ -1,5 +1,6 @@
 package com.airbng.consumer.service;
 
+import com.airbng.consumer.domain.base.LockerViewStatus;
 import com.airbng.consumer.dto.locker.*;
 import com.airbng.consumer.auth.CustomUserDetails;
 import com.airbng.platform.common.response.status.BaseResponseStatus;
@@ -42,5 +43,6 @@ public interface LockerService {
 
     BaseResponseStatus requestLockerReview(LockerInsertRequest dto, CustomUserDetails userDetails) throws IOException;
 
+    LockerViewStatus getLockerViewStatus(CustomUserDetails userDetails);
 }
 
