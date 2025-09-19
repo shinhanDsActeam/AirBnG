@@ -19,4 +19,7 @@ public class ReservationCard {
     private String pickupMemo;         // "직접 집 건네주기" (없으면 null)
 
     private String imgUrl;       // 보관소 대표 이미지 (없으면 기본 이미지)
+
+    private String status;      // PENDING/APPROVED/REJECTED/...
+    private Boolean canApprove; // 호스트가 지금 누를 수 있는지(백 판단 결과)
 }
