@@ -34,14 +34,16 @@ public class WalletServiceImpl implements WalletService {
 
     @Override
     public WalletBalanceResponse getBalance(AirbngPrincipal principal) {
-        Wallet wallet = walletRepository.findByMemberId(principal.getId());
+        Wallet wallet = walletRepository.findByMemberId(principal.getId())
+                .orElseThrow(() -> new WalletException(INVALID_WALLET));
         return WalletBalanceResponse.from(wallet);
     }
 
     @Transactional(readOnly = true)
     @Override
     public WalletOverviewResponse getOverview(AirbngPrincipal principal) {
-        Wallet wallet = walletRepository.findByMemberId(principal.getId());
+        Wallet wallet = walletRepository.findByMemberId(principal.getId())
+                .orElseThrow(() -> new WalletException(INVALID_WALLET));
         List<Account> accounts =
                 accountRepository.findAllByWalletWalletIdOrderByIsPrimaryDescAccountIdAsc(wallet.getWalletId());
         return WalletOverviewResponse.from(wallet, accounts);
@@ -127,7 +129,8 @@ public class WalletServiceImpl implements WalletService {
     @Transactional(readOnly = true)
     @Override
     public WalletHistoryResponse getHistory(AirbngPrincipal principal, Long cursor, WalletTxType type) {
-        Wallet wallet = walletRepository.findByMemberId(principal.getId());
+        Wallet wallet = walletRepository.findByMemberId(principal.getId())
+                .orElseThrow(() -> new WalletException(INVALID_WALLET));
 
         List<WalletTx> fetched = walletTxRepository.findSliceByWalletIdAndCursorDesc(
                 wallet.getWalletId(),
