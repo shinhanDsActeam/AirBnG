@@ -2,6 +2,7 @@ package com.airbng.consumer.service;
 
 import com.airbng.consumer.domain.base.MemberRole;
 import com.airbng.consumer.dto.reservation.*;
+import com.airbng.platform.security.principal.AirbngPrincipal;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -22,7 +23,7 @@ public interface ReservationService {
     ReservationFormResponse getReservationForm(Long lockerId);
 
     // 예약 등록
-    Long insertReservation(String idemKey, ReservationInsertRequest request);
+    ReservationInsertResponse insertReservation(String idemKey, ReservationInsertRequest request, AirbngPrincipal principal);
 
     //예약 상새
     ReservationDetailResponse findReservationDetail(Long reservationId, Long memberId);

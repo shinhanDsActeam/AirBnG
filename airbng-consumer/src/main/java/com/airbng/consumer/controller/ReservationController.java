@@ -6,12 +6,14 @@ import com.airbng.consumer.domain.base.ReservationState;
 import com.airbng.consumer.domain.base.MemberRole;
 import com.airbng.consumer.dto.reservation.*;
 import com.airbng.consumer.service.ReservationService;
+import com.airbng.platform.security.principal.AirbngPrincipal;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -54,12 +56,13 @@ public class ReservationController {
     // 예약 등록
     @PostMapping
     @PreAuthorize("hasAnyAuthority('USER')")
-    public BaseResponse<Long> insertReservation(
+    public BaseResponse<ReservationInsertResponse> insertReservation(
             @RequestHeader(value = "Idempotency-Key") String idemKey,
-            @RequestBody @Valid ReservationInsertRequest request) {
+            @RequestBody @Valid ReservationInsertRequest request,
+            @AuthenticationPrincipal AirbngPrincipal principal) {
         return new BaseResponse<>(
                 CREATED_RESERVATION,
-                reservationService.insertReservation(idemKey, request)
+                reservationService.insertReservation(idemKey, request, principal)
         );
     }
 

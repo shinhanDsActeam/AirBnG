@@ -17,9 +17,11 @@ import com.airbng.platform.common.response.status.BaseResponseStatus;
 import com.airbng.consumer.domain.jimtype.JimType;
 import com.airbng.consumer.domain.jimtype.ReservationJimType;
 import com.airbng.consumer.scheduler.AlertScheduledTask;
+import com.airbng.platform.security.principal.AirbngPrincipal;
 import com.github.benmanes.caffeine.cache.Cache;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.checkerframework.checker.units.qual.A;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.airbng.common.base.BaseStatus;
@@ -256,7 +258,7 @@ public class ReservationServiceImpl implements ReservationService {
      */
     @Override
     @Transactional
-    public Long insertReservation(final String idemKey, final ReservationInsertRequest request) {
+    public ReservationInsertResponse insertReservation(final String idemKey, final ReservationInsertRequest request, final AirbngPrincipal principal) {
         log.info("insertReservation({})", request);
 
         validateStartTimeAndEndTime(request.getStartTime(), request.getEndTime());
@@ -266,7 +268,7 @@ public class ReservationServiceImpl implements ReservationService {
 
         validateIsAvailable(locker);
 
-        Member dropper = memberRepository.findById(request.getDropperId())
+        Member dropper = memberRepository.findById(principal.getId())
                 .orElseThrow(() -> new MemberException(INVALID_MEMBER));
         Member keeper = memberRepository.findById(locker.getKeeper().getMemberId())
                 .orElseThrow(() -> new MemberException(INVALID_MEMBER));
@@ -288,7 +290,7 @@ public class ReservationServiceImpl implements ReservationService {
 
         Optional<Reservation> reservationOptional = reservationRepository.findByPaymentId(paymentId);
         if (reservationOptional.isPresent()) {
-            return reservationOptional.get().getReservationId();
+            return ReservationInsertResponse.from(reservationOptional.get().getReservationId());
         }
 
         Reservation reservation = request.toEntity(dropper, keeper, paymentId, locker);
@@ -305,7 +307,7 @@ public class ReservationServiceImpl implements ReservationService {
 
         reservationRepository.save(reservation);
 
-        return reservation.getReservationId();
+        return ReservationInsertResponse.from(reservation.getReservationId());
     }
 
     @Override

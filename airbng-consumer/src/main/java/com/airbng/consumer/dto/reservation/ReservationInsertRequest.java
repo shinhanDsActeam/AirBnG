@@ -22,10 +22,6 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ReservationInsertRequest {
-    private Long dropperId;
-
-    private Long keeperId;
-
     @NotNull
     @Min(1)
     private Long lockerId;  // 맡길 짐을 보관하는 락커 ID
