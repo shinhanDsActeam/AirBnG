@@ -53,7 +53,7 @@ public class WalletController {
     @PreAuthorize("hasAnyAuthority('USER')")
     public BaseResponse<String> withdraw(@AuthenticationPrincipal AirbngPrincipal principal,
                                          @RequestHeader("Idempotency-Key") String idempotencyKey,
-                                         @RequestBody WalletWithdrawRequest req) {
+                                         @RequestBody @Valid WalletWithdrawRequest req) {
         walletService.withdraw(principal, idempotencyKey, req);
         return new BaseResponse<>(SUCCESS);
     }
