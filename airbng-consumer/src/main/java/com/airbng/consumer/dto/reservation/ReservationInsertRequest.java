@@ -1,5 +1,6 @@
 package com.airbng.consumer.dto.reservation;
 
+import com.airbng.consumer.domain.Locker;
 import com.airbng.consumer.domain.Member;
 import com.airbng.consumer.domain.Reservation;
 import com.airbng.consumer.dto.jimType.JimTypeCountResult;
@@ -46,10 +47,11 @@ public class ReservationInsertRequest {
                 .build();
     }
 
-    public Reservation toEntity(Member dropper, Member keeper){
+    public Reservation toEntity(Member dropper, Member keeper, Locker locker){
         return  Reservation.builder()
                 .dropper(dropper)
                 .keeper(keeper)
+                .locker(locker)
                 .startTime(startTime)
                 .endTime(endTime)
                 .state(ReservationState.PENDING)
