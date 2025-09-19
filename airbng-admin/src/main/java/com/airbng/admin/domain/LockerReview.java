@@ -38,5 +38,18 @@ public class LockerReview extends BaseTime {
     @Column(nullable = false, columnDefinition = "VARCHAR(10)")
     private BaseStatus status;
 
+
+        public void updateState(ReviewStatus reviewStatus){
+                this.reviewStatus = reviewStatus;
+        }
+
+        public void updateComment(String reviewComment){
+                this.reviewComment = reviewComment;
+        }
+
+        public void updateStatus(BaseStatus status){
+                this.status = status;
+        }
+
 }
 
