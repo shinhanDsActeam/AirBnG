@@ -16,7 +16,8 @@ public record MessageDto(
         String text,
         Long   sentAtMs,     // ← epoch ms (Instant -> toEpochMilli)
         Boolean deleted,
-        List<AttachmentDto> attachments
+        List<AttachmentDto> attachments,
+        ReservationCardDto reservation
 ) {
     public static MessageDto from(
             Message m,
@@ -36,12 +37,23 @@ public record MessageDto(
                     );
                 }).toList();
 
+        ReservationCardDto card = null;
+        if (m.getReservation() != null) {
+            var r = m.getReservation();
+            card = new ReservationCardDto(
+                    r.getReservationId(), r.getLockerId(), r.getLockerName(), r.getAddress(),
+                    r.getStartTime(), r.getEndTime(), r.getCategory(), r.getPickupMemo(), r.getImgUrl(),
+                    r.getStatus(), r.getCanApprove()
+            );
+        }
+
         return new MessageDto(
                 m.getId(), m.getConvId(), m.getSeq(), m.getMsgId(),
                 m.getSenderId(), m.getSenderName(), m.getType(), m.getText(),
                 m.getSentAt()!=null ? m.getSentAt().toEpochMilli() : null,
                 Boolean.TRUE.equals(m.getDeleted()),
-                atts
+                atts,
+                card
         );
     }
 }

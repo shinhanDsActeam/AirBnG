@@ -1,5 +1,8 @@
 package com.airbng.chat.service;
 
+import com.airbng.api.consumer.ReservationApi;
+import com.airbng.api.consumer.dto.command.ReservationDecisionCommand;
+import com.airbng.api.consumer.dto.view.ReservationCardPayload;
 import com.airbng.chat.domain.Attachment;
 import com.airbng.chat.domain.Message;
 import com.airbng.chat.domain.model.AttachmentEmbedded;
@@ -32,106 +35,112 @@ public class MessageServiceImpl implements MessageService {
     private final RedisSequenceService redisSeq;
     private final AttachmentRepository attachmentRepository;
     private final S3Utils s3;
+    private final ReservationApi reservationApi;
 
-    // TODO: ReservatipnApi - 예약 조회용 JPA 레포 주입
-//    private final ReservationRepository reservationRepository;
+    // 예약 메시지 전송
+    @Override
+    public Message sendReservationCard(String convId,
+                                       long senderId,
+                                       String senderName,
+                                       ReservationCardPayload payload,
+                                       String msgId) {
+        conversationService.assertMember(convId, senderId);
 
-//    @Override
-//    public Message sendReservation(String convId, long senderId, String senderName, Long reservationId, String msgId) {
-//        // 1) 멤버십 검사
-//        conversationService.assertMember(convId, senderId);
-//
-//        // 2) 멱등
-//        var duplicated = messageRepo.findByConvIdAndMsgId(convId, msgId);
-//        if (duplicated.isPresent()) return duplicated.get();
-//
-//        // 3) MySQL 예약 조회 (필요 정보 fetch)
-//        Reservation r = reservationRepository.findReservationDetailById(reservationId)
-//                .orElseThrow(() -> new IllegalArgumentException("Reservation not found: " + reservationId));
-//
-//        Long dropperId = r.getDropper().getMemberId();
-//        Long keeperId  = r.getKeeper().getMemberId();
-//
-//        // convId가 예약 참여자와 일치하는지 보장
-//        String expectedConvId = conversationService.makeConvId(dropperId, keeperId);
-//        if (!expectedConvId.equals(convId)) {
-//            throw new IllegalArgumentException("Reservation parties != conversation members");
-//        }
-//
-//        // 4) 카드 페이로드 구성
-//        String lockerName  = r.getLocker().getLockerName();            // 필드명은 실제 엔티티에 맞게 수정
-//        String address     = r.getLocker().getAddress();
-//        // 첫 짐타입 이름(없으면 null)
-//        String category = r.getReservationJimTypes() != null && !r.getReservationJimTypes().isEmpty()
-//                ? r.getReservationJimTypes().iterator().next().getJimType().getTypeName()
-//                : null; // 예시
-//        String pickupMemo  = null;                  // 실제 필드명에 맞게 수정
-//        String lockerImage = r.getLocker().getLockerImages().stream()
-//                .findFirst()
-//                .map(li -> {
-//                    // 보통 li.getImage().getUrl() 형태가 많음. (필요시 getImageUrl()로 바꿔줘)
-//                    if (li.getImage() == null || li.getImage().getUrl() == null) {
-//                        throw new IllegalStateException("Locker image missing URL");
-//                    }
-//                    return li.getImage().getUrl();
-//                })
-//                .orElseThrow(() -> new IllegalStateException("Locker must have at least one image"));
-//
-//        ReservationCard card = ReservationCard.builder()
-//                .reservationId(r.getReservationId())
-//                .lockerId(r.getLocker().getLockerId())
-//                .lockerName(lockerName)
-//                .address(address)
-//                .startTime(r.getStartTime())
-//                .endTime(r.getEndTime())
-//                .category(category)
-//                .pickupMemo(null)
-//                .imgUrl(lockerImage)
-//                .build();
-//
-//        // 5) seq 생성 & 메시지 저장
-//        long seq = redisSeq.nextMessageSeq(convId);
-//        Instant now = Instant.now();
-//
-//        Message toSave = Message.builder()
-//                .convId(convId)
-//                .seq(seq)
-//                .msgId(msgId)
-//                .senderId(senderId)
-//                .senderName(senderName)
-//                .type("reservation")
-//                .reservation(card)      // ⬅⬅⬅ 카드 탑재
-//                .attachments(null)
-//                .text(null)             // 텍스트는 사용 안 함
-//                .sentAt(now)
-//                .deleted(false)
-//                .build();
-//
-//        Message saved;
-//        try {
-//            saved = messageRepo.save(toSave);
-//        } catch (DuplicateKeyException e) {
-//            return messageRepo.findByConvIdAndMsgId(convId, msgId).orElseThrow();
-//        }
-//
-//        // 6) lastMessage + inbox 갱신
-//        String preview = makeReservationPreview(card);
-//        LastMessage last = LastMessage.builder()
-//                .messageId(saved.getMsgId())
-//                .senderId(senderId)
-//                .type("reservation")
-//                .preview(preview)
-//                .sentAt(now)
-//                .build();
-//
-//        conversationService.updateOnNewMessage(convId, last, seq);
-//
-//        long peer = conversationService.peerIdOf(convId, senderId);
-//        inboxService.onNewMessage(senderId, peer, convId, last, now, senderId);
-//        inboxService.onNewMessage(peer, senderId, convId, last, now, senderId);
-//
-//        return saved;
-//    }
+        var duplicated = messageRepo.findByConvIdAndMsgId(convId, msgId);
+        if (duplicated.isPresent()) return duplicated.get();
+
+        // convId 안전 검증
+        String expected = conversationService.makeConvId(payload.dropperId(), payload.keeperId());
+        if (!expected.equals(convId)) {
+            throw new IllegalArgumentException("reservation parties != conversation");
+        }
+
+        long seq = redisSeq.nextMessageSeq(convId);
+        Instant now = Instant.now();
+
+        var card = ReservationCard.builder()
+                .reservationId(payload.reservationId())
+                .lockerId(payload.lockerId())
+                .lockerName(payload.lockerName())
+                .address(payload.address())
+                .startTime(payload.startTime())
+                .endTime(payload.endTime())
+                .category(payload.category())
+                .pickupMemo(payload.pickupMemo())
+                .imgUrl(payload.imgUrl())
+                .status(String.valueOf(payload.status()))
+                .canApprove(payload.canApprove())
+                .build();
+
+        var toSave = Message.builder()
+                .convId(convId).seq(seq).msgId(msgId)
+                .senderId(senderId).senderName(senderName)
+                .type("reservation")
+                .reservation(card)
+                .sentAt(now).deleted(false)
+                .build();
+
+        Message saved;
+        try { saved = messageRepo.save(toSave); }
+        catch (DuplicateKeyException e) {
+            return messageRepo.findByConvIdAndMsgId(convId, msgId).orElseThrow();
+        }
+
+        LastMessage last = LastMessage.builder()
+                .messageId(saved.getMsgId())
+                .senderId(senderId)
+                .type("reservation")
+                .preview(makeReservationPreview(card))
+                .sentAt(now)
+                .build();
+
+        conversationService.updateOnNewMessage(convId, last, seq);
+        long peer = conversationService.peerIdOf(convId, senderId);
+        inboxService.onNewMessage(senderId, peer, convId, last, now, senderId);
+        inboxService.onNewMessage(peer, senderId, convId, last, now, senderId);
+
+        return saved;
+    }
+
+    // 예약 승인/거절 결정
+    @Override
+    public Message decideReservation(String convId, long actorId, Long reservationId, boolean approve, String reason) {
+        conversationService.assertMember(convId, actorId);
+
+        var result = reservationApi.decide(
+                new ReservationDecisionCommand(reservationId, actorId, approve, reason)
+        );
+
+        long seq = redisSeq.nextMessageSeq(convId);
+        Instant now = Instant.now();
+
+        var text = switch (result.newStatus()) {
+            case CONFIRMED -> "예약을 승인했어요.";
+            case CANCELLED, REJECTED -> "예약을 거절했어요.";
+            default -> "예약 상태가 변경되었어요.";
+        };
+
+        var msg = Message.builder()
+                .convId(convId).seq(seq)
+                .msgId("decision-" + reservationId + "-" + now.toEpochMilli())
+                .senderId(actorId).senderName("system")
+                .type("system").text(text)
+                .sentAt(now).deleted(false)
+                .build();
+
+        var saved = messageRepo.save(msg);
+
+        LastMessage last = LastMessage.builder()
+                .messageId(saved.getMsgId()).senderId(actorId)
+                .type("system").preview(text).sentAt(now).build();
+        conversationService.updateOnNewMessage(convId, last, seq);
+
+        long peer = conversationService.peerIdOf(convId, actorId);
+        inboxService.onNewMessage(actorId, peer, convId, last, now, actorId);
+        inboxService.onNewMessage(peer, actorId, convId, last, now, actorId);
+
+        return saved;
+    }
 
     @Override
     public Message sendText(String convId, long senderId, String senderName, String text, String msgId) {

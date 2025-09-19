@@ -1,8 +1,12 @@
 package com.airbng.chat.controller;
 
+import com.airbng.api.consumer.ReservationApi;
+import com.airbng.api.consumer.dto.view.ReservationCardPayload;
 import com.airbng.chat.domain.Attachment;
 import com.airbng.chat.domain.Message;
+import com.airbng.chat.dto.chat.DecideReservationRequest;
 import com.airbng.chat.dto.chat.MessageDto;
+import com.airbng.chat.dto.chat.SendReservationRequest;
 import com.airbng.chat.dto.chat.SendTextRequest;
 import com.airbng.chat.repository.AttachmentRepository;
 import com.airbng.chat.service.ConversationService;
@@ -29,6 +33,7 @@ public class MessageController {
 
     private final MessageService messageService;
     private final ConversationService conversationService;
+    private final ReservationApi reservationApi;
 
     // REST로 보낸 후에도 방 구독자에게 실시간 반영하려면 주입해서 사용
     private final SimpMessagingTemplate messagingTemplate;
@@ -81,6 +86,46 @@ public class MessageController {
             // 그대로 DTO만 내보기
              messagingTemplate.convertAndSend("/topic/conversations." + convId, dto);
         }
+        return new BaseResponse<>(dto);
+    }
+
+    @PostMapping("/reservation")
+    @PreAuthorize("hasAnyAuthority('USER')")
+    public BaseResponse<MessageDto> sendReservation(@PathVariable String convId,
+                                                    @Valid @RequestBody SendReservationRequest req,
+                                                    Authentication auth) {
+        long me   = ((AirbngPrincipal) auth.getPrincipal()).getId();
+        String name = ((AirbngPrincipal) auth.getPrincipal()).getNickname();
+
+        // 1) 카드 페이로드 조회(consumer 내부 API 호출)
+        ReservationCardPayload payload = reservationApi.getCardPayload(req.reservationId());
+        if (payload == null) {
+            throw new IllegalArgumentException("Reservation not found: " + req.reservationId());
+        }
+
+        // 2) 안전하게 대화방 구성원이 맞는지 검증(옵션, 서비스에서 해도 OK)
+        String expected = conversationService.makeConvId(payload.dropperId(), payload.keeperId());
+        if (!expected.equals(convId)) {
+            throw new IllegalArgumentException("reservation parties != conversation");
+        }
+
+        // 3) 카드 메시지 저장/브로드캐스트
+        var saved = messageService.sendReservationCard(convId, me, name, payload, req.msgId());
+        var dto   = MessageDto.from(saved, this::sign, this::findKey);
+        messagingTemplate.convertAndSend("/topic/conversations." + convId, dto);
+        return new BaseResponse<>(dto);
+    }
+
+    @PostMapping("/reservation/{reservationId}/decision")
+    @PreAuthorize("hasAnyAuthority('USER')")
+    public BaseResponse<MessageDto> decideReservation(@PathVariable String convId,
+                                                      @PathVariable Long reservationId,
+                                                      @Valid @RequestBody DecideReservationRequest req,
+                                                      Authentication auth) {
+        long me = ((AirbngPrincipal) auth.getPrincipal()).getId();
+        var saved = messageService.decideReservation(convId, me, reservationId, req.approve(), req.reason());
+        var dto = MessageDto.from(saved, this::sign, this::findKey);
+        messagingTemplate.convertAndSend("/topic/conversations." + convId, dto);
         return new BaseResponse<>(dto);
     }
 
