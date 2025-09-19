@@ -6,5 +6,5 @@ import lombok.Getter;
 @Getter
 public class WalletWithdrawRequest {
     @NotNull
-    long accountId;
+    Long accountId;
 }

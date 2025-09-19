@@ -102,12 +102,13 @@ public class WalletServiceImpl implements WalletService {
                 .orElseThrow(() -> new WalletException(INVALID_WALLET));
 
         BigDecimal balance = wallet.getBalanceAvailable();
+        Account account = accountRepository.findForUpdate(req.getAccountId(), wallet.getWalletId())
+                .orElseThrow(() -> new AccountException(WALLET_ACCOUNT_MISMATCH));
+
         if (balance.signum() <= 0) {
             throw new WalletException(INSUFFICIENT_BALANCE);
         }
-
-        Account account = accountRepository.findForUpdate(req.getAccountId(), wallet.getWalletId())
-                .orElseThrow(() -> new AccountException(WALLET_ACCOUNT_MISMATCH));
+        
 
         wallet.subtractBalanceAvailable(balance);
         account.updateBalance(balance);
