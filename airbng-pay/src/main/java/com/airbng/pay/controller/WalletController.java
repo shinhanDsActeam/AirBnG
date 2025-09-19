@@ -5,6 +5,7 @@ import com.airbng.pay.dto.*;
 import com.airbng.pay.service.WalletService;
 import com.airbng.platform.common.response.BaseResponse;
 import com.airbng.platform.security.principal.AirbngPrincipal;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -43,7 +44,7 @@ public class WalletController {
     @PreAuthorize("hasAnyAuthority('USER')")
     public BaseResponse<String> topup(@AuthenticationPrincipal AirbngPrincipal principal,
                                                    @RequestHeader("Idempotency-Key") String idempotencyKey,
-                                                   @RequestBody WalletTopupRequest req) {
+                                                   @RequestBody @Valid WalletTopupRequest req) {
         walletService.topup(principal, idempotencyKey, req);
         return new BaseResponse<>(SUCCESS);
     }
