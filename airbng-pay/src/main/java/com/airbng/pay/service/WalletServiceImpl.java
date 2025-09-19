@@ -72,7 +72,7 @@ public class WalletServiceImpl implements WalletService {
         }
 
         if (account.getBalance().compareTo(balance) < 0) {
-            throw new WalletException(INSUFFICIENT_BALANCE);
+            throw new AccountException(INSUFFICIENT_BALANCE_ACCOUNT);
         }
 
         account.updateBalance(balance.negate());
