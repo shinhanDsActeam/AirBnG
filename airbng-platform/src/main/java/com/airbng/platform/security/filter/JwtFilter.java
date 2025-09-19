@@ -1,6 +1,7 @@
 package com.airbng.platform.security.filter;
 
 import com.airbng.platform.common.response.status.BaseResponseStatus;
+import com.airbng.platform.security.handler.CustomAuthenticationEntryPoint;
 import com.airbng.platform.security.util.JwtUtil;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
@@ -13,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -23,6 +25,7 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.function.Function;
 
+import static com.airbng.platform.common.response.status.BaseResponseStatus.*;
 import static com.airbng.platform.security.util.JwtUtil.*;
 
 @Slf4j
@@ -31,6 +34,7 @@ import static com.airbng.platform.security.util.JwtUtil.*;
 public class JwtFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
+    private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
@@ -54,16 +58,16 @@ public class JwtFilter extends OncePerRequestFilter {
 
         } catch (MalformedJwtException e) {
             log.error("[JWT 필터] 토큰 검증 실패 : 잘못된 토큰 형식");
-            request.setAttribute("JWT_ERROR_CODE", BaseResponseStatus.INVALID_TOKEN);
-            throw new MalformedJwtException("잘못된 토큰 형식");
+            handleAuthError(request, response,INVALID_TOKEN, "invalid_token");
+            return;
         } catch (ExpiredJwtException e) {
             log.error("[JWT 필터] 토큰 검증 실패 : 만료된 토큰");
-            request.setAttribute("JWT_ERROR_CODE",  BaseResponseStatus.EXPIRED_TOKEN);
-            throw new ExpiredJwtException(null, null, "만료된 토큰");
+            handleAuthError(request,response, EXPIRED_TOKEN, "expired_token");
+            return;
         } catch (SignatureException e) {
             log.error("[JWT 필터] 토큰 검증 실패 : 잘못된 서명");
-            request.setAttribute("JWT_ERROR_CODE", BaseResponseStatus.INVALID_SIGNATURE);
-            throw new SignatureException("잘못된 서명");
+            handleAuthError(request,response, INVALID_SIGNATURE, "invalid_signature");
+            return;
         }
         filterChain.doFilter(request, response);
     }
@@ -95,6 +99,15 @@ public class JwtFilter extends OncePerRequestFilter {
         UserDetails userDetails = factory.apply(claims);
         SecurityContextHolder.getContext().setAuthentication(
             new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities())
+        );
+    }
+
+    private void handleAuthError(HttpServletRequest req, HttpServletResponse res,
+                                 BaseResponseStatus status, String reason) throws IOException, ServletException {
+        SecurityContextHolder.clearContext();
+        req.setAttribute("JWT_ERROR_STATUS", status);
+        customAuthenticationEntryPoint.commence(
+                req,res,new InsufficientAuthenticationException(reason)
         );
     }
 }
