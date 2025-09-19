@@ -23,11 +23,10 @@ import java.util.List;
 import java.util.UUID;
 
 import static com.airbng.common.BusinessIds.ADMIN_MEMBER_ID;
+import static com.airbng.common.base.BaseStatus.ACTIVE;
 import static com.airbng.pay.domain.WalletTxRole.DEBIT;
 import static com.airbng.pay.domain.WalletTxType.PAYMENT;
 import static com.airbng.platform.common.response.status.BaseResponseStatus.*;
-
-import static com.airbng.common.base.BaseStatus.ACTIVE;
 
 @Service
 @Slf4j

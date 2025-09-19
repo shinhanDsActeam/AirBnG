@@ -1,6 +1,5 @@
 package com.airbng.pay.dto;
 
-import com.airbng.common.base.Available;
 import com.airbng.common.base.BaseStatus;
 import com.airbng.pay.domain.Account;
 import lombok.Builder;
@@ -20,7 +19,7 @@ public class AccountPreviewResult {
     private BigDecimal  balance;
     private String holderName;
     private boolean isPrimary;
-    private BaseStatus status;
+    private BaseStatus baseStatus;
 
     public static AccountPreviewResult from(Account account) {
         return AccountPreviewResult.builder()
@@ -30,7 +29,7 @@ public class AccountPreviewResult {
                 .balance(account.getBalance())
                 .holderName(account.getHolderName())
                 .isPrimary(account.getIsPrimary())
-                .status(account.getBaseStatus())
+                .baseStatus(account.getBaseStatus())
                 .build();
     }
 }
