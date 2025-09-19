@@ -8,6 +8,7 @@ import com.airbng.consumer.domain.jimtype.ReservationJimType;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -56,6 +57,12 @@ public class Reservation extends BaseTime {
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "locker_id", nullable = false)
     private Locker locker;
+
+    @Column(nullable = false, precision = 19, scale = 2)
+    private BigDecimal amount = BigDecimal.ZERO;
+
+    @Column(nullable = false, precision = 19, scale = 2)
+    private BigDecimal fee = BigDecimal.ZERO;
 
     @Column(nullable = false)
     private Long paymentId;

@@ -1,6 +1,5 @@
 package com.airbng.pay.dto;
 
-import com.airbng.common.base.Available;
 import com.airbng.common.base.BaseStatus;
 import com.airbng.pay.domain.Account;
 import lombok.Builder;

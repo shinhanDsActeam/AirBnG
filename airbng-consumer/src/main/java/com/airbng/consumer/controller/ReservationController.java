@@ -6,19 +6,20 @@ import com.airbng.consumer.domain.base.ReservationState;
 import com.airbng.consumer.domain.base.MemberRole;
 import com.airbng.consumer.dto.reservation.*;
 import com.airbng.consumer.service.ReservationService;
+import com.airbng.platform.security.principal.AirbngPrincipal;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import static com.airbng.platform.common.response.status.BaseResponseStatus.NO_RESERVATION_CONTNET;
-import static com.airbng.platform.common.response.status.BaseResponseStatus.SUCCESS;
+import static com.airbng.platform.common.response.status.BaseResponseStatus.*;
 
 @RestController
 @RequestMapping("/reservations")
@@ -55,11 +56,13 @@ public class ReservationController {
     // 예약 등록
     @PostMapping
     @PreAuthorize("hasAnyAuthority('USER')")
-    public BaseResponse<BaseStatus> insertReservation(@RequestBody @Valid ReservationInsertRequest request) {
-//        BaseStatus status = reservationService.insertReservation(request);
-
+    public BaseResponse<ReservationInsertResponse> insertReservation(
+            @RequestHeader(value = "Idempotency-Key") String idemKey,
+            @RequestBody @Valid ReservationInsertRequest request,
+            @AuthenticationPrincipal AirbngPrincipal principal) {
         return new BaseResponse<>(
-                reservationService.insertReservation(request)
+                CREATED_RESERVATION,
+                reservationService.insertReservation(idemKey, request, principal)
         );
     }
 

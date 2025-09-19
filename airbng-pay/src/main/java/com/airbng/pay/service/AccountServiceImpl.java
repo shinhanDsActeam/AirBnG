@@ -38,8 +38,8 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public void register(AccountRegisterRequest req, AirbngPrincipal user) {
         long memberId = user.getId();
-        if (!walletRepository.existsByMemberId(memberId)) throw new WalletException(INVALID_WALLET);
-        Wallet wallet = walletRepository.findByMemberId(memberId);
+        Wallet wallet = walletRepository.findByMemberId(memberId)
+                .orElseThrow(() -> new WalletException(INVALID_WALLET));
         if (!bankInfoRepository.existsByBankCode(req.getBankCode())) throw new BankInfoException(UNSUPPORTED_BANK);
         BankInfo bankInfo = bankInfoRepository.findByBankCode((req.getBankCode()));
 
@@ -73,8 +73,8 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public AccountCheckResponse checkAccount(AirbngPrincipal principal) {
         long memberId = principal.getId();
-        if (!walletRepository.existsByMemberId(memberId)) throw new WalletException(INVALID_WALLET);
-        Wallet wallet = walletRepository.findByMemberId(memberId);
+        Wallet wallet = walletRepository.findByMemberId(memberId)
+                .orElseThrow(() -> new WalletException(INVALID_WALLET));
         List<Account> accounts =
                 accountRepository.findAllByWalletWalletIdOrderByIsPrimaryDescAccountIdAsc(wallet.getWalletId());
         return AccountCheckResponse.from(wallet, accounts);
