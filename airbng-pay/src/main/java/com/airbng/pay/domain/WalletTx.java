@@ -39,6 +39,6 @@ public class WalletTx extends BaseTime {
     @Column(columnDefinition = "BINARY(16)", nullable = false, unique = true)
     private UUID walletIdemKey;
 
-    @Column(nullable = false)
+    @Column(nullable = false, precision = 19, scale = 2)
     private BigDecimal amount; // 사용 금액
 }
