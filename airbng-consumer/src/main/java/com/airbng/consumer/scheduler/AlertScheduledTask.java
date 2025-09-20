@@ -135,7 +135,7 @@ public class AlertScheduledTask {
                 .nickName(memberName)
                 .type(NotificationType.LOCKER_APPROVED)
                 .message("보관소 [" + lockerName + "]가 승인되었습니다.")
-                .sendTime(LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME))
+                .sendTime(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
                 .build();
 
         sseService.sendMessage(memberId, dto);
@@ -148,7 +148,7 @@ public class AlertScheduledTask {
                 .nickName(memberName)
                 .type(NotificationType.LOCKER_REJECTED)
                 .message("보관소 [" + lockerName + "]가 반려되었습니다.\n사유: " + reason)
-                .sendTime(LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME))
+                .sendTime(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
                 .build();
 
         sseService.sendMessage(memberId, dto);
