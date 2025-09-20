@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 import static com.airbng.platform.common.response.status.BaseResponseStatus.NOT_FOUND_PERIOD_SALES;
@@ -26,12 +27,14 @@ public class SalesServiceImpl implements SalesService {
 
     @Transactional(readOnly = true)
     @Override
-    public Optional<PeriodSalesResponse> getPeriodSales(LocalDateTime startDate, LocalDateTime endDate) {
+    public List<PeriodSalesResponse> getPeriodSales(LocalDateTime startDate, LocalDateTime endDate) {
         if (startDate.isAfter(LocalDateTime.now())) throw new SalesException(NOT_FOUND_PERIOD_SALES);
-        Settlement settlement = settlementRepository.findByPeriodSales(startDate, endDate)
-                .orElseThrow(() -> new SalesException(NOT_FOUND_PERIOD_SALES));
+        List<Settlement> settlement = settlementRepository.findByPeriodSales(startDate, endDate);
+        if (settlement == null || settlement.isEmpty()) throw new SalesException(NOT_FOUND_PERIOD_SALES);
 
-        return Optional.of(PeriodSalesResponse.from(settlement));
+        return settlement.stream()
+                .map(PeriodSalesResponse::from)
+                .toList();
     }
 
     @Transactional(readOnly = true)

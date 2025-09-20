@@ -12,27 +12,28 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static com.airbng.platform.common.response.status.BaseResponseStatus.INVALID_DATE;
 
 @RestController
-@RequestMapping("/admin")
+@RequestMapping("/admin/sales")
 @RequiredArgsConstructor
 public class SalesController {
 
     private final SalesService salesService;
 
     @PreAuthorize("hasAnyAuthority('ADMIN')")
-    @GetMapping("/sales/period")
-    public BaseResponse<PeriodSalesResponse> findByPeriodSales(LocalDateTime startDate, LocalDateTime endDate) {
-        PeriodSalesResponse result = salesService.getPeriodSales(startDate, endDate)
-                .orElseThrow(() -> new SalesException(INVALID_DATE));
+    @GetMapping("/period")
+    public BaseResponse<List<PeriodSalesResponse>> findByPeriodSales(LocalDateTime startDate, LocalDateTime endDate) {
+        List<PeriodSalesResponse> result = salesService.getPeriodSales(startDate, endDate);
+        if (result.isEmpty()) throw new SalesException(INVALID_DATE);
 
         return new BaseResponse<>(result);
     }
 
     @PreAuthorize("hasAnyAuthority('ADMIN')")
-    @GetMapping("/sales/storage")
+    @GetMapping("/storage")
     public BaseResponse<StorageSalesResponse> findByStorageSales(Long lockerId, LocalDateTime startDate, LocalDateTime endDate) {
         StorageSalesResponse result = salesService.getStorageSales(lockerId, startDate, endDate)
                 .orElseThrow(() -> new SalesException(INVALID_DATE));
