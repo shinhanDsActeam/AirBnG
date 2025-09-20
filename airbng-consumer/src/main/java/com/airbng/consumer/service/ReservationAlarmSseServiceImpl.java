@@ -105,6 +105,7 @@ public class ReservationAlarmSseServiceImpl implements ReservationAlarmSseServic
                         log.warn("SSE 메시지 전송 실패: memberId={}, error={}", memberId, e.getMessage());
                         deadEmitters.add(emitter);
                         emitter.completeWithError(e);
+                        removeEmitter(memberId, emitter);
                     }
                 }
                 // 연결 끊긴 emitter 정리

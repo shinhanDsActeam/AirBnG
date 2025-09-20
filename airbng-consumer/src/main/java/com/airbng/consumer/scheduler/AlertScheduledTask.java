@@ -15,6 +15,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import static com.airbng.platform.common.response.status.BaseResponseStatus.NOT_FOUND_EXPIRED_RESERVATION;
@@ -134,7 +135,7 @@ public class AlertScheduledTask {
                 .nickName(memberName)
                 .type(NotificationType.LOCKER_APPROVED)
                 .message("보관소 [" + lockerName + "]가 승인되었습니다.")
-                .sendTime(String.valueOf(LocalDateTime.now()))
+                .sendTime(LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME))
                 .build();
 
         sseService.sendMessage(memberId, dto);
@@ -147,7 +148,7 @@ public class AlertScheduledTask {
                 .nickName(memberName)
                 .type(NotificationType.LOCKER_REJECTED)
                 .message("보관소 [" + lockerName + "]가 반려되었습니다.\n사유: " + reason)
-                .sendTime(String.valueOf(LocalDateTime.now()))
+                .sendTime(LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME))
                 .build();
 
         sseService.sendMessage(memberId, dto);
