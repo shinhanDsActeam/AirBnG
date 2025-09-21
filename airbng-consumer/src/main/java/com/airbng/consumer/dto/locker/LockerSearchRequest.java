@@ -12,5 +12,5 @@ import java.util.List;
 public class LockerSearchRequest {
     private String address;
     private String lockerName;
-    private List<Long> jimTypeId;  // 서버에서 조회 후 채움
+    private List<Long> jimTypeIds;  // 서버에서 조회 후 채움
 }

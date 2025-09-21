@@ -63,12 +63,13 @@ public class Locker extends BaseTime {
     @Builder.Default
     private Set<LockerJimType> lockerJimTypes = new HashSet<>();
 
-    @OneToMany(mappedBy = "locker", cascade = CascadeType.REMOVE, orphanRemoval = true)
-    private Set<Zzim> zzims;
-
     @Column(nullable = false)
     @ColumnDefault("0")
     private Long reservationCount;
+
+    @Column(nullable = false)
+    @ColumnDefault("0")
+    private Long zzimCount;
 
     public boolean validateLockerJimtype(JimType jimType){
         return lockerJimTypes.stream()
@@ -79,4 +80,15 @@ public class Locker extends BaseTime {
     public void updateIsAvailable(){
         isAvailable = isAvailable.equals(Available.YES)?Available.NO:Available.YES;
     }
+
+    public void increaseZzimCount(){
+        this.zzimCount += 1;
+    }
+
+    public void decreaseZzimCount(){
+        if(this.zzimCount > 0){
+            this.zzimCount -= 1;
+        }
+    }
+
 }
