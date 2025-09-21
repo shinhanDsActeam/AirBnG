@@ -90,12 +90,16 @@ public class LockerServiceImpl implements LockerService {
     public LockerTop5Response findTop5Locker() {
         // local cache 확인
         LockerTop5Response cached = localCache.getIfPresent("lockerTop5");
-        if (cached != null) return cached;
+        if (cached != null) {
+            log.info("Local cache hit for lockerTop5 : {}", cached);
+            return cached;
+        }
 
         // Redis 확인
         LockerTop5Response redisValue = top5RedisTemplate.opsForValue().get("lockerTop5");
         if (redisValue != null && redisValue.getLockers() != null) {
             localCache.put("lockerTop5", redisValue);
+            log.info("Redis hit for lockerTop5 : {}", redisValue);
             return redisValue;
         }
 
@@ -103,6 +107,8 @@ public class LockerServiceImpl implements LockerService {
         var response = LockerTop5Response.from(lockers);
 
         top5RedisTemplate.opsForValue().set("lockerTop5", response, 1, TimeUnit.HOURS);
+        log.info("Local cache 채우기 - lockerTop5 : {}", response);
+
         localCache.put("lockerTop5", response);
         top5RedisTemplate.convertAndSend("lockerTop5Updated", "invalidate");
         return response;
