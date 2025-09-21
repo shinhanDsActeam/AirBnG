@@ -60,7 +60,7 @@ public class LockerServiceImpl implements LockerService {
         List<Locker> lockers = lockerRepository.findAllLockerBySearch(
                 request.getAddress(),
                 request.getLockerName(),
-                request.getJimTypeId());
+                request.getJimTypeIds());
 
         if (lockers.isEmpty()) {
             throw new LockerException(NOT_FOUND_LOCKER);
