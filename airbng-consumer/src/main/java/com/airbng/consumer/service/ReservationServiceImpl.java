@@ -119,40 +119,45 @@ public class ReservationServiceImpl implements ReservationService {
 
     private final Cache<Long, ReentrantLock> reservationLocks;
 
-
     @Override
     @Transactional
-    public ReservationCancelResponse updateReservationState(Long reservationId, Long memberId) {
+    public ReservationCancelResponse cancelReservation(Long reservationId, Long memberId) {
+        log.info("[cancelReservation] 요청 (reservationId: {}) <pending -> cancel> by Member (ID: {})", reservationId, memberId);
 
-        /** 락 만듬 */
+        /** 락 */
         ReentrantLock lock = reservationLocks.get(reservationId, key -> new ReentrantLock());
         try {
             /** 락 걸기 */
             lock.lock();
 
             /** 맴버 존재 유무 파악 */
-            if (!memberRepository.existsByMemberId(memberId)) throw new MemberException(NOT_FOUND_MEMBER);
+            Member member = memberRepository.findById(memberId)
+                    .orElseThrow(() -> new MemberException(NOT_FOUND_MEMBER));
 
             /** 요청 예약건의 존재여부 파악 */
             Reservation reservation = reservationRepository.findByReservationId(reservationId)
                     .orElseThrow(() -> new ReservationException(NOT_FOUND_RESERVATION));
 
-            /** 예약건의 주인이 맞는지 파악 */
-            if (!reservation.getDropper().getMemberId().equals(memberId)) throw new ReservationException(NOT_DROPPER_OF_RESERVATION);
+            /** 예약건의 dropper가 맞는지 파악 */
+            if (!reservation.getDropper().getMemberId().equals(member.getMemberId()))
+                throw new ReservationException(NOT_DROPPER_OF_RESERVATION);
+
+            if (reservation.getState() == ReservationState.CANCELLED) {
+                // 멱등하게 처리
+                return ReservationCancelResponse.of(reservation,
+                        ChargeType.from(reservation.getStartTime()).discountAmount(), ReservationState.CANCELLED);
+            }
 
             ChargeType chargeType = ChargeType.from(reservation.getStartTime());
-            ReservationState state = reservation.getState();
+            ReservationState newState = ReservationState.CANCELLED;
             /** 취소, 완료상태는 상태 변경 불가 */
-            state.isAvailableUpdate(state);
+            ReservationState.canUpdate(MemberRole.DROPPER, reservation.getState(), newState);
             /** 삭제 상태는 상태 변경 불가 */
             reservation.isAvailableUpdateState();
-            /** 더티 체킹으로 대체 */
-            reservation.updateState(ReservationState.CANCELLED);
+            /** 더티 체킹 */
+            reservation.updateState(newState);
 
-            /** 예약 거절 알림 발송 */
-            alertScheduledTask.sendToOne(reservation.getDropper().getMemberId(),
-                    reservationId, reservation.getDropper().getNickname(),
-                    "DROPPER", NotificationType.CANCEL_NOTICE, "예약이 취소되었습니다.");
+            log.info("[cancelReservation] 완료 - Reservation (ID: {}) state changed to {} by Dropper (ID: {})", reservationId, newState, memberId);
 
             return ReservationCancelResponse.of(reservation,
                     chargeType.discountAmount(), ReservationState.CANCELLED);
