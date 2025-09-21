@@ -2,30 +2,27 @@ package com.airbng.consumer.service;
 
 import com.airbng.api.pay.PayApi;
 import com.airbng.api.pay.dto.command.MakePaymentRequest;
+import com.airbng.common.base.BaseStatus;
 import com.airbng.consumer.domain.Locker;
 import com.airbng.consumer.domain.Member;
 import com.airbng.consumer.domain.Reservation;
 import com.airbng.consumer.domain.base.*;
+import com.airbng.consumer.domain.jimtype.JimType;
+import com.airbng.consumer.domain.jimtype.ReservationJimType;
 import com.airbng.consumer.dto.reservation.*;
-import com.airbng.consumer.mappers.ReservationMapper;
-import com.airbng.consumer.repository.*;
 import com.airbng.consumer.exception.JimTypeException;
 import com.airbng.consumer.exception.LockerException;
 import com.airbng.consumer.exception.MemberException;
 import com.airbng.consumer.exception.ReservationException;
-import com.airbng.platform.common.response.status.BaseResponseStatus;
-import com.airbng.consumer.domain.jimtype.JimType;
-import com.airbng.consumer.domain.jimtype.ReservationJimType;
+import com.airbng.consumer.repository.*;
 import com.airbng.consumer.scheduler.AlertScheduledTask;
+import com.airbng.platform.common.response.status.BaseResponseStatus;
 import com.airbng.platform.security.principal.AirbngPrincipal;
 import com.github.benmanes.caffeine.cache.Cache;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.checkerframework.checker.units.qual.A;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import com.airbng.common.base.BaseStatus;
-
 
 import java.time.LocalDateTime;
 import java.util.Collections;
@@ -222,36 +219,85 @@ public class ReservationServiceImpl implements ReservationService {
         }
     }
 
+    @Override
+    @Transactional
+    public ReservationCompleteResponse completeReservation(Long reservationId, Long memberId) {
+        log.info("[completeReservation] 요청 (reservationId: {}) by Member (ID: {})", reservationId, memberId);
+
+        ReentrantLock lock = reservationLocks.get(reservationId, key -> new ReentrantLock());
+        try {
+            /** 락 걸기 */
+            lock.lock();
+
+            /** 맴버 존재 유무 파악 */
+            Member member = memberRepository.findById(memberId)
+                    .orElseThrow(() -> new MemberException(NOT_FOUND_MEMBER));
+
+            /** 요청 예약건의 존재여부 파악 */
+            Reservation reservation = reservationRepository.findByReservationId(reservationId)
+                    .orElseThrow(() -> new ReservationException(NOT_FOUND_RESERVATION));
+
+            /** 삭제 상태는 상태 변경 불가 */
+            reservation.isAvailableUpdateState();
+
+            // 예약건의 참여자인지 파악
+            MemberRole role;
+            if (reservation.getDropper().getMemberId().equals(member.getMemberId())) {
+                role = MemberRole.DROPPER;
+            } else if (reservation.getKeeper().getMemberId().equals(member.getMemberId())) {
+                role = MemberRole.KEEPER;
             } else {
-                throw new ReservationException(CANNOT_UPDATE_STATE);
+                throw new ReservationException(NOT_PARTICIPANTS_OF_RESERVATION);
             }
-            /** 더티 체킹으로 대체 */
+
+            // 이미 완료되었는지 확인
+            if (reservation.getState() == ReservationState.COMPLETED ||
+                    (role == MemberRole.DROPPER && reservation.getState() == ReservationState.COMPLETING_DROPPER_ONLY) ||
+                    (role == MemberRole.KEEPER && reservation.getState() == ReservationState.COMPLETING_KEEPER_ONLY)) {
+                // 멱등하게 처리
+                return ReservationCompleteResponse.from(reservation);
+            }
+
+            /** 예약건 상태변경 */
+            ReservationState newState;
+            if (role == MemberRole.DROPPER) {
+                newState = (reservation.getState() == ReservationState.COMPLETING_KEEPER_ONLY)
+                        ? ReservationState.COMPLETED
+                        : ReservationState.COMPLETING_DROPPER_ONLY;
+                ReservationState.canUpdate(MemberRole.DROPPER, reservation.getState(), newState);
+            } else {
+                newState = (reservation.getState() == ReservationState.COMPLETING_DROPPER_ONLY)
+                        ? ReservationState.COMPLETED
+                        : ReservationState.COMPLETING_KEEPER_ONLY;
+                ReservationState.canUpdate(MemberRole.KEEPER, reservation.getState(), newState);
+            }
+            /** 더티 체킹 */
             reservation.updateState(newState);
 
-
-            if (reservation.getDropper() != null) {
-                NotificationType notificationType = newState == ReservationState.CONFIRMED ?
-                        NotificationType.STATE_CHANGE : NotificationType.CANCEL_NOTICE;
-                log.info("알림 발송: memberId={}, reservationId={}, nickname={}, role=DROPPER, type={}, message={}",
-                        reservation.getDropper().getMemberId(), reservationId,
-                        reservation.getDropper().getNickname(), notificationType, notificationMessage);
-                ;
-
-                alertScheduledTask.sendToOne(
-                        reservation.getDropper().getMemberId(),
-                        reservationId,
-                        reservation.getDropper().getNickname(),
-                        "DROPPER",
-                        notificationType,
-                        notificationMessage
+            /** 예약 완료 알림 발송 */
+            if (reservation.getState() != ReservationState.COMPLETED) {
+                alertScheduledTask.sendToBoth(ReservationResponse.from(reservation),
+                        NotificationType.COMPLETION_NOTICE,
+                        "상대방이 예약 완료 처리를 하였습니다. 예약을 완료해 주세요.",
+                        "상대방이 예약 완료 처리를 하였습니다. 예약을 완료해 주세요."
+                );
+            } else {
+                alertScheduledTask.sendToBoth(ReservationResponse.from(reservation),
+                        NotificationType.COMPLETION_NOTICE,
+                        "예약이 완료되었습니다. 이용해주셔서 감사합니다.",
+                        "예약이 완료되었습니다. 이용해주셔서 감사합니다."
                 );
             }
 
-            return ReservationConfirmResponse.of(reservation, newState);
+            log.info("[completeReservation] 요청 (reservationId: {}) state changed to {} by Member (ID: {})", reservationId, newState, memberId);
+
+            return ReservationCompleteResponse.from(reservation);
         } finally {
+            /** 무조건 락 해제 */
             lock.unlock();
         }
     }
+
 
     @Override
     public ReservationDetailResponse findReservationDetail(Long reservationId, Long memberId) {
@@ -264,12 +310,13 @@ public class ReservationServiceImpl implements ReservationService {
     @Override
     public ReservationFormResponse getReservationForm(Long lockerId) {
         Locker locker = lockerRepository.findLockerById(lockerId)
-                .orElseThrow(()->new LockerException(NOT_FOUND_LOCKER));
+                .orElseThrow(() -> new LockerException(NOT_FOUND_LOCKER));
 
         return ReservationFormResponse.from(locker);
     }
 
     // 예약 등록
+
     /**
      * 예약 등록
      * 결제 실패 시 - 예약 등록까지 롤백
