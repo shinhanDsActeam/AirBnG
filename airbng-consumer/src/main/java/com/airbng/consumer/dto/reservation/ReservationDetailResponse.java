@@ -16,6 +16,8 @@ public class ReservationDetailResponse {
     private String lockerName;
     private String dropperNickname;
     private String keeperNickname;
+    private Long keeperId;
+    private Long dropperId;
     private String startTime;
     private String endTime;
     private List<String> images;
@@ -28,6 +30,8 @@ public class ReservationDetailResponse {
                 .lockerName(reservation.getLocker().getLockerName())
                 .dropperNickname(reservation.getDropper().getNickname())
                 .keeperNickname(reservation.getKeeper().getNickname())
+                .keeperId(reservation.getKeeper().getMemberId())
+                .dropperId(reservation.getDropper().getMemberId())
                 .startTime(String.valueOf(reservation.getStartTime()))
                 .state(reservation.getState())
                 .endTime(String.valueOf(reservation.getEndTime()))

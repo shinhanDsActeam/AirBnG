@@ -6,5 +6,6 @@ public enum NotificationType {
     REMINDER,       //시간 다가올 때 리마인드
     CANCEL_NOTICE,   //	예약 취소 알림
     LOCKER_APPROVED,
-    LOCKER_REJECTED;
+    LOCKER_REJECTED,
+    COMPLETION_NOTICE; // 예약 완료 알림
 }

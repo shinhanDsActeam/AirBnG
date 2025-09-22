@@ -1,7 +1,6 @@
 package com.airbng.consumer.controller;
 
 import com.airbng.platform.common.response.BaseResponse;
-import com.airbng.common.base.BaseStatus;
 import com.airbng.consumer.domain.base.ReservationState;
 import com.airbng.consumer.domain.base.MemberRole;
 import com.airbng.consumer.dto.reservation.*;
@@ -29,21 +28,34 @@ import static com.airbng.platform.common.response.status.BaseResponseStatus.*;
 public class ReservationController {
     private final ReservationService reservationService;
 
-    //예약 승인 취소
-    @PatchMapping("/{reservation-id}/members/{member-id}/confirm")
+    // 예약 승인 / 거절
+    @PatchMapping("/{reservation-id}/confirm")
     @PreAuthorize("hasAnyAuthority('USER')")
-    public BaseResponse<ReservationConfirmResponse> confirmResponse(
+    public BaseResponse<ReservationConfirmResponse> confirmReservation(
             @PathVariable("reservation-id") @NotNull @Min(1) Long reservationId,
-            @PathVariable("member-id") Long memberId,
-            @RequestParam("approve") String approve) {
-        return new BaseResponse<>(reservationService.confirmReservationState(reservationId, approve, memberId));
+            @RequestParam("approve") boolean approve,
+            @AuthenticationPrincipal AirbngPrincipal principal) {
+        return new BaseResponse<>(reservationService.confirmReservation(reservationId, approve, principal.getId()));
     }
 
-    @PostMapping("/{reservation-id}/members/{member-id}/cancel")
+    // 예약 취소
+    @PatchMapping("/{reservation-id}/cancel")
     @PreAuthorize("hasAnyAuthority('USER')")
-    public BaseResponse<ReservationCancelResponse> updateResponse(@PathVariable("reservation-id") Long reservationId, @PathVariable("member-id") Long memberId) {
-        log.info("ReservationController.updateResponse");
-        return new BaseResponse<>(reservationService.updateReservationState(reservationId, memberId));
+    public BaseResponse<ReservationCancelResponse> cancelReservation(
+            @PathVariable("reservation-id") @NotNull @Min(1) Long reservationId,
+            @AuthenticationPrincipal AirbngPrincipal principal) {
+        log.info("ReservationController.cancelReservation");
+        return new BaseResponse<>(reservationService.cancelReservation(reservationId, principal.getId()));
+    }
+
+    // 예약 완료
+    @PatchMapping("/{reservation-id}/complete")
+    @PreAuthorize("hasAnyAuthority('USER')")
+    public BaseResponse<ReservationCompleteResponse> completedReservation(
+            @PathVariable("reservation-id") @NotNull @Min(1) Long reservationId,
+            @AuthenticationPrincipal AirbngPrincipal principal) {
+        log.info("ReservationController.completedReservation");
+        return new BaseResponse<>(reservationService.completeReservation(reservationId, principal.getId()));
     }
 
     // 예약 폼 받아오기
@@ -69,8 +81,8 @@ public class ReservationController {
     @GetMapping("{reservation-id}/members/{member-id}/detail")
     @PreAuthorize("hasAnyAuthority('USER')")
     public BaseResponse<ReservationDetailResponse> getReservationDetail(
-            @PathVariable("reservation-id")  @NotNull @Min(1) Long reservationId,
-            @PathVariable("member-id") @NotNull @Min(1) Long memberId){
+            @PathVariable("reservation-id") @NotNull @Min(1) Long reservationId,
+            @PathVariable("member-id") @NotNull @Min(1) Long memberId) {
         return new BaseResponse<>(reservationService.findReservationDetail(reservationId, memberId));
     }
 
@@ -86,9 +98,9 @@ public class ReservationController {
     ) {
 
         MemberRole role = isDropper ? MemberRole.DROPPER : MemberRole.KEEPER;
-        ReservationPaging response = reservationService.findAllReservationById(memberId, role, state, nextCursorId, period );
+        ReservationPaging response = reservationService.findAllReservationById(memberId, role, state, nextCursorId, period);
 
-        if(response == null || response.getReservations().isEmpty()){
+        if (response == null || response.getReservations().isEmpty()) {
             return new BaseResponse<>(NO_RESERVATION_CONTNET); // 정상응답하지만 값이 없을때
         }
         return new BaseResponse<>(response); // 값이 있을 때
@@ -96,7 +108,7 @@ public class ReservationController {
 
     @PostMapping("/delete")
     @PreAuthorize("hasAnyAuthority('USER')")
-    public BaseResponse<Void> deleteReservation(Long reservationId){
+    public BaseResponse<Void> deleteReservation(Long reservationId) {
         reservationService.deleteReservationById(reservationId);
         return new BaseResponse<>(SUCCESS);
     }
