@@ -73,7 +73,7 @@ public class Locker extends BaseTime {
     private Long zzimCount;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, columnDefinition = "VARCHAR(10)")
+    @Column(nullable = false)
     private LockerType lockerType;
 
     public boolean validateLockerJimtype(JimType jimType){
