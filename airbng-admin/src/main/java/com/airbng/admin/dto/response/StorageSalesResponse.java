@@ -1,6 +1,7 @@
 package com.airbng.admin.dto.response;
 
-import com.airbng.common.domain.Aggregate;
+import com.airbng.admin.domain.AggregateWithLockerView;
+import com.airbng.common.base.LockerType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -19,16 +20,18 @@ public class StorageSalesResponse {
     private BigDecimal averageSales;
     private BigDecimal totalFee;
     private Long lockerId;
+    private LockerType lockerType;
 
-    public static StorageSalesResponse from(Aggregate aggregate) {
+    public static StorageSalesResponse from(AggregateWithLockerView view) {
         return StorageSalesResponse.builder()
-                .aggregateId(aggregate.getAggregateId())
-                .updatedAt(aggregate.getAggregateDate())
-                .totalSales(aggregate.getTotalSales())
-                .totalCount(aggregate.getTotalCount())
-                .averageSales(aggregate.getAverageSales())
-                .totalFee(aggregate.getTotalFee())
-                .lockerId(aggregate.getLockerId())
+                .aggregateId(view.getAggregateId())
+                .updatedAt(view.getAggregateDate())
+                .totalSales(view.getTotalSales())
+                .totalCount(view.getTotalCount())
+                .averageSales(view.getAverageSales())
+                .totalFee(view.getTotalFee())
+                .lockerId(view.getLockerId())
+                .lockerType(view.getLockerType())
                 .build();
     }
 }
