@@ -32,6 +32,9 @@ public class CustomUserDetailsService implements UserDetailsService {
         // id가 memberId라면 findById로 충분. 아니면 findByMemberId 사용
         Member m = memberRepository.findById(memberId)
                 .orElseThrow(() -> new UsernameNotFoundException("해당 회원이 존재하지 않습니다."));
-        return new CustomUserDetails(m);
+        Image image = imageRepository.findById(m.getProfileImage().getImageId())
+                .orElseThrow(() -> new IllegalArgumentException("해당 회원이 프로필이 존재하지 않습니다."));
+        String profileImageUrl = image.getUrl();
+        return new CustomUserDetails(m, profileImageUrl);
     }
 }

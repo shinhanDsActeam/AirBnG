@@ -36,8 +36,7 @@ public class ReservationInsertRequest {
     @NotNull @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime endTime;   // 회수해갈 시간
 
-    @Size(max = 200, message = "메모는 최대 200자까지 입력 가능합니다.")
-    private String pickupMemo;
+    private final String pickupMemo = "직접 짐 건네주기";
 
     @Valid
     private List<JimTypeCountResult> jimTypeCounts; // 맡길 짐 타입과 개수
