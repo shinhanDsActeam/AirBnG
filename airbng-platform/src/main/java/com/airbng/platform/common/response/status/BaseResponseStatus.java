@@ -4,12 +4,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 
 @RequiredArgsConstructor
-public enum BaseResponseStatus implements ResponseStatus{
+public enum BaseResponseStatus implements ResponseStatus {
 
     /**
      * 1000: 기본 응답 코드
      */
-    SUCCESS(1000,HttpStatus.OK.value(), "요청에 성공하였습니다."),
+    SUCCESS(1000, HttpStatus.OK.value(), "요청에 성공하였습니다."),
     FAILURE(1001, HttpStatus.BAD_REQUEST.value(), "요청에 실패하였습니다."),
     INVALID_FIELD(1002, HttpStatus.BAD_REQUEST.value(), "요청한 값이 유효성 검사 조건을 만족하지 않습니다."),
     INVALID_JSON_FORMAT(1003, HttpStatus.BAD_REQUEST.value(), "요청한 JSON 필드의 데이터 타입이 올바르지 않습니다."),
@@ -24,21 +24,21 @@ public enum BaseResponseStatus implements ResponseStatus{
      */
     SUCCESS_LOGIN(2000, HttpStatus.OK.value(), "로그인에 성공하였습니다."),
     NOT_FOUND_MEMBER(2001, HttpStatus.NOT_FOUND.value(), "존재하지 않는 멤버입니다."),
-    DUPLICATE_EMAIL(2002,HttpStatus.BAD_REQUEST.value(), "중복이메일 사용"),
-    DUPLICATE_NICKNAME(2003,HttpStatus.BAD_REQUEST.value(),"중복닉네임 사용"),
-    INVALID_PASSWORD(2004,HttpStatus.BAD_REQUEST.value(),"비밀번호 형식 오류"),
-    DUPLICATE_PHONE(2005,HttpStatus.BAD_REQUEST.value(),"휴대폰 번호 중복 오류"),
-    INVALID_EMAIL(2006, HttpStatus.BAD_REQUEST.value(),"이메일 형식을 지켜주세요"),
+    DUPLICATE_EMAIL(2002, HttpStatus.BAD_REQUEST.value(), "중복이메일 사용"),
+    DUPLICATE_NICKNAME(2003, HttpStatus.BAD_REQUEST.value(), "중복닉네임 사용"),
+    INVALID_PASSWORD(2004, HttpStatus.BAD_REQUEST.value(), "비밀번호 형식 오류"),
+    DUPLICATE_PHONE(2005, HttpStatus.BAD_REQUEST.value(), "휴대폰 번호 중복 오류"),
+    INVALID_EMAIL(2006, HttpStatus.BAD_REQUEST.value(), "이메일 형식을 지켜주세요"),
     INVALID_MEMBER(2007, HttpStatus.UNAUTHORIZED.value(), "유효하지 않은 멤버입니다."),
     NOT_UPDATE_MEMBER(2008, HttpStatus.NO_CONTENT.value(), "멤버 정보가 변경되지 않았습니다."),
     SUCCESS_LOGOUT(2000, HttpStatus.OK.value(), "로그아웃에 성공하였습니다."),
     FAILED_UPDATE_MEMBER(2009, HttpStatus.UNAUTHORIZED.value(), "정보가 올바르지 않아 수정에 실패하였습니다."),
-    MEMBER_ID_MISMATCH (2010, HttpStatus.UNAUTHORIZED.value(), "멤버가 일치하지 않습니다."),
+    MEMBER_ID_MISMATCH(2010, HttpStatus.UNAUTHORIZED.value(), "멤버가 일치하지 않습니다."),
     /**
      * 3000 락커 관련 코드
      */
-    NOT_FOUND_LOCKER(3001,HttpStatus.BAD_REQUEST.value(), "락커를 찾을 수 없습니다."),
-    NOT_FOUND_LOCKERDETAILS(3002,HttpStatus.BAD_REQUEST.value(), "락커를 찾을 수 없습니다."),
+    NOT_FOUND_LOCKER(3001, HttpStatus.BAD_REQUEST.value(), "락커를 찾을 수 없습니다."),
+    NOT_FOUND_LOCKERDETAILS(3002, HttpStatus.BAD_REQUEST.value(), "락커를 찾을 수 없습니다."),
     MEMBER_ALREADY_HAS_LOCKER(3003, HttpStatus.BAD_REQUEST.value(), "한 멤버당 하나의 보관소만 등록할 수 있습니다."),
     LOCKER_KEEPER_MISMATCH(3004, HttpStatus.BAD_REQUEST.value(), "선택한 보관소의 보관자 정보가 일치하지 않습니다."),
     LOCKER_NOT_AVAILABLE(3005, HttpStatus.LOCKED.value(), "비활성화된 보관소입니다."),
@@ -52,16 +52,19 @@ public enum BaseResponseStatus implements ResponseStatus{
     INVALID_RESERVATION_PARTICIPANTS(4003, HttpStatus.BAD_REQUEST.value(), "예약자와 보관자는 동일할 수 없습니다."),
     INVALID_RESERVATION_TIME(4004, HttpStatus.BAD_REQUEST.value(), "예약 시간은 시작 시간과 종료 시간이 모두 지정되어야 합니다."),
     INVALID_RESERVATION_TIME_ORDER(4005, HttpStatus.BAD_REQUEST.value(), "시작 시간은 종료 시간보다 작아야합니다."),
-    CANNOT_UPDATE_STATE(4006,HttpStatus.BAD_REQUEST.value(), "예약 상태 변경에 실패하였습니다."),
-    NOT_DROPPER_OF_RESERVATION(4007,HttpStatus.BAD_REQUEST.value(), "해당 예약의 짐을 맡긴 사람이 아닙니다."),
-    NOT_KEEPER_OF_RESERVATION(4008,HttpStatus.BAD_REQUEST.value(), "해당 예약의 담당자가 아닙니다."),
+    CANNOT_UPDATE_STATE(4006, HttpStatus.BAD_REQUEST.value(), "예약 상태 변경에 실패하였습니다."),
+    NOT_DROPPER_OF_RESERVATION(4007, HttpStatus.BAD_REQUEST.value(), "해당 예약의 짐을 맡긴 사람이 아닙니다."),
+    NOT_KEEPER_OF_RESERVATION(4008, HttpStatus.BAD_REQUEST.value(), "해당 예약의 담당자가 아닙니다."),
     ALREADY_CANCELLED_RESERVATION(4009, HttpStatus.BAD_REQUEST.value(), "이미 취소된 예약입니다."),
-    NOT_FOUND_EXPIRED_RESERVATION(4010,HttpStatus.NOT_FOUND.value(), "예약 만료 데이터를 조회할 수 없습니다."),
-    NOT_FOUND_REMINDER_RESERVATION(4011,HttpStatus.NOT_FOUND.value(), "곧 종료 예정(30분 전) 예약 데이터를 조회할 수 없습니다."),
-    NOT_FOUND_STATE_CHANGE_RESERVATION(4012,HttpStatus.NOT_FOUND.value(), "상태 변경(CONFIRMED)된 예약 데이터를 조회할 수 없습니다."),
-    NOT_FOUND_CANCEL_NOTICE_RESERVATION(4013,HttpStatus.NOT_FOUND.value(), "상태 변경(CANCELLED)된 예약 데이터를 조회할 수 없습니다."),
+    NOT_FOUND_EXPIRED_RESERVATION(4010, HttpStatus.NOT_FOUND.value(), "예약 만료 데이터를 조회할 수 없습니다."),
+    NOT_FOUND_REMINDER_RESERVATION(4011, HttpStatus.NOT_FOUND.value(), "곧 종료 예정(30분 전) 예약 데이터를 조회할 수 없습니다."),
+    NOT_FOUND_STATE_CHANGE_RESERVATION(4012, HttpStatus.NOT_FOUND.value(), "상태 변경(CONFIRMED)된 예약 데이터를 조회할 수 없습니다."),
+    NOT_FOUND_CANCEL_NOTICE_RESERVATION(4013, HttpStatus.NOT_FOUND.value(), "상태 변경(CANCELLED)된 예약 데이터를 조회할 수 없습니다."),
     FAILED_DELETE_RESERVATION(4014, HttpStatus.BAD_REQUEST.value(), "예약 삭제 실패"),
-    NO_RESERVATION_CONTNET(4015,HttpStatus.NO_CONTENT.value(), "예약 내역이 없습니다."),
+    NO_RESERVATION_CONTNET(4015, HttpStatus.NO_CONTENT.value(), "예약 내역이 없습니다."),
+    NOT_PARTICIPANTS_OF_RESERVATION(4016, HttpStatus.BAD_REQUEST.value(), "해당 예약의 참여자가 아닙니다."),
+    ALREADY_COMPLETED(4017, HttpStatus.BAD_REQUEST.value(), "이미 완료를 누른 예약입니다."),
+
 
     /**
      * 5000 짐 타입 관련 코드
@@ -73,9 +76,9 @@ public enum BaseResponseStatus implements ResponseStatus{
     /**
      * 6000: image
      */
-    UPLOAD_FAILED(6001, HttpStatus.INTERNAL_SERVER_ERROR.value(),"이미지 업로드에 실패하였습니다."),
-    EMPTY_FILE(6002, HttpStatus.BAD_REQUEST.value(),"업로드할 이미지가 없습니다."),
-    INVALID_EXTENSIONS(6003, HttpStatus.UNSUPPORTED_MEDIA_TYPE.value(),"허용되지 않는 파일 확장자입니다."),
+    UPLOAD_FAILED(6001, HttpStatus.INTERNAL_SERVER_ERROR.value(), "이미지 업로드에 실패하였습니다."),
+    EMPTY_FILE(6002, HttpStatus.BAD_REQUEST.value(), "업로드할 이미지가 없습니다."),
+    INVALID_EXTENSIONS(6003, HttpStatus.UNSUPPORTED_MEDIA_TYPE.value(), "허용되지 않는 파일 확장자입니다."),
     EXCEED_IMAGE_COUNT(6004, HttpStatus.PAYLOAD_TOO_LARGE.value(), "이미지 개수가 초과되었습니다. 최대 5개까지 업로드 가능합니다."),
     EXCEED_FILE_SIZE(6005, HttpStatus.PAYLOAD_TOO_LARGE.value(), "이미지 크기가 초과되었습니다. 최대 10MB까지 업로드 가능합니다."),
 
@@ -105,7 +108,7 @@ public enum BaseResponseStatus implements ResponseStatus{
 
     REFRESH_TOKEN_NOT_FOUND(9005, HttpStatus.BAD_REQUEST.value(), "리프레시 토큰이 존재하지 않습니다."),
     EXPIRED_TOKEN(9006, HttpStatus.UNAUTHORIZED.value(), "토큰이 만료되었습니다."),
-    INVALID_TOKEN(9007, HttpStatus.UNAUTHORIZED.value(),"유효하지 않는 토큰입니다."),
+    INVALID_TOKEN(9007, HttpStatus.UNAUTHORIZED.value(), "유효하지 않는 토큰입니다."),
     INVALID_USERNAME_OR_PASSWORD(9008, HttpStatus.BAD_REQUEST.value(), "아이디 혹은 비밀번호가 올바르지 않습니다."),
     UNAUTHORIZED(9009, HttpStatus.UNAUTHORIZED.value(), "인증되지 않는 사용자입니다."),
     ACCESS_DENIED(9010, HttpStatus.FORBIDDEN.value(), "접근 권한이 없습니다."),
@@ -115,7 +118,7 @@ public enum BaseResponseStatus implements ResponseStatus{
     /**
      * 10000 : wallet
      */
-    INVALID_WALLET(10001, HttpStatus.BAD_REQUEST.value(),"지갑이 존재하지 않습니다."),
+    INVALID_WALLET(10001, HttpStatus.BAD_REQUEST.value(), "지갑이 존재하지 않습니다."),
     INSUFFICIENT_BALANCE(10002, HttpStatus.CONFLICT.value(), "잔액이 부족합니다."),
     INSUFFICIENT_TOPUP(10003, HttpStatus.BAD_REQUEST.value(), "1000원 이상부터 충전 가능합니다."),
     ALREADY_PROCESSED(10004, HttpStatus.BAD_REQUEST.value(), "이미 진행된 결과입니다."),
