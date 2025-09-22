@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 @Builder
 public class ReservationFormResponse {
     private Long lockerId;
+    private Long keeperId;
     private String lockerName;
     private String addressKr;
     private List<LockerJimTypeResult> lockerJimTypes;
@@ -22,6 +23,7 @@ public class ReservationFormResponse {
         return ReservationFormResponse.builder()
                 .lockerName(locker.getLockerName())
                 .lockerId(locker.getLockerId())
+                .keeperId(locker.getKeeper().getMemberId())
                 .addressKr(locker.getAddress() + " " +locker.getAddressDetail())
                 .lockerJimTypes(
                         locker.getLockerJimTypes().stream()
