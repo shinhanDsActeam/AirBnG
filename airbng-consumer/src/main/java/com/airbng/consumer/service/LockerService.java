@@ -1,7 +1,9 @@
 package com.airbng.consumer.service;
 
+import com.airbng.consumer.domain.base.LockerViewStatus;
 import com.airbng.consumer.dto.locker.*;
 import com.airbng.consumer.auth.CustomUserDetails;
+import com.airbng.platform.common.response.status.BaseResponseStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -14,7 +16,7 @@ public interface LockerService {
     LockerSearchResponse findAllLockerBySearch(LockerSearchRequest request);
 
 
-    void registerLocker(LockerInsertRequest dto) throws IOException;
+//    void registerLocker(LockerInsertRequest dto) throws IOException;
 
     /**
      * 예약 건수 기준 가장 상위 5개 조회
@@ -39,7 +41,8 @@ public interface LockerService {
 
     void deleteLocker(Long lockerId, CustomUserDetails userDetails);
 
+    BaseResponseStatus requestLockerReview(LockerInsertRequest dto, CustomUserDetails userDetails) throws IOException;
 
-
+    LockerViewStatus getLockerViewStatus(CustomUserDetails userDetails);
 }
 

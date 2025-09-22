@@ -1,6 +1,7 @@
 package com.airbng.consumer.config;
 
 import com.airbng.consumer.auth.CustomUserDetails;
+import com.airbng.consumer.domain.image.Image;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -21,8 +22,9 @@ public class SecurityPrincipalFactoryConfig {
         return claims -> {
             Long userId = (Long) claims.get("userId");
             String role = (String) claims.get("role");
+            String profileImageUrl = (String) claims.get("profileImageUrl");
 
-            return new CustomUserDetails(new Member(userId, role));
+            return new CustomUserDetails(new Member(userId, role),profileImageUrl);
         };
     }
 }

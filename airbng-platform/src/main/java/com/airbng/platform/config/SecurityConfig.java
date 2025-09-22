@@ -114,7 +114,7 @@ public class SecurityConfig {
 
     @Bean
     public JwtFilter jwtFilter() {
-        return new JwtFilter(jwtUtil);
+        return new JwtFilter(jwtUtil, customAuthenticationEntryPoint);
     }
 
     @Bean

@@ -1,0 +1,44 @@
+package com.airbng.pay.domain;
+
+import com.airbng.common.base.BaseTime;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+import java.math.BigDecimal;
+import java.util.UUID;
+
+@Getter
+@Entity
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class WalletTx extends BaseTime {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long walletTxId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "wallet_id", nullable = false)
+    private Wallet wallet;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "payment_id")
+    private Payment payment;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private WalletTxType walletTxType;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private WalletTxRole walletTxRole;
+
+    @Column(columnDefinition = "BINARY(16)", nullable = false, unique = true)
+    private UUID walletIdemKey;
+
+    @Column(nullable = false, precision = 19, scale = 2)
+    private BigDecimal amount; // 사용 금액
+}

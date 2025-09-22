@@ -12,6 +12,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -41,6 +42,16 @@ public class ReservationInsertRequest {
     @Valid
     private List<JimTypeCountResult> jimTypeCounts; // 맡길 짐 타입과 개수
 
+    // 결제 정보
+    @NotNull @Min(1)
+    private Long amount;
+
+    @NotNull @Min(0)
+    private Long fee; // 수수료
+
+    @NotBlank
+    private String paymentMethod; // 결제 수단
+
 
     public static ReservationJimTypeResult from(ReservationJimType reservationJimType){
         return ReservationJimTypeResult.builder()
@@ -50,7 +61,7 @@ public class ReservationInsertRequest {
                 .build();
     }
 
-    public Reservation toEntity(Member dropper, Member keeper, Locker locker){
+    public Reservation toEntity(Member dropper, Member keeper, Long paymentId, Locker locker){
         // 필요하면 공백만 있는 메모는 null로 정규화
         String memo = (pickupMemo != null && pickupMemo.trim().isEmpty()) ? null : pickupMemo;
 
@@ -60,8 +71,12 @@ public class ReservationInsertRequest {
                 .locker(locker)
                 .startTime(startTime)
                 .endTime(endTime)
+                .paymentId(paymentId)
                 .pickupMemo(memo)
                 .state(ReservationState.PENDING)
+                .amount(BigDecimal.valueOf(amount))
+                .fee(BigDecimal.valueOf(fee))
+                .locker(locker)
                 .status(BaseStatus.ACTIVE)
                 .build();
     }

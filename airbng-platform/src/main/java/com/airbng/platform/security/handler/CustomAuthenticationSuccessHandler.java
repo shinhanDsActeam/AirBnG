@@ -38,16 +38,19 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
         Object principal = authentication.getPrincipal();
         Long userId = null;
         String nickname = null;
+        String profileImageUrl = null;
         Collection<? extends GrantedAuthority> authorities = List.of();
 
         if (principal instanceof AirbngPrincipal ap) {
             userId = ap.getId();
             nickname = ap.getNickname();
             authorities = ap.getAuthorities();
+            profileImageUrl = ap.getUserProfileUrl();
         }
 
         log.info("[CustomAuthenticationSuccessHandler] userId: {}, nickname: {}", userId, nickname);
         log.info("[CustomAuthenticationSuccessHandler] authorities: {}", authorities);
+        log.info("[CustomAuthenticationSuccessHandler] profileImageUrl: {}", profileImageUrl);
 
 
         Iterator<? extends GrantedAuthority> iterator = authorities.iterator();
@@ -68,6 +71,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
         responseData.put("memberId", userId);
         responseData.put("role", role);
         responseData.put("nickname", nickname);
+        responseData.put("profileImageUrl", profileImageUrl);
 
         BaseResponse<Map<String, Object>> body = new BaseResponse<>(responseData);
 

@@ -1,8 +1,12 @@
 package com.airbng.consumer.service;
 
 import com.airbng.api.admin.LockerReviewApi;
+import com.airbng.api.admin.dto.command.LockerReviewCommand;
+import com.airbng.api.admin.dto.command.LockerViewStatusCommand;
+import com.airbng.api.admin.dto.view.LockerViewStatusView;
 import com.airbng.consumer.domain.Locker;
-import com.airbng.consumer.domain.Member;
+import com.airbng.consumer.domain.base.LockerType;
+import com.airbng.consumer.domain.base.LockerViewStatus;
 import com.airbng.consumer.domain.base.ReservationState;
 import com.airbng.consumer.domain.image.Image;
 import com.airbng.consumer.domain.image.LockerImage;
@@ -13,6 +17,7 @@ import com.airbng.consumer.dto.locker.*;
 import com.airbng.consumer.exception.LockerException;
 import com.airbng.consumer.exception.MemberException;
 import com.airbng.consumer.repository.*;
+import com.airbng.platform.common.response.status.BaseResponseStatus;
 import com.airbng.platform.util.S3Utils;
 import com.airbng.consumer.exception.ImageException;
 import com.airbng.common.base.BaseStatus;
@@ -43,13 +48,11 @@ public class LockerServiceImpl implements LockerService {
     private final LockerJimTypeRepository lockerJimTypeRepository;
     private final JimTypeRepository jimTypeRepository;
     private final MemberRepository memberRepository;
+    private final LockerReviewApi lockerReviewApi;
     private final S3Utils s3Utils;
 
     private final RedisTemplate<String, LockerTop5Response> top5RedisTemplate;
     private final Cache<String, LockerTop5Response> localCache;
-
-    // Admin API
-    private final LockerReviewApi reviewApi;
 
     // ================= 검색 =================
     @Override
@@ -57,7 +60,7 @@ public class LockerServiceImpl implements LockerService {
         List<Locker> lockers = lockerRepository.findAllLockerBySearch(
                 request.getAddress(),
                 request.getLockerName(),
-                request.getJimTypeId());
+                request.getJimTypeIds());
 
         if (lockers.isEmpty()) {
             throw new LockerException(NOT_FOUND_LOCKER);
@@ -87,12 +90,16 @@ public class LockerServiceImpl implements LockerService {
     public LockerTop5Response findTop5Locker() {
         // local cache 확인
         LockerTop5Response cached = localCache.getIfPresent("lockerTop5");
-        if (cached != null) return cached;
+        if (cached != null) {
+            log.info("Local cache hit for lockerTop5 : {}", cached);
+            return cached;
+        }
 
         // Redis 확인
         LockerTop5Response redisValue = top5RedisTemplate.opsForValue().get("lockerTop5");
         if (redisValue != null && redisValue.getLockers() != null) {
             localCache.put("lockerTop5", redisValue);
+            log.info("Redis hit for lockerTop5 : {}", redisValue);
             return redisValue;
         }
 
@@ -100,94 +107,178 @@ public class LockerServiceImpl implements LockerService {
         var response = LockerTop5Response.from(lockers);
 
         top5RedisTemplate.opsForValue().set("lockerTop5", response, 1, TimeUnit.HOURS);
+        log.info("Local cache 채우기 - lockerTop5 : {}", response);
+
         localCache.put("lockerTop5", response);
         top5RedisTemplate.convertAndSend("lockerTop5Updated", "invalidate");
         return response;
     }
 
-    // ================= 등록 =================
-    @Transactional(rollbackFor = Exception.class)
-    @Override
-    public void registerLocker(LockerInsertRequest dto) throws IOException {
-        if (lockerRepository.existsByKeeper_MemberId(dto.getKeeperId())) {
-            throw new LockerException(MEMBER_ALREADY_HAS_LOCKER);
-        }
-        if (!memberRepository.existsById(dto.getKeeperId())) {
-            throw new MemberException(NOT_FOUND_MEMBER);
-        }
+//    // ================= 등록 =================
+//    @Transactional(rollbackFor = Exception.class)
+//    @Override
+//    public void registerLocker(LockerInsertRequest dto) throws IOException {
+//        if (lockerRepository.existsByKeeper_MemberId(dto.getKeeperId())) {
+//            throw new LockerException(MEMBER_ALREADY_HAS_LOCKER);
+//        }
+//        if (!memberRepository.existsById(dto.getKeeperId())) {
+//            throw new MemberException(NOT_FOUND_MEMBER);
+//        }
+//
+//        Member keeper = memberRepository.findById(dto.getKeeperId())
+//                .orElseThrow(() -> new MemberException(NOT_FOUND_MEMBER));
+//
+//        Locker locker = Locker.builder()
+//                .lockerName(dto.getLockerName())
+//                .isAvailable(dto.getIsAvailable())
+//                .address(dto.getAddress())
+//                .addressEnglish(dto.getAddressEnglish())
+//                .addressDetail(dto.getAddressDetail())
+//                .latitude(dto.getLatitude())
+//                .longitude(dto.getLongitude())
+//                .keeper(keeper)
+//                .reservationCount(0L)
+//                .status(BaseStatus.ACTIVE)
+//                .build();
+//
+//        lockerRepository.saveAndFlush(locker);
+//
+//        // 이미지 저장/연결
+//        if (dto.getImages() != null && !dto.getImages().isEmpty()) {
+//            if (dto.getImages().size() > 5) throw new ImageException(EXCEED_IMAGE_COUNT);
+//
+//            for (MultipartFile file : dto.getImages()) {
+////                 if (file.isEmpty()) throw new ImageException(EMPTY_FILE);
+//
+////                 String fileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
+////                 String path = "lockers/" + fileName;
+//
+////                 String url;
+////                 try { url = s3Utils.upload(file, path); }
+////                 catch (IOException e) { throw new ImageException(UPLOAD_FAILED); }
+//
+////                 Image image = Image.builder()
+////                         .url(url)
+//
+//                if (file.isEmpty()) {
+//                    throw new ImageException(EMPTY_FILE);
+//                }
+//
+//                s3Utils.createFileName(file.getOriginalFilename());
+//
+//                Image image = Image.builder()
+//                        .url(s3Utils.upload(file))
+//                        .uploadName(file.getOriginalFilename())
+//                        .status(BaseStatus.ACTIVE)
+//                        .build();
+//                imageRepository.save(image);
+//
+//                lockerImageRepository.save(
+//                        LockerImage.builder().locker(locker).image(image).status(BaseStatus.ACTIVE).build()
+//                );
+//            }
+//        }
+//
+//        // 짐타입 연결
+//        List<Long> jimTypeIds = dto.getJimTypeIds();
+//        if (jimTypeIds != null && !jimTypeIds.isEmpty()) {
+//            if (new HashSet<>(jimTypeIds).size() != jimTypeIds.size())
+//                throw new LockerException(DUPLICATE_JIMTYPE);
+//
+//            List<Long> valid = jimTypeRepository.findValidIds(jimTypeIds);
+//            if (valid.size() != jimTypeIds.size())
+//                throw new LockerException(INVALID_JIMTYPE);
+//
+//            List<JimType> types = jimTypeRepository.findAllById(jimTypeIds);
+//            for (JimType t : types) {
+//                lockerJimTypeRepository.save(
+//                        LockerJimType.builder().locker(locker).jimType(t).status(BaseStatus.ACTIVE).build()
+//                );
+//            }
+//        }
+//    }
 
-        Member keeper = memberRepository.findById(dto.getKeeperId())
-                .orElseThrow(() -> new MemberException(NOT_FOUND_MEMBER));
+// ================= 심사 요청 =================
+@Transactional(rollbackFor = Exception.class)
+@Override
+public BaseResponseStatus requestLockerReview(LockerInsertRequest dto, CustomUserDetails userDetails) throws IOException {
 
-        Locker locker = Locker.builder()
-                .lockerName(dto.getLockerName())
-                .isAvailable(dto.getIsAvailable())
-                .address(dto.getAddress())
-                .addressEnglish(dto.getAddressEnglish())
-                .addressDetail(dto.getAddressDetail())
-                .latitude(dto.getLatitude())
-                .longitude(dto.getLongitude())
-                .keeper(keeper)
-                .reservationCount(0L)
-                .status(BaseStatus.ACTIVE)
-                .build();
+    Long memberId = userDetails.getId(); // 로그인한 회원 ID 사용
 
-        lockerRepository.saveAndFlush(locker);
+    // 기본 회원/중복 검증
+    if (!memberRepository.existsById(memberId)) {
+        throw new MemberException(NOT_FOUND_MEMBER);
+    }
 
-        // 이미지 저장/연결
-        if (dto.getImages() != null && !dto.getImages().isEmpty()) {
-            if (dto.getImages().size() > 5) throw new ImageException(EXCEED_IMAGE_COUNT);
+    if(!memberId.equals(dto.getKeeperId()) ){
+        throw new MemberException(MEMBER_ID_MISMATCH);
+    }
 
-            for (MultipartFile file : dto.getImages()) {
-//                 if (file.isEmpty()) throw new ImageException(EMPTY_FILE);
+    if (lockerRepository.existsByKeeper_MemberId(memberId)) {
+        throw new LockerException(MEMBER_ALREADY_HAS_LOCKER);
+    }
 
-//                 String fileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
-//                 String path = "lockers/" + fileName;
+    List<Long> imageIds = new ArrayList<>();
+    // 이미지 저장/연결
+    if (dto.getImages() != null && !dto.getImages().isEmpty()) {
+        if (dto.getImages().size() > 5) throw new ImageException(EXCEED_IMAGE_COUNT);
 
-//                 String url;
-//                 try { url = s3Utils.upload(file, path); }
-//                 catch (IOException e) { throw new ImageException(UPLOAD_FAILED); }
+        for (MultipartFile file : dto.getImages()) {
 
-//                 Image image = Image.builder()
-//                         .url(url)
-
-                if (file.isEmpty()) {
-                    throw new ImageException(EMPTY_FILE);
-                }
-
-                s3Utils.createFileName(file.getOriginalFilename());
-
-                Image image = Image.builder()
-                        .url(s3Utils.upload(file))
-                        .uploadName(file.getOriginalFilename())
-                        .status(BaseStatus.ACTIVE)
-                        .build();
-                imageRepository.save(image);
-
-                lockerImageRepository.save(
-                        LockerImage.builder().locker(locker).image(image).status(BaseStatus.ACTIVE).build()
-                );
+            if (file.isEmpty()) {
+                throw new ImageException(EMPTY_FILE);
             }
-        }
 
-        // 짐타입 연결
-        List<Long> jimTypeIds = dto.getJimTypeIds();
-        if (jimTypeIds != null && !jimTypeIds.isEmpty()) {
-            if (new HashSet<>(jimTypeIds).size() != jimTypeIds.size())
-                throw new LockerException(DUPLICATE_JIMTYPE);
+            s3Utils.createFileName(file.getOriginalFilename());
 
-            List<Long> valid = jimTypeRepository.findValidIds(jimTypeIds);
-            if (valid.size() != jimTypeIds.size())
-                throw new LockerException(INVALID_JIMTYPE);
+            Image image = Image.builder()
+                    .url(s3Utils.upload(file))
+                    .uploadName(file.getOriginalFilename())
+                    .status(BaseStatus.ACTIVE)
+                    .build();
+            imageRepository.save(image);
 
-            List<JimType> types = jimTypeRepository.findAllById(jimTypeIds);
-            for (JimType t : types) {
-                lockerJimTypeRepository.save(
-                        LockerJimType.builder().locker(locker).jimType(t).status(BaseStatus.ACTIVE).build()
-                );
-            }
+            // 저장 후 ID 가져오기
+            imageIds.add(image.getImageId());
         }
     }
+
+    //JimType 검증
+    List<Long> jimTypeIds = dto.getJimTypeIds();
+    if (jimTypeIds != null && !jimTypeIds.isEmpty()) {
+        if (new HashSet<>(jimTypeIds).size() != jimTypeIds.size())
+            throw new LockerException(DUPLICATE_JIMTYPE);
+
+        List<Long> valid = jimTypeRepository.findValidIds(jimTypeIds);
+        if (valid.size() != jimTypeIds.size())
+            throw new LockerException(INVALID_JIMTYPE);
+    }
+
+    //DTO 변환 후 심사 API 호출
+    LockerReviewCommand command = LockerReviewCommand.builder()
+            .lockerName(dto.getLockerName())
+            .address(dto.getAddress())
+            .addressEnglish(dto.getAddressEnglish())
+            .addressDetail(dto.getAddressDetail())
+            .latitude(dto.getLatitude())
+            .longitude(dto.getLongitude())
+            .memberId(memberId)
+            .lockerType(LockerType.PERSONAL.toString())
+            .jimTypeId(jimTypeIds)
+            .imageId(imageIds)
+            .status(BaseStatus.ACTIVE)
+            .build();
+
+    boolean result = lockerReviewApi.submitLockerForReview(command);
+
+    // 결과에 따른 상태 반환
+    if(result){
+        return BaseResponseStatus.SUCCESS;
+    } else {
+        return BaseResponseStatus.FAILURE;
+    }
+}
+
 
     // ================= 활성화 토글 =================
     @Transactional
@@ -317,8 +408,25 @@ public class LockerServiceImpl implements LockerService {
             throw new LockerException(LOCKER_KEEPER_MISMATCH);
         }
 
-        lockerRepository.deleteLockerImagesByLockerId(lockerId);
-        lockerRepository.deleteLockerJimTypesByLockerId(lockerId);
         lockerRepository.deleteById(lockerId);
     }
+
+    //내 보관소 상태
+    @Override
+    public LockerViewStatus getLockerViewStatus(CustomUserDetails userDetails) {
+
+        Long memberId = userDetails.getId();
+
+        // 심사 기록 확인
+        LockerViewStatusView response = lockerReviewApi.getLockerStatusByMemberId(memberId);
+
+        // 심사 진행 중이면 등록 불가
+        if ("WAITING".equals(response.getReviewStatus())) {
+            return LockerViewStatus.WAITING;
+        }
+
+        return LockerViewStatus.REGISTER;
+
+    }
+
 }

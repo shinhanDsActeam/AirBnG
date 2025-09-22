@@ -33,6 +33,7 @@ public enum BaseResponseStatus implements ResponseStatus{
     NOT_UPDATE_MEMBER(2008, HttpStatus.NO_CONTENT.value(), "멤버 정보가 변경되지 않았습니다."),
     SUCCESS_LOGOUT(2000, HttpStatus.OK.value(), "로그아웃에 성공하였습니다."),
     FAILED_UPDATE_MEMBER(2009, HttpStatus.UNAUTHORIZED.value(), "정보가 올바르지 않아 수정에 실패하였습니다."),
+    MEMBER_ID_MISMATCH (2010, HttpStatus.UNAUTHORIZED.value(), "멤버가 일치하지 않습니다."),
     /**
      * 3000 락커 관련 코드
      */
@@ -103,12 +104,44 @@ public enum BaseResponseStatus implements ResponseStatus{
     SESSION_EXPIRED(9004, HttpStatus.UNAUTHORIZED.value(), "세션이 만료되었습니다."),
 
     REFRESH_TOKEN_NOT_FOUND(9005, HttpStatus.BAD_REQUEST.value(), "리프레시 토큰이 존재하지 않습니다."),
-    EXPIRED_TOKEN(9006, HttpStatus.UNAUTHORIZED.value(), "리프레시 토큰이 만료되었습니다."),
+    EXPIRED_TOKEN(9006, HttpStatus.UNAUTHORIZED.value(), "토큰이 만료되었습니다."),
     INVALID_TOKEN(9007, HttpStatus.UNAUTHORIZED.value(),"유효하지 않는 토큰입니다."),
     INVALID_USERNAME_OR_PASSWORD(9008, HttpStatus.BAD_REQUEST.value(), "아이디 혹은 비밀번호가 올바르지 않습니다."),
     UNAUTHORIZED(9009, HttpStatus.UNAUTHORIZED.value(), "인증되지 않는 사용자입니다."),
     ACCESS_DENIED(9010, HttpStatus.FORBIDDEN.value(), "접근 권한이 없습니다."),
     INVALID_SIGNATURE(9011, HttpStatus.UNAUTHORIZED.value(), "잘못된 토큰 서명입니다."),
+
+
+    /**
+     * 10000 : wallet
+     */
+    INVALID_WALLET(10001, HttpStatus.BAD_REQUEST.value(),"지갑이 존재하지 않습니다."),
+    INSUFFICIENT_BALANCE(10002, HttpStatus.CONFLICT.value(), "잔액이 부족합니다."),
+    INSUFFICIENT_TOPUP(10003, HttpStatus.BAD_REQUEST.value(), "1000원 이상부터 충전 가능합니다."),
+    ALREADY_PROCESSED(10004, HttpStatus.BAD_REQUEST.value(), "이미 진행된 결과입니다."),
+
+    /**
+     * 11000 : account
+     */
+    DUPLICATE_ACCOUNT(11001, HttpStatus.BAD_REQUEST.value(), "이미 계좌가 존재합니다."),
+    WALLET_ACCOUNT_MISMATCH(11002, HttpStatus.BAD_REQUEST.value(), "지갑주인과 계좌 주인이 일치하지 않습니다."),
+    INSUFFICIENT_BALANCE_ACCOUNT(11003, HttpStatus.BAD_REQUEST.value(), "계좌 잔액이 부족합니다."),
+
+
+    /**
+     * 12000 : bankInfo
+     */
+    UNSUPPORTED_BANK(12001, HttpStatus.BAD_REQUEST.value(), "지원하지 않는 은행입니다."),
+    INVALID_ACCOUNT(12002, HttpStatus.BAD_REQUEST.value(), "유효하지 않는 계좌번호입니다."),
+
+
+    /**
+     * 13000 : payment
+     */
+    FAILED_PAYMENT(13001, HttpStatus.INTERNAL_SERVER_ERROR.value(), "결제 처리에 실패하였습니다."),
+    UNSUPPORTED_PAY_METHOD(13002, HttpStatus.BAD_REQUEST.value(), "지원하지 않는 결제 수단입니다."),
+
+
     ;
 
     private final int code;

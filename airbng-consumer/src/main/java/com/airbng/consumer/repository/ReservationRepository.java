@@ -63,4 +63,5 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
            """)
     Optional<Reservation> findByIdForUpdate(@Param("reservationId") Long reservationId);
 
+    Optional<Reservation> findByPaymentId(Long paymentId);
 }

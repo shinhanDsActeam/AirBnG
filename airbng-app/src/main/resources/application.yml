@@ -46,3 +46,7 @@ springdoc:
     operations-sorter: alpha
 image :
   default-url: ${DEFAULT_IMAGE_URL}
+business:
+  ids:
+    admin-member-id: ${ADMIN_MEMBER_ID}
+    system-wallet-id: ${SYSTEM_WALLET_ID}

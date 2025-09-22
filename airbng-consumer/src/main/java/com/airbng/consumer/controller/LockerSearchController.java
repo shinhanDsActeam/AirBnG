@@ -30,7 +30,7 @@ public class LockerSearchController {
         LockerSearchRequest request = LockerSearchRequest.builder()
                 .address(address)
                 .lockerName(lockerName)
-                .jimTypeId(jimTypeIdList)
+                .jimTypeIds(jimTypeIdList)
                 .build();
 
         LockerSearchResponse result = lockerService.findAllLockerBySearch(request);
