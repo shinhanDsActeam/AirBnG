@@ -114,9 +114,19 @@ public class MessageServiceImpl implements MessageService {
         long seq = redisSeq.nextMessageSeq(convId);
         Instant now = Instant.now();
 
+        String reasonPart = "";
+        if (!approve) {
+            String trimmed = (reason == null) ? "" : reason.trim();
+            if (!trimmed.isEmpty()) {
+                // 너무 긴 경우 컷(선택)
+                String r = trimmed.length() > 500 ? trimmed.substring(0, 500) + "…" : trimmed;
+                reasonPart = "\n사유: " + r;
+            }
+        }
+
         var text = switch (result.newStatus()) {
             case CONFIRMED -> "예약을 승인했어요.";
-            case CANCELLED, REJECTED -> "예약을 거절했어요.";
+            case CANCELLED, REJECTED -> "예약을 거절했어요." + reasonPart;
             default -> "예약 상태가 변경되었어요.";
         };
 
@@ -132,7 +142,7 @@ public class MessageServiceImpl implements MessageService {
 
         LastMessage last = LastMessage.builder()
                 .messageId(saved.getMsgId()).senderId(actorId)
-                .type("system").preview(text).sentAt(now).build();
+                .type("system").preview(makePreview(text)).sentAt(now).build();
         conversationService.updateOnNewMessage(convId, last, seq);
 
         long peer = conversationService.peerIdOf(convId, actorId);
