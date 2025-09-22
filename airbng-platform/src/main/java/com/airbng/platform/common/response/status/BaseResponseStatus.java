@@ -107,7 +107,7 @@ public enum BaseResponseStatus implements ResponseStatus {
     SESSION_EXPIRED(9004, HttpStatus.UNAUTHORIZED.value(), "세션이 만료되었습니다."),
 
     REFRESH_TOKEN_NOT_FOUND(9005, HttpStatus.BAD_REQUEST.value(), "리프레시 토큰이 존재하지 않습니다."),
-    EXPIRED_TOKEN(9006, HttpStatus.UNAUTHORIZED.value(), "리프레시 토큰이 만료되었습니다."),
+    EXPIRED_TOKEN(9006, HttpStatus.UNAUTHORIZED.value(), "토큰이 만료되었습니다."),
     INVALID_TOKEN(9007, HttpStatus.UNAUTHORIZED.value(), "유효하지 않는 토큰입니다."),
     INVALID_USERNAME_OR_PASSWORD(9008, HttpStatus.BAD_REQUEST.value(), "아이디 혹은 비밀번호가 올바르지 않습니다."),
     UNAUTHORIZED(9009, HttpStatus.UNAUTHORIZED.value(), "인증되지 않는 사용자입니다."),
