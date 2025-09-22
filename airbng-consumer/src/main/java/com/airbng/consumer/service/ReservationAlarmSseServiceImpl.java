@@ -2,6 +2,7 @@ package com.airbng.consumer.service;
 
 import com.airbng.consumer.dto.AlarmPayloadResponse;
 import com.airbng.consumer.auth.CustomUserDetails;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
@@ -28,6 +29,7 @@ public class ReservationAlarmSseServiceImpl implements ReservationAlarmSseServic
 
     // 알림 읽은 여부
     private final ReservationAlarmCacheService reservationAlarmCacheService;
+    private static final ObjectMapper objectMapper = new ObjectMapper();
 
     // 클라이언트와의 SSE 연결을 관리하기 위한 맵 (사용자가 여러개로 접속해도 sse연결 가능하도록 허용)
     //CopyOnWriteArrayList : 멀티스레드에 적합
@@ -69,7 +71,7 @@ public class ReservationAlarmSseServiceImpl implements ReservationAlarmSseServic
                     emitter.send(SseEmitter.event()
                             .id(alarm.getEventId().toString())
                             .name("alarm")
-                            .data(alarm.getData(), MediaType.APPLICATION_JSON));
+                            .data(objectMapper.writeValueAsString(alarm.getData()), MediaType.APPLICATION_JSON));
                 }
             }
 
@@ -97,7 +99,6 @@ public class ReservationAlarmSseServiceImpl implements ReservationAlarmSseServic
                 log.info("알림 전송 시도: memberId={}, data={}", memberId, payload);
 
                 List<SseEmitter> deadEmitters = new ArrayList<>();
-
                 for (SseEmitter emitter : emitters) {
                     try {
                         emitter.send(SseEmitter.event().id(eventId).name("alarm").data(payload, MediaType.APPLICATION_JSON));
@@ -105,6 +106,7 @@ public class ReservationAlarmSseServiceImpl implements ReservationAlarmSseServic
                         log.warn("SSE 메시지 전송 실패: memberId={}, error={}", memberId, e.getMessage());
                         deadEmitters.add(emitter);
                         emitter.completeWithError(e);
+                        removeEmitter(memberId, emitter);
                     }
                 }
                 // 연결 끊긴 emitter 정리
