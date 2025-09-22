@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class PeriodSalesResponse {
     private Long settlementId;
-    private BigDecimal sales;
+    private BigDecimal amount;
     private LocalDateTime updatedAt;
     private PaymentMethod paymentMethod;
     private BigDecimal paymentFee;
@@ -23,7 +23,7 @@ public class PeriodSalesResponse {
     public static PeriodSalesResponse from(Settlement settlement) {
         return PeriodSalesResponse.builder()
                 .settlementId(settlement.getSettlementId())
-                .sales(settlement.getSales())
+                .amount(settlement.getAmount())
                 .updatedAt(settlement.getSettlementDate())
                 .paymentMethod(settlement.getPaymentMethod())
                 .paymentFee(settlement.getPaymentFee())

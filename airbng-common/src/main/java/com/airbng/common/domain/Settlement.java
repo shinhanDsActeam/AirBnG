@@ -20,7 +20,7 @@ public class Settlement {
     private Long settlementId;
 
     @Column(nullable = false)
-    private BigDecimal sales;
+    private BigDecimal amount;
 
     @Column(nullable = false)
     private LocalDateTime settlementDate;
@@ -31,4 +31,13 @@ public class Settlement {
 
     @Column(nullable = false)
     private BigDecimal paymentFee;
+
+    @Column(nullable = false)
+    private Long reservationId;
+
+    @Column(nullable = false)
+    private Long keeperId;
+
+    @Column(nullable = false)
+    private LocalDateTime createdAt;
 }
