@@ -4,6 +4,7 @@ import com.airbng.admin.dto.response.PeriodSalesResponse;
 import com.airbng.admin.dto.response.StorageSalesResponse;
 import com.airbng.admin.exception.SalesException;
 import com.airbng.admin.service.SalesService;
+import com.airbng.common.base.LockerType;
 import com.airbng.platform.common.response.BaseResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -38,12 +39,12 @@ public class SalesController {
 
     @PreAuthorize("hasAnyAuthority('ADMIN')")
     @GetMapping("/storage")
-    public BaseResponse<StorageSalesResponse> findByStorageSales(
-            Long lockerId,
+    public BaseResponse<List<StorageSalesResponse>> findByStorageSales(
+            LockerType lockerType,
             @RequestParam @DateTimeFormat(pattern = "yyyy/MM/dd HH:mm") LocalDateTime startDate,
             @RequestParam @DateTimeFormat(pattern = "yyyy/MM/dd HH:mm") LocalDateTime endDate) {
-        StorageSalesResponse result = salesService.getStorageSales(lockerId, startDate, endDate)
-                .orElseThrow(() -> new SalesException(INVALID_DATE));
+        List<StorageSalesResponse> result = salesService.getStorageSales(lockerType, startDate, endDate);
+        if (result.isEmpty()) throw new SalesException(INVALID_DATE);
 
         return new BaseResponse<>(result);
     }

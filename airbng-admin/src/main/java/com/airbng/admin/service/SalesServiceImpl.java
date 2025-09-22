@@ -3,9 +3,10 @@ package com.airbng.admin.service;
 import com.airbng.admin.dto.response.PeriodSalesResponse;
 import com.airbng.admin.dto.response.StorageSalesResponse;
 import com.airbng.admin.exception.SalesException;
-import com.airbng.common.domain.Aggregate;
+import com.airbng.common.base.LockerType;
+import com.airbng.admin.domain.AggregateWithLockerView;
 import com.airbng.common.domain.Settlement;
-import com.airbng.common.repository.AggregateRepository;
+import com.airbng.admin.repository.AggregateWithLockerViewRepository;
 import com.airbng.common.repository.SettlementRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -13,7 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 import static com.airbng.platform.common.response.status.BaseResponseStatus.NOT_FOUND_PERIOD_SALES;
 import static com.airbng.platform.common.response.status.BaseResponseStatus.NOT_FOUND_STORAGE_SALES;
@@ -23,7 +23,7 @@ import static com.airbng.platform.common.response.status.BaseResponseStatus.NOT_
 public class SalesServiceImpl implements SalesService {
 
     private final SettlementRepository settlementRepository;
-    private final AggregateRepository aggregateRepository;
+    private final AggregateWithLockerViewRepository aggregateWithLockerViewRepository;
 
     @Transactional(readOnly = true)
     @Override
@@ -39,12 +39,12 @@ public class SalesServiceImpl implements SalesService {
 
     @Transactional(readOnly = true)
     @Override
-    public Optional<StorageSalesResponse> getStorageSales(Long lockerId, LocalDateTime startDate, LocalDateTime endDate) {
-        if (lockerId == null || lockerId <= 0) throw new SalesException(NOT_FOUND_STORAGE_SALES);
-        Aggregate aggregate = aggregateRepository.findByStorageSales(lockerId, startDate, endDate)
-                .orElseThrow(() -> new SalesException(NOT_FOUND_STORAGE_SALES));
+    public List<StorageSalesResponse> getStorageSales(LockerType lockerType, LocalDateTime startDate, LocalDateTime endDate) {
+        List<AggregateWithLockerView> aggregate = aggregateWithLockerViewRepository.findByStorageSales(lockerType.name(), startDate, endDate);
+        if (aggregate == null || aggregate.isEmpty()) throw new SalesException(NOT_FOUND_STORAGE_SALES);
 
-        return Optional.of(StorageSalesResponse.from(aggregate));
+        return aggregate.stream()
+                .map(StorageSalesResponse::from)
+                .toList();
     }
-
 }
