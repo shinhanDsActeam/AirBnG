@@ -80,8 +80,10 @@ public class ReservationAlarmCacheServiceImpl implements ReservationAlarmCacheSe
         return all.stream()
                 .map(s -> s.split("\\|", 2))          // [eventId, payload]
                 .filter(arr -> Long.parseLong(arr[0]) > lastId) // lastEventId 이후 것만 가져옴
-                .map(arr -> new AlarmPayloadResponse(Long.parseLong(arr[0]), arr[1]))                    // payload만 추출
-                .collect(Collectors.toList());
+                .map(arr -> new AlarmPayloadResponse(Long.parseLong(arr[0]), arr[1]))    // payload만 추출
+                .reduce((first, second) -> second)
+                .map(List::of)
+                .orElse(List.of());
     }
 
 

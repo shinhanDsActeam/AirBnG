@@ -29,7 +29,6 @@ public class ReservationAlarmSseServiceImpl implements ReservationAlarmSseServic
 
     // 알림 읽은 여부
     private final ReservationAlarmCacheService reservationAlarmCacheService;
-    private static final ObjectMapper objectMapper = new ObjectMapper();
 
     // 클라이언트와의 SSE 연결을 관리하기 위한 맵 (사용자가 여러개로 접속해도 sse연결 가능하도록 허용)
     //CopyOnWriteArrayList : 멀티스레드에 적합
@@ -60,18 +59,20 @@ public class ReservationAlarmSseServiceImpl implements ReservationAlarmSseServic
         });
 
         try {
-            emitter.send(SseEmitter.event().id("0").name("connect").data("SSE SUCCESS - memberId: " + memberId));
+            emitter.send(SseEmitter.event().name("connect").data("SSE SUCCESS - memberId: " + memberId));
 
             if (lastEventId != null) {
                 List<AlarmPayloadResponse> missedAlarms = reservationAlarmCacheService.getMissedAlarms(memberId, lastEventId);
+
                 for (AlarmPayloadResponse alarm : missedAlarms) {
+                    String json = new ObjectMapper().writeValueAsString(alarm.getData());
                     // Redis 시퀀스 ID 그대로 사용
                     log.info("놓친 알림 재전송: memberId={}, eventId={}, data={}", memberId, alarm.getEventId().toString(), alarm.getData());
                     // 놓친 알림 재전송
                     emitter.send(SseEmitter.event()
                             .id(alarm.getEventId().toString())
                             .name("alarm")
-                            .data(objectMapper.writeValueAsString(alarm.getData()), MediaType.APPLICATION_JSON));
+                            .data(json.getBytes("UTF-8"), MediaType.valueOf("text/event-stream;charset=UTF-8")));
                 }
             }
 
