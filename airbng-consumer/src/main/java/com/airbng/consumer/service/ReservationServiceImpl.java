@@ -10,6 +10,7 @@ import com.airbng.consumer.domain.base.*;
 import com.airbng.consumer.domain.jimtype.JimType;
 import com.airbng.consumer.domain.jimtype.ReservationJimType;
 import com.airbng.consumer.dto.reservation.*;
+import com.airbng.consumer.repository.*;
 import com.airbng.consumer.exception.JimTypeException;
 import com.airbng.consumer.exception.LockerException;
 import com.airbng.consumer.exception.MemberException;
