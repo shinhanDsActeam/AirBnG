@@ -10,7 +10,7 @@ import com.airbng.pay.repository.MasterTxRepository;
 import com.airbng.pay.repository.PaymentRepository;
 import com.airbng.pay.repository.WalletRepository;
 import com.airbng.pay.repository.WalletTxRepository;
-import com.airbng.pay.util.UUIDUtil;
+import com.airbng.platform.util.UUIDUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
