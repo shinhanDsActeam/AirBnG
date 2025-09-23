@@ -59,6 +59,16 @@ subprojects {
         implementation 'org.apache.commons:commons-dbcp2:2.9.0'
         runtimeOnly 'com.mysql:mysql-connector-j'
 
+        // MongoDB
+        implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
+
+        // WebSocket + STOMP
+        implementation 'org.springframework.boot:spring-boot-starter-websocket'
+        implementation 'org.springframework:spring-messaging'
+
+        // 보안(메시징까지)
+        implementation 'org.springframework.security:spring-security-messaging'
+
         // AWS SDK
         implementation 'com.amazonaws:aws-java-sdk-s3:1.12.695'
 
@@ -108,5 +118,3 @@ subprojects {
         useJUnitPlatform()
     }
 }
-
-

@@ -11,6 +11,11 @@ spring:
       port: ${REDIS_PORT}
       password: ${REDIS_PASSWORD}
 
+    mongodb:
+      uri: ${MONGODB_URI}
+      database: airbng
+      auto-index-creation: true
+
   devtools:
     restart:
       enabled: false
@@ -22,6 +27,14 @@ spring:
         format_sql: true
         default_batch_fetch_size: 100
     open-in-view: false
+
+websocket:
+  stomp:
+    endpoint: /ws-chat
+    app-destination-prefix: /app
+    broker-destination-prefixes: /topic,/queue
+    allowed-origins: http://localhost:3000,http://localhost:3001,https://www.airbng.store,https://airbng.store
+
 
 management:
   endpoints:

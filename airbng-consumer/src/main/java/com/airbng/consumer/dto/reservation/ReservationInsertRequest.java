@@ -22,6 +22,10 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ReservationInsertRequest {
+    private Long dropperId;
+
+    private Long keeperId;
+
     @NotNull
     @Min(1)
     private Long lockerId;  // 맡길 짐을 보관하는 락커 ID
@@ -31,6 +35,8 @@ public class ReservationInsertRequest {
 
     @NotNull @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime endTime;   // 회수해갈 시간
+
+    private final String pickupMemo = "직접 짐 건네주기";
 
     @Valid
     private List<JimTypeCountResult> jimTypeCounts; // 맡길 짐 타입과 개수
@@ -55,12 +61,17 @@ public class ReservationInsertRequest {
     }
 
     public Reservation toEntity(Member dropper, Member keeper, Long paymentId, Locker locker){
+        // 필요하면 공백만 있는 메모는 null로 정규화
+        String memo = (pickupMemo != null && pickupMemo.trim().isEmpty()) ? null : pickupMemo;
+
         return  Reservation.builder()
                 .dropper(dropper)
                 .keeper(keeper)
+                .locker(locker)
                 .startTime(startTime)
                 .endTime(endTime)
                 .paymentId(paymentId)
+                .pickupMemo(memo)
                 .state(ReservationState.PENDING)
                 .amount(BigDecimal.valueOf(amount))
                 .fee(BigDecimal.valueOf(fee))

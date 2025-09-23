@@ -1,5 +1,6 @@
 package com.airbng.consumer.service;
 
+import com.airbng.api.consumer.event.ReservationCreatedEvent;
 import com.airbng.api.pay.PayApi;
 import com.airbng.api.pay.dto.command.MakePaymentRequest;
 import com.airbng.common.base.BaseStatus;
@@ -22,6 +23,8 @@ import com.airbng.platform.security.principal.AirbngPrincipal;
 import com.github.benmanes.caffeine.cache.Cache;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
+import org.checkerframework.checker.units.qual.A;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -52,6 +55,7 @@ public class ReservationServiceImpl implements ReservationService {
     private final PayApi payApi;
 
     private static final Long LIMIT = 10L; // 페이지당 최대 예약 개수
+    private final ApplicationEventPublisher events;
 
     //예약 조회 + 페이징 처리
     @Override
@@ -377,6 +381,13 @@ public class ReservationServiceImpl implements ReservationService {
                 });
 
         reservationRepository.save(reservation);
+
+        // 트랜잭션 커밋 후 카드 푸시되게 이벤트 발행
+        events.publishEvent(ReservationCreatedEvent.of(
+                reservation.getReservationId(),
+                reservation.getDropper().getMemberId(),
+                reservation.getKeeper().getMemberId()
+        ));
 
         return ReservationInsertResponse.from(reservation.getReservationId());
     }
