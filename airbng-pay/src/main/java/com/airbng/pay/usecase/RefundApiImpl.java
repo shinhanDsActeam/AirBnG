@@ -7,6 +7,7 @@ import com.airbng.pay.domain.Refund;
 import com.airbng.pay.domain.RefundStatus;
 import com.airbng.pay.domain.RefundType;
 import com.airbng.pay.exception.PaymentException;
+import com.airbng.pay.exception.RefundException;
 import com.airbng.pay.repository.PaymentRepository;
 import com.airbng.pay.repository.RefundRepository;
 import lombok.RequiredArgsConstructor;
@@ -17,8 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 
-import static com.airbng.platform.common.response.status.BaseResponseStatus.FAILED_PAYMENT;
-import static com.airbng.platform.common.response.status.BaseResponseStatus.NOT_FOUND_PAYMENT;
+import static com.airbng.platform.common.response.status.BaseResponseStatus.*;
 
 @Slf4j
 @Service
@@ -59,9 +59,18 @@ public class RefundApiImpl implements RefundApi {
                     .payeeId(p.getPayeeId())
                     .payerId(p.getPayerId())
                     .lockerId(p.getLockerId())
+                    .bizKey(cmd.getIdemKey())
                     .build();
             refundRepository.save(refund);
+        } catch (DataIntegrityViolationException ex) {
+            // UNIQUE(biz_key) 충돌 → 기존 엔티티로 멱등 처리
+            log.info("멱등키 존재 - {}", cmd.getIdemKey());
+            return refundRepository.findByBizKey(cmd.getIdemKey())
+                    .map(Refund::getRefundId)
+                    .orElseThrow(() -> new RefundException(FAILED_REFUND));
+        }
 
         return refund.getRefundId();
     }
+
 }

@@ -147,6 +147,10 @@ public enum BaseResponseStatus implements ResponseStatus {
     UNSUPPORTED_PAY_METHOD(13002, HttpStatus.BAD_REQUEST.value(), "지원하지 않는 결제 수단입니다."),
     NOT_FOUND_PAYMENT(13003, HttpStatus.NOT_FOUND.value(), "결제 정보를 찾을 수 없습니다."),
 
+    /**
+     * 14000 : refund
+     */
+    FAILED_REFUND(14001, HttpStatus.INTERNAL_SERVER_ERROR.value(), "환불 처리에 실패하였습니다."),
 
     ;
 

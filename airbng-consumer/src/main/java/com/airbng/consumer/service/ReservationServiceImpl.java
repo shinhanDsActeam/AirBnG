@@ -22,6 +22,7 @@ import com.airbng.consumer.exception.ReservationException;
 import com.airbng.consumer.scheduler.AlertScheduledTask;
 import com.airbng.platform.common.response.status.BaseResponseStatus;
 import com.airbng.platform.security.principal.AirbngPrincipal;
+import com.airbng.platform.util.UUIDUtil;
 import com.github.benmanes.caffeine.cache.Cache;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -34,6 +35,7 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.locks.ReentrantLock;
 
 import static com.airbng.common.BusinessIds.ADMIN_MEMBER_ID;
@@ -151,8 +153,7 @@ public class ReservationServiceImpl implements ReservationService {
 
             if (reservation.getState() == ReservationState.CANCELLED) {
                 // 멱등하게 처리
-                return ReservationCancelResponse.of(reservation,
-                        ChargeType.from(reservation.getStartTime()).discountAmount(), ReservationState.CANCELLED);
+                return ReservationCancelResponse.of(reservation, chargeFee, ReservationState.CANCELLED);
             }
 
             ReservationState newState = ReservationState.CANCELLED;
@@ -161,16 +162,18 @@ public class ReservationServiceImpl implements ReservationService {
             /** 삭제 상태는 상태 변경 불가 */
             reservation.isAvailableUpdateState();
 
-                            idemKey,
             // 환불 모드 결정
             RefundType refundType = (reservation.getState() == ReservationState.PENDING)
                     ? RefundType.FULL : RefundType.PARTIAL;
 
+            // 환불 요청
+            UUID idemKey = UUIDUtil.generate();
             Long refundId = refundApi.requestRefund(
                     RefundRequestCommand.builder()
                             .reservationId(reservation.getReservationId())
                             .paymentId(reservation.getPaymentId())
                             .chargeFee(chargeFee)
+                            .idemKey(idemKey).build()
             );
 
 
