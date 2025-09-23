@@ -14,5 +14,5 @@ public interface SalesService {
     Page<PeriodSalesResponse> getPeriodSales(LocalDateTime startDate, LocalDateTime endDate, Pageable pageable);
 
     // 보관소별 매출 통계 조회
-    List<StorageSalesResponse> getStorageSales(LockerType lockerType, LocalDateTime startDate, LocalDateTime endDate);
+    Page<StorageSalesResponse> getStorageSales(LockerType lockerType, LocalDateTime startDate, LocalDateTime endDate, Pageable pageable);
 }

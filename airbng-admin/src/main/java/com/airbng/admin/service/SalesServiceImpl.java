@@ -39,12 +39,12 @@ public class SalesServiceImpl implements SalesService {
 
     @Transactional(readOnly = true)
     @Override
-    public List<StorageSalesResponse> getStorageSales(LockerType lockerType, LocalDateTime startDate, LocalDateTime endDate) {
-        List<AggregateWithLockerView> aggregate = aggregateWithLockerViewRepository.findByStorageSales(lockerType.name(), startDate, endDate);
+    public Page<StorageSalesResponse> getStorageSales(
+            LockerType lockerType, LocalDateTime startDate, LocalDateTime endDate, Pageable pageable) {
+        Page<AggregateWithLockerView> aggregate = aggregateWithLockerViewRepository.findByStorageSales(
+                lockerType.name(), startDate, endDate, pageable);
         if (aggregate == null || aggregate.isEmpty()) throw new SalesException(NOT_FOUND_STORAGE_SALES);
 
-        return aggregate.stream()
-                .map(StorageSalesResponse::from)
-                .toList();
+        return aggregate.map(StorageSalesResponse::from);
     }
 }

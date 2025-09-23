@@ -47,9 +47,15 @@ public class SalesController {
 
     @PreAuthorize("hasAnyAuthority('ADMIN')")
     @GetMapping("/storage")
-    public BaseResponse<List<StorageSalesResponse>> findByStorageSales(
-            LockerType lockerType,LocalDateTime startDate, LocalDateTime endDate) {
-        List<StorageSalesResponse> result = salesService.getStorageSales(lockerType, startDate, endDate);
+    public BaseResponse<Page<StorageSalesResponse>> findByStorageSales(
+            LockerType lockerType,
+            @RequestParam LocalDateTime startDate,
+            @RequestParam LocalDateTime endDate,
+            @Parameter(description = "페이지 번호 (0부터 시작)") @RequestParam(defaultValue = "0") int page,
+            @Parameter(description = "페이지 크기") @RequestParam(defaultValue = "10") int size ){
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by("totalSales").descending());
+        Page<StorageSalesResponse> result = salesService.getStorageSales(lockerType, startDate, endDate, pageable);
         if (result.isEmpty()) throw new SalesException(INVALID_DATE);
 
         return new BaseResponse<>(result);
