@@ -5,8 +5,10 @@ import com.airbng.api.consumer.dto.command.ReservationDecisionCommand;
 import com.airbng.api.consumer.dto.view.ReservationCardPayload;
 import com.airbng.api.consumer.dto.view.ReservationDecisionResult;
 import com.airbng.api.consumer.dto.common.ReservationStatus;
+import com.airbng.api.pay.dto.view.RefundCardPayload;
 import com.airbng.consumer.domain.base.ReservationState;
 import com.airbng.consumer.repository.ReservationRepository;
+import com.airbng.consumer.service.ReservationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,6 +22,7 @@ import java.time.LocalDateTime;
 class ReservationApiImpl implements ReservationApi {
 
     private final ReservationRepository reservationRepository;
+    private final ReservationService reservationService;
 
     private static ReservationStatus toDtoStatus(ReservationState s) {
         return ReservationStatus.valueOf(s.name());
@@ -76,5 +79,10 @@ class ReservationApiImpl implements ReservationApi {
                 cmd.actorId(),
                 r.getDecidedAt()
         );
+    }
+
+    @Override
+    public RefundCardPayload requestRefundFromChat(String idemKey, Long reservationId, Long actorId, String reason) {
+        return reservationService.requestRefundFromChat(idemKey, reservationId, actorId, reason);
     }
 }
