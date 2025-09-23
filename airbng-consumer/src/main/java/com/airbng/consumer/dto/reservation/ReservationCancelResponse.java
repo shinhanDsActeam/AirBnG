@@ -4,6 +4,8 @@ import com.airbng.consumer.domain.Reservation;
 import com.airbng.consumer.domain.base.ReservationState;
 import lombok.*;
 
+import java.math.BigDecimal;
+
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
@@ -12,9 +14,9 @@ public class ReservationCancelResponse {
 
     private Long reservationId;
     private ReservationState state;
-    private Long charge;
+    private BigDecimal charge;
 
-    public static ReservationCancelResponse of(Reservation reservation, Long charge, ReservationState newState){
+    public static ReservationCancelResponse of(Reservation reservation, BigDecimal charge, ReservationState newState){
         return ReservationCancelResponse.builder()
                 .reservationId(reservation.getReservationId())
                 .state(newState)
