@@ -129,7 +129,7 @@ public enum BaseResponseStatus implements ResponseStatus {
     DUPLICATE_ACCOUNT(11001, HttpStatus.BAD_REQUEST.value(), "이미 계좌가 존재합니다."),
     WALLET_ACCOUNT_MISMATCH(11002, HttpStatus.BAD_REQUEST.value(), "지갑주인과 계좌 주인이 일치하지 않습니다."),
     INSUFFICIENT_BALANCE_ACCOUNT(11003, HttpStatus.BAD_REQUEST.value(), "계좌 잔액이 부족합니다."),
-    NO_PRIMARY_ACCOUNT(11003, HttpStatus.BAD_REQUEST.value(), "주계좌가 존재하지 않습니다."),
+    NO_ACCOUNT(11004, HttpStatus.BAD_REQUEST.value(), "계좌가 존재하지 않습니다."),
 
 
     /**

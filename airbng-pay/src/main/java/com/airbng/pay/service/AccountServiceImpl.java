@@ -109,17 +109,17 @@ public class AccountServiceImpl implements AccountService {
                 .orElseThrow(() -> new WalletException(INVALID_WALLET));
 
         List<Account> accountList = accountRepository.findAccountsWithLockByWalletId(wallet.getWalletId());
-        if (accountList.isEmpty()) throw new WalletException(NO_PRIMARY_ACCOUNT);
+        if (accountList.isEmpty()) throw new WalletException(NO_ACCOUNT);
 
         Account newPrimary = accountList.stream()
                 .filter(a -> a.getAccountId().equals(accountId))
                 .findFirst()
-                .orElseThrow(() -> new AccountException(FAILURE));
+                .orElseThrow(() -> new AccountException(WALLET_ACCOUNT_MISMATCH));
 
         Account currentPrimary = accountList.stream()
                 .filter(Account::getIsPrimary)
                 .findFirst()
-                .orElseThrow(() -> new AccountException(FAILURE));
+                .orElseThrow(() -> new AccountException(WALLET_ACCOUNT_MISMATCH));
 
         currentPrimary.unsetPrimary();
         newPrimary.setPrimary();

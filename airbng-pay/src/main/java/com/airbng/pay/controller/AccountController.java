@@ -62,6 +62,6 @@ public class AccountController {
             @PathVariable("accountId") @NotNull @Min(1) Long accountId,
             @AuthenticationPrincipal AirbngPrincipal principal) {
         accountService.setPrimaryAccount(accountId, principal);
-        return new BaseResponse<>("기본 계좌 설정 성공");
+        return new BaseResponse<>("주계좌 설정 성공");
     }
 }
