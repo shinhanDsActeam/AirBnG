@@ -132,10 +132,16 @@ public class WalletServiceImpl implements WalletService {
         Wallet wallet = walletRepository.findByMemberId(principal.getId())
                 .orElseThrow(() -> new WalletException(INVALID_WALLET));
 
+        WalletTxRole role = null;
+        if(WalletTxType.PAYMENT == type) {
+            role = WalletTxRole.DEBIT;
+        }
+
         List<WalletTx> fetched = walletTxRepository.findSliceByWalletIdAndCursorDesc(
                 wallet.getWalletId(),
                 cursor,
                 type,
+                role,
                 PageRequest.of(0, PAGE_SIZE+1));
 
         boolean hasNext = fetched.size() > PAGE_SIZE;

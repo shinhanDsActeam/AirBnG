@@ -64,6 +64,4 @@ public enum ReservationState {
             throw new ReservationException(CANNOT_UPDATE_STATE);
         }
     }
-
-
 }
