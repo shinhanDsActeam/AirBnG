@@ -86,4 +86,17 @@ public class AccountServiceImpl implements AccountService {
         BankInfo bankInfo = bankInfoRepository.findByBankCode(bankCode);
         return Optional.of(BankCodeResult.from(bankInfo));
     }
+
+    @Transactional
+    @Override
+    public void delete(Long accountId, AirbngPrincipal principal) {
+        long memberId = principal.getId();
+        Wallet wallet = walletRepository.findByMemberId(memberId)
+                .orElseThrow(() -> new WalletException(INVALID_WALLET));
+
+        Account account = accountRepository.findForUpdate(accountId, wallet.getWalletId())
+                .orElseThrow(() -> new WalletException(WALLET_ACCOUNT_MISMATCH));
+
+        accountRepository.delete(account);
+    }
 }

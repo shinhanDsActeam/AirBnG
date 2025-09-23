@@ -7,6 +7,8 @@ import com.airbng.pay.exception.BankInfoException;
 import com.airbng.pay.service.AccountService;
 import com.airbng.platform.common.response.BaseResponse;
 import com.airbng.platform.security.principal.AirbngPrincipal;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -28,6 +30,15 @@ public class AccountController {
             @AuthenticationPrincipal AirbngPrincipal principal) {
         accountService.register(req, principal);
         return new BaseResponse<>("계좌 생성 성공");
+    }
+
+    @DeleteMapping("/{accountId}")
+    @PreAuthorize("hasAnyAuthority('USER')")
+    public BaseResponse<String> deleteAccount(
+            @PathVariable("accountId") @NotNull @Min(1) Long accountId,
+            @AuthenticationPrincipal AirbngPrincipal principal) {
+        accountService.delete(accountId, principal);
+        return new BaseResponse<>("계좌 삭제 성공");
     }
 
     @GetMapping

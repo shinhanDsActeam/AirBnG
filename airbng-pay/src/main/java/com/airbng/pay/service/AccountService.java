@@ -11,4 +11,6 @@ public interface AccountService {
     void register(AccountRegisterRequest req, AirbngPrincipal user);
     MyAccountsResponse getMyAccounts(AirbngPrincipal principal);
     Optional<BankCodeResult> findByBankCode(Integer bankCode);
+
+    void delete(Long accountId, AirbngPrincipal principal);
 }
