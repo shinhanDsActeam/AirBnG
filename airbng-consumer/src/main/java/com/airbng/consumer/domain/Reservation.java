@@ -101,12 +101,4 @@ public class Reservation extends BaseTime {
             throw new ReservationException(CANNOT_UPDATE_STATE);
     }
 
-    /** 승인/거절 도메인 편의 메서드 */
-    public void decide(ReservationState newState, long actorId, String reason, LocalDateTime at){
-        this.state = newState;
-        this.decisionReason = reason;
-        this.decidedBy = actorId;
-        this.decidedAt = at;
-    }
-
 }

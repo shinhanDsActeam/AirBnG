@@ -4,9 +4,7 @@ import com.airbng.api.consumer.event.ReservationCreatedEvent;
 import com.airbng.api.pay.PayApi;
 import com.airbng.api.pay.RefundApi;
 import com.airbng.api.pay.dto.command.MakePaymentRequest;
-import com.airbng.api.pay.dto.command.RefundMode;
 import com.airbng.api.pay.dto.command.RefundRequestCommand;
-import com.airbng.api.pay.dto.view.RefundCardPayload;
 import com.airbng.common.base.BaseStatus;
 import com.airbng.consumer.domain.Locker;
 import com.airbng.consumer.domain.Member;
@@ -417,37 +415,6 @@ public class ReservationServiceImpl implements ReservationService {
         ));
 
         return ReservationInsertResponse.from(reservation.getReservationId());
-    }
-
-    @Transactional
-    public RefundCardPayload requestRefundFromChat(String idemKey, Long reservationId, Long actorId, String reason) {
-        Reservation r = reservationRepository.findReservationDetailById(reservationId)
-                .orElseThrow(() -> new ReservationException(NOT_FOUND_RESERVATION));
-
-        if (!r.getDropper().getMemberId().equals(actorId))
-            throw new ReservationException(NOT_DROPPER_OF_RESERVATION);
-
-        r.isAvailableUpdateState();
-
-        RefundMode mode = (r.getState() == ReservationState.PENDING)
-                ? RefundMode.AUTO_FULL : RefundMode.REVIEW_REQUIRED;
-
-        var payload = refundApi.requestRefund(
-                new RefundRequestCommand(
-                        idemKey,
-                        r.getReservationId(),
-                        r.getPaymentId(),     // ★ 결제와 연결
-                        actorId,
-                        mode,
-                        reason
-                )
-        );
-
-        // 전액 환불(AUTO_FULL)이면 즉시 취소 전이
-        if (mode == RefundMode.AUTO_FULL) {
-            r.updateState(ReservationState.CANCELLED);
-        }
-        return payload;
     }
 
     @Override

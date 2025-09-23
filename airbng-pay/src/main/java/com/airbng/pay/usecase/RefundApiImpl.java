@@ -1,13 +1,8 @@
 package com.airbng.pay.usecase;
 
 import com.airbng.api.pay.RefundApi;
-import com.airbng.api.pay.dto.command.RefundDecisionCommand;
 import com.airbng.api.pay.dto.command.RefundRequestCommand;
-import com.airbng.api.pay.dto.view.RefundCardPayload;
-import com.airbng.api.pay.dto.view.RefundDecisionResult;
-import com.airbng.api.pay.dto.RefundStatus; // api enum
 import com.airbng.pay.domain.Refund;
-import com.airbng.pay.service.RefundService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
