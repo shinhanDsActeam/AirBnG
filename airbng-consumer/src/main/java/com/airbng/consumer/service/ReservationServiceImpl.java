@@ -2,7 +2,11 @@ package com.airbng.consumer.service;
 
 import com.airbng.api.consumer.event.ReservationCreatedEvent;
 import com.airbng.api.pay.PayApi;
+import com.airbng.api.pay.RefundApi;
 import com.airbng.api.pay.dto.command.MakePaymentRequest;
+import com.airbng.api.pay.dto.command.RefundMode;
+import com.airbng.api.pay.dto.command.RefundRequestCommand;
+import com.airbng.api.pay.dto.view.RefundCardPayload;
 import com.airbng.common.base.BaseStatus;
 import com.airbng.consumer.domain.Locker;
 import com.airbng.consumer.domain.Member;
@@ -16,7 +20,6 @@ import com.airbng.consumer.exception.JimTypeException;
 import com.airbng.consumer.exception.LockerException;
 import com.airbng.consumer.exception.MemberException;
 import com.airbng.consumer.exception.ReservationException;
-import com.airbng.consumer.repository.*;
 import com.airbng.consumer.scheduler.AlertScheduledTask;
 import com.airbng.platform.common.response.status.BaseResponseStatus;
 import com.airbng.platform.security.principal.AirbngPrincipal;
@@ -24,7 +27,6 @@ import com.github.benmanes.caffeine.cache.Cache;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
-import org.checkerframework.checker.units.qual.A;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -53,6 +55,7 @@ public class ReservationServiceImpl implements ReservationService {
     private final JimTypeRepository jimTypeRepository;
 
     private final PayApi payApi;
+    private final RefundApi refundApi;
 
     private static final Long LIMIT = 10L; // 페이지당 최대 예약 개수
     private final ApplicationEventPublisher events;
@@ -158,6 +161,30 @@ public class ReservationServiceImpl implements ReservationService {
             reservation.isAvailableUpdateState();
             /** 더티 체킹 */
             reservation.updateState(newState);
+
+            reservation.isAvailableUpdateState();
+
+            RefundMode mode = (reservation.getState() == ReservationState.PENDING)
+                    ? RefundMode.AUTO_FULL : RefundMode.REVIEW_REQUIRED;
+
+            var payload = refundApi.requestRefund(
+                    new RefundRequestCommand(
+                            idemKey,
+                            r.getReservationId(),
+                            r.getPaymentId(),     // ★ 결제와 연결
+                            actorId,
+                            mode,
+                            reason
+                    )
+            );
+
+            // 전액 환불(AUTO_FULL)이면 즉시 취소 전이
+            if (mode == RefundMode.AUTO_FULL) {
+                r.updateState(ReservationState.CANCELLED);
+            }
+
+
+
 
             log.info("[cancelReservation] 완료 - Reservation (ID: {}) state changed to {} by Dropper (ID: {})", reservationId, newState, memberId);
 
@@ -390,6 +417,37 @@ public class ReservationServiceImpl implements ReservationService {
         ));
 
         return ReservationInsertResponse.from(reservation.getReservationId());
+    }
+
+    @Transactional
+    public RefundCardPayload requestRefundFromChat(String idemKey, Long reservationId, Long actorId, String reason) {
+        Reservation r = reservationRepository.findReservationDetailById(reservationId)
+                .orElseThrow(() -> new ReservationException(NOT_FOUND_RESERVATION));
+
+        if (!r.getDropper().getMemberId().equals(actorId))
+            throw new ReservationException(NOT_DROPPER_OF_RESERVATION);
+
+        r.isAvailableUpdateState();
+
+        RefundMode mode = (r.getState() == ReservationState.PENDING)
+                ? RefundMode.AUTO_FULL : RefundMode.REVIEW_REQUIRED;
+
+        var payload = refundApi.requestRefund(
+                new RefundRequestCommand(
+                        idemKey,
+                        r.getReservationId(),
+                        r.getPaymentId(),     // ★ 결제와 연결
+                        actorId,
+                        mode,
+                        reason
+                )
+        );
+
+        // 전액 환불(AUTO_FULL)이면 즉시 취소 전이
+        if (mode == RefundMode.AUTO_FULL) {
+            r.updateState(ReservationState.CANCELLED);
+        }
+        return payload;
     }
 
     @Override
