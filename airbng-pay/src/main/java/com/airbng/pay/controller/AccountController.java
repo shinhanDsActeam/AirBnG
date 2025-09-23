@@ -1,6 +1,6 @@
 package com.airbng.pay.controller;
 
-import com.airbng.pay.dto.AccountCheckResponse;
+import com.airbng.pay.dto.MyAccountsResponse;
 import com.airbng.pay.dto.AccountRegisterRequest;
 import com.airbng.pay.dto.BankCodeResult;
 import com.airbng.pay.exception.BankInfoException;
@@ -32,8 +32,8 @@ public class AccountController {
 
     @GetMapping
     @PreAuthorize("hasAnyAuthority('USER')")
-    public BaseResponse<AccountCheckResponse> checkAccount(@AuthenticationPrincipal AirbngPrincipal principal) {
-        return new BaseResponse<>(accountService.checkAccount(principal));
+    public BaseResponse<MyAccountsResponse> getMyAccounts(@AuthenticationPrincipal AirbngPrincipal principal) {
+        return new BaseResponse<>(accountService.getMyAccounts(principal));
     }
 
     @GetMapping("/banks")
