@@ -1,6 +1,5 @@
 package com.airbng.pay.domain;
 
-import com.airbng.common.base.Available;
 import com.airbng.common.base.BaseStatus;
 import com.airbng.common.base.BaseTime;
 import jakarta.persistence.*;
@@ -43,6 +42,9 @@ public class Account extends BaseTime {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private BaseStatus baseStatus;
+
+    @Version
+    private Long version;
 
     public void updateBalance(BigDecimal amount) {
         this.balance = this.balance.add(amount);
