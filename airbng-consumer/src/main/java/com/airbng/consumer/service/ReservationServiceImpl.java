@@ -163,8 +163,11 @@ public class ReservationServiceImpl implements ReservationService {
             reservation.isAvailableUpdateState();
 
             // 환불 모드 결정
-            RefundType refundType = (reservation.getState() == ReservationState.PENDING)
-                    ? RefundType.FULL : RefundType.PARTIAL;
+            RefundType refundType = RefundType.PARTIAL;
+            if(reservation.getState() == ReservationState.PENDING){
+                refundType = RefundType.FULL;
+                chargeFee = BigDecimal.ZERO; // 전액 환불
+            }
 
             // 환불 요청
             UUID idemKey = UUIDUtil.generate();
@@ -173,6 +176,7 @@ public class ReservationServiceImpl implements ReservationService {
                             .reservationId(reservation.getReservationId())
                             .paymentId(reservation.getPaymentId())
                             .chargeFee(chargeFee)
+                            .refundType(refundType)
                             .idemKey(idemKey).build()
             );
 

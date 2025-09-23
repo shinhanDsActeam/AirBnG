@@ -56,6 +56,7 @@ public class RefundApiImpl implements RefundApi {
                     .refundStatus(RefundStatus.REQUESTED)
                     .refundType(refundType)
                     .chargeFee(cmd.getChargeFee())
+                    .paymentId(p.getPaymentId())
                     .payeeId(p.getPayeeId())
                     .payerId(p.getPayerId())
                     .lockerId(p.getLockerId())
