@@ -16,6 +16,12 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Table(name = "refund", indexes = {
+        @Index(name = "idx_refund_reservation", columnList = "reservation_id"),
+        @Index(name = "idx_refund_payment", columnList = "payment_id"),
+        @Index(name = "idx_refund_status_date", columnList = "refund_status, created_at"),
+        @Index(name = "idx_refund_locker", columnList = "locker_id")
+})
 public class Refund extends BaseTime {
 
     @Id
