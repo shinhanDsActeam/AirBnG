@@ -11,16 +11,16 @@ import java.util.List;
 @Getter
 @AllArgsConstructor
 @Builder
-public class AccountCheckResponse {
+public class MyAccountsResponse {
     private long walletId;
     private List<AccountPreviewResult> accounts;
 
-    public static AccountCheckResponse from(Wallet wallet, List<Account> accounts) {
+    public static MyAccountsResponse from(Wallet wallet, List<Account> accounts) {
         List<AccountPreviewResult> results = accounts.stream()
                 .map(AccountPreviewResult::from)
                 .toList();
 
-        return AccountCheckResponse.builder()
+        return MyAccountsResponse.builder()
                 .walletId(wallet.getWalletId())
                 .accounts(results)
                 .build();
