@@ -9,6 +9,8 @@ import com.airbng.common.domain.Settlement;
 import com.airbng.admin.repository.AggregateWithLockerViewRepository;
 import com.airbng.common.repository.SettlementRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,14 +29,12 @@ public class SalesServiceImpl implements SalesService {
 
     @Transactional(readOnly = true)
     @Override
-    public List<PeriodSalesResponse> getPeriodSales(LocalDateTime startDate, LocalDateTime endDate) {
+    public Page<PeriodSalesResponse> getPeriodSales(LocalDateTime startDate, LocalDateTime endDate, Pageable pageable) {
         if (startDate.isAfter(LocalDateTime.now())) throw new SalesException(NOT_FOUND_PERIOD_SALES);
-        List<Settlement> settlement = settlementRepository.findByPeriodSales(startDate, endDate);
+        Page<Settlement> settlement = settlementRepository.findByPeriodSales(startDate, endDate, pageable);
         if (settlement == null || settlement.isEmpty()) throw new SalesException(NOT_FOUND_PERIOD_SALES);
 
-        return settlement.stream()
-                .map(PeriodSalesResponse::from)
-                .toList();
+        return settlement.map(PeriodSalesResponse::from);
     }
 
     @Transactional(readOnly = true)
