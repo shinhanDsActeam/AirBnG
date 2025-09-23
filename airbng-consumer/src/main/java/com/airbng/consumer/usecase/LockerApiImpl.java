@@ -103,10 +103,9 @@ public class LockerApiImpl implements LockerApi {
                 .status(command.getStatus())
                 .isAvailable(Available.YES)
                 .reservationCount(0L)
+                .zzimCount(0L)
                 .build();
         lockerRepository.saveAndFlush(locker);
-
-
 
         // 이미지 저장/연결
         if (command.getImageId() != null && !command.getImageId().isEmpty()) {

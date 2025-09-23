@@ -123,6 +123,7 @@ public class LockerReviewServiceImpl implements LockerReviewService {
                         .map(PendingLockerImage::getImageId)
                         .toList())
                 .status(lockerReview.getPendingLocker().getStatus())
+                .zzimCount(0L)
                 .build();
 
         // 유저 서버에 전달

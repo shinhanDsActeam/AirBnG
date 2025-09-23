@@ -26,5 +26,6 @@ public class LockerReviewApproveCommand {
     private List<Long> jimTypeId;
     private List<Long> imageId;
     private BaseStatus status;
+    private Long zzimCount;
 
 }
