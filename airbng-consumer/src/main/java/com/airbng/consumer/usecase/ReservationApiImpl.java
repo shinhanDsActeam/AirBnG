@@ -2,10 +2,9 @@ package com.airbng.consumer.usecase;
 
 import com.airbng.api.consumer.ReservationApi;
 import com.airbng.api.consumer.dto.command.ReservationDecisionCommand;
+import com.airbng.api.consumer.dto.common.ReservationStatus;
 import com.airbng.api.consumer.dto.view.ReservationCardPayload;
 import com.airbng.api.consumer.dto.view.ReservationDecisionResult;
-import com.airbng.api.consumer.dto.common.ReservationStatus;
-import com.airbng.api.pay.dto.view.RefundCardPayload;
 import com.airbng.consumer.domain.base.ReservationState;
 import com.airbng.consumer.repository.ReservationRepository;
 import com.airbng.consumer.service.ReservationService;
@@ -81,8 +80,4 @@ class ReservationApiImpl implements ReservationApi {
         );
     }
 
-    @Override
-    public RefundCardPayload requestRefundFromChat(String idemKey, Long reservationId, Long actorId, String reason) {
-        return reservationService.requestRefundFromChat(idemKey, reservationId, actorId, reason);
-    }
 }

@@ -19,35 +19,30 @@ import java.time.ZoneId;
 @Transactional(readOnly = true)
 public class RefundApiImpl implements RefundApi {
 
-    private final RefundService refundService;
+    private final RefundRepository refundRepository;
+    private final PaymentRepository paymentRepository;
 
     @Override
     @Transactional
-    public RefundCardPayload requestRefund(RefundRequestCommand cmd) {
-        Refund r = refundService.requestRefund(cmd);
-        return toCardPayload(r, cmd.actorId());
-    }
 
-    @Override
-    @Transactional
-    public RefundDecisionResult decide(RefundDecisionCommand cmd) {
-        return refundService.decide(cmd);
-    }
+        Payment p = paymentRepository.findById(cmd.getPaymentId())
+                .orElseThrow(() -> new PaymentException(NOT_FOUND_PAYMENT));
 
-    private RefundCardPayload toCardPayload(Refund r, Long actorId) {
-        return new RefundCardPayload(
-                r.getRefundId(),
-                r.getReservationId(),
-                r.getPayment().getPaymentId(),
-                r.getLockerId(),
-                r.getPayerId(),                                 // dropper
-                r.getPayeeId(),                                 // keeper
-                r.getRefundAmount().longValue(),
-                r.getChargeFee().longValue(),
-                r.getRefundReason(),
-                r.getRequestedAt().atZone(ZoneId.systemDefault()).toInstant(),
-                RefundStatus.valueOf(r.getRefundStatus().name()),
-                actorId != null && actorId.equals(r.getPayeeId())
-        );
+        RefundType refundType = null;
+        if(cmd.getChargeFee().compareTo(BigDecimal.ZERO) == 0){
+            refundType = RefundType.FULL;
+        } else {
+            refundType = RefundType.PARTIAL;
+        }
+
+        final Refund refund;
+
+        try {
+            refund = Refund.builder()
+                    .reservationId(cmd.getReservationId())
+                    .refundAmount(p.getPaymentAmount().add(p.getPaymentFee()).subtract(cmd.getChargeFee()))
+                    .refundStatus(RefundStatus.REQUESTED)
+                    .refundType(refundType)
+                    .chargeFee(cmd.getChargeFee())
     }
 }
