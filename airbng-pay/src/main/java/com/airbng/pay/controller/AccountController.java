@@ -55,4 +55,13 @@ public class AccountController {
 
         return new BaseResponse<>(result);
     }
+
+    @PatchMapping("/{accountId}/set-primary")
+    @PreAuthorize("hasAnyAuthority('USER')")
+    public BaseResponse<String> setPrimaryAccount(
+            @PathVariable("accountId") @NotNull @Min(1) Long accountId,
+            @AuthenticationPrincipal AirbngPrincipal principal) {
+        accountService.setPrimaryAccount(accountId, principal);
+        return new BaseResponse<>("기본 계좌 설정 성공");
+    }
 }

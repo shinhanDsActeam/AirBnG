@@ -6,6 +6,7 @@ import com.airbng.pay.domain.Wallet;
 import com.airbng.pay.dto.MyAccountsResponse;
 import com.airbng.pay.dto.AccountRegisterRequest;
 import com.airbng.pay.dto.BankCodeResult;
+import com.airbng.pay.exception.AccountException;
 import com.airbng.pay.exception.BankInfoException;
 import com.airbng.pay.exception.WalletException;
 import com.airbng.pay.repository.AccountRepository;
@@ -98,5 +99,29 @@ public class AccountServiceImpl implements AccountService {
                 .orElseThrow(() -> new WalletException(WALLET_ACCOUNT_MISMATCH));
 
         accountRepository.delete(account);
+    }
+
+    @Transactional
+    @Override
+    public void setPrimaryAccount(Long accountId, AirbngPrincipal principal) {
+        long memberId = principal.getId();
+        Wallet wallet = walletRepository.findByMemberId(memberId)
+                .orElseThrow(() -> new WalletException(INVALID_WALLET));
+
+        List<Account> accountList = accountRepository.findAccountsWithLockByWalletId(wallet.getWalletId());
+        if (accountList.isEmpty()) throw new WalletException(NO_PRIMARY_ACCOUNT);
+
+        Account newPrimary = accountList.stream()
+                .filter(a -> a.getAccountId().equals(accountId))
+                .findFirst()
+                .orElseThrow(() -> new AccountException(FAILURE));
+
+        Account currentPrimary = accountList.stream()
+                .filter(Account::getIsPrimary)
+                .findFirst()
+                .orElseThrow(() -> new AccountException(FAILURE));
+
+        currentPrimary.unsetPrimary();
+        newPrimary.setPrimary();
     }
 }

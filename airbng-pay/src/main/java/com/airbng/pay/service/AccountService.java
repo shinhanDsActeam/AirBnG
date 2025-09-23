@@ -13,4 +13,6 @@ public interface AccountService {
     Optional<BankCodeResult> findByBankCode(Integer bankCode);
 
     void delete(Long accountId, AirbngPrincipal principal);
+
+    void setPrimaryAccount(Long accountId, AirbngPrincipal principal);
 }
