@@ -2,10 +2,9 @@ package com.airbng.consumer.service;
 
 import com.airbng.api.admin.LockerReviewApi;
 import com.airbng.api.admin.dto.command.LockerReviewCommand;
-import com.airbng.api.admin.dto.command.LockerViewStatusCommand;
 import com.airbng.api.admin.dto.view.LockerViewStatusView;
 import com.airbng.consumer.domain.Locker;
-import com.airbng.consumer.domain.base.LockerType;
+import com.airbng.common.base.LockerType;
 import com.airbng.consumer.domain.base.LockerViewStatus;
 import com.airbng.consumer.domain.base.ReservationState;
 import com.airbng.consumer.domain.image.Image;

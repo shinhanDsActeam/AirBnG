@@ -152,6 +152,13 @@ public enum BaseResponseStatus implements ResponseStatus {
      */
     FAILED_REFUND(14001, HttpStatus.INTERNAL_SERVER_ERROR.value(), "환불 처리에 실패하였습니다."),
 
+    /**
+     * 14000 : sales
+     */
+    INVALID_DATE(14001, HttpStatus.BAD_REQUEST.value(), "날짜 형식이 올바르지 않습니다."),
+    NOT_FOUND_PERIOD_SALES(14002, HttpStatus.BAD_REQUEST.value(), "해당 기간의 매출을 조회할 수 없습니다."),
+    NOT_FOUND_STORAGE_SALES(14003, HttpStatus.BAD_REQUEST.value(), "해당 보관소의 매출을 조회할 수 없습니다."),
+
     ;
 
     private final int code;

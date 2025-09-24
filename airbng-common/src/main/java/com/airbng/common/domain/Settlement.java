@@ -5,7 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -20,10 +20,10 @@ public class Settlement {
     private Long settlementId;
 
     @Column(nullable = false)
-    private BigDecimal sales;
+    private BigDecimal amount;
 
     @Column(nullable = false)
-    private LocalDate settlementDate;
+    private LocalDateTime settlementDate;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -31,4 +31,13 @@ public class Settlement {
 
     @Column(nullable = false)
     private BigDecimal paymentFee;
+
+    @Column(nullable = false)
+    private Long reservationId;
+
+    @Column(nullable = false)
+    private Long keeperId;
+
+    @Column(nullable = false)
+    private LocalDateTime createdAt;
 }

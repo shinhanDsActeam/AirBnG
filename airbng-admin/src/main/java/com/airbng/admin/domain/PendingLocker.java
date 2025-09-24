@@ -1,8 +1,8 @@
 package com.airbng.admin.domain;
 
-import com.airbng.admin.domain.base.LockerType;
 import com.airbng.common.base.BaseStatus;
 import com.airbng.common.base.BaseTime;
+import com.airbng.common.base.LockerType;
 import jakarta.persistence.*;
 import lombok.*;
 import java.util.HashSet;

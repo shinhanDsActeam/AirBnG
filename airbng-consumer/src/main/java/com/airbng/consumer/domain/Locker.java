@@ -3,6 +3,7 @@ package com.airbng.consumer.domain;
 import com.airbng.common.base.Available;
 import com.airbng.common.base.BaseStatus;
 import com.airbng.common.base.BaseTime;
+import com.airbng.common.base.LockerType;
 import com.airbng.consumer.domain.image.LockerImage;
 import com.airbng.consumer.domain.jimtype.JimType;
 import com.airbng.consumer.domain.jimtype.LockerJimType;
@@ -70,6 +71,10 @@ public class Locker extends BaseTime {
     @Column(nullable = false)
     @ColumnDefault("0")
     private Long zzimCount;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private LockerType lockerType;
 
     public boolean validateLockerJimtype(JimType jimType){
         return lockerJimTypes.stream()

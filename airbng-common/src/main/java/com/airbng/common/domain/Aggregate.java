@@ -1,13 +1,17 @@
 package com.airbng.common.domain;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
+import lombok.*;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
+@Getter
+@Setter
+@Entity
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Aggregate {
 
     @Id
@@ -15,7 +19,7 @@ public class Aggregate {
     private Long aggregateId;
 
     @Column(nullable = false)
-    private LocalDate aggregateDate;
+    private LocalDateTime aggregateDate;
 
     @Column(nullable = false)
     private BigDecimal totalSales;
