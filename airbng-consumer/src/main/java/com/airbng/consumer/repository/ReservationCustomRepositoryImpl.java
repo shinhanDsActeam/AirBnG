@@ -1,5 +1,6 @@
 package com.airbng.consumer.repository;
 
+import com.airbng.common.base.BaseStatus;
 import com.airbng.consumer.domain.*;
 import com.airbng.consumer.domain.base.MemberRole;
 import com.airbng.consumer.domain.base.ReservationState;
@@ -82,7 +83,7 @@ public class ReservationCustomRepositoryImpl implements ReservationCustomReposit
         if (nextCursorId != null && nextCursorId > 0L) {
             where.and(r.reservationId.lt(nextCursorId));
         }
-
+        where.and(r.status.eq(BaseStatus.ACTIVE));
         // 쿼리 실행 및 DTO 매핑
         List<Reservation> reservations;
 

@@ -2,6 +2,7 @@ package com.airbng.consumer.service;
 
 import com.airbng.consumer.dto.AlarmPayloadResponse;
 import com.airbng.consumer.auth.CustomUserDetails;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
@@ -58,18 +59,20 @@ public class ReservationAlarmSseServiceImpl implements ReservationAlarmSseServic
         });
 
         try {
-            emitter.send(SseEmitter.event().id("0").name("connect").data("SSE SUCCESS - memberId: " + memberId));
+            emitter.send(SseEmitter.event().name("connect").data("SSE SUCCESS - memberId: " + memberId));
 
             if (lastEventId != null) {
                 List<AlarmPayloadResponse> missedAlarms = reservationAlarmCacheService.getMissedAlarms(memberId, lastEventId);
+
                 for (AlarmPayloadResponse alarm : missedAlarms) {
+                    String json = new ObjectMapper().writeValueAsString(alarm.getData());
                     // Redis 시퀀스 ID 그대로 사용
                     log.info("놓친 알림 재전송: memberId={}, eventId={}, data={}", memberId, alarm.getEventId().toString(), alarm.getData());
                     // 놓친 알림 재전송
                     emitter.send(SseEmitter.event()
                             .id(alarm.getEventId().toString())
                             .name("alarm")
-                            .data(alarm.getData(), MediaType.APPLICATION_JSON));
+                            .data(json.getBytes("UTF-8"), MediaType.valueOf("text/event-stream;charset=UTF-8")));
                 }
             }
 
@@ -97,7 +100,6 @@ public class ReservationAlarmSseServiceImpl implements ReservationAlarmSseServic
                 log.info("알림 전송 시도: memberId={}, data={}", memberId, payload);
 
                 List<SseEmitter> deadEmitters = new ArrayList<>();
-
                 for (SseEmitter emitter : emitters) {
                     try {
                         emitter.send(SseEmitter.event().id(eventId).name("alarm").data(payload, MediaType.APPLICATION_JSON));
@@ -105,6 +107,7 @@ public class ReservationAlarmSseServiceImpl implements ReservationAlarmSseServic
                         log.warn("SSE 메시지 전송 실패: memberId={}, error={}", memberId, e.getMessage());
                         deadEmitters.add(emitter);
                         emitter.completeWithError(e);
+                        removeEmitter(memberId, emitter);
                     }
                 }
                 // 연결 끊긴 emitter 정리

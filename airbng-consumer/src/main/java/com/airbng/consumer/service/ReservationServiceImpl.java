@@ -4,9 +4,8 @@ import com.airbng.api.consumer.event.ReservationCreatedEvent;
 import com.airbng.api.pay.PayApi;
 import com.airbng.api.pay.RefundApi;
 import com.airbng.api.pay.dto.command.MakePaymentRequest;
-import com.airbng.api.pay.dto.command.RefundMode;
+import com.airbng.api.pay.dto.command.RefundType;
 import com.airbng.api.pay.dto.command.RefundRequestCommand;
-import com.airbng.api.pay.dto.view.RefundCardPayload;
 import com.airbng.common.base.BaseStatus;
 import com.airbng.consumer.domain.Locker;
 import com.airbng.consumer.domain.Member;
@@ -23,6 +22,7 @@ import com.airbng.consumer.exception.ReservationException;
 import com.airbng.consumer.scheduler.AlertScheduledTask;
 import com.airbng.platform.common.response.status.BaseResponseStatus;
 import com.airbng.platform.security.principal.AirbngPrincipal;
+import com.airbng.platform.util.UUIDUtil;
 import com.github.benmanes.caffeine.cache.Cache;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,10 +30,12 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.locks.ReentrantLock;
 
 import static com.airbng.common.BusinessIds.ADMIN_MEMBER_ID;
@@ -147,49 +149,44 @@ public class ReservationServiceImpl implements ReservationService {
             if (!reservation.getDropper().getMemberId().equals(member.getMemberId()))
                 throw new ReservationException(NOT_DROPPER_OF_RESERVATION);
 
+            BigDecimal chargeFee = ChargeType.from(reservation.getStartTime()).discountAmount(reservation.getAmount());
+
             if (reservation.getState() == ReservationState.CANCELLED) {
                 // 멱등하게 처리
-                return ReservationCancelResponse.of(reservation,
-                        ChargeType.from(reservation.getStartTime()).discountAmount(), ReservationState.CANCELLED);
+                return ReservationCancelResponse.of(reservation, chargeFee, ReservationState.CANCELLED);
             }
 
-            ChargeType chargeType = ChargeType.from(reservation.getStartTime());
             ReservationState newState = ReservationState.CANCELLED;
             /** 취소, 완료상태는 상태 변경 불가 */
             ReservationState.canUpdate(MemberRole.DROPPER, reservation.getState(), newState);
             /** 삭제 상태는 상태 변경 불가 */
             reservation.isAvailableUpdateState();
+
+            // 환불 모드 결정
+            RefundType refundType = RefundType.PARTIAL;
+            if(reservation.getState() == ReservationState.PENDING){
+                refundType = RefundType.FULL;
+                chargeFee = BigDecimal.ZERO; // 전액 환불
+            }
+
+            // 환불 요청
+            UUID idemKey = UUIDUtil.generate();
+            Long refundId = refundApi.requestRefund(
+                    RefundRequestCommand.builder()
+                            .reservationId(reservation.getReservationId())
+                            .paymentId(reservation.getPaymentId())
+                            .chargeFee(chargeFee)
+                            .refundType(refundType)
+                            .idemKey(idemKey).build()
+            );
+
+
             /** 더티 체킹 */
             reservation.updateState(newState);
 
-            reservation.isAvailableUpdateState();
-
-            RefundMode mode = (reservation.getState() == ReservationState.PENDING)
-                    ? RefundMode.AUTO_FULL : RefundMode.REVIEW_REQUIRED;
-
-            var payload = refundApi.requestRefund(
-                    new RefundRequestCommand(
-                            idemKey,
-                            r.getReservationId(),
-                            r.getPaymentId(),     // ★ 결제와 연결
-                            actorId,
-                            mode,
-                            reason
-                    )
-            );
-
-            // 전액 환불(AUTO_FULL)이면 즉시 취소 전이
-            if (mode == RefundMode.AUTO_FULL) {
-                r.updateState(ReservationState.CANCELLED);
-            }
-
-
-
-
             log.info("[cancelReservation] 완료 - Reservation (ID: {}) state changed to {} by Dropper (ID: {})", reservationId, newState, memberId);
 
-            return ReservationCancelResponse.of(reservation,
-                    chargeType.discountAmount(), ReservationState.CANCELLED);
+            return ReservationCancelResponse.of(reservation, chargeFee, ReservationState.CANCELLED);
 
         } finally {
             /** 무조건 락 해제 */
@@ -417,37 +414,6 @@ public class ReservationServiceImpl implements ReservationService {
         ));
 
         return ReservationInsertResponse.from(reservation.getReservationId());
-    }
-
-    @Transactional
-    public RefundCardPayload requestRefundFromChat(String idemKey, Long reservationId, Long actorId, String reason) {
-        Reservation r = reservationRepository.findReservationDetailById(reservationId)
-                .orElseThrow(() -> new ReservationException(NOT_FOUND_RESERVATION));
-
-        if (!r.getDropper().getMemberId().equals(actorId))
-            throw new ReservationException(NOT_DROPPER_OF_RESERVATION);
-
-        r.isAvailableUpdateState();
-
-        RefundMode mode = (r.getState() == ReservationState.PENDING)
-                ? RefundMode.AUTO_FULL : RefundMode.REVIEW_REQUIRED;
-
-        var payload = refundApi.requestRefund(
-                new RefundRequestCommand(
-                        idemKey,
-                        r.getReservationId(),
-                        r.getPaymentId(),     // ★ 결제와 연결
-                        actorId,
-                        mode,
-                        reason
-                )
-        );
-
-        // 전액 환불(AUTO_FULL)이면 즉시 취소 전이
-        if (mode == RefundMode.AUTO_FULL) {
-            r.updateState(ReservationState.CANCELLED);
-        }
-        return payload;
     }
 
     @Override

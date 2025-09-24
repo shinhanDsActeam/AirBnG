@@ -2,10 +2,10 @@ package com.airbng.admin.dto.response;
 
 import com.airbng.admin.domain.LockerReview;
 import com.airbng.admin.domain.PendingLocker;
-import com.airbng.admin.domain.base.LockerType;
 import com.airbng.admin.domain.base.ReviewStatus;
 import com.airbng.api.consumer.dto.view.LockerJimTypeResult;
 import com.airbng.api.consumer.dto.view.LockerReviewDetailView;
+import com.airbng.common.base.LockerType;
 import lombok.*;
 
 import java.util.List;

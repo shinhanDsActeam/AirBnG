@@ -1,12 +1,12 @@
 package com.airbng.pay.service;
 
-import com.airbng.common.base.BaseStatus;
 import com.airbng.pay.domain.Account;
 import com.airbng.pay.domain.BankInfo;
 import com.airbng.pay.domain.Wallet;
-import com.airbng.pay.dto.AccountCheckResponse;
 import com.airbng.pay.dto.AccountRegisterRequest;
 import com.airbng.pay.dto.BankCodeResult;
+import com.airbng.pay.dto.MyAccountsResponse;
+import com.airbng.pay.exception.AccountException;
 import com.airbng.pay.exception.BankInfoException;
 import com.airbng.pay.exception.WalletException;
 import com.airbng.pay.repository.AccountRepository;
@@ -21,7 +21,6 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
-import static com.airbng.common.base.Available.YES;
 import static com.airbng.common.base.BaseStatus.ACTIVE;
 import static com.airbng.platform.common.response.status.BaseResponseStatus.*;
 
@@ -71,13 +70,13 @@ public class AccountServiceImpl implements AccountService {
 
     @Transactional(readOnly = true)
     @Override
-    public AccountCheckResponse checkAccount(AirbngPrincipal principal) {
+    public MyAccountsResponse getMyAccounts(AirbngPrincipal principal) {
         long memberId = principal.getId();
         Wallet wallet = walletRepository.findByMemberId(memberId)
                 .orElseThrow(() -> new WalletException(INVALID_WALLET));
         List<Account> accounts =
                 accountRepository.findAllByWalletWalletIdOrderByIsPrimaryDescAccountIdAsc(wallet.getWalletId());
-        return AccountCheckResponse.from(wallet, accounts);
+        return MyAccountsResponse.from(wallet, accounts);
     }
 
     @Transactional(readOnly = true)
@@ -87,5 +86,32 @@ public class AccountServiceImpl implements AccountService {
             throw new BankInfoException(UNSUPPORTED_BANK);
         BankInfo bankInfo = bankInfoRepository.findByBankCode(bankCode);
         return Optional.of(BankCodeResult.from(bankInfo));
+    }
+
+    @Transactional
+    @Override
+    public void delete(Long accountId, AirbngPrincipal principal) {
+        long memberId = principal.getId();
+        Wallet wallet = walletRepository.findByMemberId(memberId)
+                .orElseThrow(() -> new WalletException(INVALID_WALLET));
+
+        Account account = accountRepository.findForUpdate(accountId, wallet.getWalletId())
+                .orElseThrow(() -> new WalletException(WALLET_ACCOUNT_MISMATCH));
+
+        accountRepository.delete(account);
+    }
+
+    @Transactional
+    @Override
+    public void setPrimaryAccount(Long accountId, AirbngPrincipal principal) {
+        long memberId = principal.getId();
+        Wallet wallet = walletRepository.findByMemberId(memberId)
+                .orElseThrow(() -> new WalletException(INVALID_WALLET));
+
+        boolean flag = accountRepository.existsByWalletWalletIdAndAccountId(wallet.getWalletId(), accountId);
+        if(!flag) throw new WalletException(WALLET_ACCOUNT_MISMATCH);
+
+        int row = accountRepository.updatePrimaryAccount(wallet.getWalletId(), accountId);
+        if (row == 0) throw new AccountException(FAILED_UPDATE_PRIMARY);
     }
 }

@@ -129,6 +129,8 @@ public enum BaseResponseStatus implements ResponseStatus {
     DUPLICATE_ACCOUNT(11001, HttpStatus.BAD_REQUEST.value(), "이미 계좌가 존재합니다."),
     WALLET_ACCOUNT_MISMATCH(11002, HttpStatus.BAD_REQUEST.value(), "지갑주인과 계좌 주인이 일치하지 않습니다."),
     INSUFFICIENT_BALANCE_ACCOUNT(11003, HttpStatus.BAD_REQUEST.value(), "계좌 잔액이 부족합니다."),
+    NO_ACCOUNT(11004, HttpStatus.BAD_REQUEST.value(), "계좌가 존재하지 않습니다."),
+    FAILED_UPDATE_PRIMARY(11005, HttpStatus.BAD_REQUEST.value(), "주계좌 갱신이 실패하였습니다."),
 
 
     /**
@@ -143,7 +145,19 @@ public enum BaseResponseStatus implements ResponseStatus {
      */
     FAILED_PAYMENT(13001, HttpStatus.INTERNAL_SERVER_ERROR.value(), "결제 처리에 실패하였습니다."),
     UNSUPPORTED_PAY_METHOD(13002, HttpStatus.BAD_REQUEST.value(), "지원하지 않는 결제 수단입니다."),
+    NOT_FOUND_PAYMENT(13003, HttpStatus.NOT_FOUND.value(), "결제 정보를 찾을 수 없습니다."),
 
+    /**
+     * 14000 : refund
+     */
+    FAILED_REFUND(14001, HttpStatus.INTERNAL_SERVER_ERROR.value(), "환불 처리에 실패하였습니다."),
+
+    /**
+     * 14000 : sales
+     */
+    INVALID_DATE(14001, HttpStatus.BAD_REQUEST.value(), "날짜 형식이 올바르지 않습니다."),
+    NOT_FOUND_PERIOD_SALES(14002, HttpStatus.BAD_REQUEST.value(), "해당 기간의 매출을 조회할 수 없습니다."),
+    NOT_FOUND_STORAGE_SALES(14003, HttpStatus.BAD_REQUEST.value(), "해당 보관소의 매출을 조회할 수 없습니다."),
 
     ;
 

@@ -1,8 +1,8 @@
 package com.airbng.admin.domain;
 
-import com.airbng.admin.domain.base.LockerType;
 import com.airbng.common.base.BaseStatus;
 import com.airbng.common.base.BaseTime;
+import com.airbng.common.base.LockerType;
 import jakarta.persistence.*;
 import lombok.*;
 import java.util.HashSet;
@@ -51,7 +51,8 @@ public class PendingLocker extends BaseTime {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private LockerType lockerType;
+    @Builder.Default
+    private LockerType lockerType = LockerType.PERSONAL;
 
     @Column(nullable = false)
     private Long memberId;

@@ -1,18 +1,26 @@
-// src/main/java/com/airbng/pay/domain/Refund.java
 package com.airbng.pay.domain;
 
 import com.airbng.common.base.BaseTime;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Getter
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Table(name = "refund", indexes = {
+        @Index(name = "idx_refund_reservation", columnList = "reservation_id"),
+        @Index(name = "idx_refund_payment", columnList = "payment_id"),
+        @Index(name = "idx_refund_status_date", columnList = "refund_status, created_at"),
+        @Index(name = "idx_refund_locker", columnList = "locker_id")
+})
 public class Refund extends BaseTime {
 
     @Id
@@ -24,14 +32,8 @@ public class Refund extends BaseTime {
     @Column(name = "reservation_id", nullable = false)
     private Long reservationId;
 
-    /** payment FK - Payment 엔티티로 참조 */
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "payment_id", nullable = false,
-            foreignKey = @ForeignKey(name = "fk_refund_payment"))
-    private Payment payment;
-
-    @Column(name = "refund_reason", length = 60)
-    private String refundReason;
+    /** 스냅샷 용도 (반정규화) */
+    private Long paymentId;
 
     /** 환불/수수료 정산 대상들 */
     @Column(name = "payer_id", nullable = false)
@@ -59,24 +61,11 @@ public class Refund extends BaseTime {
     @Column(name = "refund_status", nullable = false, length = 16)
     private RefundStatus refundStatus; // REQUESTED / PROCESSED
 
-    /** 타임스탬프 */
-    @Column(name = "requested_at", nullable = false)
-    private LocalDateTime requestedAt;
-
-    @Column(name = "processed_at")
-    private LocalDateTime processedAt;
-
     /** 멱등 키 */
-    @Column(name = "biz_key", nullable = false, length = 60, unique = true)
-    private String bizKey;
+    @Column(name = "biz_key", columnDefinition = "BINARY(16)", nullable = false, unique = true)
+    private UUID bizKey;
 
     /* ===== 도메인 메서드 ===== */
-
-    public void markProcessed(LocalDateTime processedAt) {
-        this.refundStatus = RefundStatus.PROCESSED;
-        this.processedAt = processedAt;
-    }
-
     public boolean isProcessed() {
         return this.refundStatus == RefundStatus.PROCESSED;
     }

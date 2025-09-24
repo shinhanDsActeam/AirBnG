@@ -44,9 +44,10 @@ public class ImageServiceImpl implements ImageService {
     }
 
     public Image getDefaultProfileImage() {
+        String extension = defaultImageUrl.substring(defaultImageUrl.lastIndexOf('.') + 1);
         Image image = Image.builder()
                 .url(defaultImageUrl)
-                .uploadName("default.jpg")
+                .uploadName("default." + extension)
                 .status(BaseStatus.ACTIVE)
                 .build();
         imageRepository.save(image);
@@ -60,13 +61,19 @@ public class ImageServiceImpl implements ImageService {
 
         Image image = member.getProfileImage();
 
-        if (!image.getUploadName().equals("default.jpg")) {
+        if (!image.getUploadName().contains("default.")) {
             s3Utils.delete(image.getUrl());
         }
 
         String newUrl = s3Utils.upload(file);
+        String newFileName = file.getOriginalFilename();
+        if (newFileName.contains("default.")) {
+            String extension = newFileName.substring(newFileName.lastIndexOf('.'));
+            newFileName = "default_personal" + extension;
+        }
+
         image.setUrl(newUrl);
-        image.setUploadName(file.getOriginalFilename());
+        image.setUploadName(newFileName);
 
         return image;
     }
