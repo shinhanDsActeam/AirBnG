@@ -29,7 +29,7 @@ public class AccountPreviewResult {
                 .balance(account.getBalance())
                 .holderName(account.getHolderName())
                 .isPrimary(account.getIsPrimary())
-                .baseStatus(account.getBaseStatus())
+                .baseStatus(account.getStatus())
                 .build();
     }
 }

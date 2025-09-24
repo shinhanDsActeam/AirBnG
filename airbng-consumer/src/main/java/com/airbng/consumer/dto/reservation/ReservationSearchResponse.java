@@ -17,6 +17,7 @@ public class ReservationSearchResponse {
     private Long reservationId;
     private Long keeperId;
     private Long dropperId;
+    private Long lockerId;
     private String state;
     private MemberRole role;   // "KEEPER" or "DROPPER"
     private String lockerName;
