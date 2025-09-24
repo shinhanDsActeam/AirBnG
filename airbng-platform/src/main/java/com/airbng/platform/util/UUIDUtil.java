@@ -1,5 +1,4 @@
-// common.util.UuidV4.java
-package com.airbng.pay.util;
+package com.airbng.platform.util;
 
 import java.util.UUID;
 

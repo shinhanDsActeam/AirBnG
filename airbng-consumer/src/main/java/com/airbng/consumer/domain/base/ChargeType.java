@@ -1,6 +1,7 @@
 package com.airbng.consumer.domain.base;
 
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -13,24 +14,24 @@ public enum ChargeType {
 
     SAME_DAY {
         @Override
-        public Long discountAmount() {
-            return 2000L;
+        public BigDecimal discountAmount(BigDecimal baseAmount) {
+            return baseAmount.multiply(new BigDecimal("0.2"));
         }
     },
     ONE_DAY_BEFORE {
         @Override
-        public Long discountAmount() {
-            return 1000L;
+        public BigDecimal discountAmount(BigDecimal baseAmount) {
+            return baseAmount.multiply(new BigDecimal("0.1"));
         }
     },
     BEFORE_THAT {
         @Override
-        public Long discountAmount() {
-            return 0L;
+        public BigDecimal discountAmount(BigDecimal baseAmount) {
+            return BigDecimal.ZERO;
         }
     };
 
-    public abstract Long discountAmount();
+    public abstract BigDecimal discountAmount(BigDecimal baseAmount);
 
     public static ChargeType from(LocalDateTime startTime){
         long dayBetween = ChronoUnit.DAYS.between(LocalDate.now(), startTime.toLocalDate());

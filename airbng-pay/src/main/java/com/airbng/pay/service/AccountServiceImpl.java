@@ -3,9 +3,9 @@ package com.airbng.pay.service;
 import com.airbng.pay.domain.Account;
 import com.airbng.pay.domain.BankInfo;
 import com.airbng.pay.domain.Wallet;
-import com.airbng.pay.dto.MyAccountsResponse;
 import com.airbng.pay.dto.AccountRegisterRequest;
 import com.airbng.pay.dto.BankCodeResult;
+import com.airbng.pay.dto.MyAccountsResponse;
 import com.airbng.pay.exception.AccountException;
 import com.airbng.pay.exception.BankInfoException;
 import com.airbng.pay.exception.WalletException;
@@ -108,20 +108,10 @@ public class AccountServiceImpl implements AccountService {
         Wallet wallet = walletRepository.findByMemberId(memberId)
                 .orElseThrow(() -> new WalletException(INVALID_WALLET));
 
-        List<Account> accountList = accountRepository.findAccountsWithLockByWalletId(wallet.getWalletId());
-        if (accountList.isEmpty()) throw new WalletException(NO_ACCOUNT);
+        boolean flag = accountRepository.existsByWalletWalletIdAndAccountId(wallet.getWalletId(), accountId);
+        if(!flag) throw new WalletException(WALLET_ACCOUNT_MISMATCH);
 
-        Account newPrimary = accountList.stream()
-                .filter(a -> a.getAccountId().equals(accountId))
-                .findFirst()
-                .orElseThrow(() -> new AccountException(WALLET_ACCOUNT_MISMATCH));
-
-        Account currentPrimary = accountList.stream()
-                .filter(Account::getIsPrimary)
-                .findFirst()
-                .orElseThrow(() -> new AccountException(WALLET_ACCOUNT_MISMATCH));
-
-        currentPrimary.unsetPrimary();
-        newPrimary.setPrimary();
+        int row = accountRepository.updatePrimaryAccount(wallet.getWalletId(), accountId);
+        if (row == 0) throw new AccountException(FAILED_UPDATE_PRIMARY);
     }
 }

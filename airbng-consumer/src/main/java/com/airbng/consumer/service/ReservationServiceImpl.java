@@ -2,7 +2,10 @@ package com.airbng.consumer.service;
 
 import com.airbng.api.consumer.event.ReservationCreatedEvent;
 import com.airbng.api.pay.PayApi;
+import com.airbng.api.pay.RefundApi;
 import com.airbng.api.pay.dto.command.MakePaymentRequest;
+import com.airbng.api.pay.dto.command.RefundType;
+import com.airbng.api.pay.dto.command.RefundRequestCommand;
 import com.airbng.common.base.BaseStatus;
 import com.airbng.consumer.domain.Locker;
 import com.airbng.consumer.domain.Member;
@@ -16,22 +19,23 @@ import com.airbng.consumer.exception.JimTypeException;
 import com.airbng.consumer.exception.LockerException;
 import com.airbng.consumer.exception.MemberException;
 import com.airbng.consumer.exception.ReservationException;
-import com.airbng.consumer.repository.*;
 import com.airbng.consumer.scheduler.AlertScheduledTask;
 import com.airbng.platform.common.response.status.BaseResponseStatus;
 import com.airbng.platform.security.principal.AirbngPrincipal;
+import com.airbng.platform.util.UUIDUtil;
 import com.github.benmanes.caffeine.cache.Cache;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
-import org.checkerframework.checker.units.qual.A;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.locks.ReentrantLock;
 
 import static com.airbng.common.BusinessIds.ADMIN_MEMBER_ID;
@@ -53,6 +57,7 @@ public class ReservationServiceImpl implements ReservationService {
     private final JimTypeRepository jimTypeRepository;
 
     private final PayApi payApi;
+    private final RefundApi refundApi;
 
     private static final Long LIMIT = 10L; // 페이지당 최대 예약 개수
     private final ApplicationEventPublisher events;
@@ -144,25 +149,44 @@ public class ReservationServiceImpl implements ReservationService {
             if (!reservation.getDropper().getMemberId().equals(member.getMemberId()))
                 throw new ReservationException(NOT_DROPPER_OF_RESERVATION);
 
+            BigDecimal chargeFee = ChargeType.from(reservation.getStartTime()).discountAmount(reservation.getAmount());
+
             if (reservation.getState() == ReservationState.CANCELLED) {
                 // 멱등하게 처리
-                return ReservationCancelResponse.of(reservation,
-                        ChargeType.from(reservation.getStartTime()).discountAmount(), ReservationState.CANCELLED);
+                return ReservationCancelResponse.of(reservation, chargeFee, ReservationState.CANCELLED);
             }
 
-            ChargeType chargeType = ChargeType.from(reservation.getStartTime());
             ReservationState newState = ReservationState.CANCELLED;
             /** 취소, 완료상태는 상태 변경 불가 */
             ReservationState.canUpdate(MemberRole.DROPPER, reservation.getState(), newState);
             /** 삭제 상태는 상태 변경 불가 */
             reservation.isAvailableUpdateState();
+
+            // 환불 모드 결정
+            RefundType refundType = RefundType.PARTIAL;
+            if(reservation.getState() == ReservationState.PENDING){
+                refundType = RefundType.FULL;
+                chargeFee = BigDecimal.ZERO; // 전액 환불
+            }
+
+            // 환불 요청
+            UUID idemKey = UUIDUtil.generate();
+            Long refundId = refundApi.requestRefund(
+                    RefundRequestCommand.builder()
+                            .reservationId(reservation.getReservationId())
+                            .paymentId(reservation.getPaymentId())
+                            .chargeFee(chargeFee)
+                            .refundType(refundType)
+                            .idemKey(idemKey).build()
+            );
+
+
             /** 더티 체킹 */
             reservation.updateState(newState);
 
             log.info("[cancelReservation] 완료 - Reservation (ID: {}) state changed to {} by Dropper (ID: {})", reservationId, newState, memberId);
 
-            return ReservationCancelResponse.of(reservation,
-                    chargeType.discountAmount(), ReservationState.CANCELLED);
+            return ReservationCancelResponse.of(reservation, chargeFee, ReservationState.CANCELLED);
 
         } finally {
             /** 무조건 락 해제 */
