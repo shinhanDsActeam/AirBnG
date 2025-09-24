@@ -74,7 +74,8 @@ public class Locker extends BaseTime {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private LockerType lockerType;
+    @Builder.Default
+    private LockerType lockerType = LockerType.PERSONAL;
 
     public boolean validateLockerJimtype(JimType jimType){
         return lockerJimTypes.stream()

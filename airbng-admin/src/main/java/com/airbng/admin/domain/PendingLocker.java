@@ -51,7 +51,8 @@ public class PendingLocker extends BaseTime {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private LockerType lockerType;
+    @Builder.Default
+    private LockerType lockerType = LockerType.PERSONAL;
 
     @Column(nullable = false)
     private Long memberId;
