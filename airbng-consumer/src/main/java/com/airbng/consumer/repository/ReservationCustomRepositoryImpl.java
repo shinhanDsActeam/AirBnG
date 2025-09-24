@@ -1,5 +1,6 @@
 package com.airbng.consumer.repository;
 
+import com.airbng.common.base.BaseStatus;
 import com.airbng.consumer.domain.*;
 import com.airbng.consumer.domain.base.MemberRole;
 import com.airbng.consumer.domain.base.ReservationState;
