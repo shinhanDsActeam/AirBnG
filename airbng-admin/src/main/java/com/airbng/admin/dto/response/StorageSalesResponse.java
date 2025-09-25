@@ -2,6 +2,7 @@ package com.airbng.admin.dto.response;
 
 import com.airbng.admin.domain.AggregateWithLockerView;
 import com.airbng.common.base.LockerType;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -14,6 +15,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class StorageSalesResponse {
     private Long aggregateId;
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime updatedAt;
     private BigDecimal totalSales;
     private Long totalCount;
