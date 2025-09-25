@@ -19,7 +19,9 @@ public class WebSocketMessageSecurity {
             SimpMessageType type = acc.getMessageType();
             String dest = acc.getDestination();
 
-            // 1) CONNECT/HEARTBEAT/UNSUBSCRIBE/DISCONNECT 또는 목적지 없는 메시지는 항상 허용
+            boolean isAuth = authentication.get() != null && authentication.get().isAuthenticated();
+
+            // 1) 목적지 없는 프레임(HEARTBEAT 등) 또는 연결/종료 계열은 허용
             if (type == SimpMessageType.CONNECT
                     || type == SimpMessageType.HEARTBEAT
                     || type == SimpMessageType.UNSUBSCRIBE
@@ -28,22 +30,27 @@ public class WebSocketMessageSecurity {
                 return new AuthorizationDecision(true);
             }
 
-            // 2) /app/** 로 SEND 하는 건 인증 필요
-            if (dest.startsWith("/app/")) {
-                return new AuthorizationDecision(authentication.get() != null
-                        && authentication.get().isAuthenticated());
+            // 2) SEND 프레임: /app/** 만 허용(인증 필수). 그 외 목적지는 거부
+            if (type == SimpMessageType.MESSAGE) {
+                if (dest.startsWith("/app/")) {
+                    return new AuthorizationDecision(isAuth);
+                }
+                // 클라가 /topic,/queue 로 SEND 하는 케이스는 차단
+                return new AuthorizationDecision(false);
             }
 
-            // 3) 구독 목적지(/topic, /queue, /user)도 인증 필요
-            if (dest.startsWith("/topic/")
-                    || dest.startsWith("/queue/")
-                    || dest.startsWith("/user/")) {
-                return new AuthorizationDecision(authentication.get() != null
-                        && authentication.get().isAuthenticated());
+            // 3) SUBSCRIBE 프레임: 브로커 목적지(/topic,/queue,/user)만 허용(인증 필수)
+            if (type == SimpMessageType.SUBSCRIBE) {
+                if (dest.startsWith("/topic/")
+                        || dest.startsWith("/queue/")
+                        || dest.startsWith("/user/")) {
+                    return new AuthorizationDecision(isAuth);
+                }
+                return new AuthorizationDecision(false);
             }
 
-            // 4) 그 외는 허용 (원하면 false로 바꿔 더 보수적으로)
-            return new AuthorizationDecision(true);
+            // 4) 그 외 타입은 보수적으로 거부
+            return new AuthorizationDecision(false);
         };
     }
 }

@@ -1,11 +1,14 @@
 package com.airbng.consumer.service;
 
+import com.airbng.api.consumer.event.ReservationCancelledEvent;
 import com.airbng.api.consumer.event.ReservationCreatedEvent;
 import com.airbng.api.pay.PayApi;
 import com.airbng.api.pay.RefundApi;
+import com.airbng.api.pay.RefundReadApi;
 import com.airbng.api.pay.dto.command.MakePaymentRequest;
 import com.airbng.api.pay.dto.command.RefundType;
 import com.airbng.api.pay.dto.command.RefundRequestCommand;
+import com.airbng.api.pay.dto.view.RefundCardPayload;
 import com.airbng.common.base.BaseStatus;
 import com.airbng.consumer.domain.Locker;
 import com.airbng.consumer.domain.Member;
@@ -29,6 +32,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import com.airbng.api.pay.dto.RefundStatus;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -58,6 +62,7 @@ public class ReservationServiceImpl implements ReservationService {
 
     private final PayApi payApi;
     private final RefundApi refundApi;
+    private final RefundReadApi refundReadApi;
 
     private static final Long LIMIT = 10L; // 페이지당 최대 예약 개수
     private final ApplicationEventPublisher events;
@@ -131,45 +136,45 @@ public class ReservationServiceImpl implements ReservationService {
     public ReservationCancelResponse cancelReservation(Long reservationId, Long memberId) {
         log.info("[cancelReservation] 요청 (reservationId: {}) <pending -> cancel> by Member (ID: {})", reservationId, memberId);
 
-        /** 락 */
         ReentrantLock lock = reservationLocks.get(reservationId, key -> new ReentrantLock());
         try {
-            /** 락 걸기 */
             lock.lock();
 
-            /** 맴버 존재 유무 파악 */
             Member member = memberRepository.findById(memberId)
                     .orElseThrow(() -> new MemberException(NOT_FOUND_MEMBER));
 
-            /** 요청 예약건의 존재여부 파악 */
             Reservation reservation = reservationRepository.findByReservationId(reservationId)
                     .orElseThrow(() -> new ReservationException(NOT_FOUND_RESERVATION));
 
-            /** 예약건의 dropper가 맞는지 파악 */
             if (!reservation.getDropper().getMemberId().equals(member.getMemberId()))
                 throw new ReservationException(NOT_DROPPER_OF_RESERVATION);
 
-            BigDecimal chargeFee = ChargeType.from(reservation.getStartTime()).discountAmount(reservation.getAmount());
+            BigDecimal chargeFee = ChargeType.from(reservation.getStartTime())
+                    .discountAmount(reservation.getAmount());
 
+            // 이미 취소된 경우: 환불 요약 조회 없이 바로 반환 (refund = null)
             if (reservation.getState() == ReservationState.CANCELLED) {
-                // 멱등하게 처리
-                return ReservationCancelResponse.of(reservation, chargeFee, ReservationState.CANCELLED);
+                return ReservationCancelResponse.of(
+                        reservation,
+                        chargeFee,
+                        ReservationState.CANCELLED,
+                        null // refund summary 없이
+                );
             }
 
+            // 상태 전이 검증
             ReservationState newState = ReservationState.CANCELLED;
-            /** 취소, 완료상태는 상태 변경 불가 */
             ReservationState.canUpdate(MemberRole.DROPPER, reservation.getState(), newState);
-            /** 삭제 상태는 상태 변경 불가 */
             reservation.isAvailableUpdateState();
 
-            // 환불 모드 결정
+            // 환불 타입 결정 (PENDING이면 전액)
             RefundType refundType = RefundType.PARTIAL;
-            if(reservation.getState() == ReservationState.PENDING){
+            if (reservation.getState() == ReservationState.PENDING) {
                 refundType = RefundType.FULL;
-                chargeFee = BigDecimal.ZERO; // 전액 환불
+                chargeFee = BigDecimal.ZERO;
             }
 
-            // 환불 요청
+            // 환불 생성 (멱등)
             UUID idemKey = UUIDUtil.generate();
             Long refundId = refundApi.requestRefund(
                     RefundRequestCommand.builder()
@@ -177,19 +182,53 @@ public class ReservationServiceImpl implements ReservationService {
                             .paymentId(reservation.getPaymentId())
                             .chargeFee(chargeFee)
                             .refundType(refundType)
-                            .idemKey(idemKey).build()
+                            .idemKey(idemKey)
+                            .build()
             );
 
-
-            /** 더티 체킹 */
+            // 상태 업데이트
             reservation.updateState(newState);
 
-            log.info("[cancelReservation] 완료 - Reservation (ID: {}) state changed to {} by Dropper (ID: {})", reservationId, newState, memberId);
+            events.publishEvent(ReservationCancelledEvent.of(
+                    reservation.getReservationId(),
+                    refundId,
+                    reservation.getDropper().getMemberId(),
+                    reservation.getKeeper().getMemberId()
+            ));
 
-            return ReservationCancelResponse.of(reservation, chargeFee, ReservationState.CANCELLED);
+            // 환불 요약 조회해서 응답 포함 (실패해도 취소는 성공)
+            ReservationCancelResponse.RefundSummary refundSummary;
+            try {
+                RefundCardPayload card = refundReadApi.getCardPayload(refundId);
+                refundSummary = ReservationCancelResponse.RefundSummary.builder()
+                        .refundId(card.refundId())
+                        .amount(card.amount())
+                        .refundType(card.refundType())
+                        .status(card.status())
+                        .createdAt(card.createdAt())
+                        .build();
+            } catch (Exception e) {
+                log.warn("refund payload fetch failed, refundId={}", refundId, e);
+                refundSummary = ReservationCancelResponse.RefundSummary.builder()
+                        .refundId(refundId)
+                        .amount(0L)
+                        .refundType(refundType)
+                        .status(RefundStatus.PENDING)
+                        .createdAt(null)
+                        .build();
+            }
+
+            log.info("[cancelReservation] 완료 - Reservation (ID: {}) state=CANCELLED by Dropper (ID: {})",
+                    reservationId, memberId);
+
+            return ReservationCancelResponse.of(
+                    reservation,
+                    chargeFee,
+                    ReservationState.CANCELLED,
+                    refundSummary
+            );
 
         } finally {
-            /** 무조건 락 해제 */
             lock.unlock();
         }
     }

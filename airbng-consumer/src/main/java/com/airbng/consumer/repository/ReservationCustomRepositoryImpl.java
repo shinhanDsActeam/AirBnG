@@ -84,6 +84,7 @@ public class ReservationCustomRepositoryImpl implements ReservationCustomReposit
             where.and(r.reservationId.lt(nextCursorId));
         }
         where.and(r.status.eq(BaseStatus.ACTIVE));
+
         // 쿼리 실행 및 DTO 매핑
         List<Reservation> reservations;
 

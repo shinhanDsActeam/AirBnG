@@ -53,7 +53,7 @@ public class RefundApiImpl implements RefundApi {
             refund = Refund.builder()
                     .reservationId(cmd.getReservationId())
                     .refundAmount(p.getPaymentAmount().add(p.getPaymentFee()).subtract(cmd.getChargeFee()))
-                    .refundStatus(RefundStatus.REQUESTED)
+                    .refundStatus(RefundStatus.PROCESSED)
                     .refundType(refundType)
                     .chargeFee(cmd.getChargeFee())
                     .paymentId(p.getPaymentId())
