@@ -23,11 +23,13 @@ public class ReservationDetailResponse {
     private List<String> images;
     private ReservationState state;
     private List<ReservationJimTypeResult> reservationJimTypes;
+    private String fullAddress;
 
     public static ReservationDetailResponse from(Reservation reservation){
         return ReservationDetailResponse.builder()
                 .reservationId(reservation.getReservationId())
                 .lockerName(reservation.getLocker().getLockerName())
+                .fullAddress(reservation.getLocker().getAddress() + " " + reservation.getLocker().getAddressDetail())
                 .dropperNickname(reservation.getDropper().getNickname())
                 .keeperNickname(reservation.getKeeper().getNickname())
                 .keeperId(reservation.getKeeper().getMemberId())
