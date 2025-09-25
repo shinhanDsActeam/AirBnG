@@ -11,6 +11,13 @@ public final class UUIDUtil {
         return UUID.randomUUID(); // 기본 v4
     }
 
+    public static UUID generateFromString(String name) {
+        if (name == null || name.isBlank()) {
+            throw new IllegalArgumentException("UUID name is required");
+        }
+        return UUID.nameUUIDFromBytes(name.trim().getBytes());
+    }
+
     /**
      * 문자열을 UUID v4 객체로 변환 (형식/버전 틀리면 IllegalArgumentException)
      */

@@ -170,7 +170,7 @@ public class ReservationServiceImpl implements ReservationService {
             }
 
             // 환불 요청
-            UUID idemKey = UUIDUtil.generate();
+            UUID idemKey = UUIDUtil.generateFromString(reservation.getPaymentId() + ":refund");
             Long refundId = refundApi.requestRefund(
                     RefundRequestCommand.builder()
                             .reservationId(reservation.getReservationId())
