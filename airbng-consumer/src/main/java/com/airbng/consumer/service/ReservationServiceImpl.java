@@ -300,7 +300,12 @@ public class ReservationServiceImpl implements ReservationService {
                         : ReservationState.COMPLETING_KEEPER_ONLY;
                 ReservationState.canUpdate(MemberRole.KEEPER, reservation.getState(), newState);
             }
+
             /** 더티 체킹 */
+            if(newState == ReservationState.COMPLETED){
+                reservation.getLocker().increaseReservationCount();
+            }
+
             reservation.updateState(newState);
 
             /** 예약 완료 알림 발송 */
