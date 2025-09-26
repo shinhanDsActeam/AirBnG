@@ -1,5 +1,6 @@
 package com.airbng.platform.util;
 
+import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
 public final class UUIDUtil {
@@ -15,7 +16,7 @@ public final class UUIDUtil {
         if (name == null || name.isBlank()) {
             throw new IllegalArgumentException("UUID name is required");
         }
-        return UUID.nameUUIDFromBytes(name.trim().getBytes());
+        return UUID.nameUUIDFromBytes(name.trim().getBytes(StandardCharsets.UTF_8));
     }
 
     /**
