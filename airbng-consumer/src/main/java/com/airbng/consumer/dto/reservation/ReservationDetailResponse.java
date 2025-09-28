@@ -37,6 +37,7 @@ public class ReservationDetailResponse {
                 .startTime(String.valueOf(reservation.getStartTime()))
                 .state(reservation.getState())
                 .endTime(String.valueOf(reservation.getEndTime()))
+                .fullAddress(reservation.getLocker().getAddress() + " " + reservation.getLocker().getAddressDetail())
                 .reservationJimTypes(
                         reservation.getReservationJimTypes().stream()
                                 .map(ReservationJimTypeResult::from)
