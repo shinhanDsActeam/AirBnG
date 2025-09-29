@@ -1,5 +1,6 @@
 package com.airbng.platform.util;
 
+import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
 public final class UUIDUtil {
@@ -9,6 +10,13 @@ public final class UUIDUtil {
     // 새 v4 UUID 생성
     public static UUID generate() {
         return UUID.randomUUID(); // 기본 v4
+    }
+
+    public static UUID generateFromString(String name) {
+        if (name == null || name.isBlank()) {
+            throw new IllegalArgumentException("UUID name is required");
+        }
+        return UUID.nameUUIDFromBytes(name.trim().getBytes(StandardCharsets.UTF_8));
     }
 
     /**

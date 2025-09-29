@@ -174,8 +174,8 @@ public class ReservationServiceImpl implements ReservationService {
                 chargeFee = BigDecimal.ZERO;
             }
 
-            // 환불 생성 (멱등)
-            UUID idemKey = UUIDUtil.generate();
+            // 환불 요청
+            UUID idemKey = UUIDUtil.generateFromString("refund:"+refundType.name()+":"+reservation.getReservationId());
             Long refundId = refundApi.requestRefund(
                     RefundRequestCommand.builder()
                             .reservationId(reservation.getReservationId())
