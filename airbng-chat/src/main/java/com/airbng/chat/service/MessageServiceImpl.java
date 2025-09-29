@@ -3,10 +3,12 @@ package com.airbng.chat.service;
 import com.airbng.api.consumer.ReservationApi;
 import com.airbng.api.consumer.dto.command.ReservationDecisionCommand;
 import com.airbng.api.consumer.dto.view.ReservationCardPayload;
+import com.airbng.api.pay.dto.view.RefundCardPayload;
 import com.airbng.chat.domain.Attachment;
 import com.airbng.chat.domain.Message;
 import com.airbng.chat.domain.model.AttachmentEmbedded;
 import com.airbng.chat.domain.model.LastMessage;
+import com.airbng.chat.domain.model.RefundCard;
 import com.airbng.chat.domain.model.ReservationCard;
 import com.airbng.chat.repository.AttachmentRepository;
 import com.airbng.chat.repository.MessageRepository;
@@ -150,6 +152,99 @@ public class MessageServiceImpl implements MessageService {
         inboxService.onNewMessage(peer, actorId, convId, last, now, actorId);
 
         return saved;
+    }
+
+    @Override
+    public Message saveReservationCancelledCardIfAbsent(
+            String convId,
+            ReservationCardPayload r,
+            RefundCardPayload refund,
+            String dedupKey
+    ) {
+        // 멱등: 같은 msgId가 있으면 그거 반환
+        var duplicated = messageRepo.findByConvIdAndMsgId(convId, dedupKey);
+        if (duplicated.isPresent()) return duplicated.get();
+
+        // convId 안전 검증(예약 참여자 기준)
+        String expected = conversationService.makeConvId(r.dropperId(), r.keeperId());
+        if (!expected.equals(convId)) {
+            throw new IllegalArgumentException("reservation parties != conversation");
+        }
+
+        long seq = redisSeq.nextMessageSeq(convId);
+        Instant now = Instant.now();
+
+        // 예약 카드 임베드
+        var rCard = ReservationCard.builder()
+                .reservationId(r.reservationId())
+                .lockerId(r.lockerId())
+                .lockerName(r.lockerName())
+                .address(r.address())
+                .startTime(r.startTime())
+                .endTime(r.endTime())
+                .category(r.category())
+                .pickupMemo(r.pickupMemo())
+                .imgUrl(r.imgUrl())
+                .status(String.valueOf(r.status()))
+                .canApprove(r.canApprove())
+                .build();
+
+        // 환불 카드 임베드 (Message 엔티티에 RefundCard 임베드가 있다고 가정)
+        var fCard = RefundCard.builder()
+                .refundId(refund.refundId())
+                .reservationId(refund.reservationId())
+                .paymentId(refund.paymentId())
+                .lockerId(refund.lockerId())
+                .dropperId(refund.dropperId())
+                .keeperId(refund.keeperId())
+                .amount(refund.amount())
+                .feeToKeeper(refund.feeToKeeper())
+                .refundType(refund.refundType() != null ? refund.refundType().name() : null)
+                .status(refund.status() != null ? refund.status().name() : null)
+                .createdAt(refund.createdAt())
+                .build();
+
+        // 시스템 카드 메시지로 저장
+        var toSave = Message.builder()
+                .convId(convId).seq(seq).msgId(dedupKey)
+                .senderId(0L).senderName("system")
+                .type("reservation_cancelled")
+                .reservation(rCard)
+                .refund(fCard)
+                .sentAt(now).deleted(false)
+                .build();
+
+        Message saved;
+        try {
+            saved = messageRepo.save(toSave);
+        } catch (DuplicateKeyException e) {
+            return messageRepo.findByConvIdAndMsgId(convId, dedupKey).orElseThrow();
+        }
+
+        // 인박스/대화 최신 갱신
+        String preview = makePreviewForCancel(refund.amount());  // 아래 헬퍼 참고
+        LastMessage last = LastMessage.builder()
+                .messageId(saved.getMsgId())
+                .senderId(0L)
+                .type("reservation_cancelled")
+                .preview(preview)
+                .sentAt(now)
+                .build();
+
+        conversationService.updateOnNewMessage(convId, last, seq);
+        long dropper = r.dropperId();
+        long keeper  = r.keeperId();
+        inboxService.onNewMessage(dropper, keeper, convId, last, now, 0L);
+        inboxService.onNewMessage(keeper, dropper, convId, last, now, 0L);
+
+        return saved;
+    }
+
+    private static String makePreviewForCancel(long amount) {
+        // 금액이 0이면 텍스트만
+        if (amount <= 0) return "예약 취소 · 환불 접수";
+        // 금액 표시 (간단 포맷)
+        return "예약 취소 · 환불 " + String.format("₩%,d", amount);
     }
 
     @Override

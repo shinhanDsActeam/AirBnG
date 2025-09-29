@@ -1,6 +1,7 @@
 package com.airbng.chat.domain;
 
 import com.airbng.chat.domain.model.AttachmentEmbedded;
+import com.airbng.chat.domain.model.RefundCard;
 import com.airbng.chat.domain.model.ReservationCard;
 import lombok.*;
 import org.springframework.data.annotation.Id;
@@ -32,6 +33,7 @@ public class Message {
     private String text;                // nullable
 
     private ReservationCard reservation;
+    private RefundCard refund;
 
     private List<AttachmentEmbedded> attachments;
 
