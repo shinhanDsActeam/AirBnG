@@ -11,8 +11,10 @@ import com.airbng.platform.security.principal.AirbngPrincipal;
 import com.airbng.chat.service.InboxService;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
@@ -29,11 +31,13 @@ import java.util.stream.Collectors;
 @RequestMapping("/chat/inbox")
 @RequiredArgsConstructor
 @Validated
+@Slf4j
 public class InboxController {
 
     private final InboxService inboxService;
     private final ConversationService conversationService;
     private final MemberApi memberApi;
+    private final SimpMessagingTemplate broker;
 
     /**
      * 내 인박스 목록 조회 (최신순)
@@ -88,10 +92,24 @@ public class InboxController {
                                        @RequestParam @Min(0) long lastSeenSeq,
                                        Authentication auth) {
         long me = ((AirbngPrincipal) auth.getPrincipal()).getId();
-        // 안전장치: 내가 속한 대화방만 허용
         conversationService.assertMember(convId, me);
 
         inboxService.markRead(me, convId, lastSeenSeq);
+
+        // 1) 내 인박스 뱃지 0
+        broker.convertAndSendToUser(String.valueOf(me),
+                "/queue/inbox", Map.of("convId", convId, "unreadTotal", 0));
+
+        // 2) READ 이벤트(WS와 동일 포맷) → 나 + 상대
+        var readEvt = Map.of("userId", me, "lastReadSeq", lastSeenSeq);
+        broker.convertAndSendToUser(String.valueOf(me),  "/queue/read." + convId, readEvt);
+
+        long peer = conversationService.peerIdOf(convId, me);
+        if (peer > 0) {
+            broker.convertAndSendToUser(String.valueOf(peer), "/queue/read." + convId, readEvt);
+        }
+
+        log.info("[HTTP READ OUT] conv={} self={} peer={} evt={}", convId, me, peer, readEvt);
         return new BaseResponse<>((Void) null);
     }
 

@@ -1,6 +1,7 @@
 package com.airbng.chat.service;
 
 import com.airbng.api.consumer.dto.view.ReservationCardPayload;
+import com.airbng.api.pay.dto.view.RefundCardPayload;
 import com.airbng.chat.domain.Message;
 
 import java.util.List;
@@ -21,4 +22,11 @@ public interface MessageService {
 
     /** 메시지 페이징 (beforeSeq 미지정 시 최신부터) */
     List<Message> getMessages(String convId, Long beforeSeq, int size);
+
+    Message saveReservationCancelledCardIfAbsent(
+            String convId,
+            ReservationCardPayload reservation,
+            RefundCardPayload refund,
+            String dedupKey             // 메시지 msgId로 그대로 사용(UNIQUE)
+    );
 }

@@ -42,6 +42,7 @@ public class ReservationController {
     @PatchMapping("/{reservation-id}/cancel")
     @PreAuthorize("hasAnyAuthority('USER')")
     public BaseResponse<ReservationCancelResponse> cancelReservation(
+            @RequestHeader(value = "Idempotency-Key") String idemKey,
             @PathVariable("reservation-id") @NotNull @Min(1) Long reservationId,
             @AuthenticationPrincipal AirbngPrincipal principal) {
         log.info("ReservationController.cancelReservation");
