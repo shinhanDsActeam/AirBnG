@@ -1,4 +1,4 @@
-package com.airbng.common.domain;
+package com.airbng.pay.domain;
 
 import com.airbng.common.base.PaymentMethod;
 import jakarta.persistence.*;

@@ -1,8 +1,8 @@
 package com.airbng.admin.dto.response;
 
 
+import com.airbng.api.pay.dto.view.PeriodSalesView;
 import com.airbng.common.base.PaymentMethod;
-import com.airbng.common.domain.Settlement;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -25,16 +25,16 @@ public class PeriodSalesResponse {
     private Long keeperId;
     private LocalDateTime createdAt;
 
-    public static PeriodSalesResponse from(Settlement settlement) {
+    public static PeriodSalesResponse from(PeriodSalesView view) {
         return PeriodSalesResponse.builder()
-                .settlementId(settlement.getSettlementId())
-                .amount(settlement.getAmount())
-                .settlementDate(settlement.getSettlementDate())
-                .paymentMethod(settlement.getPaymentMethod())
-                .paymentFee(settlement.getPaymentFee())
-                .reservationId(settlement.getReservationId())
-                .keeperId(settlement.getKeeperId())
-                .createdAt(settlement.getCreatedAt())
+                .settlementId(view.getSettlementId())
+                .amount(view.getAmount())
+                .settlementDate(view.getSettlementDate())
+                .paymentMethod(view.getPaymentMethod())
+                .paymentFee(view.getPaymentFee())
+                .reservationId(view.getReservationId())
+                .keeperId(view.getKeeperId())
+                .createdAt(view.getCreatedAt())
                 .build();
     }
 }

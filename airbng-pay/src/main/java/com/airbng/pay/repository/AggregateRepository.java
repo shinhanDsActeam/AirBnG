@@ -1,6 +1,6 @@
-package com.airbng.common.repository;
+package com.airbng.pay.repository;
 
-import com.airbng.common.domain.Aggregate;
+import com.airbng.pay.domain.Aggregate;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

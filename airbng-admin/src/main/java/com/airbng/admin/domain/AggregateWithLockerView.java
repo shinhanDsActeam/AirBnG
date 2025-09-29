@@ -24,10 +24,9 @@ import java.time.LocalDateTime;
             a.locker_id,
             l.locker_type
         FROM aggregate a
-        JOIN locker l ON a.locker_id = l.locker_id
+        LEFT JOIN locker l ON a.locker_id = l.locker_id
         """)
 @Synchronize({"aggregate", "locker"})
-@Table(name = "aggregate_with_locker_view")
 @NoArgsConstructor
 @Getter
 public class AggregateWithLockerView {
@@ -39,7 +38,7 @@ public class AggregateWithLockerView {
     @Column(name = "locker_id")
     private Long lockerId;
 
-    @Column (name = "aggregate_date")
+    @Column(name = "aggregate_date")
     private LocalDateTime aggregateDate;
 
     @Column(name = "total_sales")

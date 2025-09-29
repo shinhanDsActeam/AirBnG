@@ -1,6 +1,6 @@
-package com.airbng.common.repository;
+package com.airbng.pay.repository;
 
-import com.airbng.common.domain.Settlement;
+import com.airbng.pay.domain.Settlement;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.repository.JpaRepository;
