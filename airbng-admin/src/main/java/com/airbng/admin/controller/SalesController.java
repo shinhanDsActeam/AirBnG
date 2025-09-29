@@ -40,7 +40,7 @@ public class SalesController {
 
         Pageable pageable = PageRequest.of(page, size, Sort.by("settlementDate").descending());
         Page<PeriodSalesResponse> result = salesService.getPeriodSales(startDate, endDate, pageable);
-        if (result.isEmpty()) throw new SalesException(INVALID_DATE);
+//        if (result.isEmpty()) throw new SalesException(INVALID_DATE);
 
         return new BaseResponse<>(result);
     }
@@ -54,9 +54,9 @@ public class SalesController {
             @Parameter(description = "페이지 번호 (0부터 시작)") @RequestParam(defaultValue = "0") int page,
             @Parameter(description = "페이지 크기") @RequestParam(defaultValue = "10") int size ){
 
-        Pageable pageable = PageRequest.of(page, size, Sort.by("totalSales").descending());
+        Pageable pageable = PageRequest.of(page, size, Sort.by("aggregate_date").descending());
         Page<StorageSalesResponse> result = salesService.getStorageSales(lockerType, startDate, endDate, pageable);
-        if (result.isEmpty()) throw new SalesException(INVALID_DATE);
+//        if (result.isEmpty()) throw new SalesException(INVALID_DATE);
 
         return new BaseResponse<>(result);
     }

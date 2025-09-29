@@ -41,7 +41,8 @@ public class Account extends BaseTime {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private BaseStatus baseStatus;
+    @Builder.Default
+    private BaseStatus status = BaseStatus.ACTIVE;
 
     @Version
     private Long version;

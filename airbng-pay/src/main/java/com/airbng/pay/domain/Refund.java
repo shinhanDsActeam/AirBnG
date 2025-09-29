@@ -1,4 +1,3 @@
-// src/main/java/com/airbng/pay/domain/Refund.java
 package com.airbng.pay.domain;
 
 import com.airbng.common.base.BaseTime;

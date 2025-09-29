@@ -47,6 +47,11 @@ public class ConversationServiceImpl implements ConversationService {
     }
 
     @Override
+    public String ensureByPeer(long userA, long userB) {
+        return getOrCreate(userA, userB).getId();
+    }
+
+    @Override
     public Conversation findById(String convId) {
         return conversationRepo.findById(convId).orElse(null);
     }

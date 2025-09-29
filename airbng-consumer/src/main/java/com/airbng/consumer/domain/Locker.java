@@ -97,4 +97,8 @@ public class Locker extends BaseTime {
         }
     }
 
+    public void increaseReservationCount() {
+        this.reservationCount += 1;
+    }
+
 }

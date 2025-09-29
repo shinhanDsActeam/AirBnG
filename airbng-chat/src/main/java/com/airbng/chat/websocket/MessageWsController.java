@@ -26,6 +26,7 @@ import org.springframework.stereotype.Controller;
 
 import java.security.Principal;
 import java.time.Instant;
+import java.util.Map;
 
 @Slf4j
 @Controller
@@ -121,31 +122,85 @@ public class MessageWsController {
 
     /**
      * 읽음 처리
-     * 클라 → 서버: /conversations/{convId}/read
-     * 서버 → 상대 유저: /user/queue/read.{convId}
+     * 클라 → 서버: /conversations/{convId}/read  (payload: { lastSeenSeq })
+     * 서버 → 내 인박스 힌트: /user/queue/inbox          (unreadTotal=0)
+     * 서버 → 방별 READ 이벤트(양쪽): /user/queue/read.{convId}  ({ userId, lastReadSeq })
      */
     @MessageMapping("/conversations/{convId}/read")
     public void wsMarkRead(@DestinationVariable String convId,
                            @Payload ReadPayload payload,
-                           Principal principal) {                     // ← 변경
+                           Principal principal) {
 
         AirbngPrincipal me = currentUser(principal);
         conversationService.assertMember(convId, me.getId());
 
-        inboxService.markRead(me.getId(), convId, payload.getLastSeenSeq());
+        long lastSeenSeq = payload != null ? payload.getLastSeenSeq() : 0L;
+
+        log.info("[READ IN] u={} conv={} lastSeenSeq={}", me.getId(), convId, lastSeenSeq);
+
+        // 1) 서버 기준 읽음 반영 + unread 재계산
+        inboxService.markRead(me.getId(), convId, lastSeenSeq);
+
+        // 내 인박스 0 힌트
+        broker.convertAndSendToUser(String.valueOf(me.getId()),
+                "/queue/inbox", Map.of("convId", convId, "unreadTotal", 0));
+
+        // READ 이벤트는 '객체'로 양쪽에게
+        var readEvt = Map.of("userId", me.getId(), "lastReadSeq", lastSeenSeq);
+        broker.convertAndSendToUser(String.valueOf(me.getId()), "/queue/read." + convId, readEvt);
 
         long peer = conversationService.peerIdOf(convId, me.getId());
-        broker.convertAndSendToUser(String.valueOf(peer),
-                "/queue/read." + convId,
-                payload.getLastSeenSeq());
+        if (peer > 0) {
+            broker.convertAndSendToUser(String.valueOf(peer), "/queue/read." + convId, readEvt);
+        }
 
-        // ===== 인박스 힌트: 내 리스트 즉시 0 처리 =====
-        broker.convertAndSendToUser(String.valueOf(me.getId()),
+        // === LOG
+        log.info("[READ OUT] conv={} -> self={}, peer={} payload={}", convId, me.getId(), peer, readEvt);
+    }
+
+    @MessageMapping("/conversations/{convId}/read-sync")
+    public void wsReadSync(@DestinationVariable String convId,
+                           @Payload ReadSyncRequest payload,
+                           Principal principal) {
+
+        var me = currentUser(principal);
+        conversationService.assertMember(convId, me.getId());
+
+        long meId   = me.getId();
+        long peerId = conversationService.peerIdOf(convId, meId);
+
+        long meLastRead   = 0L;
+        long peerLastRead = 0L;
+
+        var meInbox   = inboxService.getOne(meId, convId);
+        var peerInbox = inboxService.getOne(peerId, convId);
+        if (meInbox   != null && meInbox.getLastReadSeq()   != null) meLastRead   = meInbox.getLastReadSeq();
+        if (peerInbox != null && peerInbox.getLastReadSeq() != null) peerLastRead = peerInbox.getLastReadSeq();
+
+        // === LOG
+        log.info("[READ-SYNC IN] u={} conv={} meLastRead={} peerLastRead={}",
+                meId, convId, meLastRead, peerLastRead);
+
+        // 1) 나에게: 상대의 읽은 위치(내 UI가 필요로 하는 값)
+        broker.convertAndSendToUser(String.valueOf(meId),
+                "/queue/read." + convId,
+                java.util.Map.of("userId", peerId, "lastReadSeq", peerLastRead));
+
+        // 2) 상대에게도: 나의 읽은 위치(멱등 동기화)
+        if (peerId > 0) {
+            broker.convertAndSendToUser(String.valueOf(peerId),
+                    "/queue/read." + convId,
+                    java.util.Map.of("userId", meId, "lastReadSeq", meLastRead));
+        }
+
+        // 3) 선택: 방에 들어온 나의 인박스 뱃지는 바로 0
+        broker.convertAndSendToUser(String.valueOf(meId),
                 "/queue/inbox",
-                InboxHint.builder()
-                        .convId(convId)
-                        .unreadTotal(0)
-                        .build());
+                java.util.Map.of("convId", convId, "unreadTotal", 0));
+
+        // === LOG
+        log.info("[READ-SYNC OUT] conv={} to={} (peerRead={}), toPeer={} (meRead={})",
+                convId, meId, peerLastRead, peerId, meLastRead);
     }
 
     /**
@@ -156,7 +211,7 @@ public class MessageWsController {
     @MessageMapping("/conversations/{convId}/typing")
     public void wsTyping(@DestinationVariable String convId,
                          @Payload TypingPayload payload,
-                         Principal principal) {                      // ← 변경
+                         Principal principal) {
 
         AirbngPrincipal me = currentUser(principal);
         conversationService.assertMember(convId, me.getId());
@@ -175,7 +230,7 @@ public class MessageWsController {
 
     /* ================= Error Handling ================= */
     @MessageExceptionHandler
-    public void handle(Exception ex, Principal principal) {          // ← 변경
+    public void handle(Exception ex, Principal principal) {
         Long me = null;
         if (principal instanceof Authentication a && a.getPrincipal() instanceof AirbngPrincipal cud) {
             me = cud.getId();

@@ -74,7 +74,8 @@ public interface LockerRepository extends JpaRepository<Locker, Long> {
             "LEFT JOIN FETCH li.image i " +
             "LEFT JOIN FETCH l.lockerJimTypes lj " +
             "JOIN FETCH lj.jimType j " +
-            "ORDER BY l.reservationCount DESC " +
+            "WHERE l.reservationCount != 0 " +
+            "ORDER BY l.reservationCount ASC " +
             "limit 5")
     List<Locker> findTop5LockersByReservation(ReservationState state);
 

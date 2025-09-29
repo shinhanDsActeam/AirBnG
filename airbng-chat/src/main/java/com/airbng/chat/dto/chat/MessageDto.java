@@ -17,7 +17,8 @@ public record MessageDto(
         Long   sentAtMs,     // ← epoch ms (Instant -> toEpochMilli)
         Boolean deleted,
         List<AttachmentDto> attachments,
-        ReservationCardDto reservation
+        ReservationCardDto reservation,
+        RefundDto refund
 ) {
     public static MessageDto from(
             Message m,
@@ -47,13 +48,16 @@ public record MessageDto(
             );
         }
 
+        RefundDto refund = RefundDto.from(m.getRefund());
+
         return new MessageDto(
                 m.getId(), m.getConvId(), m.getSeq(), m.getMsgId(),
                 m.getSenderId(), m.getSenderName(), m.getType(), m.getText(),
-                m.getSentAt()!=null ? m.getSentAt().toEpochMilli() : null,
+                (m.getSentAt() != null ? m.getSentAt().toEpochMilli() : null),
                 Boolean.TRUE.equals(m.getDeleted()),
                 atts,
-                card
+                card,
+                refund
         );
     }
 }

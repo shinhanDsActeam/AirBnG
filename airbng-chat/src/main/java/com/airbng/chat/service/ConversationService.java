@@ -26,4 +26,8 @@ public interface ConversationService {
     void updateOnNewMessage(String convId, LastMessage last, long seq);
 
     PeerProfileDto getPeerProfile(String convId, long requesterId);
+
+    default String ensureByPeer(long userA, long userB) {
+        return getOrCreate(userA, userB).getId();
+    }
 }
