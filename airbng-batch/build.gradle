@@ -1,0 +1,11 @@
+bootJar.enabled = false
+jar.enabled = true
+dependencies {
+    implementation project(':airbng-common')
+    implementation project(':airbng-platform')
+    implementation 'org.springframework.boot:spring-boot-starter-batch'
+    implementation 'org.springframework.boot:spring-boot-starter-quartz'
+}
+tasks.named('test') {
+    ignoreFailures = true
+}

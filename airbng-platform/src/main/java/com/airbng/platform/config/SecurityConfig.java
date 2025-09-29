@@ -132,7 +132,8 @@ public class SecurityConfig {
                 "http://localhost:3000",
                 "http://localhost:3001",
                 "https://www.airbng.store",
-                "https://airbng.store"
+                "https://airbng.store",
+                "https://airbng.shinhanacademy.co.kr/"
         ));
         corsConfiguration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         corsConfiguration.setAllowedHeaders(Arrays.asList("*"));
