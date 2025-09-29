@@ -60,7 +60,6 @@ public class AccountServiceImpl implements AccountService {
                 .accountNumber(accountNumber)
                 .holderName(req.getHolderName())
                 .isPrimary(isPrimary)
-                .baseStatus(ACTIVE)
                 .balance(BigDecimal.ZERO)
                 .build();
 

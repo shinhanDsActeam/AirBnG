@@ -137,6 +137,7 @@ public class ReservationCustomRepositoryImpl implements ReservationCustomReposit
                 .reservationId(res.getReservationId())
                 .keeperId(res.getKeeper().getMemberId())
                 .dropperId(res.getDropper().getMemberId())
+                .lockerId(locker.getLockerId())
                 .state(res.getState().name())
                 .role(role)
                 .lockerName(locker.getLockerName())

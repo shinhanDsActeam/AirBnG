@@ -339,16 +339,26 @@ public class ReservationServiceImpl implements ReservationService {
                         : ReservationState.COMPLETING_KEEPER_ONLY;
                 ReservationState.canUpdate(MemberRole.KEEPER, reservation.getState(), newState);
             }
+
             /** 더티 체킹 */
+            if(newState == ReservationState.COMPLETED){
+                reservation.getLocker().increaseReservationCount();
+            }
+
             reservation.updateState(newState);
 
             /** 예약 완료 알림 발송 */
             if (reservation.getState() != ReservationState.COMPLETED) {
-                alertScheduledTask.sendToBoth(ReservationResponse.from(reservation),
+                Long targetMemberId = (role == MemberRole.DROPPER) ? reservation.getKeeper().getMemberId() : reservation.getDropper().getMemberId();
+                alertScheduledTask.sendToOne(
+                        targetMemberId,
+                        reservationId,
+                        (role == MemberRole.DROPPER) ? reservation.getKeeper().getNickname() : reservation.getDropper().getNickname(),
+                        (role == MemberRole.DROPPER) ? MemberRole.KEEPER.name() : MemberRole.DROPPER.name(),
                         NotificationType.COMPLETION_NOTICE,
-                        "상대방이 예약 완료 처리를 하였습니다. 예약을 완료해 주세요.",
                         "상대방이 예약 완료 처리를 하였습니다. 예약을 완료해 주세요."
                 );
+
             } else {
                 alertScheduledTask.sendToBoth(ReservationResponse.from(reservation),
                         NotificationType.COMPLETION_NOTICE,
