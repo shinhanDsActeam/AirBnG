@@ -138,6 +138,8 @@ public class WalletServiceImpl implements WalletService {
         WalletTxRole role = null;
         if(WalletTxType.PAYMENT == type) {
             role = WalletTxRole.DEBIT;
+        }else if(WalletTxType.SETTLEMENT == type) {
+            role = WalletTxRole.MOVE;
         }
 
         List<WalletTx> fetched = walletTxRepository.findSliceByWalletIdAndCursorDesc(
