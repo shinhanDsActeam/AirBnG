@@ -29,6 +29,7 @@ import java.time.LocalDateTime;
 @Synchronize({"aggregate", "locker"})
 @NoArgsConstructor
 @Getter
+@Table(name = "aggregate_with_locker_view")
 public class AggregateWithLockerView {
 
     @Id
