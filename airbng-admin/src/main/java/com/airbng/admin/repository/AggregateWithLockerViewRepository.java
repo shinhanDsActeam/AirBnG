@@ -13,11 +13,12 @@ import java.time.LocalDateTime;
 @Repository
 public interface AggregateWithLockerViewRepository extends JpaRepository<AggregateWithLockerView, Long> {
     @Query(value = "SELECT * FROM aggregate_with_locker_view v " +
-            "WHERE v.locker_type = :lockerType " +
-            "AND v.aggregate_date BETWEEN :startDate AND :endDate",
+            "WHERE v.locker_type = :lockerType "
+//            "AND v.aggregate_date BETWEEN :startDate AND :endDate",
+            ,
             countQuery = "SELECT COUNT(*) FROM aggregate_with_locker_view v " +
-                    "WHERE v.locker_type = :lockerType " +
-                    "AND v.aggregate_date BETWEEN :startDate AND :endDate",
+                    "WHERE v.locker_type = :lockerType ",
+//                    "AND v.aggregate_date BETWEEN :startDate AND :endDate",
             nativeQuery = true)
     Page<AggregateWithLockerView> findByStorageSales(
             @Param("lockerType") String lockerType,
