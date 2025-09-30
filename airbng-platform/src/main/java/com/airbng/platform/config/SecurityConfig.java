@@ -135,7 +135,7 @@ public class SecurityConfig {
                 "https://airbng.store",
                 "https://airbng.shinhanacademy.co.kr/"
         ));
-        corsConfiguration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        corsConfiguration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
         corsConfiguration.setAllowedHeaders(Arrays.asList("*"));
         corsConfiguration.setExposedHeaders(Arrays.asList("Authorization"));
         corsConfiguration.setAllowCredentials(true);
