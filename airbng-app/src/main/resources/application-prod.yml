@@ -1,0 +1,36 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://${DB_URL}/airbng?characterEncoding=UTF-8&connectionCollation=utf8mb4_unicode_ci&serverTimezone=Asia/Seoul&allowPublicKeyRetrieval=true
+    password: ${DB_PASSWORD}
+  data:
+    redis:
+      host: ${REDIS_HOST}
+      username: ${REDIS_USERNAME}
+      port: ${REDIS_PORT}
+      password: ${REDIS_PASSWORD}
+
+    mongodb:
+      uri: ${MONGODB_URI}
+      database: airbng
+      auto-index-creation: true
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+        format_sql: true
+        default_batch_fetch_size: 100
+    open-in-view: false
+
+websocket:
+  stomp:
+    endpoint: /ws-chat
+    app-destination-prefix: /app
+    broker-destination-prefixes: /topic,/queue
+    allowed-origins: http://localhost:3000,http://localhost:3001,https://www.airbng.store,https://airbng.store,https://airbng.shinhanacademy.co.kr
+
+logging.level:
+  org.hibernate.SQL: debug
+  org.hibernate.type: trace
