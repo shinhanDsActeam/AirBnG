@@ -39,5 +39,8 @@ public class Settlement {
     private Long keeperId;
 
     @Column(nullable = false)
+    private Long lockerId;
+
+    @Column(nullable = false)
     private LocalDateTime createdAt;
 }

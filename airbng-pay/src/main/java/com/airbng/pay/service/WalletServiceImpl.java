@@ -1,13 +1,13 @@
 package com.airbng.pay.service;
 
 import com.airbng.pay.domain.*;
+import com.airbng.pay.domain.view.CompletedReservationView;
 import com.airbng.pay.dto.*;
 import com.airbng.pay.exception.AccountException;
 import com.airbng.pay.exception.WalletException;
-import com.airbng.pay.repository.AccountRepository;
-import com.airbng.pay.repository.WalletRepository;
-import com.airbng.pay.repository.WalletTxRepository;
+import com.airbng.pay.repository.*;
 import com.airbng.platform.security.principal.AirbngPrincipal;
+import com.airbng.platform.util.UUIDUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
@@ -15,10 +15,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
+import static com.airbng.common.BusinessIds.ADMIN_MEMBER_ID;
+import static com.airbng.pay.domain.WalletTxType.REFUND;
 import static com.airbng.platform.common.response.status.BaseResponseStatus.*;
 
 @Service
@@ -31,6 +31,8 @@ public class WalletServiceImpl implements WalletService {
     private final AccountRepository accountRepository;
     private static final int PAGE_SIZE = 10;
     private static final BigDecimal MIN_TOPUP_AMOUNT = new BigDecimal("1000");
+    private final PaymentRepository paymentRepository;
+    private final MasterTxRepository masterTxRepository;
 
     @Override
     public WalletBalanceResponse getBalance(AirbngPrincipal principal) {
@@ -152,4 +154,52 @@ public class WalletServiceImpl implements WalletService {
 
         return WalletHistoryResponse.from(wallet, fetched, nextCursor, hasNext);
     }
+
+    @Override
+    public void performSettlement(CompletedReservationView v) {
+        List<Long> memberIds = new ArrayList<>(List.of(v.getKeeperId(), ADMIN_MEMBER_ID))
+                .stream().filter(Objects::nonNull).distinct().toList();
+
+        List<Wallet> wallets = walletRepository.findWalletsWithLockByMemberIds(memberIds);
+
+        Wallet keeper = walletPickByMemberIdOrThrow(wallets, v.getKeeperId());
+        Wallet system = walletPickByMemberIdOrThrow(wallets, ADMIN_MEMBER_ID);
+
+        // 2) 잔액 이동
+        keeper.subtractBalanceReserved(v.getAmount()); // keeper 보류금 차감
+        keeper.addBalanceAvailable(v.getAmount()); // keeper 가용금 증가
+        system.subtractBalanceReserved(v.getFee()); // 시스템 보류금 차감
+        system.addBalanceAvailable(v.getFee()); // 시스템 가용금 증가
+
+        Payment paymentRef = paymentRepository.getReferenceById(v.getPaymentId()); // 프록시
+
+        // 3) WalletTx 기록
+        WalletTx keeperTx = WalletTx.builder()
+                .wallet(keeper)
+                .payment(paymentRef)
+                .walletTxType(WalletTxType.SETTLEMENT)
+                .walletTxRole(WalletTxRole.MOVE)
+                .walletIdemKey(UUIDUtil.generate())
+                .amount(v.getAmount())
+                .build();
+
+        MasterTx masterTx = MasterTx.builder()
+                .wallet(system)
+                .masterTxRole(MasterTxRole.MOVE)
+                .amount(v.getFee())
+                .build();
+
+        walletTxRepository.save(keeperTx);
+        masterTxRepository.save(masterTx);
+        log.info("Settlement done: reservationId={}, keeperId={}, amount={}, fee={}",
+                v.getReservationId(), v.getKeeperId(), v.getAmount(), v.getFee());
+    }
+
+    private Wallet walletPickByMemberIdOrThrow(List<Wallet> wallets, Long memberID) {
+        return wallets.stream()
+                .filter(w -> w.getMemberId().equals(memberID))
+                .findFirst()
+                .orElseThrow(()-> new WalletException(INVALID_WALLET));
+    }
+
 }
