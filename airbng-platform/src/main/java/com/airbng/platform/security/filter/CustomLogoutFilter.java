@@ -95,7 +95,12 @@ public class CustomLogoutFilter extends GenericFilterBean {
         cookie.setMaxAge(0);
         cookie.setPath("/");
 
+        Cookie sseCookie = new Cookie(TOKEN_TYPE_SSE, null);
+        sseCookie.setMaxAge(0);
+        sseCookie.setPath("/");
+
         response.addCookie(cookie);
+        response.addCookie(sseCookie);
         response.setStatus(HttpServletResponse.SC_OK);
         log.info("[로그아웃 요청] 완료: {}", jwtUtil.getUserId(refreshToken));
     }
