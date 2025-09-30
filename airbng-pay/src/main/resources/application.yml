@@ -1,0 +1,10 @@
+spring:
+  jackson:
+    time-zone: Asia/Seoul
+app:
+  settlement:
+    enabled: true
+  refund:
+    enabled: true
+  aggregate:
+    enabled: true
