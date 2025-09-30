@@ -4,6 +4,7 @@ import com.airbng.pay.domain.*;
 import com.airbng.pay.domain.view.CompletedReservationView;
 import com.airbng.pay.dto.*;
 import com.airbng.pay.exception.AccountException;
+import com.airbng.pay.exception.PaymentException;
 import com.airbng.pay.exception.WalletException;
 import com.airbng.pay.repository.*;
 import com.airbng.platform.security.principal.AirbngPrincipal;
@@ -153,6 +154,67 @@ public class WalletServiceImpl implements WalletService {
         Long nextCursor = hasNext ? fetched.get(fetched.size() -1).getWalletTxId() : null;
 
         return WalletHistoryResponse.from(wallet, fetched, nextCursor, hasNext);
+    }
+
+
+    @Transactional
+    @Override
+    public void performRefund(Refund refund) {
+        // 락 대상 지갑 목록 구성
+        List<Long> memberIds = new ArrayList<>(List.of(refund.getPayerId(), refund.getPayeeId(), ADMIN_MEMBER_ID))
+                .stream().filter(Objects::nonNull).distinct().toList();
+
+        // 대상 지갑 락
+        List<Wallet> wallets = walletRepository.findWalletsWithLockByMemberIds(memberIds);
+
+        Wallet payer = walletPickByMemberIdOrThrow(wallets, refund.getPayerId());
+        Wallet keeper = walletPickByMemberIdOrThrow(wallets, refund.getPayeeId());
+        Wallet system = walletPickByMemberIdOrThrow(wallets, ADMIN_MEMBER_ID);
+
+        Payment payment = paymentRepository.findById(refund.getPaymentId())
+                .orElseThrow(() -> new PaymentException(NOT_FOUND_PAYMENT));
+
+        // 2) 잔액 이동
+        payer.addBalanceAvailable(refund.getRefundAmount());      // payer 환불금 수령
+        keeper.subtractBalanceReserved(payment.getPaymentAmount()); // keeper 보류금 차감
+        if (refund.getChargeFee().compareTo(BigDecimal.ZERO) > 0) {
+            keeper.addBalanceAvailable(refund.getChargeFee());    // keeper 수수료 수령
+        }
+        system.subtractBalanceReserved(payment.getPaymentFee()); // 시스템 보류금 차감
+
+        // 3) WalletTx 기록
+        WalletTx payerTx = WalletTx.builder()
+                .wallet(payer)
+                .payment(payment).walletTxType(REFUND)
+                .walletTxRole(WalletTxRole.CREDIT)
+                .walletIdemKey(UUIDUtil.generate())
+                .amount(refund.getRefundAmount())
+                .build();
+
+        WalletTx keeperReserveTx = WalletTx.builder()
+                .wallet(keeper)
+                .payment(payment).walletTxType(REFUND)
+                .walletTxRole(WalletTxRole.DEBIT)
+                .walletIdemKey(UUIDUtil.generate())
+                .amount(payment.getPaymentAmount())
+                .build();
+
+        WalletTx keeperAvailableTx = WalletTx.builder()
+                .wallet(keeper)
+                .payment(payment).walletTxType(REFUND)
+                .walletTxRole(WalletTxRole.CREDIT)
+                .walletIdemKey(UUIDUtil.generate())
+                .amount(refund.getChargeFee())
+                .build();
+
+        MasterTx masterTx = MasterTx.builder()
+                .wallet(system)
+                .masterTxRole(MasterTxRole.DEBIT)
+                .amount(payment.getPaymentFee())
+                .build();
+
+        walletTxRepository.saveAll(List.of(payerTx, keeperReserveTx, keeperAvailableTx));
+        masterTxRepository.save(masterTx);
     }
 
     @Override
