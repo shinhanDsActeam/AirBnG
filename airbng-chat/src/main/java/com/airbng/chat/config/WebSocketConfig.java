@@ -98,7 +98,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
      */
     @Bean
     public ServletServerContainerFactoryBean webSocketContainer() {
-        var c = new org.springframework.web.socket.server.standard.ServletServerContainerFactoryBean();
+        var c = new ServletServerContainerFactoryBean();
         c.setMaxTextMessageBufferSize(512 * 1024);
         c.setMaxBinaryMessageBufferSize(512 * 1024);
         c.setMaxSessionIdleTimeout(60_000L); // 60s idle timeout (선택)
