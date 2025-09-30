@@ -18,15 +18,13 @@ public interface WalletTxRepository extends JpaRepository<WalletTx, Long> {
     Optional<WalletTx> findByWalletIdemKey(UUID walletIdemKey);
 
     @Query("""
-            select t
-            from WalletTx t
-            where t.wallet.walletId = :walletId
-            and (
-                (:type is null and (t.walletTxRole = 'DEBIT'))
-                or (:type is not null and t.walletTxType = :type and (:role is null or t.walletTxRole = :role))
-            )
-            and (:cursor is null or t.walletTxId < :cursor)
-            order by t.walletTxId desc
+              select t
+              from WalletTx t
+              where t.wallet.walletId = :walletId
+                and (:cursor is null or t.walletTxId < :cursor)
+                and (:type  is null or t.walletTxType = :type)
+                and (:role  is null or t.walletTxRole = :role)
+              order by t.walletTxId desc
             """)
     List<WalletTx> findSliceByWalletIdAndCursorDesc(@Param("walletId") Long walletId,
                                                     @Param("cursor") Long cursor,

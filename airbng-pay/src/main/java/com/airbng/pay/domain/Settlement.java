@@ -1,4 +1,4 @@
-package com.airbng.common.domain;
+package com.airbng.pay.domain;
 
 import com.airbng.common.base.PaymentMethod;
 import jakarta.persistence.*;
@@ -37,6 +37,9 @@ public class Settlement {
 
     @Column(nullable = false)
     private Long keeperId;
+
+    @Column(nullable = false)
+    private Long lockerId;
 
     @Column(nullable = false)
     private LocalDateTime createdAt;

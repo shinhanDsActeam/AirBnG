@@ -1,4 +1,4 @@
-package com.airbng.common.domain;
+package com.airbng.pay.domain;
 
 import jakarta.persistence.*;
 import lombok.*;

@@ -45,12 +45,12 @@ public class Refund extends BaseTime {
     @Column(name = "locker_id", nullable = false)
     private Long lockerId;
 
-    /** 금액 필드 */
+    /** 환불해줄 금액 (총금액 - 취소수수료) */
     @Column(name = "refund_amount", nullable = false, precision = 19, scale = 2)
     private BigDecimal refundAmount;  // dropper에게 돌아갈 금액
 
     @Column(name = "charge_fee", nullable = false, precision = 19, scale = 2)
-    private BigDecimal chargeFee;     // 정책상 차감 수수료(없으면 0)
+    private BigDecimal chargeFee;     // 취소 수수료
 
     /** 타입/상태 */
     @Enumerated(EnumType.STRING)
@@ -68,5 +68,9 @@ public class Refund extends BaseTime {
     /* ===== 도메인 메서드 ===== */
     public boolean isProcessed() {
         return this.refundStatus == RefundStatus.PROCESSED;
+    }
+
+    public void markProcessedNow() {
+        this.refundStatus = RefundStatus.PROCESSED;
     }
 }
