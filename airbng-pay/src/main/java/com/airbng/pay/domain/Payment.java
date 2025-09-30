@@ -42,4 +42,10 @@ public class Payment extends BaseTime {
 
     @Column(columnDefinition = "BINARY(16)", nullable = false, unique = true)
     private UUID payIdemKey; // 멱등키
+
+    // 결제 취소
+    public void cancel() {
+        this.paymentStatus = PaymentStatus.CANCELED;
+    }
+
 }

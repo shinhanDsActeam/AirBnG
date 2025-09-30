@@ -37,7 +37,7 @@ public class RefundApiImpl implements RefundApi {
             return existed.getRefundId();
         }
 
-        Payment p = paymentRepository.findById(cmd.getPaymentId())
+        Payment payment = paymentRepository.findById(cmd.getPaymentId())
                 .orElseThrow(() -> new PaymentException(NOT_FOUND_PAYMENT));
 
         RefundType refundType = null;
@@ -49,17 +49,20 @@ public class RefundApiImpl implements RefundApi {
 
         final Refund refund;
 
+        /** 환불요청 시점에 결제 취소 처리 */
+        payment.cancel();
+
         try {
             refund = Refund.builder()
                     .reservationId(cmd.getReservationId())
-                    .refundAmount(p.getPaymentAmount().add(p.getPaymentFee()).subtract(cmd.getChargeFee()))
-                    .refundStatus(RefundStatus.PROCESSED)
+                    .refundAmount(payment.getPaymentAmount().add(payment.getPaymentFee()).subtract(cmd.getChargeFee()))
+                    .refundStatus(RefundStatus.REQUESTED)
                     .refundType(refundType)
                     .chargeFee(cmd.getChargeFee())
-                    .paymentId(p.getPaymentId())
-                    .payeeId(p.getPayeeId())
-                    .payerId(p.getPayerId())
-                    .lockerId(p.getLockerId())
+                    .paymentId(payment.getPaymentId())
+                    .payeeId(payment.getPayeeId())
+                    .payerId(payment.getPayerId())
+                    .lockerId(payment.getLockerId())
                     .bizKey(cmd.getIdemKey())
                     .build();
             refundRepository.save(refund);
